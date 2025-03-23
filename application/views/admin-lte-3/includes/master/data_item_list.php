@@ -24,7 +24,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card card-default">
+                    <div class="card card-default rounded-0">
                         <div class="card-header">
                             <h3 class="card-title">Data Item</h3>
                             <div class="card-tools">
@@ -33,7 +33,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
+                        <div class="card-body">
                             <?php
                                 $filter_kode     = strtoupper($this->input->get('filter_kode'));
                                 $filter_produk   = strtoupper($this->input->get('filter_produk'));
@@ -46,7 +46,7 @@
                             
                                 $sql_kat = $this->db->where('id', $filter_kat)->get('tbl_m_kategori')->row();
                             ?>
-                            <table class="table table-condensed">
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <td colspan="5" class="text-left"><?php echo (!empty($sql_kat) ? '<b>'.strtoupper($sql_kat->keterangan).' : '.$jml.'</b>' : '') ?></td>
