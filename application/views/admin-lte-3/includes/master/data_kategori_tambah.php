@@ -37,7 +37,6 @@
                             </div>
                         </div>
                         <div class="card-body table-responsive">
-                            <?php echo $this->session->flashdata('master'); ?>
                             <?php $hasError = $this->session->flashdata('form_error'); ?>
                             <?php echo form_hidden('id', $this->input->get('id')) ?>
                             <div class="form-group <?php echo (!empty($hasError['kategori']) ? 'has-error' : '') ?>">

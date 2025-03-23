@@ -103,6 +103,8 @@ $route['master/data_klinik_tambah.php']     = "master/data_klinik_tambah";
 $route['master/data_klinik_simpan.php']     = "master/data_klinik_simpan";
 $route['master/data_klinik_update.php']     = "master/data_klinik_update";
 $route['master/data_klinik_hapus.php']      = "master/data_klinik_hapus";
+$route['master/set_klinik_cari.php']        = "master/set_klinik_cari";
+
 
 $route['master/data_kamar_list.php']        = "master/data_kamar_list";
 $route['master/data_kamar_tambah.php']      = "master/data_kamar_tambah";
@@ -124,6 +126,8 @@ $route['master/data_satuan_tambah.php']   	= "master/data_satuan_tambah";
 $route['master/data_satuan_simpan.php']   	= "master/data_satuan_simpan";
 $route['master/data_satuan_update.php']   	= "master/data_satuan_update";
 $route['master/data_satuan_hapus.php']    	= "master/data_satuan_hapus";
+$route['master/set_cari_satuan.php']        = "master/set_cari_satuan";
+
 
 $route['master/data_barang_list.php']     	= "master/data_barang_list";
 $route['master/data_barang_list_arsip.php'] = "master/data_barang_list_arsip";

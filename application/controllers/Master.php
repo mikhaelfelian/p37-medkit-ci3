@@ -1416,6 +1416,8 @@ class master extends CI_Controller {
             $query      = $this->input->get('q');
             $hal        = $this->input->get('halaman');
             $jml        = $this->input->get('jml');
+            $kode       = $this->input->get('kode');
+            $klinik     = $this->input->get('klinik');
             $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_poli'));
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
             
@@ -1460,6 +1462,16 @@ class master extends CI_Controller {
                                                ->like('lokasi', $query)
                                                ->order_by('lokasi','asc')
                                                ->get('tbl_m_poli')->result();
+                } else if (!empty($kode)) {
+                    $data['lokasi'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('kode', $kode)
+                                               ->order_by('lokasi','asc')
+                                               ->get('tbl_m_poli')->result();
+                } else if (!empty($klinik)) {
+                    $data['lokasi'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('lokasi', $klinik)
+                                               ->order_by('lokasi','asc')
+                                               ->get('tbl_m_poli')->result();
                 } else {
                     $data['lokasi'] = $this->db->limit($config['per_page'],$hal)
                                                ->order_by('lokasi','asc')
@@ -1469,6 +1481,16 @@ class master extends CI_Controller {
                 if (!empty($query)) {
                     $data['lokasi'] = $this->db->limit($config['per_page'],$hal)
                                                ->like('lokasi', $query)
+                                               ->order_by('lokasi','asc')
+                                               ->get('tbl_m_poli')->result();
+                } else if (!empty($kode)) {
+                    $data['lokasi'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('kode', $kode)
+                                               ->order_by('lokasi','asc')
+                                               ->get('tbl_m_poli')->result();
+                } else if (!empty($klinik)) {
+                    $data['lokasi'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('lokasi', $klinik)
                                                ->order_by('lokasi','asc')
                                                ->get('tbl_m_poli')->result();
                 } else {
@@ -1525,10 +1547,10 @@ class master extends CI_Controller {
     
     public function data_klinik_simpan() {
         if (Akses::aksesLogin() == TRUE) {
-            $kode     = $this->input->post('kode');
-            $lokasi   = $this->input->post('lokasi');
-            $ket      = $this->input->post('keterangan');
-            $disk     = $this->input->post('diskon');
+            $kode          = $this->input->post('kode');
+            $lokasi        = $this->input->post('lokasi');
+            $ket           = $this->input->post('keterangan');
+            $postlocation  = $this->input->post('postlocation');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
@@ -1540,17 +1562,36 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_klinik_tambah.php?id='.$id));
-            } else {                
-                $data_penj = array(
-                    'tgl_simpan' => date('Y-m-d H:i:s'),
-                    'kode'       => $kode,
-                    'lokasi'     => $lokasi,
-                    'keterangan' => $ket,
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik disimpan</div>');
-                crud::simpan('tbl_m_poli',$data_penj);
+                redirect(base_url('master/data_klinik_tambah.php'));
+            } else {
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_klinik_list.php'));
+                        return;
+                    }
+                    
+                    $data_penj = array(
+                        'tgl_simpan' => date('Y-m-d H:i:s'),
+                        'tgl_modif'  => date('Y-m-d H:i:s'),
+                        'kode'       => $kode,
+                        'lokasi'     => $lokasi,
+                        'keterangan' => $ket,
+                        'post_location' => $postlocation,
+                    );
+                    
+                    if (!crud::simpan('tbl_m_poli', $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menyimpan data klinik");');
+                        throw new Exception("Gagal menyimpan data klinik");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data klinik berhasil disimpan");');
+                    $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik disimpan</div>');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_klinik_tambah.php'));
+                    return;
+                }
                 redirect(base_url('master/data_klinik_list.php'));
             }
         } else {
@@ -1562,15 +1603,16 @@ class master extends CI_Controller {
     
     public function data_klinik_update() {
         if (Akses::aksesLogin() == TRUE) {
-            $id       = $this->input->post('id');
-            $kode     = $this->input->post('kode');
-            $lokasi   = $this->input->post('lokasi');
-            $ket      = $this->input->post('keterangan');
-            $disk     = $this->input->post('diskon');
+            $id            = $this->input->post('id');
+            $kode          = $this->input->post('kode');
+            $lokasi        = $this->input->post('lokasi');
+            $ket           = $this->input->post('keterangan');
+            $postlocation  = $this->input->post('postlocation');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('lokasi', 'Kategori', 'required');
+            $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
@@ -1579,16 +1621,34 @@ class master extends CI_Controller {
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_klinik_tambah.php?id='.$id));
-            } else {                
-                $data_penj = array(
-                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                    'kode'       => $kode,
-                    'lokasi'     => $lokasi,
-                    'keterangan' => $ket,
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik diubah</div>');
-                crud::update('tbl_m_poli','id', general::dekrip($id),$data_penj);
+            } else {
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_klinik_list.php'));
+                        return;
+                    }
+                    
+                    $data_penj = array(
+                        'tgl_modif'  => date('Y-m-d H:i:s'),
+                        'kode'       => $kode,
+                        'lokasi'     => $lokasi,
+                        'keterangan' => $ket,
+                        'post_location' => $postlocation,
+                    );
+                    
+                    if (!crud::update('tbl_m_poli', 'id', general::dekrip($id), $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal mengubah data klinik");');
+                        throw new Exception("Gagal mengubah data klinik");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data klinik berhasil diubah");');
+                    $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik diubah</div>');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_klinik_tambah.php?id='.$id));
+                    return;
+                }
                 redirect(base_url('master/data_klinik_tambah.php?id='.$id));
             }
         } else {
@@ -1603,7 +1663,15 @@ class master extends CI_Controller {
             $id = $this->input->get('id');
             
             if(!empty($id)){
-                crud::delete('tbl_m_poli','id',general::dekrip($id));
+                try {
+                    if (!crud::delete('tbl_m_poli','id',general::dekrip($id))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menghapus data klinik");');
+                    } else {
+                        $this->session->set_flashdata('master_toast', 'toastr.success("Data klinik berhasil dihapus");');
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                }
             }
             
             redirect(base_url('master/data_klinik_list.php'));
@@ -1613,289 +1681,10 @@ class master extends CI_Controller {
             redirect();
         }
     }
-    
-    
-    public function data_promo_list() {
+
+    public function set_klinik_cari() {
         if (Akses::aksesLogin() == TRUE) {
-            $query      = $this->input->get('q');
-            $hal        = $this->input->get('halaman');
-            $jml        = $this->input->get('jml');
-            $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_promo'));
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-            
-            $data['hasError'] = $this->session->flashdata('form_error');
-                        
-            $config['base_url']               = base_url('master/data_promo_list.php?'.(isset($_GET['q']) ? '&q='.$_GET['q'].'&jml='.$jml_hal : ''));
-            $config['total_rows']             = $jml_hal;
-            
-            $config['query_string_segment']  = 'halaman';
-            $config['page_query_string']     = TRUE;
-            $config['per_page']              = $pengaturan->jml_item;
-            $config['num_links']             = 2;
-            
-            $config['first_tag_open']        = '<li>';
-            $config['first_tag_close']       = '</li>';
-            
-            $config['prev_tag_open']         = '<li>';
-            $config['prev_tag_close']        = '</li>';
-            
-            $config['num_tag_open']          = '<li>';
-            $config['num_tag_close']         = '</li>';
-            
-            $config['next_tag_open']         = '<li>';
-            $config['next_tag_close']        = '</li>';
-            
-            $config['last_tag_open']         = '<li>';
-            $config['last_tag_close']        = '</li>';
-            
-            $config['cur_tag_open']          = '<li><a href="#"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
-            
-            $config['first_link']            = '&laquo;';
-            $config['prev_link']             = '&lsaquo;';
-            $config['next_link']             = '&rsaquo;';
-            $config['last_link']             = '&raquo;';
-            
-            
-            if(!empty($hal)){
-                if (!empty($query)) {
-                    $data['promo'] = $this->db->limit($config['per_page'],$hal)
-                                               ->like('promo', $query)
-                                               ->order_by('promo','asc')
-                                               ->get('tbl_m_promo')->result();
-                } else {
-                    $data['promo'] = $this->db->limit($config['per_page'],$hal)
-                                               ->order_by('promo','asc')
-                                               ->get('tbl_m_promo')->result();
-                }
-            }else{
-                if (!empty($query)) {
-                    $data['promo'] = $this->db->limit($config['per_page'],$hal)
-                                               ->like('promo', $query)
-                                               ->order_by('promo','asc')
-                                               ->get('tbl_m_promo')->result();
-                } else {
-                    $data['promo'] = $this->db->limit($config['per_page'])->order_by('promo','asc')->get('tbl_m_promo')->result();
-                }
-            }
-            
-            $this->pagination->initialize($config);
-            
-            $data['total_rows'] = $config['total_rows'];
-            $data['PerPage']    = $config['per_page'];
-            $data['pagination'] = $this->pagination->create_links();
-            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_promo.php?'.(!empty($query) ? 'query='.$query : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
-
-            $this->load->view('admin-lte-2/1_atas', $data);
-            $this->load->view('admin-lte-2/2_header', $data);
-//            $this->load->view('admin-lte-2/3_navbar', $data);
-            $this->load->view('admin-lte-2/includes/master/data_promo_list', $data);
-            $this->load->view('admin-lte-2/5_footer', $data);
-            $this->load->view('admin-lte-2/6_bawah', $data);
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_tambah() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id   = $this->input->get('id');
-            
-            $data['promo'] = $this->db->where('id', general::dekrip($id))->get('tbl_m_promo')->row();
-
-            $this->load->view('admin-lte-2/1_atas', $data);
-            $this->load->view('admin-lte-2/2_header', $data);
-//            $this->load->view('admin-lte-2/3_navbar', $data);
-            $this->load->view('admin-lte-2/includes/master/data_promo_tambah', $data);
-            $this->load->view('admin-lte-2/5_footer', $data);
-            $this->load->view('admin-lte-2/6_bawah', $data);
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_tambah_item() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id   = $this->input->get('id');
-            
-            $data['promo']      = $this->db->where('id', general::dekrip($id))->get('tbl_m_promo')->row();
-            $data['promo_item'] = $this->db->where('id_promo', general::dekrip($id))->get('tbl_m_produk_promo')->result();
-
-            $this->load->view('admin-lte-2/1_atas', $data);
-            $this->load->view('admin-lte-2/2_header', $data);
-//            $this->load->view('admin-lte-2/3_navbar', $data);
-            $this->load->view('admin-lte-2/includes/master/data_promo_tambah_item', $data);
-            $this->load->view('admin-lte-2/5_footer', $data);
-            $this->load->view('admin-lte-2/6_bawah', $data);
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_simpan() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id       = $this->input->post('id');
-            $promo    = $this->input->post('promo');
-            $ket      = $this->input->post('keterangan');
-            $tipe     = $this->input->post('tipe');
-            $potongan = str_replace('.', '', $this->input->post('potongan'));
-            $disk1    = $this->input->post('disk1');
-            $disk2    = $this->input->post('disk2');
-            $disk3    = $this->input->post('disk3');
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('promo', 'Kategori', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'promo'     => form_error('promo'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_promo_tambah.php?id='.$id));
-            } else {                
-                $data_penj = array(
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'promo'         => $promo,
-                    'keterangan'    => $ket,
-                    'nominal'       => $potongan,
-                    'disk1'         => $disk1,
-                    'disk2'         => $disk2,
-                    'disk3'         => $disk3,
-                    'tipe'          => $tipe,
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data promo disimpan</div>');
-                crud::simpan('tbl_m_promo',$data_penj);
-                redirect(base_url('master/data_promo_list.php'));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_simpan_item() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id       = $this->input->post('id');
-            $id_prod  = $this->input->post('id_barang');
-            $disk1    = $this->input->post('disk1');
-            $disk2    = $this->input->post('disk2');
-            $disk3    = $this->input->post('disk3');
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('id', 'Kategori', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'     => form_error('id'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_promo_tambah.php'));
-            } else {
-                $sql_prod = $this->db->where('id_produk', $id_prod)->get('tbl_m_produk_promo');
-                
-                $data_penj = array(
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'id_promo'      => general::dekrip($id),
-                    'id_produk'     => $id_prod,
-                    'disk1'         => $disk1,
-                    'disk2'         => $disk2,
-                    'disk3'         => $disk3,
-                    'tipe'          => '1',
-                );
-                
-                
-                
-                if($sql_prod->num_rows() > 0){
-                    $this->session->set_flashdata('master', '<div class="alert alert-danger">Data produk sudah ada! </div>');
-                }else{
-                    $this->session->set_flashdata('master', '<div class="alert alert-success">Data promo disimpan</div>');
-                    crud::simpan('tbl_m_produk_promo',$data_penj);
-                }
-                
-                redirect(base_url('master/data_promo_tambah_item.php?id='.$id));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_update() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id       = $this->input->post('id');
-            $promo    = $this->input->post('promo');
-            $ket      = $this->input->post('keterangan');
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('promo', 'Kategori', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'promo'     => form_error('promo'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_promo_tambah.php?id='.$id));
-            } else {                
-                $data_penj = array(
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'promo'         => $promo,
-                    'keterangan'    => $ket
-                );
-                echo '<pre>';
-                print_r($data_penj);
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data promo diubah</div>');
-                crud::update('tbl_m_promo','id', general::dekrip($id),$data_penj);
-                redirect(base_url('master/data_promo_tambah.php?id='.$id));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_hapus() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id = $this->input->get('id');
-            
-            if(!empty($id)){
-                crud::delete('tbl_m_promo','id',general::dekrip($id));
-            }
-            
-            redirect(base_url('master/data_promo_list.php'));
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_promo_hapus_item() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id  = $this->input->get('id');
-            $idp = $this->input->get('id_item');
-            
-            if(!empty($id)){
-                crud::delete('tbl_m_produk_promo','id',general::dekrip($idp));
-            }
-            
-            redirect(base_url('master/data_promo_tambah_item.php?id='.$id));
+            redirect('master/data_klinik_list.php?' . http_build_query($_GET));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -2235,6 +2024,7 @@ class master extends CI_Controller {
     public function data_satuan_list() {
         if (Akses::aksesLogin() == TRUE) {
             $query      = $this->input->get('q');
+            $satuan     = $this->input->get('satuan');
             $hal        = $this->input->get('halaman');
             $jml        = $this->input->get('jml');
             $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_satuan'));
@@ -2273,30 +2063,31 @@ class master extends CI_Controller {
             $config['next_link']             = '&rsaquo;';
             $config['last_link']             = '&raquo;';
             
+            $this->db->select('satuanBesar');
+            
+            if(!empty($satuan)) {
+                $this->db->where('satuanBesar', $satuan);
+            }
             
             if(!empty($hal)){
                 if (!empty($query)) {
                     $data['satuan'] = $this->db->limit($config['per_page'],$hal)
-                                               ->like('satuanTerkecil', $query)
-                                               ->or_like('satuanBesar', $query)
-                                               ->or_like('jml', $query)
-                                               ->order_by('satuanTerkecil','asc')
+                                               ->like('satuanBesar', $query)
+                                               ->order_by('satuanBesar','asc')
                                                ->get('tbl_m_satuan')->result();
                 } else {
                     $data['satuan'] = $this->db->limit($config['per_page'],$hal)
-                                               ->order_by('satuanTerkecil','asc')
+                                               ->order_by('satuanBesar','asc')
                                                ->get('tbl_m_satuan')->result();
                 }
             }else{
                 if (!empty($query)) {
                     $data['satuan'] = $this->db->limit($config['per_page'],$hal)
-                                               ->like('satuanTerkecil', $query)
-                                               ->or_like('satuanBesar', $query)
-                                               ->or_like('jml', $query)
-                                               ->order_by('satuanTerkecil','asc')
+                                               ->like('satuanBesar', $query)
+                                               ->order_by('satuanBesar','asc')
                                                ->get('tbl_m_satuan')->result();
                 } else {
-                    $data['satuan'] = $this->db->limit($config['per_page'])->order_by('satuanTerkecil','asc')->get('tbl_m_satuan')->result();
+                    $data['satuan'] = $this->db->limit($config['per_page'])->order_by('satuanBesar','asc')->get('tbl_m_satuan')->result();
                 }
             }
             
@@ -2365,11 +2156,9 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_satuan_tambah.php?id='.$id));
-            } else {
-                $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
-                $kode    = sprintf('%05d', $sql_num);
-                
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
+                redirect(base_url('master/data_satuan_tambah.php'));
+            } else {                
                 $data_penj = array(
                     'tgl_simpan'     => date('Y-m-d H:i:s'),
                     'satuanTerkecil' => $satKcl,
@@ -2378,15 +2167,32 @@ class master extends CI_Controller {
                     'status'         => '1',
                 );
                 
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data satuan disimpan</div>');
-                crud::simpan('tbl_m_satuan',$data_penj);
-                $aid = crud::last_id();
-                
-                if(!empty($tipe)){
-                    crud::update('tbl_m_satuan','id',$aid,array('id_sub'=>$aid));
-                    redirect(base_url('master/data_satuan_tambah.php?id='.general::enkrip($aid)));
-                }else{
-                    redirect(base_url('master/data_satuan_list.php'));
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_satuan_list.php'));
+                        return;
+                    }
+                    
+                    if (!crud::simpan('tbl_m_satuan', $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menyimpan data satuan");');
+                        throw new Exception("Gagal menyimpan data satuan");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data satuan berhasil disimpan");');
+                    
+                    $aid = crud::last_id();
+                    
+                    if(!empty($tipe)){
+                        crud::update('tbl_m_satuan','id',$aid,array('id_sub'=>$aid));
+                        redirect(base_url('master/data_satuan_tambah.php?id='.general::enkrip($aid)));
+                    }else{
+                        redirect(base_url('master/data_satuan_list.php'));
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_satuan_tambah.php?id='.$id));
+                    return;
                 }
             }
         } else {
@@ -2395,8 +2201,7 @@ class master extends CI_Controller {
             redirect();
         }
     }
-    
-    
+       
     public function data_satuan_update() {
         if (Akses::aksesLogin() == TRUE) {
             $id      = $this->input->post('id');
@@ -2414,10 +2219,10 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_satuan_tambah.php?id='.$id));
-            } else {
+            } else {                
                 $sql_num = $this->db->where('id', general::dekrip($id))->get('tbl_m_satuan')->row();
-                $kode    = sprintf('%05d', $sql_num);
                 
                 $data_penj = array(
                     'tgl_modif'      => date('Y-m-d H:i:s'),
@@ -2426,10 +2231,27 @@ class master extends CI_Controller {
                     'jml'            => $jml
                 );
                 
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data satuan diubah</div>');
-                crud::update('tbl_m_satuan','id', general::dekrip($id),$data_penj);
-                crud::update('tbl_m_produk_satuan','id_satuan', general::dekrip($id), array('satuan'=>$satKcl, 'jml'=>$sql_num->jml));
-                redirect(base_url('master/data_satuan_tambah.php?id='.$id));
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_satuan_list.php'));
+                        return;
+                    }
+                    
+                    if (!crud::update('tbl_m_satuan', 'id', general::dekrip($id), $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal mengubah data satuan");');
+                        throw new Exception("Gagal mengubah data satuan");
+                    }
+                    
+                    crud::update('tbl_m_produk_satuan','id_satuan', general::dekrip($id), array('satuan'=>$satKcl, 'jml'=>$sql_num->jml));
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data satuan berhasil diubah");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_satuan_tambah.php?id='.$id));
+                    return;
+                }
+                redirect(base_url('master/data_satuan_list.php'));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2440,20 +2262,34 @@ class master extends CI_Controller {
     
     public function data_satuan_hapus() {
         if (Akses::aksesLogin() == TRUE) {
-            $id = $this->input->get('id');
-            
-            if(!empty($id)){
-                crud::delete('tbl_m_satuan','id',general::dekrip($id));
-                crud::delete('tbl_m_produk_satuan','id_satuan',general::dekrip($id));
+            try {
+                $id = $this->input->get('id');
+                
+                if(!empty($id)){
+                    // Check if satuan is used in products
+                    $satuan_id = general::dekrip($id);
+                    $used_in_products = $this->db->where('id_satuan', $satuan_id)->get('tbl_m_produk')->num_rows();
+                    
+                    if($used_in_products > 0) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Satuan tidak dapat dihapus karena masih digunakan dalam data produk");');
+                    } else {
+                        crud::delete('tbl_m_satuan','id', $satuan_id);
+                        $this->session->set_flashdata('master_toast', 'toastr.success("Data satuan berhasil dihapus");');
+                    }
+                }
+                
+                redirect(base_url('master/data_satuan_list.php'));
+            } catch (Exception $e) {
+                $this->session->set_flashdata('master_toast', 'toastr.error("Terjadi kesalahan: '.$e->getMessage().'");');
+                redirect(base_url('master/data_satuan_list.php'));
             }
-            
-            redirect(base_url('master/data_satuan_list.php'));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
+    
         
     public function data_barang_list() {
         if (Akses::aksesLogin() == TRUE) {
@@ -10020,17 +9856,7 @@ class master extends CI_Controller {
 
     public function set_cari_satuan() {
         if (Akses::aksesLogin() == TRUE) {
-            $id = $this->input->post('pencarian');
-            
-            if(!empty($id)){
-                $jml = $this->db->like('satuanTerkecil',$id)
-                                ->or_like('satuanBesar',$id)
-                                ->or_like('jml',$id)
-                            ->get('tbl_m_satuan')->num_rows();
-                redirect(base_url('master/data_satuan_list.php?q='.$id.'&jml='.$jml));
-            }else{
-                redirect(base_url('master/data_satuan_list.php'));
-            }
+            redirect('master/data_satuan_list.php?' . http_build_query($_GET));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -10087,25 +9913,6 @@ class master extends CI_Controller {
                 redirect(base_url('master/data_lokasi_list.php?q='.$id.'&jml='.$jml));
             }else{
                 redirect(base_url('master/data_lokasi_list.php'));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-
-    public function set_cari_promo() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id = $this->input->post('pencarian');
-
-            if(!empty($id)){
-                $jml = $this->db->like('promo',$id)
-                                ->like('keterangan',$id)
-                                ->get('tbl_m_promo')->num_rows();
-                redirect(base_url('master/data_promo_list.php?q='.$id.'&jml='.$jml));
-            }else{
-                redirect(base_url('master/data_promo_list.php'));
             }
         } else {
             $errors = $this->ion_auth->messages();

@@ -24,7 +24,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card card-default">
+                    <div class="card card-default rounded-0">
                         <div class="card-header">
                             <h3 class="card-title">Data Klinik</h3>
                             <div class="card-tools">
@@ -33,9 +33,9 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
-                            <?php echo $this->session->flashdata('master'); ?>
-                            <table class="table table-condensed">
+                        <div class="card-body">
+                            <?php echo form_open(base_url('master/set_klinik_cari.php'), ['method' => 'get']); ?>
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center">No.</th>
@@ -48,10 +48,10 @@
                                 <tbody>
                                     <tr>
                                         <td></td>
-                                        <td><?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control', 'placeholder' => 'Kode ...')) ?></td>
-                                        <td><?php echo form_input(array('id' => 'klinik', 'name' => 'klinik', 'class' => 'form-control', 'placeholder' => 'Klinik ...')) ?></td>
+                                        <td><?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control rounded-0', 'placeholder' => 'Kode ...')) ?></td>
+                                        <td><?php echo form_input(array('id' => 'klinik', 'name' => 'klinik', 'class' => 'form-control rounded-0', 'placeholder' => 'Klinik ...')) ?></td>
                                         <td></td>
-                                        <td></td>
+                                        <td><button type="submit" class="btn btn-primary rounded-0"><i class="fas fa-search"></i> Search</button></td>
                                     </tr>
                                     <?php
                                     if (!empty($lokasi)) {
@@ -78,6 +78,7 @@
                                     ?>
                                 </tbody>
                             </table>
+                            <?php echo form_close(); ?>
                         </div>
                     </div>
                 </div>
@@ -89,3 +90,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>

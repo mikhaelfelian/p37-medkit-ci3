@@ -10,7 +10,8 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo base_url('master/index.php') ?>">Master Data</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo base_url('master/index.php') ?>">Master Data</a>
+                        </li>
                         <li class="breadcrumb-item active">Satuan</li>
                     </ol>
                 </div><!-- /.col -->
@@ -24,7 +25,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card card-default">
+                    <div class="card card-default rounded-0">
                         <div class="card-header">
                             <h3 class="card-title">Data Satuan</h3>
                             <div class="card-tools">
@@ -33,8 +34,8 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
-                            <?php echo $this->session->flashdata('master'); ?>
+                        <div class="card-body">
+                            <?php echo form_open(base_url('master/set_cari_satuan.php'), ['method' => 'get']); ?>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -45,11 +46,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-<!--                                    <tr>
+                                    <tr>
                                         <td></td>
-                                        <td><?php echo form_input(array('id' => 'satuan', 'name' => 'satuan', 'class' => 'form-control', 'placeholder' => 'Satuan ...')) ?></td>
+                                        <td><?php echo form_input(array('id' => 'satuan', 'name' => 'satuan', 'class' => 'form-control rounded-0', 'placeholder' => 'Satuan ...')) ?></td>
                                         <td></td>
-                                    </tr>-->
+                                        <td><button type="submit" class="btn btn-primary rounded-0"><i class="fas fa-search"></i> Cari</button></td>
+                                    </tr>
                                     <?php
                                     if (!empty($satuan)) {
                                         $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
@@ -64,7 +66,7 @@
                                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE) { ?>
                                                         <?php echo nbs() ?>
                                                         <?php echo anchor(base_url('master/data_satuan_tambah.php?id=' . general::enkrip($satuan->id)), '<i class="fas fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
-                                                        <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE) { ?>
+                                                        <?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE) { ?>
                                                             <?php echo nbs() ?>
                                                             <?php echo anchor(base_url('master/data_satuan_hapus.php?id=' . general::enkrip($satuan->id)), '<i class="fas fa-trash"></i> Hapus', 'onclick="return confirm(\'Hapus [' . $satuan->satuanTerkecil . '] ? Cek controller master line 1946\')" class="btn btn-danger btn-flat btn-xs" style="width: 55px;"') ?>
                                                         <?php } ?>
@@ -77,6 +79,7 @@
                                     ?>
                                 </tbody>
                             </table>
+                            <?php echo form_close(); ?>
                         </div>
                     </div>
                 </div>
@@ -88,3 +91,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>
