@@ -1,7 +1,7 @@
 # Medkit 2
 
 ## Overview
-Medkit 2 is an upgraded version of the original Medkit application, migrated from CodeIgniter 2 to be compatible with PHP 8.2.
+Medkit 2 is an upgraded version of the original Medkit application, migrated from CodeIgniter 2 to be compatible with PHP 8.2. 
 
 Updated from GitHub Repository: https://github.com/mikhaelfelian/p37-medkit-dev
 
