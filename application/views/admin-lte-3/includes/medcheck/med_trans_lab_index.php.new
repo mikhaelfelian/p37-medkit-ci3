@@ -1,0 +1,43 @@
+<?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakAnalis() == TRUE) { ?>
+    <a href="<?php echo base_url('medcheck/set_medcheck_lab.php?id=' . general::enkrip($sql_medc->id) . '&status=' . $this->input->get('status')) ?>" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Permintaan Lab</a>
+<?php } ?>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">No.</th>
+            <th class="text-center">Tgl Masuk</th>
+            <th class="text-left">No. Sampel</th>
+            <th class="text-left">Analis</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $grup = $this->ion_auth->get_users_groups()->row(); ?>
+        <?php $no = 1; ?>
+        <?php foreach ($sql_medc_lab->result() as $lab) { ?>
+            <tr>
+                <td class="text-center" style="width: 50px;">                    
+                    <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE) { ?>
+                        <?php echo anchor(base_url('medcheck/lab/hapus.php?id=' . $this->input->get('id') . '&item_id=' . general::enkrip($lab->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-trash"></i>', 'class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus [' . $lab->no_lab . '] ?\')"') ?>
+                    <?php } elseif ($lab->id_analis == $this->ion_auth->user()->row()->id) { ?>
+                        <?php if ($sql_medc->status_bayar == '0') { ?>
+                            <?php echo anchor(base_url('medcheck/lab/hapus.php?id=' . $this->input->get('id') . '&item_id=' . general::enkrip($lab->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-trash"></i>', 'class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus [' . $lab->no_lab . '] ?\')"') ?>
+                        <?php } ?>
+                    <?php } ?>
+                </td>
+                <td class="text-center" style="width: 50px;"><?php echo $no; ?></td>
+                <td class="text-left" style="width: 50px;"><?php echo $this->tanggalan->tgl_indo2($lab->tgl_simpan); ?></td>
+                <td class="text-left" style="width: 50px;"><?php echo $lab->no_sample; //anchor(base_url('medcheck/resep/detail.php?id=' . general::enkrip($lab->id) . '&id_medc=' . general::enkrip($sql_medc->id)), $lab->no_sample);     ?></td>
+                <td class="text-left" style="width: 100px;"><?php echo $this->ion_auth->user($lab->id_analis)->row()->first_name; ?></td>
+                <td class="text-left" style="width: 90px;">
+                    <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAnalis() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE) { ?>
+                        <?php echo anchor(base_url('medcheck/tambah.php?act=lab_input&id=' . general::enkrip($sql_medc->id) . '&id_lab=' . general::enkrip($lab->id) . '&status=' . $this->input->get('status')), 'Input &raquo;', 'class="btn btn-success btn-flat btn-xs text-bold" style="width: 70px;"') ?>
+                    <?php } ?>
+                </td>
+            </tr>
+            <?php $no++ ?>
+        <?php } ?>
+    </tbody>
+</table>

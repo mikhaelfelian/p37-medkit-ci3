@@ -1,0 +1,7 @@
+<?php // if(isset($_GET['judul'])){ ?>
+    <!--<a class="nav-link <?php echo (empty($_GET['act']) ? 'active' : '') ?>" href="<?php echo base_url('medcheck/tambah.php?id=' . $this->input->get('id') . '&status=15') ?>" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Assesment</a>-->
+<?php // }else{ ?>
+    <a class="nav-link <?php echo (empty($_GET['act']) ? 'active' : '') ?>" href="<?php echo base_url('medcheck/tambah.php?id=' . $this->input->get('id') . '&status=3') ?>" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Pemeriksaan</a>
+<?php // } ?>
+<!--<a class="nav-link <?php // echo ($_GET['act'] == 'lab_spirometri' ? 'active' : '') ?>" id="vert-tabs-profile-tab" data-toggle="" href="<?php echo base_url('medcheck/tambah.php?act=lab_spirometri&id=' . $this->input->get('id') . '&status=3'.(isset($_GET['judul']) ? '&judul='.$_GET['judul'] : '')) ?>" aria-controls="vert-tabs-profile" aria-selected="false">Spirometri</a>-->
+<!--<a class="nav-link <?php // echo ($_GET['act'] == 'lab_ekg' ? 'active' : '') ?>" id="vert-tabs-profile-tab" data-toggle="" href="<?php echo base_url('medcheck/tambah.php?act=lab_ekg&id=' . $this->input->get('id') . '&status=3'.(isset($_GET['judul']) ? '&judul='.$_GET['judul'] : '')) ?>" aria-controls="vert-tabs-profile" aria-selected="<?php echo ($_GET['act'] == 'lab_ekg' ? 'true' : 'false') ?>">EKG</a>-->

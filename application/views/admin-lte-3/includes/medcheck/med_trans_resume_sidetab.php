@@ -1,0 +1,4 @@
+<a class="nav-link <?php echo (empty($_GET['act']) ? 'active' : '') ?>" href="<?php echo base_url('medcheck/tambah.php?id=' . $this->input->get('id') . '&status=9') ?>" role="tab" aria-controls="vert-tabs-home" aria-selected="true"><?php echo ($sql_medc->tipe == '3' ? 'Resume' : 'MCU'); ?></a>
+<?php // if ($sql_medc->tipe == '5') { ?>
+    <a class="nav-link <?php echo ($_GET['act'] == 'resm_fisik' ? 'active' : '') ?>" id="vert-tabs-profile-tab" data-toggle="" href="<?php echo base_url('medcheck/tambah.php?act=resm_fisik&id=' . $this->input->get('id') . '&status=9') ?>" aria-controls="vert-tabs-profile" aria-selected="false">Pemeriksaan Fisik</a>
+<?php // } ?>
