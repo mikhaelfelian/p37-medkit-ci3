@@ -47,7 +47,7 @@ class login extends CI_Controller {
             );
 
             $this->session->set_flashdata('form_error', $msg_error);
-            redirect('page=login');
+            redirect(base_url());
         } else {            
             if($this->input->post('login') === 'login_aksi'){
                 /*

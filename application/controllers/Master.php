@@ -1287,11 +1287,10 @@ class master extends CI_Controller {
             $id       = $this->input->post('id');
             $merk     = $this->input->post('merk');
             $ket      = $this->input->post('keterangan');
-            $diskon   = $this->input->post('diskon');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
-            $this->form_validation->set_rules('merk', 'Kategori', 'required');
+            $this->form_validation->set_rules('merk', 'Merk', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
@@ -1299,17 +1298,34 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_merk_tambah.php?id='.$id));
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal : '.$msg_error['merk'].'");');
+                redirect(base_url('master/data_merk_tambah.php'));
             } else {                
                 $data_penj = array(
                     'tgl_simpan' => date('Y-m-d H:i:s'),
+                    'tgl_modif'  => date('Y-m-d H:i:s'),
                     'merk'       => $merk,
-                    'keterangan' => $ket,
-                    'diskon'     => (!empty($diskon) ? $diskon : 0),
+                    'keterangan' => $ket
                 );
                 
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data merk disimpan</div>');
-                crud::simpan('tbl_m_merk',$data_penj);
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_merk_list.php'));
+                        return;
+                    }
+                    
+                    if (!crud::simpan('tbl_m_merk', $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menyimpan data merk");');
+                        throw new Exception("Gagal menyimpan data merk");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data merk berhasil disimpan");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_merk_tambah.php?id='.$id));
+                    return;
+                }
                 redirect(base_url('master/data_merk_list.php'));
             }
         } else {
