@@ -1298,7 +1298,7 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal : '.$msg_error['merk'].'");');
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_merk_tambah.php'));
             } else {                
                 $data_penj = array(
@@ -1345,40 +1345,46 @@ class master extends CI_Controller {
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('merk', 'Kategori', 'required');
+            $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
+                    'id'       => form_error('id'),
                     'merk'     => form_error('merk'),
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_merk_tambah.php?id='.$id));
             } else {
-                $sql = $this->db->where('id_merk', general::dekrip($id))->get('tbl_m_produk')->result();
-                
-                $data_penj = array(
-                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                    'merk'       => $merk,
-                    'keterangan' => $ket,
-                    'diskon'     => (!empty($diskon) ? $diskon : '0'),
-                );
-                crud::update('tbl_m_merk','id', general::dekrip($id),$data_penj);
-                
-                $i = 1;
-                foreach ($sql as $prod){
-                    $p  = ($diskon / 100) * $prod->harga_jual;
-                    $hb = $prod->harga_jual - $p;
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_merk_list.php'));
+                        return;
+                    }
                     
-                    $data_prod = array(
+                    $sql = $this->db->where('id_merk', general::dekrip($id))->get('tbl_m_produk')->result();
+                    $count_updated = 0; // Initialize counter for updated products
+                    
+                    $data_penj = array(
                         'tgl_modif'  => date('Y-m-d H:i:s'),
-                        'harga_beli' => $hb
+                        'merk'       => $merk,
+                        'keterangan' => $ket,
+                        'diskon'     => (!empty($diskon) ? $diskon : '0'),
                     );
                     
-                    crud::update('tbl_m_produk','id', $prod->id, $data_prod);
-                    $i++;
+                    if (!crud::update('tbl_m_merk', 'id', general::dekrip($id), $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal mengubah data merk");');
+                        throw new Exception("Gagal mengubah data merk");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data merk berhasil diubah");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_merk_tambah.php?id='.$id));
+                    return;
                 }
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data merk berhasil diubah!!. <b>'.$i.'</b> Produk berhasil update harga beli</div>');
                 
                 redirect(base_url('master/data_merk_tambah.php?id='.$id));
             }

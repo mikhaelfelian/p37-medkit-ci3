@@ -16948,3 +16948,2587 @@ INFO - 2025-03-23 16:46:50 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\appli
 INFO - 2025-03-23 16:46:50 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
 INFO - 2025-03-23 16:46:50 --> Final output sent to browser
 DEBUG - 2025-03-23 16:46:50 --> Total execution time: 0.3374
+INFO - 2025-03-23 16:48:09 --> Config Class Initialized
+INFO - 2025-03-23 16:48:09 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:48:09 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:48:09 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:48:09 --> URI Class Initialized
+INFO - 2025-03-23 16:48:09 --> Router Class Initialized
+INFO - 2025-03-23 16:48:09 --> Output Class Initialized
+INFO - 2025-03-23 16:48:09 --> Security Class Initialized
+DEBUG - 2025-03-23 16:48:09 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:48:09 --> CSRF cookie sent
+INFO - 2025-03-23 16:48:09 --> Input Class Initialized
+INFO - 2025-03-23 16:48:09 --> Language Class Initialized
+INFO - 2025-03-23 16:48:09 --> Loader Class Initialized
+INFO - 2025-03-23 16:48:09 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:48:09 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:48:09 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:48:09 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:48:09 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:48:09 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:48:09 --> Pagination Class Initialized
+INFO - 2025-03-23 16:48:09 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:48:09 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:48:09 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:09 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:48:09 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:48:09 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:48:09 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:48:09 --> Email Class Initialized
+INFO - 2025-03-23 16:48:09 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:48:09 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:48:09 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:48:09 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:09 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:48:09 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:48:09 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:48:09 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:48:09 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:48:09 --> Model "crud" initialized
+INFO - 2025-03-23 16:48:09 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:48:09 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:09 --> Model "general" initialized
+INFO - 2025-03-23 16:48:09 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:48:09 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:48:09 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:48:09 --> Final output sent to browser
+DEBUG - 2025-03-23 16:48:09 --> Total execution time: 0.3854
+INFO - 2025-03-23 16:48:10 --> Config Class Initialized
+INFO - 2025-03-23 16:48:10 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:48:10 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:48:10 --> URI Class Initialized
+INFO - 2025-03-23 16:48:10 --> Router Class Initialized
+INFO - 2025-03-23 16:48:10 --> Output Class Initialized
+INFO - 2025-03-23 16:48:10 --> Security Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:48:10 --> CSRF cookie sent
+INFO - 2025-03-23 16:48:10 --> CSRF token verified
+INFO - 2025-03-23 16:48:10 --> Input Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language Class Initialized
+INFO - 2025-03-23 16:48:10 --> Loader Class Initialized
+INFO - 2025-03-23 16:48:10 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:48:10 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:48:10 --> Pagination Class Initialized
+INFO - 2025-03-23 16:48:10 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:48:10 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:48:10 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:48:10 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:48:10 --> Email Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:48:10 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:48:10 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:48:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:48:10 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:48:10 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:48:10 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:48:10 --> Model "crud" initialized
+INFO - 2025-03-23 16:48:10 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:48:10 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> Model "general" initialized
+INFO - 2025-03-23 16:48:10 --> Controller Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:48:10 --> Config Class Initialized
+INFO - 2025-03-23 16:48:10 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:48:10 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:48:10 --> URI Class Initialized
+INFO - 2025-03-23 16:48:10 --> Router Class Initialized
+INFO - 2025-03-23 16:48:10 --> Output Class Initialized
+INFO - 2025-03-23 16:48:10 --> Security Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:48:10 --> CSRF cookie sent
+INFO - 2025-03-23 16:48:10 --> Input Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language Class Initialized
+INFO - 2025-03-23 16:48:10 --> Loader Class Initialized
+INFO - 2025-03-23 16:48:10 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:48:10 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:48:10 --> Pagination Class Initialized
+INFO - 2025-03-23 16:48:10 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:48:10 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:48:10 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:48:10 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:48:10 --> Email Class Initialized
+INFO - 2025-03-23 16:48:10 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:48:10 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:48:10 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:48:10 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:48:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:48:10 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:48:10 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:48:10 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:48:10 --> Model "crud" initialized
+INFO - 2025-03-23 16:48:10 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:48:10 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> Model "general" initialized
+INFO - 2025-03-23 16:48:10 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:48:10 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:48:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:48:10 --> Final output sent to browser
+DEBUG - 2025-03-23 16:48:10 --> Total execution time: 0.3210
+INFO - 2025-03-23 16:49:12 --> Config Class Initialized
+INFO - 2025-03-23 16:49:12 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:12 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:12 --> URI Class Initialized
+INFO - 2025-03-23 16:49:12 --> Router Class Initialized
+INFO - 2025-03-23 16:49:12 --> Output Class Initialized
+INFO - 2025-03-23 16:49:12 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:12 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:12 --> CSRF token verified
+INFO - 2025-03-23 16:49:12 --> Input Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language Class Initialized
+INFO - 2025-03-23 16:49:12 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:12 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:12 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:12 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:12 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:12 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:12 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:12 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:12 --> Email Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:12 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:12 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:12 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:12 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:12 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:12 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:12 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:12 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:12 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> Model "general" initialized
+INFO - 2025-03-23 16:49:12 --> Controller Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:49:12 --> Config Class Initialized
+INFO - 2025-03-23 16:49:12 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:12 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:12 --> URI Class Initialized
+INFO - 2025-03-23 16:49:12 --> Router Class Initialized
+INFO - 2025-03-23 16:49:12 --> Output Class Initialized
+INFO - 2025-03-23 16:49:12 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:12 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:12 --> Input Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language Class Initialized
+INFO - 2025-03-23 16:49:12 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:12 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:12 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:12 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:12 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:12 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:12 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:12 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:12 --> Email Class Initialized
+INFO - 2025-03-23 16:49:12 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:12 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:12 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:12 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:12 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:12 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:12 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:12 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:12 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:12 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:12 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> Model "general" initialized
+INFO - 2025-03-23 16:49:12 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:49:12 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:49:12 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:49:12 --> Final output sent to browser
+DEBUG - 2025-03-23 16:49:12 --> Total execution time: 0.3437
+INFO - 2025-03-23 16:49:22 --> Config Class Initialized
+INFO - 2025-03-23 16:49:22 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:22 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:22 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:22 --> URI Class Initialized
+INFO - 2025-03-23 16:49:22 --> Router Class Initialized
+INFO - 2025-03-23 16:49:22 --> Output Class Initialized
+INFO - 2025-03-23 16:49:23 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:23 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:23 --> CSRF token verified
+INFO - 2025-03-23 16:49:23 --> Input Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language Class Initialized
+INFO - 2025-03-23 16:49:23 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:23 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:23 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:23 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:23 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:23 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:23 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:23 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:23 --> Email Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:23 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:23 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:23 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:23 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:23 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:23 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:23 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:23 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:23 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> Model "general" initialized
+INFO - 2025-03-23 16:49:23 --> Controller Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:49:23 --> Config Class Initialized
+INFO - 2025-03-23 16:49:23 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:23 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:23 --> URI Class Initialized
+INFO - 2025-03-23 16:49:23 --> Router Class Initialized
+INFO - 2025-03-23 16:49:23 --> Output Class Initialized
+INFO - 2025-03-23 16:49:23 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:23 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:23 --> Input Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language Class Initialized
+INFO - 2025-03-23 16:49:23 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:23 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:23 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:23 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:23 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:23 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:23 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:23 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:23 --> Email Class Initialized
+INFO - 2025-03-23 16:49:23 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:23 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:23 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:23 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:23 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:23 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:23 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:23 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:23 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:23 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:23 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> Model "general" initialized
+INFO - 2025-03-23 16:49:23 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:49:23 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:49:23 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:49:23 --> Final output sent to browser
+DEBUG - 2025-03-23 16:49:23 --> Total execution time: 0.3469
+INFO - 2025-03-23 16:49:38 --> Config Class Initialized
+INFO - 2025-03-23 16:49:38 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:38 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:38 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:38 --> URI Class Initialized
+INFO - 2025-03-23 16:49:38 --> Router Class Initialized
+INFO - 2025-03-23 16:49:38 --> Output Class Initialized
+INFO - 2025-03-23 16:49:38 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:38 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:38 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:38 --> Input Class Initialized
+INFO - 2025-03-23 16:49:38 --> Language Class Initialized
+INFO - 2025-03-23 16:49:38 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:38 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:39 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:39 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:39 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:39 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:39 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:39 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:39 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:39 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:39 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:39 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:39 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:39 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:39 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:39 --> Email Class Initialized
+INFO - 2025-03-23 16:49:39 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:39 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:39 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:39 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:39 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:39 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:39 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:39 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:39 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:39 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:39 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:39 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:39 --> Model "general" initialized
+INFO - 2025-03-23 16:49:39 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:49:39 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:49:39 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:49:39 --> Final output sent to browser
+DEBUG - 2025-03-23 16:49:39 --> Total execution time: 0.5299
+INFO - 2025-03-23 16:49:41 --> Config Class Initialized
+INFO - 2025-03-23 16:49:41 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:41 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:41 --> URI Class Initialized
+INFO - 2025-03-23 16:49:41 --> Router Class Initialized
+INFO - 2025-03-23 16:49:41 --> Output Class Initialized
+INFO - 2025-03-23 16:49:41 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:41 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:41 --> CSRF token verified
+INFO - 2025-03-23 16:49:41 --> Input Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language Class Initialized
+INFO - 2025-03-23 16:49:41 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:41 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:41 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:41 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:41 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:41 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:41 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:41 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:41 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:41 --> Email Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:41 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:41 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:41 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:41 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:41 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:41 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:41 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:41 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:41 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:41 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:41 --> Model "general" initialized
+INFO - 2025-03-23 16:49:41 --> Controller Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:49:41 --> Config Class Initialized
+INFO - 2025-03-23 16:49:41 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:41 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:41 --> URI Class Initialized
+INFO - 2025-03-23 16:49:41 --> Router Class Initialized
+INFO - 2025-03-23 16:49:41 --> Output Class Initialized
+INFO - 2025-03-23 16:49:41 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:41 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:41 --> Input Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language Class Initialized
+INFO - 2025-03-23 16:49:41 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:41 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:41 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:41 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:41 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:41 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:41 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:41 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:41 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:41 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:41 --> Email Class Initialized
+INFO - 2025-03-23 16:49:41 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:41 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:41 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:41 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:41 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:41 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:41 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:41 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:41 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:41 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:41 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:41 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:41 --> Model "general" initialized
+INFO - 2025-03-23 16:49:42 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:49:42 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:49:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:49:42 --> Final output sent to browser
+DEBUG - 2025-03-23 16:49:42 --> Total execution time: 0.4122
+INFO - 2025-03-23 16:49:45 --> Config Class Initialized
+INFO - 2025-03-23 16:49:45 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:45 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:45 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:45 --> URI Class Initialized
+INFO - 2025-03-23 16:49:45 --> Router Class Initialized
+INFO - 2025-03-23 16:49:45 --> Output Class Initialized
+INFO - 2025-03-23 16:49:45 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:45 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:45 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:45 --> Input Class Initialized
+INFO - 2025-03-23 16:49:45 --> Language Class Initialized
+INFO - 2025-03-23 16:49:45 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:45 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:45 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:45 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:45 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:45 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:45 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:45 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:45 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:45 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:45 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:45 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:45 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:45 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:45 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:45 --> Email Class Initialized
+INFO - 2025-03-23 16:49:45 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:45 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:45 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:45 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:45 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:45 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:45 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:45 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:45 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:45 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:45 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:45 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:45 --> Model "general" initialized
+INFO - 2025-03-23 16:49:45 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:49:45 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:49:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:49:45 --> Final output sent to browser
+DEBUG - 2025-03-23 16:49:45 --> Total execution time: 0.2910
+INFO - 2025-03-23 16:49:47 --> Config Class Initialized
+INFO - 2025-03-23 16:49:47 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:47 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:47 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:47 --> URI Class Initialized
+INFO - 2025-03-23 16:49:47 --> Router Class Initialized
+INFO - 2025-03-23 16:49:47 --> Output Class Initialized
+INFO - 2025-03-23 16:49:47 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:47 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:47 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:47 --> CSRF token verified
+INFO - 2025-03-23 16:49:47 --> Input Class Initialized
+INFO - 2025-03-23 16:49:47 --> Language Class Initialized
+INFO - 2025-03-23 16:49:47 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:47 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:47 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:47 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:47 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:47 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:47 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:47 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:47 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:47 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:47 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:47 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:47 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:47 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:47 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:47 --> Email Class Initialized
+INFO - 2025-03-23 16:49:47 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:47 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:47 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:47 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:47 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:47 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:47 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:47 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:47 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:47 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:47 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:47 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:47 --> Model "general" initialized
+INFO - 2025-03-23 16:49:47 --> Controller Class Initialized
+INFO - 2025-03-23 16:49:47 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:49:47 --> Config Class Initialized
+INFO - 2025-03-23 16:49:47 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:49:47 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:49:47 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:49:47 --> URI Class Initialized
+INFO - 2025-03-23 16:49:48 --> Router Class Initialized
+INFO - 2025-03-23 16:49:48 --> Output Class Initialized
+INFO - 2025-03-23 16:49:48 --> Security Class Initialized
+DEBUG - 2025-03-23 16:49:48 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:49:48 --> CSRF cookie sent
+INFO - 2025-03-23 16:49:48 --> Input Class Initialized
+INFO - 2025-03-23 16:49:48 --> Language Class Initialized
+INFO - 2025-03-23 16:49:48 --> Loader Class Initialized
+INFO - 2025-03-23 16:49:48 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:49:48 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:49:48 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:49:48 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:49:48 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:49:48 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:49:48 --> Pagination Class Initialized
+INFO - 2025-03-23 16:49:48 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:49:48 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:49:48 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:48 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:49:48 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:49:48 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:49:48 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:49:48 --> Email Class Initialized
+INFO - 2025-03-23 16:49:48 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:49:48 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:49:48 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:49:48 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:48 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:49:48 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:49:48 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:49:48 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:49:48 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:49:48 --> Model "crud" initialized
+INFO - 2025-03-23 16:49:48 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:49:48 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:48 --> Model "general" initialized
+INFO - 2025-03-23 16:49:48 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:49:48 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:49:48 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:49:48 --> Final output sent to browser
+DEBUG - 2025-03-23 16:49:48 --> Total execution time: 0.4179
+INFO - 2025-03-23 16:50:01 --> Config Class Initialized
+INFO - 2025-03-23 16:50:01 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:50:01 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:50:01 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:50:01 --> URI Class Initialized
+INFO - 2025-03-23 16:50:01 --> Router Class Initialized
+INFO - 2025-03-23 16:50:01 --> Output Class Initialized
+INFO - 2025-03-23 16:50:01 --> Security Class Initialized
+DEBUG - 2025-03-23 16:50:01 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:50:01 --> CSRF cookie sent
+INFO - 2025-03-23 16:50:01 --> CSRF token verified
+INFO - 2025-03-23 16:50:01 --> Input Class Initialized
+INFO - 2025-03-23 16:50:01 --> Language Class Initialized
+INFO - 2025-03-23 16:50:01 --> Loader Class Initialized
+INFO - 2025-03-23 16:50:01 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:50:01 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:50:01 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:50:01 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:50:01 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:50:01 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:50:01 --> Pagination Class Initialized
+INFO - 2025-03-23 16:50:01 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:50:01 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:50:01 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:50:02 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:50:02 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:50:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:50:02 --> Email Class Initialized
+INFO - 2025-03-23 16:50:02 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:50:02 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:50:02 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:50:02 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:50:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:50:02 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:50:02 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:50:02 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:50:02 --> Model "crud" initialized
+INFO - 2025-03-23 16:50:02 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:50:02 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> Model "general" initialized
+INFO - 2025-03-23 16:50:02 --> Controller Class Initialized
+INFO - 2025-03-23 16:50:02 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:50:02 --> Config Class Initialized
+INFO - 2025-03-23 16:50:02 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:50:02 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:50:02 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:50:02 --> URI Class Initialized
+INFO - 2025-03-23 16:50:02 --> Router Class Initialized
+INFO - 2025-03-23 16:50:02 --> Output Class Initialized
+INFO - 2025-03-23 16:50:02 --> Security Class Initialized
+DEBUG - 2025-03-23 16:50:02 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:50:02 --> CSRF cookie sent
+INFO - 2025-03-23 16:50:02 --> Input Class Initialized
+INFO - 2025-03-23 16:50:02 --> Language Class Initialized
+INFO - 2025-03-23 16:50:02 --> Loader Class Initialized
+INFO - 2025-03-23 16:50:02 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:50:02 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:50:02 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:50:02 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:50:02 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:50:02 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:50:02 --> Pagination Class Initialized
+INFO - 2025-03-23 16:50:02 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:50:02 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:50:02 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:50:02 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:50:02 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:50:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:50:02 --> Email Class Initialized
+INFO - 2025-03-23 16:50:02 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:50:02 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:50:02 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:50:02 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:50:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:50:02 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:50:02 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:50:02 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:50:02 --> Model "crud" initialized
+INFO - 2025-03-23 16:50:02 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:50:02 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> Model "general" initialized
+INFO - 2025-03-23 16:50:02 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:50:02 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:50:02 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:50:02 --> Final output sent to browser
+DEBUG - 2025-03-23 16:50:02 --> Total execution time: 0.3497
+INFO - 2025-03-23 16:50:20 --> Config Class Initialized
+INFO - 2025-03-23 16:50:20 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:50:20 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:50:20 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:50:20 --> URI Class Initialized
+INFO - 2025-03-23 16:50:20 --> Router Class Initialized
+INFO - 2025-03-23 16:50:20 --> Output Class Initialized
+INFO - 2025-03-23 16:50:20 --> Security Class Initialized
+DEBUG - 2025-03-23 16:50:20 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:50:20 --> CSRF cookie sent
+INFO - 2025-03-23 16:50:20 --> CSRF token verified
+INFO - 2025-03-23 16:50:20 --> Input Class Initialized
+INFO - 2025-03-23 16:50:20 --> Language Class Initialized
+INFO - 2025-03-23 16:50:20 --> Loader Class Initialized
+INFO - 2025-03-23 16:50:20 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:50:20 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:50:20 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:50:20 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:50:20 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:50:20 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:50:20 --> Pagination Class Initialized
+INFO - 2025-03-23 16:50:20 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:50:20 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:50:20 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:20 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:50:20 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:50:20 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:50:21 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:50:21 --> Email Class Initialized
+INFO - 2025-03-23 16:50:21 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:50:21 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:50:21 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:50:21 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:21 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:50:21 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:50:21 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:50:21 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:50:21 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:50:21 --> Model "crud" initialized
+INFO - 2025-03-23 16:50:21 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:50:21 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:21 --> Model "general" initialized
+INFO - 2025-03-23 16:50:21 --> Controller Class Initialized
+INFO - 2025-03-23 16:50:21 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:50:21 --> Config Class Initialized
+INFO - 2025-03-23 16:50:21 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:50:21 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:50:21 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:50:21 --> URI Class Initialized
+INFO - 2025-03-23 16:50:21 --> Router Class Initialized
+INFO - 2025-03-23 16:50:21 --> Output Class Initialized
+INFO - 2025-03-23 16:50:21 --> Security Class Initialized
+DEBUG - 2025-03-23 16:50:21 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:50:21 --> CSRF cookie sent
+INFO - 2025-03-23 16:50:21 --> Input Class Initialized
+INFO - 2025-03-23 16:50:21 --> Language Class Initialized
+INFO - 2025-03-23 16:50:21 --> Loader Class Initialized
+INFO - 2025-03-23 16:50:21 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:50:21 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:50:21 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:50:21 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:50:21 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:50:21 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:50:21 --> Pagination Class Initialized
+INFO - 2025-03-23 16:50:21 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:50:21 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:50:21 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:21 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:50:21 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:50:21 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:50:21 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:50:21 --> Email Class Initialized
+INFO - 2025-03-23 16:50:21 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:50:21 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:50:21 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:50:21 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:21 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:50:21 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:50:21 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:50:21 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:50:21 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:50:21 --> Model "crud" initialized
+INFO - 2025-03-23 16:50:21 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:50:21 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:21 --> Model "general" initialized
+INFO - 2025-03-23 16:50:21 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:50:21 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:50:21 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:50:21 --> Final output sent to browser
+DEBUG - 2025-03-23 16:50:21 --> Total execution time: 0.3684
+INFO - 2025-03-23 16:50:25 --> Config Class Initialized
+INFO - 2025-03-23 16:50:25 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:50:25 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:50:25 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:50:25 --> URI Class Initialized
+INFO - 2025-03-23 16:50:25 --> Router Class Initialized
+INFO - 2025-03-23 16:50:25 --> Output Class Initialized
+INFO - 2025-03-23 16:50:25 --> Security Class Initialized
+DEBUG - 2025-03-23 16:50:25 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:50:25 --> CSRF cookie sent
+INFO - 2025-03-23 16:50:25 --> Input Class Initialized
+INFO - 2025-03-23 16:50:25 --> Language Class Initialized
+INFO - 2025-03-23 16:50:25 --> Loader Class Initialized
+INFO - 2025-03-23 16:50:25 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:50:25 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:50:25 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:50:25 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:50:25 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:50:25 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:50:25 --> Pagination Class Initialized
+INFO - 2025-03-23 16:50:25 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:50:25 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:50:25 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:25 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:50:25 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:50:25 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:50:25 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:50:25 --> Email Class Initialized
+INFO - 2025-03-23 16:50:25 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:50:25 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:50:25 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:50:25 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:25 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:50:25 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:50:25 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:50:25 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:50:25 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:50:25 --> Model "crud" initialized
+INFO - 2025-03-23 16:50:25 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:50:25 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:25 --> Model "general" initialized
+INFO - 2025-03-23 16:50:25 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:50:25 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:50:25 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:50:25 --> Final output sent to browser
+DEBUG - 2025-03-23 16:50:25 --> Total execution time: 0.2918
+INFO - 2025-03-23 16:53:06 --> Config Class Initialized
+INFO - 2025-03-23 16:53:06 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:53:06 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:53:06 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:53:06 --> URI Class Initialized
+INFO - 2025-03-23 16:53:06 --> Router Class Initialized
+INFO - 2025-03-23 16:53:06 --> Output Class Initialized
+INFO - 2025-03-23 16:53:06 --> Security Class Initialized
+DEBUG - 2025-03-23 16:53:06 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:53:06 --> CSRF cookie sent
+INFO - 2025-03-23 16:53:06 --> CSRF token verified
+INFO - 2025-03-23 16:53:06 --> Input Class Initialized
+INFO - 2025-03-23 16:53:06 --> Language Class Initialized
+INFO - 2025-03-23 16:53:06 --> Loader Class Initialized
+INFO - 2025-03-23 16:53:06 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:53:06 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:53:06 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:53:06 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:53:06 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:53:06 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:53:06 --> Pagination Class Initialized
+INFO - 2025-03-23 16:53:06 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:53:06 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:53:06 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:06 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:53:06 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:53:06 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:53:06 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:53:06 --> Email Class Initialized
+INFO - 2025-03-23 16:53:06 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:53:06 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:53:06 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:53:06 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:06 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:53:06 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:53:06 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:53:06 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:53:06 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:53:06 --> Model "crud" initialized
+INFO - 2025-03-23 16:53:06 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:53:06 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:06 --> Model "general" initialized
+INFO - 2025-03-23 16:53:06 --> Controller Class Initialized
+INFO - 2025-03-23 16:53:06 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:53:06 --> Config Class Initialized
+INFO - 2025-03-23 16:53:06 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:53:06 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:53:06 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:53:06 --> URI Class Initialized
+INFO - 2025-03-23 16:53:06 --> Router Class Initialized
+INFO - 2025-03-23 16:53:06 --> Output Class Initialized
+INFO - 2025-03-23 16:53:06 --> Security Class Initialized
+DEBUG - 2025-03-23 16:53:06 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:53:06 --> CSRF cookie sent
+INFO - 2025-03-23 16:53:06 --> Input Class Initialized
+INFO - 2025-03-23 16:53:06 --> Language Class Initialized
+INFO - 2025-03-23 16:53:07 --> Loader Class Initialized
+INFO - 2025-03-23 16:53:07 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:53:07 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:53:07 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:53:07 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:53:07 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:53:07 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:53:07 --> Pagination Class Initialized
+INFO - 2025-03-23 16:53:07 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:53:07 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:53:07 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:07 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:53:07 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:53:07 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:53:07 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:53:07 --> Email Class Initialized
+INFO - 2025-03-23 16:53:07 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:53:07 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:53:07 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:53:07 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:07 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:53:07 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:53:07 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:53:07 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:53:07 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:53:07 --> Model "crud" initialized
+INFO - 2025-03-23 16:53:07 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:53:07 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:07 --> Model "general" initialized
+INFO - 2025-03-23 16:53:07 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:53:07 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:53:07 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:53:07 --> Final output sent to browser
+DEBUG - 2025-03-23 16:53:07 --> Total execution time: 0.3613
+INFO - 2025-03-23 16:53:10 --> Config Class Initialized
+INFO - 2025-03-23 16:53:10 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:53:10 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:53:10 --> URI Class Initialized
+INFO - 2025-03-23 16:53:10 --> Router Class Initialized
+INFO - 2025-03-23 16:53:10 --> Output Class Initialized
+INFO - 2025-03-23 16:53:10 --> Security Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:53:10 --> CSRF cookie sent
+INFO - 2025-03-23 16:53:10 --> CSRF token verified
+INFO - 2025-03-23 16:53:10 --> Input Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language Class Initialized
+INFO - 2025-03-23 16:53:10 --> Loader Class Initialized
+INFO - 2025-03-23 16:53:10 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:53:10 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:53:10 --> Pagination Class Initialized
+INFO - 2025-03-23 16:53:10 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:53:10 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:53:10 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:53:10 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:53:10 --> Email Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:53:10 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:53:10 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:53:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:53:10 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:53:10 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:53:10 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:53:10 --> Model "crud" initialized
+INFO - 2025-03-23 16:53:10 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:53:10 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> Model "general" initialized
+INFO - 2025-03-23 16:53:10 --> Controller Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:53:10 --> Config Class Initialized
+INFO - 2025-03-23 16:53:10 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:53:10 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:53:10 --> URI Class Initialized
+INFO - 2025-03-23 16:53:10 --> Router Class Initialized
+INFO - 2025-03-23 16:53:10 --> Output Class Initialized
+INFO - 2025-03-23 16:53:10 --> Security Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:53:10 --> CSRF cookie sent
+INFO - 2025-03-23 16:53:10 --> Input Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language Class Initialized
+INFO - 2025-03-23 16:53:10 --> Loader Class Initialized
+INFO - 2025-03-23 16:53:10 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:53:10 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:53:10 --> Pagination Class Initialized
+INFO - 2025-03-23 16:53:10 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:53:10 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:53:10 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:53:10 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:53:10 --> Email Class Initialized
+INFO - 2025-03-23 16:53:10 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:53:10 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:53:10 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:53:10 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:53:10 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:53:10 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:53:10 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:53:10 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:53:10 --> Model "crud" initialized
+INFO - 2025-03-23 16:53:10 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:53:10 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> Model "general" initialized
+INFO - 2025-03-23 16:53:10 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:53:10 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:53:10 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:53:10 --> Final output sent to browser
+DEBUG - 2025-03-23 16:53:10 --> Total execution time: 0.3501
+INFO - 2025-03-23 16:54:33 --> Config Class Initialized
+INFO - 2025-03-23 16:54:33 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:54:33 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:54:33 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:54:33 --> URI Class Initialized
+INFO - 2025-03-23 16:54:33 --> Router Class Initialized
+INFO - 2025-03-23 16:54:33 --> Output Class Initialized
+INFO - 2025-03-23 16:54:33 --> Security Class Initialized
+DEBUG - 2025-03-23 16:54:33 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:54:33 --> CSRF cookie sent
+INFO - 2025-03-23 16:54:33 --> Input Class Initialized
+INFO - 2025-03-23 16:54:33 --> Language Class Initialized
+INFO - 2025-03-23 16:54:33 --> Loader Class Initialized
+INFO - 2025-03-23 16:54:33 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:54:33 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:54:33 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:54:33 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:54:33 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:54:33 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:54:33 --> Pagination Class Initialized
+INFO - 2025-03-23 16:54:33 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:54:33 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:54:33 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:33 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:54:33 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:54:33 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:54:33 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:54:33 --> Email Class Initialized
+INFO - 2025-03-23 16:54:33 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:54:33 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:54:33 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:54:33 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:33 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:54:33 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:54:33 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:54:33 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:54:33 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:54:33 --> Model "crud" initialized
+INFO - 2025-03-23 16:54:33 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:54:33 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:33 --> Model "general" initialized
+INFO - 2025-03-23 16:54:33 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:54:33 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:54:33 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:54:33 --> Final output sent to browser
+DEBUG - 2025-03-23 16:54:33 --> Total execution time: 0.4169
+INFO - 2025-03-23 16:54:36 --> Config Class Initialized
+INFO - 2025-03-23 16:54:36 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:54:36 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:54:36 --> URI Class Initialized
+INFO - 2025-03-23 16:54:36 --> Router Class Initialized
+INFO - 2025-03-23 16:54:36 --> Output Class Initialized
+INFO - 2025-03-23 16:54:36 --> Security Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:54:36 --> CSRF cookie sent
+INFO - 2025-03-23 16:54:36 --> CSRF token verified
+INFO - 2025-03-23 16:54:36 --> Input Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language Class Initialized
+INFO - 2025-03-23 16:54:36 --> Loader Class Initialized
+INFO - 2025-03-23 16:54:36 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:54:36 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:54:36 --> Pagination Class Initialized
+INFO - 2025-03-23 16:54:36 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:54:36 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:54:36 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:54:36 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:54:36 --> Email Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:54:36 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:54:36 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:54:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:54:36 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:54:36 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:54:36 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:54:36 --> Model "crud" initialized
+INFO - 2025-03-23 16:54:36 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:54:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> Model "general" initialized
+INFO - 2025-03-23 16:54:36 --> Controller Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:54:36 --> Config Class Initialized
+INFO - 2025-03-23 16:54:36 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:54:36 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:54:36 --> URI Class Initialized
+INFO - 2025-03-23 16:54:36 --> Router Class Initialized
+INFO - 2025-03-23 16:54:36 --> Output Class Initialized
+INFO - 2025-03-23 16:54:36 --> Security Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:54:36 --> CSRF cookie sent
+INFO - 2025-03-23 16:54:36 --> Input Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language Class Initialized
+INFO - 2025-03-23 16:54:36 --> Loader Class Initialized
+INFO - 2025-03-23 16:54:36 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:54:36 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:54:36 --> Pagination Class Initialized
+INFO - 2025-03-23 16:54:36 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:54:36 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:54:36 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:54:36 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:54:36 --> Email Class Initialized
+INFO - 2025-03-23 16:54:36 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:54:36 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:54:36 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:54:36 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:54:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:54:36 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:54:36 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:54:36 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:54:36 --> Model "crud" initialized
+INFO - 2025-03-23 16:54:36 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:54:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> Model "general" initialized
+INFO - 2025-03-23 16:54:36 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:54:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:54:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:54:36 --> Final output sent to browser
+DEBUG - 2025-03-23 16:54:36 --> Total execution time: 0.3776
+INFO - 2025-03-23 16:55:12 --> Config Class Initialized
+INFO - 2025-03-23 16:55:12 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:55:12 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:55:12 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:55:12 --> URI Class Initialized
+INFO - 2025-03-23 16:55:12 --> Router Class Initialized
+INFO - 2025-03-23 16:55:12 --> Output Class Initialized
+INFO - 2025-03-23 16:55:12 --> Security Class Initialized
+DEBUG - 2025-03-23 16:55:12 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:55:12 --> CSRF cookie sent
+INFO - 2025-03-23 16:55:12 --> CSRF token verified
+INFO - 2025-03-23 16:55:12 --> Input Class Initialized
+INFO - 2025-03-23 16:55:12 --> Language Class Initialized
+INFO - 2025-03-23 16:55:12 --> Loader Class Initialized
+INFO - 2025-03-23 16:55:12 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:55:12 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:55:12 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:55:12 --> Pagination Class Initialized
+INFO - 2025-03-23 16:55:12 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:55:12 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:55:12 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:12 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:55:12 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:55:12 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:55:12 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:55:12 --> Email Class Initialized
+INFO - 2025-03-23 16:55:12 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:55:12 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:55:12 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:12 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:55:12 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:55:12 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:55:12 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:55:12 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:55:12 --> Model "crud" initialized
+INFO - 2025-03-23 16:55:12 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:55:12 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:12 --> Model "general" initialized
+INFO - 2025-03-23 16:55:12 --> Controller Class Initialized
+INFO - 2025-03-23 16:55:12 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:55:12 --> Config Class Initialized
+INFO - 2025-03-23 16:55:12 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:55:12 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:55:12 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:55:12 --> URI Class Initialized
+INFO - 2025-03-23 16:55:12 --> Router Class Initialized
+INFO - 2025-03-23 16:55:12 --> Output Class Initialized
+INFO - 2025-03-23 16:55:12 --> Security Class Initialized
+DEBUG - 2025-03-23 16:55:12 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:55:12 --> CSRF cookie sent
+INFO - 2025-03-23 16:55:12 --> Input Class Initialized
+INFO - 2025-03-23 16:55:12 --> Language Class Initialized
+INFO - 2025-03-23 16:55:12 --> Loader Class Initialized
+INFO - 2025-03-23 16:55:12 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:55:12 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:55:12 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:55:13 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:55:13 --> Pagination Class Initialized
+INFO - 2025-03-23 16:55:13 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:55:13 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:55:13 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:13 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:55:13 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:55:13 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:55:13 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:55:13 --> Email Class Initialized
+INFO - 2025-03-23 16:55:13 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:55:13 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:55:13 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:55:13 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:13 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:55:13 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:55:13 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:55:13 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:55:13 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:55:13 --> Model "crud" initialized
+INFO - 2025-03-23 16:55:13 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:55:13 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:13 --> Model "general" initialized
+INFO - 2025-03-23 16:55:13 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:55:13 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:55:13 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:55:13 --> Final output sent to browser
+DEBUG - 2025-03-23 16:55:13 --> Total execution time: 0.3597
+INFO - 2025-03-23 16:57:02 --> Config Class Initialized
+INFO - 2025-03-23 16:57:02 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:02 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:02 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:02 --> URI Class Initialized
+INFO - 2025-03-23 16:57:02 --> Router Class Initialized
+INFO - 2025-03-23 16:57:02 --> Output Class Initialized
+INFO - 2025-03-23 16:57:02 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:02 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:02 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:02 --> Input Class Initialized
+INFO - 2025-03-23 16:57:02 --> Language Class Initialized
+INFO - 2025-03-23 16:57:02 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:02 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:02 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:02 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:02 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:03 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:03 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:03 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:03 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:03 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:03 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:03 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:03 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:03 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:03 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:03 --> Email Class Initialized
+INFO - 2025-03-23 16:57:03 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:03 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:03 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:03 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:03 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:03 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:03 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:03 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:03 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:03 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:03 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:03 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:03 --> Model "general" initialized
+INFO - 2025-03-23 16:57:03 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:57:03 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:57:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:57:03 --> Final output sent to browser
+DEBUG - 2025-03-23 16:57:03 --> Total execution time: 0.3558
+INFO - 2025-03-23 16:57:04 --> Config Class Initialized
+INFO - 2025-03-23 16:57:04 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:04 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:04 --> URI Class Initialized
+INFO - 2025-03-23 16:57:04 --> Router Class Initialized
+INFO - 2025-03-23 16:57:04 --> Output Class Initialized
+INFO - 2025-03-23 16:57:04 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:04 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:04 --> CSRF token verified
+INFO - 2025-03-23 16:57:04 --> Input Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language Class Initialized
+INFO - 2025-03-23 16:57:04 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:04 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:04 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:04 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:04 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:04 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:04 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:04 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:04 --> Email Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:04 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:04 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:04 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:04 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:04 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:04 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:04 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:04 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:04 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> Model "general" initialized
+INFO - 2025-03-23 16:57:04 --> Controller Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:57:04 --> Config Class Initialized
+INFO - 2025-03-23 16:57:04 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:04 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:04 --> URI Class Initialized
+INFO - 2025-03-23 16:57:04 --> Router Class Initialized
+INFO - 2025-03-23 16:57:04 --> Output Class Initialized
+INFO - 2025-03-23 16:57:04 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:04 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:04 --> Input Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language Class Initialized
+INFO - 2025-03-23 16:57:04 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:04 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:04 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:04 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:04 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:04 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:04 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:04 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:04 --> Email Class Initialized
+INFO - 2025-03-23 16:57:04 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:04 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:04 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:04 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:04 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:04 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:04 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:04 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:04 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:04 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:04 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> Model "general" initialized
+INFO - 2025-03-23 16:57:04 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:57:04 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:57:04 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:57:04 --> Final output sent to browser
+DEBUG - 2025-03-23 16:57:04 --> Total execution time: 0.4450
+INFO - 2025-03-23 16:57:16 --> Config Class Initialized
+INFO - 2025-03-23 16:57:16 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:16 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:16 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:16 --> URI Class Initialized
+INFO - 2025-03-23 16:57:16 --> Router Class Initialized
+INFO - 2025-03-23 16:57:16 --> Output Class Initialized
+INFO - 2025-03-23 16:57:16 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:16 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:16 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:16 --> Input Class Initialized
+INFO - 2025-03-23 16:57:16 --> Language Class Initialized
+INFO - 2025-03-23 16:57:16 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:16 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:16 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:16 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:16 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:16 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:16 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:16 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:16 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:16 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:16 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:16 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:16 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:16 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:16 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:16 --> Email Class Initialized
+INFO - 2025-03-23 16:57:16 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:16 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:16 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:16 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:16 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:16 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:16 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:16 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:16 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:16 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:16 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:16 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:16 --> Model "general" initialized
+INFO - 2025-03-23 16:57:16 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:57:17 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:57:17 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:57:17 --> Final output sent to browser
+DEBUG - 2025-03-23 16:57:17 --> Total execution time: 0.3456
+INFO - 2025-03-23 16:57:18 --> Config Class Initialized
+INFO - 2025-03-23 16:57:18 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:18 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:18 --> URI Class Initialized
+INFO - 2025-03-23 16:57:18 --> Router Class Initialized
+INFO - 2025-03-23 16:57:18 --> Output Class Initialized
+INFO - 2025-03-23 16:57:18 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:18 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:18 --> CSRF token verified
+INFO - 2025-03-23 16:57:18 --> Input Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language Class Initialized
+INFO - 2025-03-23 16:57:18 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:18 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:18 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:18 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:18 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:18 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:18 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:18 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:18 --> Email Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:18 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:18 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:18 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:18 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:18 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:18 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:18 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:18 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:18 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> Model "general" initialized
+INFO - 2025-03-23 16:57:18 --> Controller Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:57:18 --> Config Class Initialized
+INFO - 2025-03-23 16:57:18 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:18 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:18 --> URI Class Initialized
+INFO - 2025-03-23 16:57:18 --> Router Class Initialized
+INFO - 2025-03-23 16:57:18 --> Output Class Initialized
+INFO - 2025-03-23 16:57:18 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:18 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:18 --> Input Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language Class Initialized
+INFO - 2025-03-23 16:57:18 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:18 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:18 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:18 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:18 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:18 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:18 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:18 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:18 --> Email Class Initialized
+INFO - 2025-03-23 16:57:18 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:18 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:18 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:18 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:18 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:18 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:18 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:18 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:18 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:18 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:18 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> Model "general" initialized
+INFO - 2025-03-23 16:57:18 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:57:18 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:57:18 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:57:18 --> Final output sent to browser
+DEBUG - 2025-03-23 16:57:18 --> Total execution time: 0.3525
+INFO - 2025-03-23 16:57:52 --> Config Class Initialized
+INFO - 2025-03-23 16:57:52 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:52 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:52 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:52 --> URI Class Initialized
+INFO - 2025-03-23 16:57:52 --> Router Class Initialized
+INFO - 2025-03-23 16:57:52 --> Output Class Initialized
+INFO - 2025-03-23 16:57:52 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:52 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:52 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:52 --> Input Class Initialized
+INFO - 2025-03-23 16:57:52 --> Language Class Initialized
+INFO - 2025-03-23 16:57:52 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:52 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:52 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:52 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:52 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:52 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:52 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:52 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:52 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:52 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:52 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:52 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:52 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:52 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:52 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:52 --> Email Class Initialized
+INFO - 2025-03-23 16:57:52 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:52 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:52 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:52 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:52 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:52 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:52 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:52 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:52 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:52 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:52 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:52 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:52 --> Model "general" initialized
+INFO - 2025-03-23 16:57:52 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:57:52 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:57:52 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:57:52 --> Final output sent to browser
+DEBUG - 2025-03-23 16:57:52 --> Total execution time: 0.3766
+INFO - 2025-03-23 16:57:53 --> Config Class Initialized
+INFO - 2025-03-23 16:57:53 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:53 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:53 --> URI Class Initialized
+INFO - 2025-03-23 16:57:53 --> Router Class Initialized
+INFO - 2025-03-23 16:57:53 --> Output Class Initialized
+INFO - 2025-03-23 16:57:53 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:53 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:53 --> CSRF token verified
+INFO - 2025-03-23 16:57:53 --> Input Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language Class Initialized
+INFO - 2025-03-23 16:57:53 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:53 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:53 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:53 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:53 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:53 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:53 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:53 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:53 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:53 --> Email Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:53 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:53 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:53 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:53 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:53 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:53 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:53 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:53 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:53 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:53 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:53 --> Model "general" initialized
+INFO - 2025-03-23 16:57:53 --> Controller Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:57:53 --> Config Class Initialized
+INFO - 2025-03-23 16:57:53 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:57:53 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:57:53 --> URI Class Initialized
+INFO - 2025-03-23 16:57:53 --> Router Class Initialized
+INFO - 2025-03-23 16:57:53 --> Output Class Initialized
+INFO - 2025-03-23 16:57:53 --> Security Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:57:53 --> CSRF cookie sent
+INFO - 2025-03-23 16:57:53 --> Input Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language Class Initialized
+INFO - 2025-03-23 16:57:53 --> Loader Class Initialized
+INFO - 2025-03-23 16:57:53 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:57:53 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:57:53 --> Pagination Class Initialized
+INFO - 2025-03-23 16:57:53 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:57:53 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:53 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:57:53 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:57:53 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:57:53 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:57:53 --> Email Class Initialized
+INFO - 2025-03-23 16:57:53 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:57:53 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:57:53 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:57:53 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:53 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:57:53 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:57:53 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:57:53 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:57:53 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:57:53 --> Model "crud" initialized
+INFO - 2025-03-23 16:57:53 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:57:53 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:53 --> Model "general" initialized
+INFO - 2025-03-23 16:57:53 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:57:54 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:57:54 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:57:54 --> Final output sent to browser
+DEBUG - 2025-03-23 16:57:54 --> Total execution time: 0.3916
+INFO - 2025-03-23 16:58:33 --> Config Class Initialized
+INFO - 2025-03-23 16:58:33 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:58:33 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:58:33 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:58:33 --> URI Class Initialized
+INFO - 2025-03-23 16:58:33 --> Router Class Initialized
+INFO - 2025-03-23 16:58:33 --> Output Class Initialized
+INFO - 2025-03-23 16:58:33 --> Security Class Initialized
+DEBUG - 2025-03-23 16:58:33 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:58:33 --> CSRF cookie sent
+INFO - 2025-03-23 16:58:33 --> Input Class Initialized
+INFO - 2025-03-23 16:58:33 --> Language Class Initialized
+INFO - 2025-03-23 16:58:33 --> Loader Class Initialized
+INFO - 2025-03-23 16:58:33 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:58:33 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:58:33 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:58:33 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:58:33 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:58:33 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:58:33 --> Pagination Class Initialized
+INFO - 2025-03-23 16:58:33 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:58:33 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:58:33 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:33 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:58:33 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:58:33 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:58:33 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:58:33 --> Email Class Initialized
+INFO - 2025-03-23 16:58:33 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:58:33 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:58:33 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:58:33 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:33 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:58:33 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:58:33 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:58:33 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:58:33 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:58:33 --> Model "crud" initialized
+INFO - 2025-03-23 16:58:33 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:58:33 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:33 --> Model "general" initialized
+INFO - 2025-03-23 16:58:33 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:58:34 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:58:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:58:34 --> Final output sent to browser
+DEBUG - 2025-03-23 16:58:34 --> Total execution time: 0.3996
+INFO - 2025-03-23 16:58:36 --> Config Class Initialized
+INFO - 2025-03-23 16:58:36 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:58:36 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:58:36 --> URI Class Initialized
+INFO - 2025-03-23 16:58:36 --> Router Class Initialized
+INFO - 2025-03-23 16:58:36 --> Output Class Initialized
+INFO - 2025-03-23 16:58:36 --> Security Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:58:36 --> CSRF cookie sent
+INFO - 2025-03-23 16:58:36 --> CSRF token verified
+INFO - 2025-03-23 16:58:36 --> Input Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language Class Initialized
+INFO - 2025-03-23 16:58:36 --> Loader Class Initialized
+INFO - 2025-03-23 16:58:36 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:58:36 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:58:36 --> Pagination Class Initialized
+INFO - 2025-03-23 16:58:36 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:58:36 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:36 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:58:36 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:58:36 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:58:36 --> Email Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:58:36 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:58:36 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:36 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:58:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:58:36 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:58:36 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:58:36 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:58:36 --> Model "crud" initialized
+INFO - 2025-03-23 16:58:36 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:58:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:36 --> Model "general" initialized
+INFO - 2025-03-23 16:58:36 --> Controller Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:58:36 --> Config Class Initialized
+INFO - 2025-03-23 16:58:36 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:58:36 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:58:36 --> URI Class Initialized
+INFO - 2025-03-23 16:58:36 --> Router Class Initialized
+INFO - 2025-03-23 16:58:36 --> Output Class Initialized
+INFO - 2025-03-23 16:58:36 --> Security Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:58:36 --> CSRF cookie sent
+INFO - 2025-03-23 16:58:36 --> Input Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language Class Initialized
+INFO - 2025-03-23 16:58:36 --> Loader Class Initialized
+INFO - 2025-03-23 16:58:36 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:58:36 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:58:36 --> Pagination Class Initialized
+INFO - 2025-03-23 16:58:36 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:58:36 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:36 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:58:36 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:58:36 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:58:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:58:36 --> Email Class Initialized
+INFO - 2025-03-23 16:58:36 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:58:36 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:58:36 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:58:36 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:36 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:58:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:58:36 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:58:36 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:58:36 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:58:36 --> Model "crud" initialized
+INFO - 2025-03-23 16:58:36 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:58:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:36 --> Model "general" initialized
+INFO - 2025-03-23 16:58:36 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:58:37 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:58:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:58:37 --> Final output sent to browser
+DEBUG - 2025-03-23 16:58:37 --> Total execution time: 0.2783
+INFO - 2025-03-23 16:59:02 --> Config Class Initialized
+INFO - 2025-03-23 16:59:02 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:02 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:02 --> URI Class Initialized
+INFO - 2025-03-23 16:59:02 --> Router Class Initialized
+INFO - 2025-03-23 16:59:02 --> Output Class Initialized
+INFO - 2025-03-23 16:59:02 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:02 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:02 --> CSRF token verified
+INFO - 2025-03-23 16:59:02 --> Input Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language Class Initialized
+INFO - 2025-03-23 16:59:02 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:02 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:02 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:02 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:02 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:02 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:02 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:02 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:02 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:02 --> Email Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:02 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:02 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:02 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:02 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:02 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:02 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:02 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:02 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:02 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:02 --> Model "general" initialized
+INFO - 2025-03-23 16:59:02 --> Controller Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:59:02 --> Config Class Initialized
+INFO - 2025-03-23 16:59:02 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:02 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:02 --> URI Class Initialized
+INFO - 2025-03-23 16:59:02 --> Router Class Initialized
+INFO - 2025-03-23 16:59:02 --> Output Class Initialized
+INFO - 2025-03-23 16:59:02 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:02 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:02 --> Input Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language Class Initialized
+INFO - 2025-03-23 16:59:02 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:02 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:02 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:02 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:02 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:02 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:02 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:02 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:02 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:02 --> Email Class Initialized
+INFO - 2025-03-23 16:59:02 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:02 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:02 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:02 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:02 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:02 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:02 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:02 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:02 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:02 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:02 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:02 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:02 --> Model "general" initialized
+INFO - 2025-03-23 16:59:02 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:59:03 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:03 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:03 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:03 --> Total execution time: 0.3869
+INFO - 2025-03-23 16:59:30 --> Config Class Initialized
+INFO - 2025-03-23 16:59:30 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:30 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:30 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:30 --> URI Class Initialized
+INFO - 2025-03-23 16:59:30 --> Router Class Initialized
+INFO - 2025-03-23 16:59:30 --> Output Class Initialized
+INFO - 2025-03-23 16:59:30 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:30 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:30 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:30 --> Input Class Initialized
+INFO - 2025-03-23 16:59:30 --> Language Class Initialized
+INFO - 2025-03-23 16:59:30 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:30 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:30 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:30 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:30 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:30 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:30 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:30 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:30 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:30 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:30 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:30 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:30 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:30 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:30 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:30 --> Email Class Initialized
+INFO - 2025-03-23 16:59:30 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:30 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:30 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:30 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:30 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:30 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:30 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:30 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:30 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:30 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:30 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:30 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:30 --> Model "general" initialized
+INFO - 2025-03-23 16:59:30 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:59:30 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:30 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:30 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:30 --> Total execution time: 0.4652
+INFO - 2025-03-23 16:59:31 --> Config Class Initialized
+INFO - 2025-03-23 16:59:31 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:31 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:31 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:31 --> URI Class Initialized
+INFO - 2025-03-23 16:59:31 --> Router Class Initialized
+INFO - 2025-03-23 16:59:31 --> Output Class Initialized
+INFO - 2025-03-23 16:59:31 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:31 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:31 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:31 --> CSRF token verified
+INFO - 2025-03-23 16:59:31 --> Input Class Initialized
+INFO - 2025-03-23 16:59:31 --> Language Class Initialized
+INFO - 2025-03-23 16:59:31 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:31 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:31 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:31 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:31 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:31 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:32 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:32 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:32 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:32 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:32 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:32 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:32 --> Email Class Initialized
+INFO - 2025-03-23 16:59:32 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:32 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:32 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:32 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:32 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:32 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:32 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:32 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:32 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:32 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:32 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> Model "general" initialized
+INFO - 2025-03-23 16:59:32 --> Controller Class Initialized
+INFO - 2025-03-23 16:59:32 --> Language file loaded: language/english/form_validation_lang.php
+INFO - 2025-03-23 16:59:32 --> Config Class Initialized
+INFO - 2025-03-23 16:59:32 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:32 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:32 --> URI Class Initialized
+INFO - 2025-03-23 16:59:32 --> Router Class Initialized
+INFO - 2025-03-23 16:59:32 --> Output Class Initialized
+INFO - 2025-03-23 16:59:32 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:32 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:32 --> Input Class Initialized
+INFO - 2025-03-23 16:59:32 --> Language Class Initialized
+INFO - 2025-03-23 16:59:32 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:32 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:32 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:32 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:32 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:32 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:32 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:32 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:32 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:32 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:32 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:32 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:32 --> Email Class Initialized
+INFO - 2025-03-23 16:59:32 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:32 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:32 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:32 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:32 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:32 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:32 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:32 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:32 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:32 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:32 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> Model "general" initialized
+INFO - 2025-03-23 16:59:32 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:59:32 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:32 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:32 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:32 --> Total execution time: 0.3815
+INFO - 2025-03-23 16:59:34 --> Config Class Initialized
+INFO - 2025-03-23 16:59:34 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:34 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:34 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:34 --> URI Class Initialized
+INFO - 2025-03-23 16:59:34 --> Router Class Initialized
+INFO - 2025-03-23 16:59:34 --> Output Class Initialized
+INFO - 2025-03-23 16:59:34 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:34 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:34 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:34 --> Input Class Initialized
+INFO - 2025-03-23 16:59:34 --> Language Class Initialized
+INFO - 2025-03-23 16:59:34 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:34 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:34 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:34 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:34 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:34 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:34 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:34 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:34 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:34 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:34 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:34 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:34 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:34 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:34 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:34 --> Email Class Initialized
+INFO - 2025-03-23 16:59:34 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:34 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:34 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:34 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:34 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:34 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:34 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:34 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:34 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:34 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:34 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:34 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:34 --> Model "general" initialized
+INFO - 2025-03-23 16:59:34 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:59:34 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:34 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:34 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:34 --> Total execution time: 0.3826
+INFO - 2025-03-23 16:59:36 --> Config Class Initialized
+INFO - 2025-03-23 16:59:36 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:36 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:36 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:36 --> URI Class Initialized
+INFO - 2025-03-23 16:59:36 --> Router Class Initialized
+INFO - 2025-03-23 16:59:36 --> Output Class Initialized
+INFO - 2025-03-23 16:59:36 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:36 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:36 --> Input Class Initialized
+INFO - 2025-03-23 16:59:36 --> Language Class Initialized
+INFO - 2025-03-23 16:59:36 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:36 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:36 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:36 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:36 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:36 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:36 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:36 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:36 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:36 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:36 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:36 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:36 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:36 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:36 --> Email Class Initialized
+INFO - 2025-03-23 16:59:36 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:36 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:36 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:36 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:36 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:36 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:36 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:36 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:36 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:36 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:36 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:36 --> Model "general" initialized
+INFO - 2025-03-23 16:59:36 --> Controller Class Initialized
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+DEBUG - 2025-03-23 16:59:36 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:36 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_list.php
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:36 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:36 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:36 --> Total execution time: 0.3586
+INFO - 2025-03-23 16:59:37 --> Config Class Initialized
+INFO - 2025-03-23 16:59:37 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:37 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:37 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:37 --> URI Class Initialized
+INFO - 2025-03-23 16:59:37 --> Router Class Initialized
+INFO - 2025-03-23 16:59:37 --> Output Class Initialized
+INFO - 2025-03-23 16:59:37 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:37 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:37 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:37 --> Input Class Initialized
+INFO - 2025-03-23 16:59:37 --> Language Class Initialized
+INFO - 2025-03-23 16:59:37 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:37 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:37 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:37 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:37 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:37 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:37 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:37 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:37 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:37 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:37 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:37 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:37 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:37 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:37 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:37 --> Email Class Initialized
+INFO - 2025-03-23 16:59:37 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:37 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:37 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:37 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:37 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:37 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:37 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:37 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:37 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:37 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:37 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:37 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:37 --> Model "general" initialized
+INFO - 2025-03-23 16:59:37 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:59:37 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:37 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:37 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:37 --> Total execution time: 0.2677
+INFO - 2025-03-23 16:59:40 --> Config Class Initialized
+INFO - 2025-03-23 16:59:40 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:40 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:40 --> URI Class Initialized
+INFO - 2025-03-23 16:59:40 --> Router Class Initialized
+INFO - 2025-03-23 16:59:40 --> Output Class Initialized
+INFO - 2025-03-23 16:59:40 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:40 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:40 --> CSRF token verified
+INFO - 2025-03-23 16:59:40 --> Input Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language Class Initialized
+INFO - 2025-03-23 16:59:40 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:40 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:40 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:40 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:40 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:40 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:40 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:40 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:40 --> Email Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:40 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:40 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:40 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:40 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:40 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:40 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:40 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:40 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:40 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Model "general" initialized
+INFO - 2025-03-23 16:59:40 --> Controller Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language file loaded: language/english/form_validation_lang.php
+DEBUG - 2025-03-23 16:59:40 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:40 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Config Class Initialized
+INFO - 2025-03-23 16:59:40 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:40 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:40 --> URI Class Initialized
+INFO - 2025-03-23 16:59:40 --> Router Class Initialized
+INFO - 2025-03-23 16:59:40 --> Output Class Initialized
+INFO - 2025-03-23 16:59:40 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:40 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:40 --> Input Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language Class Initialized
+INFO - 2025-03-23 16:59:40 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:40 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:40 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:40 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:40 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:40 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:40 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:40 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:40 --> Email Class Initialized
+INFO - 2025-03-23 16:59:40 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:40 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:40 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:40 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:40 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:40 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:40 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:40 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:40 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:40 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:40 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> Model "general" initialized
+INFO - 2025-03-23 16:59:40 --> Controller Class Initialized
+DEBUG - 2025-03-23 16:59:40 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_tambah.php
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:40 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:40 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:40 --> Total execution time: 0.4201
+INFO - 2025-03-23 16:59:42 --> Config Class Initialized
+INFO - 2025-03-23 16:59:42 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:42 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:42 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:42 --> URI Class Initialized
+INFO - 2025-03-23 16:59:42 --> Router Class Initialized
+INFO - 2025-03-23 16:59:42 --> Output Class Initialized
+INFO - 2025-03-23 16:59:42 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:42 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:42 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:42 --> Input Class Initialized
+INFO - 2025-03-23 16:59:42 --> Language Class Initialized
+INFO - 2025-03-23 16:59:42 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:42 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:42 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:42 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:42 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:42 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:42 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:42 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:42 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:42 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:42 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:42 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:42 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:42 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:42 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:42 --> Email Class Initialized
+INFO - 2025-03-23 16:59:42 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:42 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:42 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:42 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:42 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:42 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_merk.php
+INFO - 2025-03-23 16:59:42 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+DEBUG - 2025-03-23 16:59:43 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:43 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:43 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_merk_list.php
+INFO - 2025-03-23 16:59:43 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:43 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:43 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:43 --> Total execution time: 0.3776
+INFO - 2025-03-23 16:59:44 --> Config Class Initialized
+INFO - 2025-03-23 16:59:44 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:44 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:44 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:44 --> URI Class Initialized
+INFO - 2025-03-23 16:59:44 --> Router Class Initialized
+INFO - 2025-03-23 16:59:44 --> Output Class Initialized
+INFO - 2025-03-23 16:59:44 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:44 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:44 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:44 --> Input Class Initialized
+INFO - 2025-03-23 16:59:44 --> Language Class Initialized
+INFO - 2025-03-23 16:59:44 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:44 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:44 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:44 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:44 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:44 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:44 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:44 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:44 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:44 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:44 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:44 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:44 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:44 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:44 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:44 --> Email Class Initialized
+INFO - 2025-03-23 16:59:44 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:44 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:44 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:44 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:44 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:44 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:44 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:44 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:44 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:44 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:44 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:44 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:44 --> Model "general" initialized
+INFO - 2025-03-23 16:59:44 --> Controller Class Initialized
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/menu/side_master.php
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/index.php
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:44 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:44 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:44 --> Total execution time: 0.3844
+INFO - 2025-03-23 16:59:45 --> Config Class Initialized
+INFO - 2025-03-23 16:59:45 --> Hooks Class Initialized
+DEBUG - 2025-03-23 16:59:45 --> UTF-8 Support Enabled
+INFO - 2025-03-23 16:59:45 --> Utf8 Class Initialized
+INFO - 2025-03-23 16:59:45 --> URI Class Initialized
+INFO - 2025-03-23 16:59:45 --> Router Class Initialized
+INFO - 2025-03-23 16:59:45 --> Output Class Initialized
+INFO - 2025-03-23 16:59:45 --> Security Class Initialized
+DEBUG - 2025-03-23 16:59:45 --> Global POST, GET and COOKIE data sanitized
+INFO - 2025-03-23 16:59:45 --> CSRF cookie sent
+INFO - 2025-03-23 16:59:45 --> Input Class Initialized
+INFO - 2025-03-23 16:59:45 --> Language Class Initialized
+INFO - 2025-03-23 16:59:45 --> Loader Class Initialized
+INFO - 2025-03-23 16:59:45 --> Helper loaded: form_helper
+INFO - 2025-03-23 16:59:45 --> Helper loaded: url_helper
+INFO - 2025-03-23 16:59:45 --> Helper loaded: html_helper
+INFO - 2025-03-23 16:59:45 --> Helper loaded: form_protection_helper
+INFO - 2025-03-23 16:59:45 --> Database Driver Class Initialized
+INFO - 2025-03-23 16:59:45 --> Language file loaded: language/english/pagination_lang.php
+INFO - 2025-03-23 16:59:45 --> Pagination Class Initialized
+INFO - 2025-03-23 16:59:45 --> Encryption: OpenSSL initialized with method AES-256-CBC.
+INFO - 2025-03-23 16:59:45 --> Encryption Class Initialized
+DEBUG - 2025-03-23 16:59:45 --> Encryption class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:45 --> Session: Class initialized using 'database' driver.
+INFO - 2025-03-23 16:59:45 --> Form Validation Class Initialized
+INFO - 2025-03-23 16:59:45 --> User Agent Class Initialized
+DEBUG - 2025-03-23 16:59:45 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/ion_auth.php
+INFO - 2025-03-23 16:59:45 --> Email Class Initialized
+INFO - 2025-03-23 16:59:45 --> Language file loaded: language/english/ion_auth_lang.php
+INFO - 2025-03-23 16:59:45 --> Helper loaded: cookie_helper
+INFO - 2025-03-23 16:59:45 --> Helper loaded: language_helper
+DEBUG - 2025-03-23 16:59:45 --> Session class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:45 --> Model "Ion_auth_model" initialized
+DEBUG - 2025-03-23 16:59:45 --> Config file loaded: C:\xampp\htdocs\p37-medkit-ci3\application\config/recaptcha.php
+INFO - 2025-03-23 16:59:45 --> reCaptcha Class: Keys were set
+INFO - 2025-03-23 16:59:45 --> reCaptcha Class: Rendering parameter "theme" was set to "light"
+INFO - 2025-03-23 16:59:45 --> reCaptcha Class Initialized
+INFO - 2025-03-23 16:59:45 --> Model "crud" initialized
+INFO - 2025-03-23 16:59:45 --> Model "akses" initialized
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:45 --> Model "general" initialized
+INFO - 2025-03-23 16:59:45 --> Controller Class Initialized
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/1_atas.php
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/2_header.php
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/sidebar_klinik.php
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/3_navbar.php
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+DEBUG - 2025-03-23 16:59:45 --> Encrypt class already loaded. Second attempt ignored.
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/includes/master/data_klinik_list.php
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/5_footer.php
+INFO - 2025-03-23 16:59:45 --> File loaded: C:\xampp\htdocs\p37-medkit-ci3\application\views\admin-lte-3/6_bawah.php
+INFO - 2025-03-23 16:59:45 --> Final output sent to browser
+DEBUG - 2025-03-23 16:59:45 --> Total execution time: 0.4279

@@ -49,12 +49,13 @@
                             <?php echo form_hidden('id', $this->input->get('id')) ?>
                             <?php echo form_hidden('form_id', uniqid()) ?>
                             <div class="form-group <?php echo (!empty($hasError['merk']) ? 'has-error' : '') ?>">
-                                <label class="control-label">Merk</label>
-                                <?php echo form_input(array('id' => 'merk', 'name' => 'merk', 'class' => 'form-control rounded-0', 'value' => $merk->merk)) ?>
+                                <label class="control-label">Merk <span class="text-danger">*</span></label>
+                                <?php echo form_input(array('id' => 'merk', 'name' => 'merk', 'class' => 'form-control rounded-0'.(!empty($hasError['merk']) ? ' is-invalid' : ''), 'value' => $merk->merk)) ?>
                             </div>
                             <div class="form-group <?php echo (!empty($hasError['keterangan']) ? 'has-error' : '') ?>">
                                 <label class="control-label">Keterangan</label>
                                 <?php echo form_input(array('id' => 'keterangan', 'name' => 'keterangan', 'class' => 'form-control rounded-0', 'value' => $merk->keterangan)) ?>
+                                <?php if (!empty($hasError['keterangan'])) echo $hasError['keterangan']; ?>
                             </div>
                         </div>
                         <div class="card-footer">
