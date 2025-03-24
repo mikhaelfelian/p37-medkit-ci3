@@ -24,7 +24,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-5">
-                    <?php echo form_open(base_url('master/data_barang_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), 'autocomplete="off"') ?>
+                    <?php echo form_open(base_url('master/data_barang_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), array('autocomplete' => 'off', 'id' => 'item_form')) ?>
+                    <?php echo add_form_protection(); ?>
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Form Data Item</h3>
@@ -36,7 +37,6 @@
                         </div>
                         <div class="card-body table-responsive">
                             <?php $hasError = $this->session->flashdata('form_error'); ?>
-                            <?php echo $this->session->flashdata('master'); ?>
                             <?php echo form_hidden('id', $this->input->get('id')) ?>
                             
                             <div class="form-group <?php echo (!empty($hasError['kategori']) ? 'text-danger' : '') ?>">
@@ -229,6 +229,7 @@
                             </div>                            
                         </div>
                     </div>
+                    <?php echo add_double_submit_protection('item_form'); ?>
                     <?php echo form_close() ?>
                 </div>
                 <?php if (!empty($barang)) { ?>
@@ -524,5 +525,6 @@
                     .append("<a>" + item.name + "</a>")
                     .appendTo(ul);
         };
+        <?php echo $this->session->flashdata('master_toast'); ?>
     });
 </script>

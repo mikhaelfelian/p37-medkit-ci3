@@ -95,15 +95,14 @@
                                     if (!empty($barang)) {
                                         $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
                                         foreach ($barang as $barang) {
-                                            $sql_tipe = $this->db->where('id', $barang->id_grup)->get('tbl_m_pelanggan_grup')->row();
-                                            $sql_satuan = $this->db->where('id', $barang->id_satuan)->get('tbl_m_satuan')->row();
-                                            $sql_kat = $this->db->where('id', $barang->id_kategori)->get('tbl_m_kategori')->row();
-                                            $sql_mrk = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
-//                                            $sql_stok = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $barang->id)->get('tbl_m_produk_stok')->row();
+                                            // Get related data for the current item
+                                            $sql_tipe    = $this->db->where('id', $barang->id_grup)->get('tbl_m_pelanggan_grup')->row();
+                                            $sql_satuan  = $this->db->where('id', $barang->id_satuan)->get('tbl_m_satuan')->row();
+                                            $sql_kat     = $this->db->where('id', $barang->id_kategori)->get('tbl_m_kategori')->row();
+                                            $sql_mrk     = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
                                             ?>
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?></td>
-                                                <!--<td><?php echo (!empty($sql_mrk->merk) ? strtoupper($sql_mrk->merk) : '-') ?></td>-->
                                                 <td style="width: 200px;"><?php echo (!empty($sql_kat->keterangan) ? strtoupper($sql_kat->keterangan) : '-') ?></td>
                                                 <td style="width: 450px;">
                                                     <?php echo $barang->kode; ?>
@@ -150,3 +149,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>

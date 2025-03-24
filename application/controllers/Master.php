@@ -2461,100 +2461,140 @@ class master extends CI_Controller {
             $sort_type       = $this->input->get('sort_type');
             $sort_order      = $this->input->get('sort_order');
             $jml             = $this->input->get('jml');
-            $jml_hal         = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_produk'));
             $pengaturan      = $this->db->get('tbl_pengaturan')->row();
             
             $data['hasError'] = $this->session->flashdata('form_error');
-                        
-            $config['base_url']              = base_url('master/data_barang_list_arsip.php?'.(!empty($filter_kode) ? '&filter_kode='.$filter_kode : '').(!empty($filter_kat) ? '&filter_kategori='.$filter_kat : '').(!empty($filter_brcd) ? '&filter_barcode='.$filter_brcd : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($sort_order) ? '&sort_order='.$sort_order : '').(!empty($jml) ? '&jml='.$jml : ''));
-            $config['total_rows']            = $jml_hal;
             
-            $config['query_string_segment']  = 'halaman';
-            $config['page_query_string']     = TRUE;
-            $config['per_page']              = $pengaturan->jml_item;
-            $config['num_links']             = 3;
+            // Build the base query
+            $this->db->select('*')
+                     ->from('tbl_m_produk')
+                     ->where('status_hps', '1');
             
-            $config['first_tag_open']        = '<li class="page-item">';
-            $config['first_tag_close']       = '</li>';
-            
-            $config['prev_tag_open']         = '<li class="page-item">';
-            $config['prev_tag_close']        = '</li>';
-            
-            $config['num_tag_open']          = '<li class="page-item">';
-            $config['num_tag_close']         = '</li>';
-            
-            $config['next_tag_open']         = '<li class="page-item">';
-            $config['next_tag_close']        = '</li>';
-            
-            $config['last_tag_open']         = '<li class="page-item">';
-            $config['last_tag_close']        = '</li>';
-            
-            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
-            
-            $config['first_link']            = '&laquo;';
-            $config['prev_link']             = '&lsaquo;';
-            $config['next_link']             = '&rsaquo;';
-            $config['last_link']             = '&raquo;';
-            $config['anchor_class']          = 'class="page-link"';
-            
-//            $where = "(tbl_m_produk.kode LIKE '%".$filter_kode."%' OR tbl_m_produk.barcode LIKE '%".$filter_kode."%')";
-            $where = "MATCH(tbl_m_produk.produk) AGAINST('".$filter_produk."')";
-
-            if(!empty($hal)){
-                if (!empty($jml)) {
-                    $data['barang'] = $this->db->limit($config['per_page'],$hal)
-                                               ->where('status_hps', '1')
-                                                   ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR tbl_m_produk.kode LIKE '%".$filter_produk."%')")
-//                                                   ->like('kode', $filter_kode)
-//                                                   ->like('barcode', $filter_brcd, (!empty($filter_brcd) ? 'none' : ''))
-//                                                   ->like('produk', $filter_produk)
-                                                   ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
-                                                   ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
-                                                   ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
-                                                   ->like('status_subt', $filter_stok, ($filter_stok !='' ? 'none' : ''))
-                                               ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-                                               ->get('tbl_m_produk')->result();
-                } else {
-                    $data['barang'] = $this->db->where('status_hps', '1')->limit($config['per_page'],$hal)->order_by('produk', (!empty($sort_order) ? $sort_order : 'asc'))->get('tbl_m_produk')->result();
-                }
-            }else{
-                if (!empty($jml)) {
-                    $data['barang'] = $this->db->limit($config['per_page'],$hal)
-                                               ->where('status_hps', '1')
-                                                   ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR tbl_m_produk.kode LIKE '%".$filter_produk."%')")
-//                                                   ->like('kode', $filter_kode)
-//                                                   ->like('barcode', $filter_brcd, 'none')
-//                                                   ->like('produk', $filter_produk)
-                                                   ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
-                                                   ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
-                                                   ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
-                                                   ->like('status_subt', $filter_stok, ($filter_stok !='' ? 'none' : ''))
-                                               ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-                                               ->get('tbl_m_produk')->result();
-                } else {
-                    $data['barang'] = $this->db->where('status_hps', '1')->limit($config['per_page'])
-                                               ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-//                                               ->order_by(!empty($sort_type) ? $sort_type : 'id', (isset($sort_order) ? $sort_order : 'desc'))
-                                               ->get('tbl_m_produk')->result();
-                }
+            // Apply filters if they exist
+            if (!empty($filter_produk)) {
+                $this->db->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR tbl_m_produk.kode LIKE '%".$filter_produk."%')");
             }
             
-//            $data['barang_jml'] = $this->db->where('status_hps', '1')->get('tbl_m_produk')->num_rows();
+            if (!empty($filter_harga)) {
+                $this->db->like('harga_jual', $filter_harga, 'after');
+            }
+            
+            if (!empty($filter_merk)) {
+                $this->db->like('id_merk', $filter_merk, 'none');
+            }
+            
+            if (!empty($filter_kat)) {
+                $this->db->like('id_kategori', $filter_kat, 'none');
+            }
+            
+            if ($filter_stok !== '' && $filter_stok !== null) {
+                $this->db->like('status_subt', $filter_stok, 'none');
+            }
+            
+            // Set the order
+            $this->db->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'));
+            
+            // Count total rows for pagination
+            $config['total_rows'] = $this->db->count_all_results();
+            
+            // Reset the query builder
+            $this->db->select('*')
+                     ->from('tbl_m_produk')
+                     ->where('status_hps', '1');
+            
+            // Apply filters again (since we reset the query builder)
+            if (!empty($filter_produk)) {
+                $this->db->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR tbl_m_produk.kode LIKE '%".$filter_produk."%')");
+            }
+            
+            if (!empty($filter_harga)) {
+                $this->db->like('harga_jual', $filter_harga, 'after');
+            }
+            
+            if (!empty($filter_merk)) {
+                $this->db->like('id_merk', $filter_merk, 'none');
+            }
+            
+            if (!empty($filter_kat)) {
+                $this->db->like('id_kategori', $filter_kat, 'none');
+            }
+            
+            if ($filter_stok !== '' && $filter_stok !== null) {
+                $this->db->like('status_subt', $filter_stok, 'none');
+            }
+            
+            // Set the order again
+            $this->db->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'));
+            
+            // Build pagination configuration
+            $config['base_url'] = base_url('master/data_barang_list_arsip.php?');
+            $config['query_string_segment'] = 'halaman';
+            $config['page_query_string'] = TRUE;
+            $config['per_page'] = $pengaturan->jml_item;
+            $config['num_links'] = 3;
+            
+            $config['first_tag_open'] = '<li class="page-item">';
+            $config['first_tag_close'] = '</li>';
+            $config['prev_tag_open'] = '<li class="page-item">';
+            $config['prev_tag_close'] = '</li>';
+            $config['num_tag_open'] = '<li class="page-item">';
+            $config['num_tag_close'] = '</li>';
+            $config['next_tag_open'] = '<li class="page-item">';
+            $config['next_tag_close'] = '</li>';
+            $config['last_tag_open'] = '<li class="page-item">';
+            $config['last_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+            $config['cur_tag_close'] = '</b></a></li>';
+            $config['first_link'] = '&laquo;';
+            $config['prev_link'] = '&lsaquo;';
+            $config['next_link'] = '&rsaquo;';
+            $config['last_link'] = '&raquo;';
+            $config['anchor_class'] = 'class="page-link"';
+            
+            // Add query parameters to pagination links
+            $config['suffix'] = '';
+            if (!empty($filter_kode)) $config['suffix'] .= '&filter_kode='.$filter_kode;
+            if (!empty($filter_merk)) $config['suffix'] .= '&filter_merk='.$filter_merk;
+            if (!empty($filter_lokasi)) $config['suffix'] .= '&filter_lokasi='.$filter_lokasi;
+            if (!empty($filter_kat)) $config['suffix'] .= '&filter_kategori='.$filter_kat;
+            if (!empty($filter_produk)) $config['suffix'] .= '&filter_produk='.$filter_produk;
+            if (!empty($filter_hpp)) $config['suffix'] .= '&filter_hpp='.$filter_hpp;
+            if (!empty($filter_harga)) $config['suffix'] .= '&filter_harga='.$filter_harga;
+            if ($filter_stok !== '' && $filter_stok !== null) $config['suffix'] .= '&filter_stok='.$filter_stok;
+            if (!empty($filter_brcd)) $config['suffix'] .= '&filter_barcode='.$filter_brcd;
+            if (!empty($sort_type)) $config['suffix'] .= '&sort_type='.$sort_type;
+            if (!empty($sort_order)) $config['suffix'] .= '&sort_order='.$sort_order;
+            if (!empty($jml)) $config['suffix'] .= '&jml='.$jml;
+            
+            // Apply pagination limit
+            $this->db->limit($config['per_page'], $hal);
+            
+            // Get the results
+            $data['barang'] = $this->db->get()->result();
             
             $this->pagination->initialize($config);
             
             /* Sidebar Menu */
-            $data['sidebar']    = 'admin-lte-3/includes/master/sidebar_item';
+            $data['sidebar'] = 'admin-lte-3/includes/master/sidebar_item';
             /* --- Sidebar Menu --- */
             
             $data['total_rows'] = $config['total_rows'];
-            $data['PerPage']    = $config['per_page'];
+            $data['PerPage'] = $config['per_page'];
             $data['pagination'] = $this->pagination->create_links();
-            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_barang.php?'.(!empty($filter_kode) ? 'filter_kode='.$filter_kode : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
-
-            $data['sql_kats']   = $this->db->where('status', '1')->where('status_lab', '0')->get('tbl_m_kategori')->result();
             
+            // Build the print URL with all filters
+            $print_url = 'master/cetak_data_barang.php?';
+            if (!empty($filter_kode)) $print_url .= 'filter_kode='.$filter_kode.'&';
+            if (!empty($filter_merk)) $print_url .= 'filter_merk='.$filter_merk.'&';
+            if (!empty($filter_lokasi)) $print_url .= 'filter_lokasi='.$filter_lokasi.'&';
+            if (!empty($filter_produk)) $print_url .= 'filter_produk='.$filter_produk.'&';
+            if (!empty($filter_hpp)) $print_url .= 'filter_hpp='.$filter_hpp.'&';
+            if (!empty($filter_harga)) $print_url .= 'filter_harga='.$filter_harga.'&';
+            if (!empty($jml)) $print_url .= 'jml='.$jml;
+            
+            $data['cetak'] = '<button type="button" onclick="window.location.href = \''.base_url($print_url).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
+
+            $data['sql_kats'] = $this->db->where('status', '1')->where('status_lab', '0')->get('tbl_m_kategori')->result();
             
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
@@ -2696,43 +2736,56 @@ class master extends CI_Controller {
     
     public function data_barang_tambah() {
         if (Akses::aksesLogin() == TRUE) {
-            $id                  = $this->input->get('id');
-            $lab                 = $this->input->get('id_item_lab');
-            $lab_ref             = $this->input->get('ref');
+            $id      = $this->input->get('id');
+            $lab     = $this->input->get('id_item_lab');
+            $lab_ref = $this->input->get('ref');
 
-            $sql_brg             = $this->db->get('tbl_m_produk')->row();
-            $sql_brg_kode        = $this->db->select_max('id')->get('tbl_m_produk')->row();
-            $sql_brg_sat         = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_satuan')->num_rows();
-            $sql_brg_satm        = $this->db->get('tbl_m_satuan')->num_rows();
-            $kodebar             = $sql_brg_kode->id + 1;
+            $sql_brg                    = $this->db->get('tbl_m_produk')->row();
+            $sql_brg_kode               = $this->db->select_max('id')->get('tbl_m_produk')->row();
+            $sql_brg_sat                = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_satuan')->num_rows();
+            $sql_brg_satm               = $this->db->get('tbl_m_satuan')->num_rows();
+            $kodebar                    = $sql_brg_kode->id + 1;
             
-            $data['kode']        = (!empty($id) ? general::dekrip($id) : $kodebar);
-            $data['barang']      = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
-            $data['barang_nom']  = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_nominal')->result();
-            $data['barang_stk']  = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $data['barang']->id)->get('tbl_m_produk_stok')->row();
-            $data['barang_bom_rw'] = $this->db->where('id', general::dekrip($lab))->get('tbl_m_produk')->row();
-            $data['barang_bom_rs'] = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_ref')->result();
-            $data['barang_bom_ip'] = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_ref_input')->result();
-            $data['barang_bom_ip2']= $this->db->where('id', general::dekrip($lab_ref))->get('tbl_m_produk_ref_input')->row();
+            $data['kode']               = (!empty($id) ? general::dekrip($id) : $kodebar);
+            $data['barang']             = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
+            $data['barang_nom']         = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_nominal')->result();
+            $data['barang_stk']         = $this->db->select('SUM(jml * jml_satuan) AS jml')
+                                                   ->where('id_produk', $data['barang']->id)
+                                                   ->get('tbl_m_produk_stok')->row();
+            $data['barang_bom_rw']      = $this->db->where('id', general::dekrip($lab))->get('tbl_m_produk')->row();
+            $data['barang_bom_rs']      = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_ref')->result();
+            $data['barang_bom_ip']      = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_ref_input')->result();
+            $data['barang_bom_ip2']     = $this->db->where('id', general::dekrip($lab_ref))->get('tbl_m_produk_ref_input')->row();
             
-            if($sql_brg_sat != $sql_brg_satm){
-                $data['barang_sat']  = $this->db->select('id, satuanTerkecil as satuan, status')->get('tbl_m_satuan')->result();
-            }else{
-                $data['barang_sat']  = $this->db->where('id_produk', general::dekrip($id))->order_by('id_satuan', 'asc')->get('tbl_m_produk_satuan')->result();
+            if($sql_brg_sat != $sql_brg_satm) {
+                $data['barang_sat']     = $this->db->select('id, satuanTerkecil as satuan, status')
+                                              ->get('tbl_m_satuan')->result();
+            } else {
+                $data['barang_sat']     = $this->db->where('id_produk', general::dekrip($id))
+                                              ->order_by('id_satuan', 'asc')
+                                              ->get('tbl_m_produk_satuan')->result();
             }
             
             /* Sidebar Menu */
-            $data['sidebar']    = 'admin-lte-3/includes/master/sidebar_item';
+            $data['sidebar']            = 'admin-lte-3/includes/master/sidebar_item';
             /* --- Sidebar Menu --- */
             
-            $data['barang_sat2'] = $this->db->where('id', $data['barang']->id_satuan)->get('tbl_m_satuan')->row();
-            $data['barang_dep']  = $this->db->select('DATE(tgl_simpan) as tgl_simpan, id, id_produk, keterangan, harga, debet, kredit, saldo, status')->where('id_produk', general::dekrip($id))->get('tbl_m_produk_deposit')->result();
-            $data['barang_log']  = $this->db->select('DATE(tgl_simpan) as tgl_simpan, jml, harga, satuan, keterangan')->where('id_produk', general::dekrip($id))->get('tbl_m_produk_saldo')->result();
-            $data['sql_satuan']  = $this->db->order_by('satuanTerkecil', 'asc')->get('tbl_m_satuan')->result();
-            $data['sql_merk']    = $this->db->order_by('merk', 'asc')->get('tbl_m_merk')->result();
-            $data['sql_lokasi']  = $this->db->order_by('lokasi', 'asc')->get('tbl_m_poli')->result();
-            $data['sql_kat']     = $this->db->where('status_lab', '0')->order_by('kategori', 'asc')->get('tbl_m_kategori')->result();
-            $data['sql_kat_lab'] = $this->db->where('status_lab', '1')->order_by('kategori', 'asc')->get('tbl_m_kategori')->result();
+            $data['barang_sat2']        = $this->db->where('id', $data['barang']->id_satuan)->get('tbl_m_satuan')->row();
+            $data['barang_dep']         = $this->db->select('DATE(tgl_simpan) as tgl_simpan, id, id_produk, keterangan, harga, debet, kredit, saldo, status')
+                                                   ->where('id_produk', general::dekrip($id))
+                                                   ->get('tbl_m_produk_deposit')->result();
+            $data['barang_log']         = $this->db->select('DATE(tgl_simpan) as tgl_simpan, jml, harga, satuan, keterangan')
+                                                   ->where('id_produk', general::dekrip($id))
+                                                   ->get('tbl_m_produk_saldo')->result();
+            $data['sql_satuan']         = $this->db->order_by('satuanTerkecil', 'asc')->get('tbl_m_satuan')->result();
+            $data['sql_merk']           = $this->db->order_by('merk', 'asc')->get('tbl_m_merk')->result();
+            $data['sql_lokasi']         = $this->db->order_by('lokasi', 'asc')->get('tbl_m_poli')->result();
+            $data['sql_kat']            = $this->db->where('status_lab', '0')
+                                                   ->order_by('kategori', 'asc')
+                                                   ->get('tbl_m_kategori')->result();
+            $data['sql_kat_lab']        = $this->db->where('status_lab', '1')
+                                                   ->order_by('kategori', 'asc')
+                                                   ->get('tbl_m_kategori')->result();
 
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
@@ -2846,7 +2899,6 @@ class master extends CI_Controller {
                             
                             $nomer = $row - 1;
                             
-//                            if(!empty($val[1])){
                                 $produk = array(
                                     'id_satuan'     => 7,
                                     'id_kategori'   => 4,
@@ -2861,16 +2913,7 @@ class master extends CI_Controller {
                                     'status'        => 2,
                                 );
                                 
-                                crud::simpan('tbl_m_produk', $produk); 
-//                                crud::update('tbl_m_produk','produk',$val[3], $produk);
-//                                
-//                                echo $row.br();
-//                                echo '<pre>';
-//                                print_r($produk);
-//                                echo '</pre>';
-//                                
-//                                unset($produk);
-//                            }                       
+                                crud::simpan('tbl_m_produk', $produk);                     
                         }
                     }
                     
@@ -2928,44 +2971,54 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_barang_tambah.php'));
             } else {
-                $kodebar = 'B' . sprintf("%010s", general::dekrip($id));
-                $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
-                $sql_brg = $this->db->get('tbl_m_produk');
-                $sql_kat = $this->db->where('id', $kategori)->get('tbl_m_kategori')->row();
-                $sql_gdg = $this->db->get('tbl_m_gudang')->result();
-                
-                $kd_item = sprintf('%02d', $kategori).sprintf('%04d', $sql_brg->num_rows() + 1);
-
-                $data = array(
-                        'tgl_simpan'        => date('Y-m-d H:i:s'),
-                        'id_kategori'       => (!empty($kategori) ? $kategori : 0),
-                        'id_merk'           => (!empty($merk) ? $merk : 0),
-                        'id_satuan'         => (!empty($satuan) ? $satuan : 0),
-                        'id_user'           => $this->ion_auth->user()->row()->id,
-                        'kode'              => $kd_item,
-                        'barcode'           => (!empty($barcode) ? $barcode : '899'.sprintf("%07s",$kode_blk)),
-                        'produk'            => trim($brg),                     
-                        'produk_alias'      => trim($brg_alias),                    
-                        'produk_kand'       => trim($brg_kand),                
-                        'jml'               => 0,                
-                        'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
-                        'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
-                        'harga_jual'        => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
-                        'harga_grosir'      => (!empty($harga_gr) ? general::format_angka_db($harga_gr) : 0),
-                        'remun_tipe'        => (!empty($rem_tipe) ? $rem_tipe : '0'),
-                        'remun_nom'         => (!empty($rem_nom) ? $rem_nom : '0'),
-                        'remun_perc'        => (!empty($rem_perc) ? $rem_perc : '0'),
-                        'apres_tipe'        => (!empty($aps_tipe) ? $aps_tipe : '0'),
-                        'apres_nom'         => (!empty($aps_nom) ? $aps_nom : '0'),
-                        'apres_perc'        => (!empty($aps_perc) ? $aps_perc : '0'),
-                        'status_subt'       => (!empty($stat_sub) ? $stat_sub : '0'),
-                        'status_racikan'    => (!empty($tipe_rc) ? $tipe_rc : '0'),
-                        'status'            => (!empty($tipe) ? $tipe : '0')
-                    );
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_barang_list.php'));
+                        return;
+                    }
                     
-                    $this->db->insert('tbl_m_produk', $data);
+                    $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
+                    $sql_brg = $this->db->get('tbl_m_produk');
+                    $sql_kat = $this->db->where('id', $kategori)->get('tbl_m_kategori')->row();
+                    $sql_gdg = $this->db->get('tbl_m_gudang')->result();
+                    
+                    $kd_item = sprintf('%02d', $kategori).sprintf('%04d', $sql_brg->num_rows() + 1);
+
+                    $data = array(
+                            'tgl_simpan'        => date('Y-m-d H:i:s'),
+                            'id_kategori'       => (!empty($kategori) ? $kategori : 0),
+                            'id_merk'           => (!empty($merk) ? $merk : 0),
+                            'id_satuan'         => (!empty($satuan) ? $satuan : 0),
+                            'id_user'           => $this->ion_auth->user()->row()->id,
+                            'kode'              => $kd_item,
+                            'barcode'           => (!empty($barcode) ? $barcode : '899'.sprintf("%07s",$kode_blk)),
+                            'produk'            => trim($brg),                     
+                            'produk_alias'      => trim($brg_alias),                    
+                            'produk_kand'       => trim($brg_kand),                
+                            'jml'               => 0,                
+                            'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
+                            'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
+                            'harga_jual'        => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
+                            'harga_grosir'      => (!empty($harga_gr) ? general::format_angka_db($harga_gr) : 0),
+                            'remun_tipe'        => (!empty($rem_tipe) ? $rem_tipe : '0'),
+                            'remun_nom'         => (!empty($rem_nom) ? $rem_nom : '0'),
+                            'remun_perc'        => (!empty($rem_perc) ? $rem_perc : '0'),
+                            'apres_tipe'        => (!empty($aps_tipe) ? $aps_tipe : '0'),
+                            'apres_nom'         => (!empty($aps_nom) ? $aps_nom : '0'),
+                            'apres_perc'        => (!empty($aps_perc) ? $aps_perc : '0'),
+                            'status_subt'       => (!empty($stat_sub) ? $stat_sub : '0'),
+                            'status_racikan'    => (!empty($tipe_rc) ? $tipe_rc : '0'),
+                            'status'            => (!empty($tipe) ? $tipe : '0')
+                        );
+                        
+                    if (!$this->db->insert('tbl_m_produk', $data)) {
+                        throw new Exception("Gagal menyimpan data item");
+                    }
+                    
                     $last_id = crud::last_id();
 
                     if($last_id > 0){
@@ -2983,16 +3036,22 @@ class master extends CI_Controller {
                                     'status'        => $gudang->status,
                                 );
                                 
-                                $this->db->insert('tbl_m_produk_stok', $data_stok);
+                                if (!$this->db->insert('tbl_m_produk_stok', $data_stok)) {
+                                    throw new Exception("Gagal menyimpan data stok item");
+                                }
                             }                          
                         }
                         
-                        $this->session->set_flashdata('master', '<div class="alert alert-success">Data barang disimpan</div>');
+                        $this->session->set_flashdata('master_toast', 'toastr.success("Data item berhasil disimpan");');
                         redirect(base_url('master/data_barang_tambah.php?id='.general::enkrip($last_id)));
-                    }else{
-                        $this->session->set_flashdata('master', '<div class="alert alert-danger">Data Item Gagal Disimpan !!</div>');
-                        redirect(base_url('master/data_barang_tambah.php'));
-                    }     
+                    } else {
+                        throw new Exception("Gagal mendapatkan ID item yang disimpan");
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_barang_tambah.php'));
+                    return;
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
