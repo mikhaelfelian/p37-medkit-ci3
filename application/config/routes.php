@@ -38,286 +38,259 @@
 | in the URL cannot be matched to a valid route.
 |
 */
-
-$route['default_controller'] 	= "login";
-$route['404_override'] 			= '';
-$route['translate_uri_dashes'] 	= FALSE;
-
-
+$route['default_controller'] 	                        = "login";
+$route['404_override'] 			                        = '';
+$route['translate_uri_dashes'] 	                        = FALSE;
 
 /* Dashboard */
-$route['home.php']   = "home/index";
+$route['home.php']                                      = "home/index";
 
 /* FrontEnd */
-$route['cek_login.php']        = "login/cek_login";
-$route['dashboard2.php']       = "home/index2";
+$route['cek_login.php']                                 = "login/cek_login";
+$route['dashboard2.php']                                = "home/index2";
 
-$route['home/register.php']    = "home/register";
+$route['home/register.php']                             = "home/register";
 
 /* BUNDLE SATUSEHAT API */
-$route['satusehat/index.php']       		= "Satusehat/index";
-$route['satusehat/post_bundle.php'] 		= "Satusehat/post_bundle_encounter_condition";
+$route['satusehat/index.php']                           = "Satusehat/index";
+$route['satusehat/post_bundle.php']                     = "Satusehat/post_bundle_encounter_condition";
 
 /* Master */
-$route['master/index.php']                	= "master/index";
+$route['master/index.php']                              = "master/index";
 
-$route['master/data_gudang_list.php']     	= "master/data_gudang_list";
-$route['master/data_gudang_tambah.php']   	= "master/data_gudang_tambah";
-$route['master/data_gudang_simpan.php']   	= "master/data_gudang_simpan";
-$route['master/data_gudang_update.php']   	= "master/data_gudang_update";
-$route['master/data_gudang_hapus.php']    	= "master/data_gudang_hapus";
+$route['master/data_kategori_list.php']                 = "master/data_kategori_list";
+$route['master/data_kategori_tambah.php']               = "master/data_kategori_tambah";
+$route['master/data_kategori_simpan.php']               = "master/data_kategori_simpan";
+$route['master/data_kategori_update.php']               = "master/data_kategori_update";
+$route['master/data_kategori_hapus.php']                = "master/data_kategori_hapus";
+$route['master/set_kategori_cari.php']                  = "master/set_kategori_cari";
 
-$route['master/data_kategori_list.php']     = "master/data_kategori_list";
-$route['master/data_kategori_tambah.php']   = "master/data_kategori_tambah";
-$route['master/data_kategori_simpan.php']   = "master/data_kategori_simpan";
-$route['master/data_kategori_update.php']   = "master/data_kategori_update";
-$route['master/data_kategori_hapus.php']    = "master/data_kategori_hapus";
+$route['master/data_merk_list.php']                     = "master/data_merk_list";
+$route['master/data_merk_tambah.php']                   = "master/data_merk_tambah";
+$route['master/data_merk_simpan.php']                   = "master/data_merk_simpan";
+$route['master/data_merk_update.php']                   = "master/data_merk_update";
+$route['master/data_merk_hapus.php']                    = "master/data_merk_hapus";
+$route['master/set_merk_cari.php']                      = "master/set_merk_cari";
 
-$route['master/data_mcu_list.php']          = "master/data_mcu_list";
-$route['master/data_mcu_tambah.php']        = "master/data_mcu_tambah";
-$route['master/data_mcu_simpan.php']        = "master/data_mcu_simpan";
-$route['master/data_mcu_update.php']        = "master/data_mcu_update";
-$route['master/data_mcu_hapus.php']         = "master/data_mcu_hapus";
-$route['master/data_mcu_list.php']          = "master/data_mcu_list";
+$route['master/data_klinik_list.php']                   = "master/data_klinik_list";
+$route['master/data_klinik_tambah.php']                 = "master/data_klinik_tambah";
+$route['master/data_klinik_simpan.php']                 = "master/data_klinik_simpan";
+$route['master/data_klinik_update.php']                 = "master/data_klinik_update";
+$route['master/data_klinik_hapus.php']                  = "master/data_klinik_hapus";
+$route['master/set_klinik_cari.php']                    = "master/set_klinik_cari";
 
-$route['master/data_mcu_kat_list.php']      = "master/data_mcu_kat_list";
-$route['master/data_mcu_kat_tambah.php']    = "master/data_mcu_kat_tambah";
-$route['master/data_mcu_kat_simpan.php']    = "master/data_mcu_kat_simpan";
-$route['master/data_mcu_kat_update.php']    = "master/data_mcu_kat_update";
-$route['master/data_mcu_kat_hapus.php']     = "master/data_mcu_kat_hapus";
+$route['master/data_satuan_list.php']                   = "master/data_satuan_list";
+$route['master/data_satuan_tambah.php']                 = "master/data_satuan_tambah";
+$route['master/data_satuan_simpan.php']                 = "master/data_satuan_simpan";
+$route['master/data_satuan_update.php']                 = "master/data_satuan_update";
+$route['master/data_satuan_hapus.php']                  = "master/data_satuan_hapus";
+$route['master/set_cari_satuan.php']                    = "master/set_cari_satuan";
 
-$route['master/data_icd_list.php']          = "master/data_icd_list";
-$route['master/data_icd_tambah.php']        = "master/data_icd_tambah";
-$route['master/data_icd_simpan.php']        = "master/data_icd_simpan";
-$route['master/data_icd_update.php']        = "master/data_icd_update";
-$route['master/data_icd_hapus.php']         = "master/data_icd_hapus";
+$route['master/data_barang_list.php']                   = "master/data_barang_list";
+$route['master/data_barang_list_arsip.php']             = "master/data_barang_list_arsip";
+$route['master/data_barang_list_retur_beli.php']        = "master/data_barang_list_retbeli";
+$route['master/data_barang_tambah.php']                 = "master/data_barang_tambah";
+$route['master/data_barang_det.php']                    = "master/data_barang_det";
+$route['master/data_barang_import.php']                 = "master/data_barang_import";
+$route['master/data_barang_export.php']                 = "master/ex_data_barang";
+$route['master/data_barang_upload.php']                 = "master/data_barang_upload";
+$route['master/data_barang_simpan.php']                 = "master/data_barang_simpan";
+$route['master/data_barang_simpan_bom.php']             = "master/data_barang_simpan_bom";
+$route['master/data_barang_simpan_bom_input.php']       = "master/data_barang_simpan_bom_input";
+$route['master/data_barang_simpan_nom.php']             = "master/data_barang_simpan_nom";
+$route['master/data_barang_simpan_sat.php']             = "master/data_barang_simpan_sat";
+$route['master/data_barang_update_bom_input.php']       = "master/data_barang_update_bom_input";
+$route['master/data_barang_update.php']                 = "master/data_barang_update";
+$route['master/data_barang_hapus.php']                  = "master/data_barang_hapus";
+$route['master/data_barang_hapus_ars.php']              = "master/data_barang_hapus_arsip";
+$route['master/data_barang_hapus_nom.php']              = "master/data_barang_hapus_nom";
+$route['master/data_barang_hapus_sat.php']              = "master/data_barang_hapus_sat";
+$route['master/data_barang_hapus_ref.php']              = "master/data_barang_hapus_ref";
+$route['master/data_barang_hapus_ref_ip.php']           = "master/data_barang_hapus_ref_input";
+$route['master/json_item.php']                          = "master/json_item";
 
-$route['master/data_merk_list.php']         = "master/data_merk_list";
-$route['master/data_merk_tambah.php']       = "master/data_merk_tambah";
-$route['master/data_merk_simpan.php']       = "master/data_merk_simpan";
-$route['master/data_merk_update.php']       = "master/data_merk_update";
-$route['master/data_merk_hapus.php']        = "master/data_merk_hapus";
-
-$route['master/data_klinik_list.php']       = "master/data_klinik_list";
-$route['master/data_klinik_tambah.php']     = "master/data_klinik_tambah";
-$route['master/data_klinik_simpan.php']     = "master/data_klinik_simpan";
-$route['master/data_klinik_update.php']     = "master/data_klinik_update";
-$route['master/data_klinik_hapus.php']      = "master/data_klinik_hapus";
-$route['master/set_klinik_cari.php']        = "master/set_klinik_cari";
-
-
-$route['master/data_kamar_list.php']        = "master/data_kamar_list";
-$route['master/data_kamar_tambah.php']      = "master/data_kamar_tambah";
-$route['master/data_kamar_simpan.php']      = "master/data_kamar_simpan";
-$route['master/data_kamar_update.php']      = "master/data_kamar_update";
-$route['master/data_kamar_hapus.php']       = "master/data_kamar_hapus";
-
-$route['master/data_promo_list.php']        = "master/data_promo_list";
-$route['master/data_promo_tambah.php']      = "master/data_promo_tambah";
-$route['master/data_promo_tambah_item.php'] = "master/data_promo_tambah_item";
-$route['master/data_promo_simpan_item.php'] = "master/data_promo_simpan_item";
-$route['master/data_promo_simpan.php']      = "master/data_promo_simpan";
-$route['master/data_promo_update.php']      = "master/data_promo_update";
-$route['master/data_promo_hapus.php']       = "master/data_promo_hapus";
-$route['master/data_promo_hapus_item.php']  = "master/data_promo_hapus_item";
-
-$route['master/data_satuan_list.php']     	= "master/data_satuan_list";
-$route['master/data_satuan_tambah.php']   	= "master/data_satuan_tambah";
-$route['master/data_satuan_simpan.php']   	= "master/data_satuan_simpan";
-$route['master/data_satuan_update.php']   	= "master/data_satuan_update";
-$route['master/data_satuan_hapus.php']    	= "master/data_satuan_hapus";
-$route['master/set_cari_satuan.php']        = "master/set_cari_satuan";
+$route['master/data_pasien_list.php']                   = "master/data_pasien_list";
+$route['master/data_pasien_tambah.php']                 = "master/data_pasien_tambah";
+$route['master/data_pasien_det.php']                    = "master/data_pasien_det";
+$route['master/data_pasien_simpan.php']                 = "master/data_pasien_simpan";
+$route['master/data_pasien_simpan2.php']                = "master/data_pasien_simpan2";
+$route['master/data_pasien_update.php']                 = "master/data_pasien_update";
+$route['master/data_pasien_hapus.php']                  = "master/data_pasien_hapus";
+$route['master/data_pasien_import.php']                 = "master/data_pasien_import";
+$route['master/data_pasien_export.php']                 = "master/ex_data_pasien";
+$route['master/data_pasien_upload.php']                 = "master/data_pasien_upload";
+$route['master/data_pasien_user.php']                   = "master/data_pasien_user";
+$route['master/data_pasien_user_reset.php']             = "master/data_pasien_user_reset";
+$route['master/data_pasien_foto_reset.php']             = "master/data_pasien_foto_reset";
+$route['master/data_pasien_pdf.php']                    = "master/pdf_pasien";
 
 
-$route['master/data_barang_list.php']     	= "master/data_barang_list";
-$route['master/data_barang_list_arsip.php'] = "master/data_barang_list_arsip";
-$route['master/data_barang_list_retur_beli.php'] = "master/data_barang_list_retbeli";
-$route['master/data_barang_tambah.php']   = "master/data_barang_tambah";
-$route['master/data_barang_det.php']      = "master/data_barang_det";
-$route['master/data_barang_import.php']   = "master/data_barang_import";
-$route['master/data_barang_export.php']   = "master/ex_data_barang";
-$route['master/data_barang_upload.php']   = "master/data_barang_upload";
-$route['master/data_barang_simpan.php']   = "master/data_barang_simpan";
-$route['master/data_barang_simpan_bom.php'] = "master/data_barang_simpan_bom";
-$route['master/data_barang_simpan_bom_input.php'] = "master/data_barang_simpan_bom_input";
-$route['master/data_barang_simpan_nom.php'] = "master/data_barang_simpan_nom";
-$route['master/data_barang_simpan_sat.php'] = "master/data_barang_simpan_sat";
-$route['master/data_barang_update_bom_input.php'] = "master/data_barang_update_bom_input";
-$route['master/data_barang_update.php']   = "master/data_barang_update";
-$route['master/data_barang_hapus.php']    = "master/data_barang_hapus";
-$route['master/data_barang_hapus_ars.php']= "master/data_barang_hapus_arsip";
-$route['master/data_barang_hapus_nom.php']= "master/data_barang_hapus_nom";
-$route['master/data_barang_hapus_sat.php']= "master/data_barang_hapus_sat";
-$route['master/data_barang_hapus_ref.php']= "master/data_barang_hapus_ref";
-$route['master/data_barang_hapus_ref_ip.php']= "master/data_barang_hapus_ref_input";
-$route['master/json_item.php']            = "master/json_item";
 
-$route['master/data_pasien_list.php']   = "master/data_pasien_list";
-$route['master/data_pasien_tambah.php'] = "master/data_pasien_tambah";
-$route['master/data_pasien_det.php']    = "master/data_pasien_det";
-$route['master/data_pasien_simpan.php'] = "master/data_pasien_simpan";
-$route['master/data_pasien_simpan2.php']= "master/data_pasien_simpan2";
-$route['master/data_pasien_update.php'] = "master/data_pasien_update";
-$route['master/data_pasien_hapus.php']  = "master/data_pasien_hapus";
-$route['master/data_pasien_import.php'] = "master/data_pasien_import";
-$route['master/data_pasien_export.php'] = "master/ex_data_pasien";
-$route['master/data_pasien_upload.php'] = "master/data_pasien_upload";
-$route['master/data_pasien_user.php']   = "master/data_pasien_user";
-$route['master/data_pasien_user_reset.php']     = "master/data_pasien_user_reset";
-$route['master/data_pasien_foto_reset.php']     = "master/data_pasien_foto_reset";
-$route['master/data_pasien_pdf.php']            = "master/pdf_pasien";
+$route['master/data_mcu_list.php']                      = "master/data_mcu_list";
+$route['master/data_mcu_tambah.php']                    = "master/data_mcu_tambah";
+$route['master/data_mcu_simpan.php']                    = "master/data_mcu_simpan";
+$route['master/data_mcu_update.php']                    = "master/data_mcu_update";
+$route['master/data_mcu_hapus.php']                     = "master/data_mcu_hapus";
 
-$route['master/data_customer_list.php']   = "master/data_customer_list";
-$route['master/data_customer_tambah.php'] = "master/data_customer_tambah";
-$route['master/data_customer_simpan.php'] = "master/data_customer_simpan";
-$route['master/data_customer_simpan2.php']= "master/data_customer_simpan2";
-$route['master/data_customer_update.php'] = "master/data_customer_update";
-$route['master/data_customer_hapus.php']  = "master/data_customer_hapus";
-$route['master/data_customer_import.php'] = "master/data_customer_import";
-$route['master/data_customer_export.php'] = "master/ex_data_customer";
-$route['master/data_customer_upload.php'] = "master/data_customer_upload";
+$route['master/data_mcu_kat_list.php']                  = "master/data_mcu_kat_list";
+$route['master/data_mcu_kat_tambah.php']                = "master/data_mcu_kat_tambah";
+$route['master/data_mcu_kat_simpan.php']                = "master/data_mcu_kat_simpan";
+$route['master/data_mcu_kat_update.php']                = "master/data_mcu_kat_update";
+$route['master/data_mcu_kat_hapus.php']                 = "master/data_mcu_kat_hapus";
 
-$route['master/data_sales_list.php']            = "master/data_karyawan_list";
-$route['master/data_karyawan_list.php']         = "master/data_karyawan_list";
-$route['master/data_karyawan_tambah.php']       = "master/data_karyawan_tambah";
-$route['master/data_karyawan_pend.php']         = "master/data_karyawan_tambah_pend";
-$route['master/data_karyawan_sert.php']         = "master/data_karyawan_tambah_sert";
-$route['master/data_karyawan_peg.php']          = "master/data_karyawan_tambah_peg";
-$route['master/data_karyawan_kel.php']          = "master/data_karyawan_tambah_kel";
-$route['master/data_karyawan_jadwal.php']       = "master/data_karyawan_tambah_jdwl";
-$route['master/set_karyawan_simpan.php']        = "master/set_karyawan_simpan";
-$route['master/set_karyawan_simpan_pend.php']   = "master/set_karyawan_simpan_pend";
-$route['master/set_karyawan_simpan_sert.php']   = "master/set_karyawan_simpan_sert";
-$route['master/set_karyawan_simpan_peg.php']    = "master/set_karyawan_simpan_peg";
-$route['master/set_karyawan_simpan_kel.php']    = "master/set_karyawan_simpan_kel";
-$route['master/set_karyawan_simpan_kel_ktp.php']= "master/set_karyawan_simpan_kel_ktp";
-$route['master/set_karyawan_simpan_jadwal.php'] = "master/set_karyawan_simpan_jdwl";
-$route['master/set_karyawan_simpan_cuti.php']   = "master/set_karyawan_simpan_cuti";
-$route['master/set_karyawan_update.php']        = "master/set_karyawan_update";
-$route['master/set_karyawan_update_kel.php']    = "master/set_karyawan_update_kel";
-$route['master/set_karyawan_hapus.php']         = "master/set_karyawan_hapus";
-$route['master/set_karyawan_hapus_pend.php']    = "master/set_karyawan_hapus_pend";
-$route['master/set_karyawan_hapus_sert.php']    = "master/set_karyawan_hapus_sert";
-$route['master/set_karyawan_hapus_peg.php']     = "master/set_karyawan_hapus_peg";
-$route['master/set_karyawan_hapus_kel.php']     = "master/set_karyawan_hapus_kel";
-$route['master/set_karyawan_hapus_jadwal.php']  = "master/set_karyawan_hapus_jdwl";
-$route['master/data_karyawan_import.php']       = "master/data_karyawan_import";
-$route['master/data_karyawan_export.php']       = "master/ex_data_karyawan";
-$route['master/data_karyawan_upload.php']       = "master/data_karyawan_upload";
+$route['master/data_mcu_perusahaan_list.php']           = "master/data_mcu_perusahaan_list";
+$route['master/data_mcu_perusahaan_tambah.php']         = "master/data_mcu_perusahaan_tambah";
+$route['master/set_mcu_perusahaan_simpan.php']          = "master/set_mcu_perusahaan_simpan";
+$route['master/set_mcu_perusahaan_update.php']          = "master/set_mcu_perusahaan_update";
+$route['master/set_mcu_perusahaan_hapus.php']           = "master/set_mcu_perusahaan_hapus";
+$route['master/set_mcu_perusahaan_cari.php']            = "master/set_cari_mcu_perusahaan";
 
-$route['master/data_aps_list.php']              = "master/data_aps_list";
-$route['master/data_aps_tambah.php']            = "master/data_aps_tambah";
-$route['master/set_aps_simpan.php']             = "master/set_aps_simpan";
-$route['master/set_aps_update.php']             = "master/set_aps_update";
-$route['master/set_aps_hapus.php']              = "master/set_aps_hapus";
-$route['master/set_aps_cari.php']               = "master/set_cari_aps";
+$route['master/data_mcu_header_list.php']               = "master/data_mcu_header";
+$route['master/data_mcu_header_param_simpan.php']       = "master/data_mcu_header_simpan";
+$route['master/data_mcu_header_hapus.php']              = "master/data_mcu_header_hapus";
 
-$route['master/data_mcu_perusahaan_list.php']   = "master/data_mcu_perusahaan_list";
-$route['master/data_mcu_perusahaan_tambah.php'] = "master/data_mcu_perusahaan_tambah";
-$route['master/set_mcu_perusahaan_simpan.php']  = "master/set_mcu_perusahaan_simpan";
-$route['master/set_mcu_perusahaan_update.php']  = "master/set_mcu_perusahaan_update";
-$route['master/set_mcu_perusahaan_hapus.php']   = "master/set_mcu_perusahaan_hapus";
-$route['master/set_mcu_perusahaan_cari.php']    = "master/set_cari_mcu_perusahaan";
+$route['master/data_icd_list.php']                      = "master/data_icd_list";
+$route['master/data_icd_tambah.php']                    = "master/data_icd_tambah";
+$route['master/data_icd_simpan.php']                    = "master/data_icd_simpan";
+$route['master/data_icd_update.php']                    = "master/data_icd_update";
+$route['master/data_icd_hapus.php']                     = "master/data_icd_hapus";
 
-$route['master/data_supplier_list.php']         = "master/data_supplier_list";
-$route['master/data_supplier_tambah.php']       = "master/data_supplier_tambah";
-$route['master/data_supplier_simpan.php']       = "master/data_supplier_simpan";
-$route['master/data_supplier_simpan2.php']      = "master/data_supplier_simpan2";
-$route['master/data_supplier_update.php']       = "master/data_supplier_update";
-$route['master/data_supplier_hapus.php']        = "master/data_supplier_hapus";
-$route['master/data_supplier_import.php']       = "master/data_supplier_import";
-$route['master/data_supplier_export.php']       = "master/ex_data_supplier";
-$route['master/data_supplier_upload.php']       = "master/data_supplier_upload";
-$route['master/set_cari_supplier.php']          = "master/set_cari_supplier";
 
-$route['master/data_platform_list.php']   = "master/data_platform_list";
-$route['master/data_platform_tambah.php'] = "master/data_platform_tambah";
-$route['master/data_platform_simpan.php'] = "master/data_platform_simpan";
-$route['master/data_platform_update.php'] = "master/data_platform_update";
-$route['master/data_platform_hapus.php']  = "master/data_platform_hapus";
+$route['master/data_gudang_list.php']                   = "master/data_gudang_list";
+$route['master/data_gudang_tambah.php']                 = "master/data_gudang_tambah";
+$route['master/data_gudang_simpan.php']                 = "master/data_gudang_simpan";
+$route['master/data_gudang_update.php']                 = "master/data_gudang_update";
+$route['master/data_gudang_hapus.php']                  = "master/data_gudang_hapus";
 
-$route['master/data_platform_pjm_list.php']     = "master/data_platform_pjm_list";
-$route['master/data_platform_pjm_tambah.php']   = "master/data_platform_pjm_tambah";
-$route['master/data_platform_pjm_simpan.php']   = "master/data_platform_pjm_simpan";
-$route['master/data_platform_pjm_update.php']   = "master/data_platform_pjm_update";
-$route['master/data_platform_pjm_hapus.php']    = "master/data_platform_pjm_hapus";
 
-$route['master/data_biaya_list.php']            = "master/data_biaya_list";
-$route['master/data_biaya_tambah.php']          = "master/data_biaya_tambah";
-$route['master/data_biaya_simpan.php']          = "master/data_biaya_simpan";
-$route['master/data_biaya_jns_simpan.php']      = "master/data_biaya_jns_simpan";
-$route['master/data_biaya_update.php']          = "master/data_biaya_update";
-$route['master/data_biaya_hapus.php']           = "master/data_biaya_hapus";
-$route['master/data_biaya_jns_hapus.php']       = "master/data_biaya_jns_hapus";
+$route['master/data_kamar_list.php']                    = "master/data_kamar_list";
+$route['master/data_kamar_tambah.php']                  = "master/data_kamar_tambah";
+$route['master/data_kamar_simpan.php']                  = "master/data_kamar_simpan";
+$route['master/data_kamar_update.php']                  = "master/data_kamar_update";
+$route['master/data_kamar_hapus.php']                   = "master/data_kamar_hapus";
 
-$route['master/set_cari_kategori.php']          = "master/set_cari_kategori";
-$route['master/set_cari_lokasi.php']            = "master/set_cari_lokasi";
-$route['master/set_cari_merk.php']              = "master/set_cari_merk";
-$route['master/set_cari_promo.php']             = "master/set_cari_promo";
-$route['master/set_cari_barang.php']            = "master/set_cari_barang";
-$route['master/set_cari_barang_retbeli.php']    = "master/set_cari_barang_retbeli";
-$route['master/set_cari_satuan.php']            = "master/set_cari_satuan";
-$route['master/set_cari_plgn.php']              = "master/set_cari_plgn";
-$route['master/set_cari_pasien.php']            = "master/set_cari_pasien";
-$route['master/set_cari_karyawan.php']          = "master/set_cari_karyawan";
-$route['master/set_cari_supplier.php']          = "master/set_cari_supplier";
-$route['master/set_cari_platform.php']          = "master/set_cari_platform";
-$route['master/set_cari_icd.php']               = "master/set_cari_icd";
+$route['master/data_sales_list.php']                    = "master/data_karyawan_list";
+$route['master/data_karyawan_list.php']                 = "master/data_karyawan_list";
+$route['master/data_karyawan_tambah.php']               = "master/data_karyawan_tambah";
+$route['master/data_karyawan_pend.php']                 = "master/data_karyawan_tambah_pend";
+$route['master/data_karyawan_sert.php']                 = "master/data_karyawan_tambah_sert";
+$route['master/data_karyawan_peg.php']                  = "master/data_karyawan_tambah_peg";
+$route['master/data_karyawan_kel.php']                  = "master/data_karyawan_tambah_kel";
+$route['master/data_karyawan_jadwal.php']               = "master/data_karyawan_tambah_jdwl";
+$route['master/set_karyawan_simpan.php']                = "master/set_karyawan_simpan";
+$route['master/set_karyawan_simpan_pend.php']           = "master/set_karyawan_simpan_pend";
+$route['master/set_karyawan_simpan_sert.php']           = "master/set_karyawan_simpan_sert";
+$route['master/set_karyawan_simpan_peg.php']            = "master/set_karyawan_simpan_peg";
+$route['master/set_karyawan_simpan_kel.php']            = "master/set_karyawan_simpan_kel";
+$route['master/set_karyawan_simpan_kel_ktp.php']        = "master/set_karyawan_simpan_kel_ktp";
+$route['master/set_karyawan_simpan_jadwal.php']         = "master/set_karyawan_simpan_jdwl";
+$route['master/set_karyawan_simpan_cuti.php']           = "master/set_karyawan_simpan_cuti";
+$route['master/set_karyawan_update.php']                = "master/set_karyawan_update";
+$route['master/set_karyawan_update_kel.php']            = "master/set_karyawan_update_kel";
+$route['master/set_karyawan_hapus.php']                 = "master/set_karyawan_hapus";
+$route['master/set_karyawan_hapus_pend.php']            = "master/set_karyawan_hapus_pend";
+$route['master/set_karyawan_hapus_sert.php']            = "master/set_karyawan_hapus_sert";
+$route['master/set_karyawan_hapus_peg.php']             = "master/set_karyawan_hapus_peg";
+$route['master/set_karyawan_hapus_kel.php']             = "master/set_karyawan_hapus_kel";
+$route['master/set_karyawan_hapus_jadwal.php']          = "master/set_karyawan_hapus_jdwl";
+$route['master/data_karyawan_import.php']               = "master/data_karyawan_import";
+$route['master/data_karyawan_export.php']               = "master/ex_data_karyawan";
+$route['master/data_karyawan_upload.php']               = "master/data_karyawan_upload";
 
-$route['master/data_mcu_header_list.php']           = "master/data_mcu_header";
-$route['master/data_mcu_header_param_simpan.php']   = "master/data_mcu_header_simpan";
-$route['master/data_mcu_header_hapus.php']           = "master/data_mcu_header_hapus";
+$route['master/data_aps_list.php']                      = "master/data_aps_list";
+$route['master/data_aps_tambah.php']                    = "master/data_aps_tambah";
+$route['master/set_aps_simpan.php']                     = "master/set_aps_simpan";
+$route['master/set_aps_update.php']                     = "master/set_aps_update";
+$route['master/set_aps_hapus.php']                      = "master/set_aps_hapus";
+$route['master/set_aps_cari.php']                       = "master/set_cari_aps";
+
+$route['master/data_supplier_list.php']                 = "master/data_supplier_list";
+$route['master/data_supplier_tambah.php']               = "master/data_supplier_tambah";
+$route['master/data_supplier_simpan.php']               = "master/data_supplier_simpan";
+$route['master/data_supplier_simpan2.php']              = "master/data_supplier_simpan2";
+$route['master/data_supplier_update.php']               = "master/data_supplier_update";
+$route['master/data_supplier_hapus.php']                = "master/data_supplier_hapus";
+$route['master/data_supplier_import.php']               = "master/data_supplier_import";
+$route['master/data_supplier_export.php']               = "master/ex_data_supplier";
+$route['master/data_supplier_upload.php']               = "master/data_supplier_upload";
+$route['master/set_cari_supplier.php']                  = "master/set_cari_supplier";
+
+$route['master/data_platform_list.php']                 = "master/data_platform_list";
+$route['master/data_platform_tambah.php']               = "master/data_platform_tambah";
+$route['master/data_platform_simpan.php']               = "master/data_platform_simpan";
+$route['master/data_platform_update.php']               = "master/data_platform_update";
+$route['master/data_platform_hapus.php']                = "master/data_platform_hapus";
+
+$route['master/data_platform_pjm_list.php']             = "master/data_platform_pjm_list";
+$route['master/data_platform_pjm_tambah.php']           = "master/data_platform_pjm_tambah";
+$route['master/data_platform_pjm_simpan.php']           = "master/data_platform_pjm_simpan";
+$route['master/data_platform_pjm_update.php']           = "master/data_platform_pjm_update";
+$route['master/data_platform_pjm_hapus.php']            = "master/data_platform_pjm_hapus";
+
+$route['master/set_cari_kategori.php']                  = "master/set_cari_kategori";
+$route['master/set_cari_lokasi.php']                    = "master/set_cari_lokasi";
+$route['master/set_cari_merk.php']                      = "master/set_cari_merk";
+$route['master/set_cari_promo.php']                     = "master/set_cari_promo";
+$route['master/set_cari_barang.php']                    = "master/set_cari_barang";
+$route['master/set_cari_barang_retbeli.php']            = "master/set_cari_barang_retbeli";
+$route['master/set_cari_satuan.php']                    = "master/set_cari_satuan";
+$route['master/set_cari_plgn.php']                      = "master/set_cari_plgn";
+$route['master/set_cari_pasien.php']                    = "master/set_cari_pasien";
+$route['master/set_cari_karyawan.php']                  = "master/set_cari_karyawan";
+$route['master/set_cari_supplier.php']                  = "master/set_cari_supplier";
+$route['master/set_cari_platform.php']                  = "master/set_cari_platform";
+$route['master/set_cari_icd.php']                       = "master/set_cari_icd";
 
 /* --- GUDANG --- */
-$route['gudang/index.php']                      = "gudang/index";
-$route['gudang/data_stok_list.php']             = "gudang/data_stok_list";
-$route['gudang/data_stok_tambah.php']           = "gudang/data_stok_tambah";
-$route['gudang/data_stok_update.php']           = "gudang/data_stok_update";
-$route['gudang/data_stok_update_br.php']        = "gudang/data_stok_update_br";
-$route['gudang/data_stok_hapus.php']            = "gudang/data_stok_hapus";
-$route['gudang/data_stok_hapus_hist.php']       = "gudang/data_stok_hapus_hist";
-$route['gudang/data_stok_det.php']              = "gudang/data_stok_det";
-$route['gudang/data_stok_import.php']           = "gudang/data_stok_import";
-$route['gudang/data_stok_trm_simpan.php']       = "gudang/data_stok_trm_simpan";
-$route['gudang/data_stok_export.php']           = "gudang/ex_data_stok";
-$route['gudang/data_stok_export_tmp.php']       = "gudang/ex_data_stok_temp";
-$route['gudang/data_stok_export_brc.php']       = "gudang/ex_data_stok_brcd";
-$route['gudang/data_stok_op_tmp.php']           = "gudang/ex_data_op_temp";
-$route['gudang/data_stok_upload.php']           = "gudang/data_stok_upload";
-$route['gudang/data_po_list.php']               = "gudang/data_po_list";
-$route['gudang/cetak_data_stok.php']            = "gudang/cetak_data_stok";
-$route['gudang/trans_po_det.php']               = "gudang/trans_po_det";
-$route['gudang/trans_po_terima.php']            = "gudang/trans_po_terima";
-$route['gudang/set_stok_update_gd.php']         = "gudang/set_stok_update_gd";
-$route['gudang/trans_beli_list.php']            = "gudang/trans_beli_list";
-$route['gudang/trans_beli_terima.php']          = "gudang/trans_beli_terima";
-$route['gudang/trans_beli_terima_simpan.php']   = "gudang/trans_beli_terima_simpan";
-$route['gudang/trans_beli_terima_hapus.php']    = "gudang/trans_beli_terima_hapus_hist";
-$route['gudang/set_beli_terima.php']            = "gudang/set_beli_terima";
-$route['gudang/set_beli_terima_finish.php']     = "gudang/set_beli_terima_finish";
-$route['gudang/set_beli_terima_reset.php']      = "gudang/set_beli_terima_reset";
-$route['gudang/data_opname_list.php']           = "gudang/data_opname_list";
-$route['gudang/data_opname_item_list.php']      = "gudang/data_opname_item_list";
-$route['gudang/data_opname_tambah.php']         = "gudang/data_opname_tambah";
-$route['gudang/data_opname_det.php']            = "gudang/data_opname_det";
-$route['gudang/data_opname_upload.php']         = "gudang/data_opname_upload";
-$route['gudang/set_opname.php']                 = "gudang/set_opname";
-$route['gudang/set_opname_batal.php']           = "gudang/set_opname_batal";
-$route['gudang/set_opname_cari_item.php']       = "gudang/set_opname_cari_item";
-$route['gudang/data_opname_dl.php']             = "gudang/data_opname_dl";
-$route['gudang/cart_opn_simpan.php']            = "gudang/cart_opn_simpan";
-$route['gudang/cart_opn_hapus.php']             = "gudang/cart_opn_hapus";
-$route['gudang/data_mutasi.php']                = "gudang/trans_mutasi_list";
-$route['gudang/data_mutasi_terima.php']         = "gudang/trans_mutasi_list_terima";
-$route['gudang/trans_mutasi.php']               = "gudang/trans_mutasi";
-$route['gudang/trans_mutasi_edit.php']          = "gudang/trans_mutasi_edit";
-$route['gudang/trans_mutasi_det.php']           = "gudang/trans_mutasi_det";
-$route['gudang/trans_mutasi_terima.php']        = "gudang/trans_mutasi_terima";
-$route['gudang/trans_mutasi_terima_simpan.php'] = "gudang/trans_mutasi_terima_simpan";
-$route['gudang/trans_mutasi_terima_hapus.php']  = "gudang/trans_mutasi_terima_hapus_hist";
-$route['gudang/trans_mutasi_terima_cek.php']    = "gudang/trans_mutasi_terima_cek";
-$route['gudang/set_trans_mutasi.php']           = "gudang/set_trans_mutasi";
-$route['gudang/set_trans_mutasi_update.php']    = "gudang/set_trans_mutasi_update";
+$route['gudang/index.php']                              = "gudang/index";
+$route['gudang/data_stok_list.php']                     = "gudang/data_stok_list";
+$route['gudang/data_stok_tambah.php']                   = "gudang/data_stok_tambah";
+$route['gudang/data_stok_update.php']                   = "gudang/data_stok_update";
+$route['gudang/data_stok_update_br.php']                = "gudang/data_stok_update_br";
+$route['gudang/data_stok_hapus.php']                    = "gudang/data_stok_hapus";
+$route['gudang/data_stok_hapus_hist.php']               = "gudang/data_stok_hapus_hist";
+$route['gudang/data_stok_det.php']                      = "gudang/data_stok_det";
+$route['gudang/data_stok_import.php']                   = "gudang/data_stok_import";
+$route['gudang/data_stok_trm_simpan.php']               = "gudang/data_stok_trm_simpan";
+$route['gudang/data_stok_export.php']                   = "gudang/ex_data_stok";
+$route['gudang/data_stok_export_tmp.php']               = "gudang/ex_data_stok_temp";
+$route['gudang/data_stok_export_brc.php']               = "gudang/ex_data_stok_brcd";
+$route['gudang/data_stok_op_tmp.php']                   = "gudang/ex_data_op_temp";
+$route['gudang/data_stok_upload.php']                   = "gudang/data_stok_upload";
+$route['gudang/data_po_list.php']                       = "gudang/data_po_list";
+$route['gudang/cetak_data_stok.php']                    = "gudang/cetak_data_stok";
+$route['gudang/trans_po_det.php']                       = "gudang/trans_po_det";
+$route['gudang/trans_po_terima.php']                    = "gudang/trans_po_terima";
+$route['gudang/set_stok_update_gd.php']                 = "gudang/set_stok_update_gd";
+$route['gudang/trans_beli_list.php']                    = "gudang/trans_beli_list";
+$route['gudang/trans_beli_terima.php']                  = "gudang/trans_beli_terima";
+$route['gudang/trans_beli_terima_simpan.php']           = "gudang/trans_beli_terima_simpan";
+$route['gudang/trans_beli_terima_hapus.php']            = "gudang/trans_beli_terima_hapus_hist";
+$route['gudang/set_beli_terima.php']                    = "gudang/set_beli_terima";
+$route['gudang/set_beli_terima_finish.php']             = "gudang/set_beli_terima_finish";
+$route['gudang/set_beli_terima_reset.php']              = "gudang/set_beli_terima_reset";
+$route['gudang/data_opname_list.php']                   = "gudang/data_opname_list";
+$route['gudang/data_opname_item_list.php']              = "gudang/data_opname_item_list";
+$route['gudang/data_opname_tambah.php']                 = "gudang/data_opname_tambah";
+$route['gudang/data_opname_det.php']                    = "gudang/data_opname_det";
+$route['gudang/data_opname_upload.php']                 = "gudang/data_opname_upload";
+$route['gudang/set_opname.php']                         = "gudang/set_opname";
+$route['gudang/set_opname_batal.php']                   = "gudang/set_opname_batal";
+$route['gudang/set_opname_cari_item.php']               = "gudang/set_opname_cari_item";
+$route['gudang/data_opname_dl.php']                     = "gudang/data_opname_dl";
+$route['gudang/cart_opn_simpan.php']                    = "gudang/cart_opn_simpan";
+$route['gudang/cart_opn_hapus.php']                     = "gudang/cart_opn_hapus";
+$route['gudang/data_mutasi.php']                        = "gudang/trans_mutasi_list";
+$route['gudang/data_mutasi_terima.php']                 = "gudang/trans_mutasi_list_terima";
+$route['gudang/trans_mutasi.php']                       = "gudang/trans_mutasi";
+$route['gudang/trans_mutasi_edit.php']                  = "gudang/trans_mutasi_edit";
+$route['gudang/trans_mutasi_det.php']                   = "gudang/trans_mutasi_det";
+$route['gudang/trans_mutasi_terima.php']                = "gudang/trans_mutasi_terima";
+$route['gudang/trans_mutasi_terima_simpan.php']         = "gudang/trans_mutasi_terima_simpan";
+$route['gudang/trans_mutasi_terima_hapus.php']          = "gudang/trans_mutasi_terima_hapus_hist";
+$route['gudang/trans_mutasi_terima_cek.php']            = "gudang/trans_mutasi_terima_cek";
+$route['gudang/set_trans_mutasi.php']                   = "gudang/set_trans_mutasi";
+$route['gudang/set_trans_mutasi_update.php']            = "gudang/set_trans_mutasi_update";
 $route['gudang/set_trans_mutasi_proses.php']            = "gudang/set_trans_mutasi_proses";
 $route['gudang/set_trans_mutasi_batal.php']             = "gudang/set_trans_mutasi_batal";
 $route['gudang/set_trans_mutasi_finish.php']            = "gudang/set_trans_mutasi_finish";
@@ -913,271 +886,252 @@ $route['laporan/htm_data_omset_dokter.php']             = "laporan/htm_data_omse
 $route['laporan/htm_data_omset.php']                    = "laporan/htm_data_omset_global";
 $route['laporan/csv_data_omset.php']                    = "laporan/htm_data_omset";
 
-
 // Laporan Bukti Bayar
-$route['laporan/data_bayar.php']                    = "laporan/data_bayar";
-$route['laporan/set_data_bayar.php']                = "laporan/set_data_bayar";
-//$route['laporan/xls_data_pasien.php']               = "laporan/xls_data_pasien";
-//$route['laporan/xls_data_pasien2.php']              = "laporan/xls_data_pasien2";
+$route['laporan/data_bayar.php']                        = "laporan/data_bayar";
+$route['laporan/set_data_bayar.php']                    = "laporan/set_data_bayar";
+//$route['laporan/xls_data_pasien.php']                 = "laporan/xls_data_pasien";
+//$route['laporan/xls_data_pasien2.php']                = "laporan/xls_data_pasien2";
 
 // Laporan Remunerasi
-$route['laporan/data_remunerasi.php']               = "laporan/data_remunerasi";
-$route['laporan/set_data_remunerasi.php']           = "laporan/set_data_remunerasi";
-$route['laporan/xls_data_remunerasi.php']           = "laporan/xls_data_remunerasi";
+$route['laporan/data_remunerasi.php']                   = "laporan/data_remunerasi";
+$route['laporan/set_data_remunerasi.php']               = "laporan/set_data_remunerasi";
+$route['laporan/xls_data_remunerasi.php']               = "laporan/xls_data_remunerasi";
 
 // Laporan Apresiasi
-$route['laporan/data_apresiasi.php']                = "laporan/data_apresiasi";
-$route['laporan/set_data_apresiasi.php']            = "laporan/set_data_apresiasi";
-$route['laporan/xls_data_apresiasi.php']            = "laporan/xls_data_apresiasi";
+$route['laporan/data_apresiasi.php']                    = "laporan/data_apresiasi";
+$route['laporan/set_data_apresiasi.php']                = "laporan/set_data_apresiasi";
+$route['laporan/xls_data_apresiasi.php']                = "laporan/xls_data_apresiasi";
 
 // Laporan Rekap SDM
-$route['laporan/data_cuti.php']                     = "laporan/data_cuti";
-$route['laporan/set_data_cuti.php']                 = "laporan/set_data_cuti";
-$route['laporan/xls_data_cuti.php']                 = "laporan/xls_data_cuti";
-$route['laporan/data_periksa.php']                  = "laporan/data_periksa";
-$route['laporan/data_periksa_wa.php']               = "laporan/data_periksa_wa";
-$route['laporan/set_data_periksa.php']              = "laporan/set_data_periksa";
-$route['laporan/data_karyawan_ultah.php']           = "laporan/data_karyawan_ultah";
-$route['laporan/set_data_karyawan_ultah.php']       = "laporan/set_data_karyawan_ultah";
-$route['laporan/data_tracer.php']                   = "laporan/data_tracer";
-$route['laporan/xls_data_periksa.php']              = "laporan/xls_data_periksa";
-$route['laporan/xls_data_karyawan_ultah.php']       = "laporan/xls_data_karyawan_ultah";
+$route['laporan/data_cuti.php']                         = "laporan/data_cuti";
+$route['laporan/set_data_cuti.php']                     = "laporan/set_data_cuti";
+$route['laporan/xls_data_cuti.php']                     = "laporan/xls_data_cuti";
+$route['laporan/data_periksa.php']                      = "laporan/data_periksa";
+$route['laporan/data_periksa_wa.php']                   = "laporan/data_periksa_wa";
+$route['laporan/set_data_periksa.php']                  = "laporan/set_data_periksa";
+$route['laporan/data_karyawan_ultah.php']               = "laporan/data_karyawan_ultah";
+$route['laporan/set_data_karyawan_ultah.php']           = "laporan/set_data_karyawan_ultah";
+$route['laporan/data_tracer.php']                       = "laporan/data_tracer";
+$route['laporan/xls_data_periksa.php']                  = "laporan/xls_data_periksa";
+$route['laporan/xls_data_karyawan_ultah.php']           = "laporan/xls_data_karyawan_ultah";
 
 // Laporan Pembelian
-$route['laporan/data_pembelian.php']                = "laporan/data_pembelian";
-$route['laporan/set_data_pembelian.php']            = "laporan/set_data_pembelian";
-$route['laporan/xls_data_pembelian.php']            = "laporan/xls_data_pembelian";
-$route['laporan/htm_data_pembelian.php']            = "laporan/htm_data_pembelian";
+$route['laporan/data_pembelian.php']                    = "laporan/data_pembelian";
+$route['laporan/set_data_pembelian.php']                = "laporan/set_data_pembelian";
+$route['laporan/xls_data_pembelian.php']                = "laporan/xls_data_pembelian";
+$route['laporan/htm_data_pembelian.php']                = "laporan/htm_data_pembelian";
 
 // Laporan Stok
-$route['laporan/data_stok.php']                     = "laporan/data_stok";
-$route['laporan/data_stok_telusur.php']             = "laporan/data_stok_telusur";
-$route['laporan/data_stok_pers.php']                = "laporan/data_stok_pers";
-$route['laporan/set_data_stok.php']                 = "laporan/set_data_stok";
-$route['laporan/set_data_stok_telusur.php']         = "laporan/set_data_stok_telusur";
-$route['laporan/set_data_stok_pers.php']            = "laporan/set_data_stok_pers";
-$route['laporan/xls_data_stok.php']                 = "laporan/xls_data_stok";
-$route['laporan/xls_data_stok_telusur.php']         = "laporan/xls_data_stok_telusur";
-$route['laporan/xls_data_stok_pers.php']            = "laporan/xls_data_stok_pers";
-$route['laporan/xls_data_stok_gomed.php']           = "laporan/xls_data_stok_gomed";
-$route['laporan/csv_data_stok_gomed.php']           = "laporan/csv_data_stok_gomed";
-$route['laporan/json_pasien.php']                   = "laporan/json_pasien";
-
+$route['laporan/data_stok.php']                         = "laporan/data_stok";
+$route['laporan/data_stok_telusur.php']                 = "laporan/data_stok_telusur";
+$route['laporan/data_stok_pers.php']                    = "laporan/data_stok_pers";
+$route['laporan/set_data_stok.php']                     = "laporan/set_data_stok";
+$route['laporan/set_data_stok_telusur.php']             = "laporan/set_data_stok_telusur";
+$route['laporan/set_data_stok_pers.php']                = "laporan/set_data_stok_pers";
+$route['laporan/xls_data_stok.php']                     = "laporan/xls_data_stok";
+$route['laporan/xls_data_stok_telusur.php']             = "laporan/xls_data_stok_telusur";
+$route['laporan/xls_data_stok_pers.php']                = "laporan/xls_data_stok_pers";
+$route['laporan/xls_data_stok_gomed.php']               = "laporan/xls_data_stok_gomed";
+$route['laporan/csv_data_stok_gomed.php']               = "laporan/csv_data_stok_gomed";
+$route['laporan/json_pasien.php']                       = "laporan/json_pasien";
 
 // Laporan Stok Masuk
-$route['laporan/data_stok_masuk.php']               = "laporan/data_stok_masuk";
-$route['laporan/set_data_stok_masuk.php']           = "laporan/set_data_stok_masuk";
-$route['laporan/xls_data_stok_masuk.php']           = "laporan/xls_data_stok_masuk";
-$route['laporan/json_pasien.php']                   = "laporan/json_pasien";
+$route['laporan/data_stok_masuk.php']                   = "laporan/data_stok_masuk";
+$route['laporan/set_data_stok_masuk.php']               = "laporan/set_data_stok_masuk";
+$route['laporan/xls_data_stok_masuk.php']               = "laporan/xls_data_stok_masuk";
+$route['laporan/json_pasien.php']                       = "laporan/json_pasien";
 
 // Laporan Data Tracer
-$route['laporan/data_tracer.php']                   = "laporan/data_tracer";
-$route['laporan/set_data_tracer.php']               = "laporan/set_data_tracer";
-$route['laporan/xls_data_tracer.php']               = "laporan/xls_data_tracer";
+$route['laporan/data_tracer.php']                       = "laporan/data_tracer";
+$route['laporan/set_data_tracer.php']                   = "laporan/set_data_tracer";
+$route['laporan/xls_data_tracer.php']                   = "laporan/xls_data_tracer";
 
 // Laporan Data Tracer Divisi
-$route['laporan/data_tracer_div.php']               = "laporan/data_tracer_div";
-$route['laporan/set_data_tracer_div.php']           = "laporan/set_data_tracer_div";
-$route['laporan/xls_data_tracer_div.php']           = "laporan/xls_data_tracer_div";
+$route['laporan/data_tracer_div.php']                   = "laporan/data_tracer_div";
+$route['laporan/set_data_tracer_div.php']               = "laporan/set_data_tracer_div";
+$route['laporan/xls_data_tracer_div.php']               = "laporan/xls_data_tracer_div";
 
 // Laporan Stok Keluar
-$route['laporan/data_stok_keluar.php']              = "laporan/data_stok_keluar";
-$route['laporan/data_stok_keluar_resep.php']        = "laporan/data_stok_keluar_resep";
-$route['laporan/set_data_stok_keluar.php']          = "laporan/set_data_stok_keluar";
-$route['laporan/set_data_stok_keluar_resep.php']    = "laporan/set_data_stok_keluar_resep";
-$route['laporan/xls_data_stok_keluar.php']          = "laporan/xls_data_stok_keluar";
-$route['laporan/xls_data_stok_keluar_resep.php']    = "laporan/xls_data_stok_keluar_resep";
+$route['laporan/data_stok_keluar.php']                  = "laporan/data_stok_keluar";
+$route['laporan/data_stok_keluar_resep.php']            = "laporan/data_stok_keluar_resep";
+$route['laporan/set_data_stok_keluar.php']              = "laporan/set_data_stok_keluar";
+$route['laporan/set_data_stok_keluar_resep.php']        = "laporan/set_data_stok_keluar_resep";
+$route['laporan/xls_data_stok_keluar.php']              = "laporan/xls_data_stok_keluar";
+$route['laporan/xls_data_stok_keluar_resep.php']        = "laporan/xls_data_stok_keluar_resep";
 
-# Laporan Stok Mutasi
-$route['laporan/data_stok_mutasi.php']              = "laporan/data_stok_mutasi";
-$route['laporan/set_data_stok_mutasi.php']          = "laporan/set_data_stok_mutasi";
-$route['laporan/xls_data_stok_mutasi.php']          = "laporan/xls_data_stok_mutasi";
+// Laporan Stok Mutasi
+$route['laporan/data_stok_mutasi.php']                  = "laporan/data_stok_mutasi";
+$route['laporan/set_data_stok_mutasi.php']              = "laporan/set_data_stok_mutasi";
+$route['laporan/xls_data_stok_mutasi.php']              = "laporan/xls_data_stok_mutasi";
 
-$route['laporan/data_persediaan.php']               = "laporan/data_persediaan";
-$route['laporan/data_stok2.php']                    = "laporan/data_stok2";
-$route['laporan/data_penjualan.php']                = "laporan/data_penjualan";
-$route['laporan/data_penjualan_prod.php']           = "laporan/data_penjualan_prod";
-$route['laporan/data_penjualan_kasir.php']          = "laporan/data_penjualan_kasir";
-$route['laporan/data_penjualan_produk.php']         = "laporan/data_penjualan_kasir_produk";
-$route['laporan/data_piutang.php']                  = "laporan/data_piutang";
-$route['laporan/data_retur_penjualan.php']          = "laporan/data_retur_penjualan";
-$route['laporan/data_retur_pembelian.php']          = "laporan/data_retur_pembelian";
-$route['laporan/data_pemasukan.php']                = "laporan/data_pemasukan";
-$route['laporan/data_pengeluaran.php']              = "laporan/data_pengeluaran";
-$route['laporan/data_lr.php']                       = "laporan/data_lr";
-$route['laporan/data_mutasi.php']                   = "laporan/data_mutasi";
+$route['laporan/data_persediaan.php']                   = "laporan/data_persediaan";
+$route['laporan/data_stok2.php']                        = "laporan/data_stok2";
+$route['laporan/data_penjualan.php']                    = "laporan/data_penjualan";
+$route['laporan/data_penjualan_prod.php']               = "laporan/data_penjualan_prod";
+$route['laporan/data_penjualan_kasir.php']              = "laporan/data_penjualan_kasir";
+$route['laporan/data_penjualan_produk.php']             = "laporan/data_penjualan_kasir_produk";
+$route['laporan/data_piutang.php']                      = "laporan/data_piutang";
+$route['laporan/data_retur_penjualan.php']              = "laporan/data_retur_penjualan";
+$route['laporan/data_retur_pembelian.php']              = "laporan/data_retur_pembelian";
+$route['laporan/data_pemasukan.php']                    = "laporan/data_pemasukan";
+$route['laporan/data_pengeluaran.php']                  = "laporan/data_pengeluaran";
+$route['laporan/data_lr.php']                           = "laporan/data_lr";
+$route['laporan/data_mutasi.php']                       = "laporan/data_mutasi";
 
-$route['laporan/data_persediaan_pdf.php']           = "laporan/data_persediaan_pdf";
-$route['laporan/data_stok_pdf.php']                 = "laporan/data_stok_pdf";
-$route['laporan/data_piutang_pdf.php']              = "laporan/data_piutang_pdf";
-$route['laporan/data_penjualan_pdf.php']            = "laporan/data_penjualan_pdf";
-$route['laporan/data_penjualan_prod_pdf.php']       = "laporan/data_penjualan_prod_pdf";
-$route['laporan/data_penjualan_kasir_pdf.php']      = "laporan/data_penjualan_kasir_pdf";
-$route['laporan/data_penjualan_kasir_pos.php']      = "cetak/termal_ctk_rkp_ksr";
-$route['laporan/data_penjualan_produk_pdf.php']     = "laporan/data_penjualan_kasir_produk_pdf";
-$route['laporan/data_penjualan_kasir_prd.php']      = "cetak/termal_ctk_rkp_prd";
-$route['laporan/data_pembelian_pdf.php']            = "laporan/data_pembelian_pdf";
-$route['laporan/data_retur_penjualan_pdf.php']      = "laporan/data_retur_penjualan_pdf";
-$route['laporan/data_retur_pembelian_pdf.php']      = "laporan/data_retur_pembelian_pdf";
-$route['laporan/data_pemasukan_pdf.php']            = "laporan/data_pemasukan_pdf";
-$route['laporan/data_pengeluaran_pdf.php']          = "laporan/data_pengeluaran_pdf";
-$route['laporan/data_lr_pdf.php']                   = "laporan/data_lr_pdf";
+$route['laporan/data_persediaan_pdf.php']               = "laporan/data_persediaan_pdf";
+$route['laporan/data_stok_pdf.php']                     = "laporan/data_stok_pdf";
+$route['laporan/data_piutang_pdf.php']                  = "laporan/data_piutang_pdf";
+$route['laporan/data_penjualan_pdf.php']                = "laporan/data_penjualan_pdf";
+$route['laporan/data_penjualan_prod_pdf.php']           = "laporan/data_penjualan_prod_pdf";
+$route['laporan/data_penjualan_kasir_pdf.php']          = "laporan/data_penjualan_kasir_pdf";
+$route['laporan/data_penjualan_kasir_pos.php']          = "cetak/termal_ctk_rkp_ksr";
+$route['laporan/data_penjualan_produk_pdf.php']         = "laporan/data_penjualan_kasir_produk_pdf";
+$route['laporan/data_penjualan_kasir_prd.php']          = "cetak/termal_ctk_rkp_prd";
+$route['laporan/data_pembelian_pdf.php']                = "laporan/data_pembelian_pdf";
+$route['laporan/data_retur_penjualan_pdf.php']          = "laporan/data_retur_penjualan_pdf";
+$route['laporan/data_retur_pembelian_pdf.php']          = "laporan/data_retur_pembelian_pdf";
+$route['laporan/data_pemasukan_pdf.php']                = "laporan/data_pemasukan_pdf";
+$route['laporan/data_pengeluaran_pdf.php']              = "laporan/data_pengeluaran_pdf";
+$route['laporan/data_lr_pdf.php']                       = "laporan/data_lr_pdf";
 
-$route['laporan/pdf_data_persediaan.php']           = "laporan/pdf_data_persediaan";
-$route['laporan/pdf_data_stok.php']                 = "laporan/pdf_data_stok";
-$route['laporan/pdf_data_piutang.php']              = "laporan/pdf_data_piutang";
-$route['laporan/pdf_data_penjualan.php']            = "laporan/pdf_data_penjualan";
-$route['laporan/pdf_data_penjualan_prod.php']       = "laporan/pdf_data_penjualan_prod";
-$route['laporan/pdf_data_penjualan_kasir.php']      = "laporan/pdf_data_penjualan_kasir";
-$route['laporan/pdf_data_penjualan_produk.php']     = "laporan/pdf_data_penjualan_kasir_produk";
-$route['laporan/pdf_data_pembelian.php']            = "laporan/pdf_data_pembelian";
-$route['laporan/pdf_data_retur_penjualan.php']      = "laporan/pdf_data_retur_penjualan";
-$route['laporan/pdf_data_retur_pembelian.php']      = "laporan/pdf_data_retur_pembelian";
-$route['laporan/pdf_data_pemasukan.php']            = "laporan/pdf_data_pemasukan";
-$route['laporan/pdf_data_pengeluaran.php']          = "laporan/pdf_data_pengeluaran";
-$route['laporan/pdf_data_lr.php']                   = "laporan/pdf_data_lr";
-$route['laporan/ex_data_lr.php']                    = "laporan/ex_data_lr";
-$route['laporan/xls_data_pengeluaran.php']          = "laporan/xls_data_pengeluaran";
+$route['laporan/pdf_data_persediaan.php']               = "laporan/pdf_data_persediaan";
+$route['laporan/pdf_data_stok.php']                     = "laporan/pdf_data_stok";
+$route['laporan/pdf_data_piutang.php']                  = "laporan/pdf_data_piutang";
+$route['laporan/pdf_data_penjualan.php']                = "laporan/pdf_data_penjualan";
+$route['laporan/pdf_data_penjualan_prod.php']           = "laporan/pdf_data_penjualan_prod";
+$route['laporan/pdf_data_penjualan_kasir.php']          = "laporan/pdf_data_penjualan_kasir";
+$route['laporan/pdf_data_penjualan_produk.php']         = "laporan/pdf_data_penjualan_kasir_produk";
+$route['laporan/pdf_data_pembelian.php']                = "laporan/pdf_data_pembelian";
+$route['laporan/pdf_data_retur_penjualan.php']          = "laporan/pdf_data_retur_penjualan";
+$route['laporan/pdf_data_retur_pembelian.php']          = "laporan/pdf_data_retur_pembelian";
+$route['laporan/pdf_data_pemasukan.php']                = "laporan/pdf_data_pemasukan";
+$route['laporan/pdf_data_pengeluaran.php']              = "laporan/pdf_data_pengeluaran";
+$route['laporan/pdf_data_lr.php']                       = "laporan/pdf_data_lr";
+$route['laporan/ex_data_lr.php']                        = "laporan/ex_data_lr";
+$route['laporan/xls_data_pengeluaran.php']              = "laporan/xls_data_pengeluaran";
 
-$route['laporan/xls_data_stok.php']                 = "laporan/xls_data_stok";
-$route['laporan/xls_data_stok2.php']                = "laporan/xls_data_stok2";
-$route['laporan/xls_data_penjualan.php']            = "laporan/xls_data_penjualan";
-$route['laporan/xls_data_piutang.php']              = "laporan/xls_data_piutang";
-$route['laporan/xls_data_pembelian.php']            = "laporan/xls_data_pembelian";
+$route['laporan/xls_data_stok.php']                     = "laporan/xls_data_stok";
+$route['laporan/xls_data_stok2.php']                    = "laporan/xls_data_stok2";
+$route['laporan/xls_data_penjualan.php']                = "laporan/xls_data_penjualan";
+$route['laporan/xls_data_piutang.php']                  = "laporan/xls_data_piutang";
+$route['laporan/xls_data_pembelian.php']                = "laporan/xls_data_pembelian";
 
-$route['laporan/set_lap_persediaan.php']            = "laporan/set_lap_persediaan";
-$route['laporan/set_lap_stok.php']                  = "laporan/set_lap_stok";
-$route['laporan/set_lap_piutang.php']               = "laporan/set_lap_piutang";
-$route['laporan/set_lap_penjualan.php']             = "laporan/set_lap_penjualan";
-$route['laporan/set_lap_penjualan_prod.php']        = "laporan/set_lap_penjualan_prod";
-$route['laporan/set_lap_penjualan_kasir.php']       = "laporan/set_lap_penjualan_kasir";
-$route['laporan/set_lap_penjualan_produk.php']      = "laporan/set_lap_penjualan_produk";
-$route['laporan/set_lap_ret_penjualan.php']         = "laporan/set_lap_ret_penjualan";
-$route['laporan/set_lap_ret_pembelian.php']         = "laporan/set_lap_ret_pembelian";
-$route['laporan/set_lap_pemasukan.php']             = "laporan/set_lap_pemasukan";
-$route['laporan/set_lap_pengeluaran.php']           = "laporan/set_lap_pengeluaran";
-$route['laporan/set_lap_mutasi.php']                = "laporan/set_lap_mutasi";
+$route['laporan/set_lap_persediaan.php']                = "laporan/set_lap_persediaan";
+$route['laporan/set_lap_stok.php']                      = "laporan/set_lap_stok";
+$route['laporan/set_lap_piutang.php']                   = "laporan/set_lap_piutang";
+$route['laporan/set_lap_penjualan.php']                 = "laporan/set_lap_penjualan";
+$route['laporan/set_lap_penjualan_prod.php']            = "laporan/set_lap_penjualan_prod";
+$route['laporan/set_lap_penjualan_kasir.php']           = "laporan/set_lap_penjualan_kasir";
+$route['laporan/set_lap_penjualan_produk.php']          = "laporan/set_lap_penjualan_produk";
+$route['laporan/set_lap_ret_penjualan.php']             = "laporan/set_lap_ret_penjualan";
+$route['laporan/set_lap_ret_pembelian.php']             = "laporan/set_lap_ret_pembelian";
+$route['laporan/set_lap_pemasukan.php']                 = "laporan/set_lap_pemasukan";
+$route['laporan/set_lap_pengeluaran.php']               = "laporan/set_lap_pengeluaran";
+$route['laporan/set_lap_mutasi.php']                    = "laporan/set_lap_mutasi";
 
-$route['laporan/data_referall.php']                 = "laporan/data_referall";
-$route['laporan/set_data_referall.php']             = "laporan/set_data_referall";
-$route['laporan/xls_data_referall.php']             = "laporan/xls_data_referall";
+$route['laporan/data_referall.php']                     = "laporan/data_referall";
+$route['laporan/set_data_referall.php']                 = "laporan/set_data_referall";
+$route['laporan/xls_data_referall.php']                 = "laporan/xls_data_referall";
 
 
 /* PAJAK */
-$route['pajak/input_retur_jual.php']                = "pajak/input_retur_jual";
-$route['pajak/data_retur_jual_list.php']            = "pajak/data_retur_jual_list";
+$route['pajak/input_retur_jual.php']                    = "pajak/input_retur_jual";
+$route['pajak/data_retur_jual_list.php']                = "pajak/data_retur_jual_list";
 
-$route['pajak/data_penj_list.php']                  = "pajak/data_penj_list";
-$route['pajak/data_pemb_jual_list.php']             = "pajak/data_pemb_jual_list";
-$route['pajak/data_pemb_beli_list.php']             = "pajak/data_pemb_beli_list";
+$route['pajak/data_penj_list.php']                      = "pajak/data_penj_list";
+$route['pajak/data_pemb_jual_list.php']                 = "pajak/data_pemb_jual_list";
+$route['pajak/data_pemb_beli_list.php']                 = "pajak/data_pemb_beli_list";
 
-$route['pajak/input_trans_jual.php']                = "pajak/input_trans_jual";
-$route['pajak/set_nota_jual_simpan.php']            = "pajak/set_nota_jual_simpan";
-$route['pajak/trans_jual_hapus.php']                = "pajak/trans_jual_hapus";
+$route['pajak/input_trans_jual.php']                    = "pajak/input_trans_jual";
+$route['pajak/set_nota_jual_simpan.php']                = "pajak/set_nota_jual_simpan";
+$route['pajak/trans_jual_hapus.php']                    = "pajak/trans_jual_hapus";
 
-$route['pajak/set_cari_penj.php']                   = "pajak/set_cari_penj";
-$route['pajak/set_retur_jual_batal.php']            = "pajak/set_retur_jual_batal";
-$route['pajak/set_retur_beli_batal.php']            = "pajak/set_retur_beli_batal";
-$route['pajak/set_cari_penj.php']                   = "pajak/set_cari_penj";
-$route['pajak/set_cari_penj_retur.php']             = "pajak/set_cari_penj_retur";
-$route['pajak/set_cari_penj_bayar.php']             = "pajak/set_cari_penj_bayar";
-$route['pajak/set_cari_penawaran.php']              = "pajak/set_cari_penawaran";
-$route['pajak/set_cari_pemb.php']                   = "pajak/set_cari_pemb";
-$route['pajak/set_cari_pemb_bayar.php']             = "pajak/set_cari_pemb_bayar";
-$route['pajak/set_cari_po.php']                     = "pajak/set_cari_po";
+$route['pajak/set_cari_penj.php']                       = "pajak/set_cari_penj";
+$route['pajak/set_retur_jual_batal.php']                = "pajak/set_retur_jual_batal";
+$route['pajak/set_retur_beli_batal.php']                = "pajak/set_retur_beli_batal";
+$route['pajak/set_cari_penj.php']                       = "pajak/set_cari_penj";
+$route['pajak/set_cari_penj_retur.php']                 = "pajak/set_cari_penj_retur";
+$route['pajak/set_cari_penj_bayar.php']                 = "pajak/set_cari_penj_bayar";
+$route['pajak/set_cari_penawaran.php']                  = "pajak/set_cari_penawaran";
+$route['pajak/set_cari_pemb.php']                       = "pajak/set_cari_pemb";
+$route['pajak/set_cari_pemb_bayar.php']                 = "pajak/set_cari_pemb_bayar";
+$route['pajak/set_cari_po.php']                         = "pajak/set_cari_po";
 /* -- END -- */
 
 
 /* -- POS -- */
-# Untuk penjualan bebas seperti apotik dll
-$route['pos/index.php']                             = "Pos/Index";
-$route['pos/data_pelanggan_tambah.php']             = "Pos/data_pelanggan_tambah";
-$route['pos/trans_jual.php']                        = "Pos/trans_jual";
-$route['pos/trans_jual_inv.php']                    = "Pos/trans_jual_invoice";
-$route['pos/trans_jual_inv_print_dm.php']           = "Pos/trans_jual_invoice_print_dm";
-$route['pos/trans_jual_list.php']                   = "Pos/trans_jual_list";
-$route['pos/trans_jual_simpan.php']                 = "Pos/trans_jual_simpan";
-$route['pos/trans_jual_hapus.php']                  = "Pos/trans_jual_hapus";
-$route['pos/set_trans_jual.php']                    = "Pos/set_trans_jual";
-$route['pos/set_trans_jual_proses.php']             = "Pos/set_trans_jual_proses";
-$route['pos/set_trans_jual_upd.php']                = "Pos/set_trans_jual_upd";
-$route['pos/set_trans_jual_upd_proses.php']         = "Pos/set_trans_jual_upd_proses";
-$route['pos/set_trans_jual_simpan_item.php']        = "Pos/set_trans_jual_simpan_item";
-$route['pos/set_trans_jual_hapus_item.php']         = "Pos/set_trans_jual_hapus_item";
-$route['pos/set_trans_jual_batal.php']              = "Pos/set_trans_jual_batal";
-$route['pos/set_trans_jual_batal_post.php']         = "Pos/set_trans_jual_batal_posting";
-$route['pos/set_trans_jual_cari.php']               = "Pos/set_trans_jual_cari";
-$route['pos/set_pelanggan_simpan.php']              = "Pos/set_pelanggan_simpan";
-$route['pos/json_customer.php']                     = "Pos/json_customer";
-$route['pos/json_item.php']                         = "Pos/json_item";
+// Untuk penjualan bebas seperti apotik dll
+$route['pos/index.php']                                 = "Pos/Index";
+$route['pos/data_pelanggan_tambah.php']                 = "Pos/data_pelanggan_tambah";
+$route['pos/trans_jual.php']                            = "Pos/trans_jual";
+$route['pos/trans_jual_inv.php']                        = "Pos/trans_jual_invoice";
+$route['pos/trans_jual_inv_print_dm.php']               = "Pos/trans_jual_invoice_print_dm";
+$route['pos/trans_jual_list.php']                       = "Pos/trans_jual_list";
+$route['pos/trans_jual_simpan.php']                     = "Pos/trans_jual_simpan";
+$route['pos/trans_jual_hapus.php']                      = "Pos/trans_jual_hapus";
+$route['pos/set_trans_jual.php']                        = "Pos/set_trans_jual";
+$route['pos/set_trans_jual_proses.php']                 = "Pos/set_trans_jual_proses";
+$route['pos/set_trans_jual_upd.php']                    = "Pos/set_trans_jual_upd";
+$route['pos/set_trans_jual_upd_proses.php']             = "Pos/set_trans_jual_upd_proses";
+$route['pos/set_trans_jual_simpan_item.php']            = "Pos/set_trans_jual_simpan_item";
+$route['pos/set_trans_jual_hapus_item.php']             = "Pos/set_trans_jual_hapus_item";
+$route['pos/set_trans_jual_batal.php']                  = "Pos/set_trans_jual_batal";
+$route['pos/set_trans_jual_batal_post.php']             = "Pos/set_trans_jual_batal_posting";
+$route['pos/set_trans_jual_cari.php']                   = "Pos/set_trans_jual_cari";
+$route['pos/set_pelanggan_simpan.php']                  = "Pos/set_pelanggan_simpan";
+$route['pos/json_customer.php']                         = "Pos/json_customer";
+$route['pos/json_item.php']                             = "Pos/json_item";
 
 /* -- e-PASIEN -- */
-$route['pasien/login.php']                          = "Pasien/login";
-$route['pasien/logout.php']                         = "Pasien/logout";
-$route['pasien/cek_login.php']                      = "Pasien/cek_login";
-$route['pasien/cek_login2.php']                     = "Pasien/cek_login2";
-$route['pasien/dashboard.php']                      = "Pasien/dashboard";
-$route['pasien/pendaftaran.php']                    = "Pasien/pendaftaran";
-$route['pasien/pendaftaran_baru.php']               = "Pasien/pendaftaran_baru";
-$route['pasien/profile.php']                        = "Pasien/profile";
-$route['pasien/detail.php']                         = "Pasien/detail";
-$route['pasien/riwayat_lab.php']                    = "Pasien/riwayat_lab";
-$route['pasien/riwayat_rad.php']                    = "Pasien/riwayat_rad";
-$route['pasien/riwayat_berkas.php']                 = "Pasien/riwayat_berkas";
-$route['pasien/set_daftar.php']                     = "Pasien/set_daftar";
-$route['pasien/set_daftar_baru.php']                = "Pasien/set_daftar_baru";
-$route['pasien/set_daftar_hapus.php']               = "Pasien/set_daftar_hapus";
-$route['pasien/surat/cetak_pdf_lab.php']            = "Pasien/pdf_riwayat_lab";
-$route['pasien/surat/cetak_pdf_rad.php']            = "Pasien/pdf_riwayat_rad";
-$route['pasien/surat/cetak_pdf_berkas.php']         = "Pasien/pdf_riwayat_berkas";
+$route['pasien/login.php']                              = "Pasien/login";
+$route['pasien/logout.php']                             = "Pasien/logout";
+$route['pasien/cek_login.php']                          = "Pasien/cek_login";
+$route['pasien/cek_login2.php']                         = "Pasien/cek_login2";
+$route['pasien/dashboard.php']                          = "Pasien/dashboard";
+$route['pasien/pendaftaran.php']                        = "Pasien/pendaftaran";
+$route['pasien/pendaftaran_baru.php']                   = "Pasien/pendaftaran_baru";
+$route['pasien/profile.php']                            = "Pasien/profile";
+$route['pasien/detail.php']                             = "Pasien/detail";
+$route['pasien/riwayat_lab.php']                        = "Pasien/riwayat_lab";
+$route['pasien/riwayat_rad.php']                        = "Pasien/riwayat_rad";
+$route['pasien/riwayat_berkas.php']                     = "Pasien/riwayat_berkas";
+$route['pasien/set_daftar.php']                         = "Pasien/set_daftar";
+$route['pasien/set_daftar_baru.php']                    = "Pasien/set_daftar_baru";
+$route['pasien/set_daftar_hapus.php']                   = "Pasien/set_daftar_hapus";
+$route['pasien/surat/cetak_pdf_lab.php']                = "Pasien/pdf_riwayat_lab";
+$route['pasien/surat/cetak_pdf_rad.php']                = "Pasien/pdf_riwayat_rad";
+$route['pasien/surat/cetak_pdf_berkas.php']             = "Pasien/pdf_riwayat_berkas";
 /* -- PASIEN -- */
 
 /* Pengaturan */
-$route['pengaturan/index.php']                      = "pengaturan/index";
-$route['pengaturan/set_pengaturan.php']             = "pengaturan/set_pengaturan";
-$route['pengaturan/data_cabang_list.php']           = "pengaturan/cabang_list";
-$route['pengaturan/data_cabang_simpan.php']         = "pengaturan/cabang_simpan";
-$route['pengaturan/data_cabang_update.php']         = "pengaturan/cabang_update";
-$route['pengaturan/data_cabang_hapus.php']          = "pengaturan/cabang_hapus";
-$route['pengaturan/data_user_list.php']             = "pengaturan/user_list";
-$route['pengaturan/data_user_simpan.php']           = "pengaturan/user_simpan";
-$route['pengaturan/data_user_update.php']           = "pengaturan/user_update";
-$route['pengaturan/data_user_hapus.php']            = "pengaturan/user_hapus";
-$route['profile.php']                               = "pengaturan/profile";
-$route['set_profile_update.php']                    = "pengaturan/set_profile_update";
-
-/* -- Set Cabang -- */
-// $route['sinkronisasi/data_export_list.php']      = "sinkronisasi/trans_eksport";
-// $route['sinkronisasi/data_import_list.php']      = "sinkronisasi/trans_import";
-
-// $route['sinkronisasi/export_create.php']         = "sinkronisasi/eksport_create";
-// $route['sinkronisasi/export_download.php']       = "sinkronisasi/eksport_download";
-// $route['sinkronisasi/export_hapus.php']          = "sinkronisasi/eksport_hapus";
-
-// $route['sinkronisasi/import_create.php']         = "sinkronisasi/import_create";
-// $route['sinkronisasi/import_download.php']       = "sinkronisasi/import_download";
-// $route['sinkronisasi/import_hapus.php']          = "sinkronisasi/import_hapus";
-
-// $route['pengaturan/data_app_list.php']           = "pengaturan/app_list";
-// $route['pengaturan/data_app_simpan.php']         = "pengaturan/app_simpan";
-// $route['pengaturan/data_app_update.php']         = "pengaturan/app_update";
-// $route['pengaturan/data_app_hapus.php']          = "pengaturan/app_hapus";
-/* -- End Set Cabang -- */
-
-$route['pengaturan/set_cari_user.php']              = "pengaturan/set_cari_user";
-$route['pengaturan/set_cari_cabang.php']            = "pengaturan/set_cari_cabang";
-
-$route['json_member.php']                           = "transaksi/json_member";
-$route['logout.php']                                = "login/logout";
-
-$route['transaksi/cetak_nota_termal.php']           = "cetak/termal_ctk";
+$route['pengaturan/index.php']                          = "pengaturan/index";
+$route['pengaturan/set_pengaturan.php']                 = "pengaturan/set_pengaturan";
+$route['pengaturan/data_cabang_list.php']               = "pengaturan/cabang_list";
+$route['pengaturan/data_cabang_simpan.php']             = "pengaturan/cabang_simpan";
+$route['pengaturan/data_cabang_update.php']             = "pengaturan/cabang_update";
+$route['pengaturan/data_cabang_hapus.php']              = "pengaturan/cabang_hapus";
+$route['pengaturan/data_user_list.php']                 = "pengaturan/user_list";
+$route['pengaturan/data_user_simpan.php']               = "pengaturan/user_simpan";
+$route['pengaturan/data_user_update.php']               = "pengaturan/user_update";
+$route['pengaturan/data_user_hapus.php']                = "pengaturan/user_hapus";
+$route['profile.php']                                   = "pengaturan/profile";
+$route['set_profile_update.php']                        = "pengaturan/set_profile_update";
 
 
-$route['medcheck/add_param.php']                    = "medcheck/add_param";
-$route['medcheck/add_param_prod.php']               = "medcheck/add_param_prod";
-$route['medcheck/search_parameters.php']            = "medcheck/search_parameters";
+$route['pengaturan/set_cari_user.php']                  = "pengaturan/set_cari_user";
+$route['pengaturan/set_cari_cabang.php']                = "pengaturan/set_cari_cabang";
 
-$route['master/set_kategori_cari.php'] = 'master/set_kategori_cari';
+$route['json_member.php']                               = "transaksi/json_member";
+$route['logout.php']                                    = "login/logout";
+
+$route['transaksi/cetak_nota_termal.php']               = "cetak/termal_ctk";
+
+
+$route['medcheck/add_param.php']                        = "medcheck/add_param";
+$route['medcheck/add_param_prod.php']                   = "medcheck/add_param_prod";
+$route['medcheck/search_parameters.php']                = "medcheck/search_parameters";
+
+$route['master/set_kategori_cari.php']                  = 'master/set_kategori_cari';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

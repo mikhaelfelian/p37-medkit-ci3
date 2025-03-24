@@ -1410,6 +1410,18 @@ class master extends CI_Controller {
             redirect();
         }
     }
+
+    public function set_merk_cari() {
+        if (Akses::aksesLogin() == TRUE) {
+            redirect('master/data_merk_list.php?' . http_build_query($_GET));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+    
     
     public function data_klinik_list() {
         if (Akses::aksesLogin() == TRUE) {
@@ -3075,33 +3087,53 @@ class master extends CI_Controller {
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('item_id', 'ID Barang', 'required');
+            $this->form_validation->set_rules('kode', 'Kode', 'required');
+            $this->form_validation->set_rules('item', 'Item', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
                     'item_id'         => form_error('item_id'),
+                    'kode'            => form_error('kode'),
+                    'item'            => form_error('item'),
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             } else {
-                $sql         = $this->db->where('kode', $kode)->get('tbl_m_produk')->row();
-                $sql_satuan  = $this->db->where('id', (!empty($sat) ? $sat : $sql->id_satuan))->get('tbl_m_satuan')->row();
-                
-                $data_penj = array(
-                    'id_produk'         => general::dekrip($id),
-                    'id_produk_item'    => (int)$sql->id,
-                    'id_satuan'         => (int)$sql_satuan->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'kode'              => $sql->kode,
-                    'item'              => $sql->produk,
-                    'harga'             => (float)$sql->harga_jual,      
-                    'jml'               => (int)$jml,
-                    'jml_satuan'        => (int)$sql_satuan->jml,
-                    'satuan'            => $sql_satuan->satuanTerkecil,
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Item lab berhasil di tambahkan</div>');
-                crud::simpan('tbl_m_produk_ref', $data_penj);
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_barang_tambah.php?id='.$id));
+                        return;
+                    }
+                    
+                    $sql         = $this->db->where('kode', $kode)->get('tbl_m_produk')->row();
+                    $sql_satuan  = $this->db->where('id', (!empty($sat) ? $sat : $sql->id_satuan))->get('tbl_m_satuan')->row();
+                    
+                    $data_penj = array(
+                        'id_produk'         => general::dekrip($id),
+                        'id_produk_item'    => (int)$sql->id,
+                        'id_satuan'         => (int)$sql_satuan->id,
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'kode'              => $sql->kode,
+                        'item'              => $sql->produk,
+                        'harga'             => (float)$sql->harga_jual,      
+                        'jml'               => (int)$jml,
+                        'jml_satuan'        => (int)$sql_satuan->jml,
+                        'satuan'            => $sql_satuan->satuanTerkecil,
+                    );
+                    
+                    if (!crud::simpan('tbl_m_produk_ref', $data_penj)) {
+                        throw new Exception("Gagal menyimpan data item");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Item lab berhasil di tambahkan");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_barang_tambah.php?id='.$id));
+                    return;
+                }
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             }
         } else {
@@ -3127,37 +3159,51 @@ class master extends CI_Controller {
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('id', 'ID Barang', 'required');
-//            $this->form_validation->set_rules('item_periksa', 'Pemeriksaan', 'required');
-//            $this->form_validation->set_rules('item_nilai', 'Nilai', 'required');
+            $this->form_validation->set_rules('item_periksa', 'Nama Pemeriksaan', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
                     'id'            => form_error('id'),
-//                    'item_periksa'  => form_error('item_periksa'),
-//                    'item_nilai'    => form_error('item_nilai'),
+                    'item_periksa'  => form_error('item_periksa'),
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_barang_tambah.php?id='.$id.'#item-ref-input'));
             } else {
-                $sql         = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
-                
-                $data_penj = array(
-                    'id_produk'         => (int)$sql->id,
-                    'id_user'           => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'item_name'         => $itm_nm,
-                    'item_value'        => $itm_val,
-                    'item_value_l1'     => $itm_l1,
-                    'item_value_l2'     => $itm_l2,
-                    'item_value_p1'     => $itm_p1,
-                    'item_value_p2'     => $itm_p2,
-                    'item_satuan'       => $itm_sat,
-                    'status'            => (int)$sql->status,
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Item lab berhasil di tambahkan</div>');
-                crud::simpan('tbl_m_produk_ref_input', $data_penj);
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_barang_tambah.php?id='.$id.'#item-ref-input'));
+                        return;
+                    }
+                    
+                    $sql = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
+                    
+                    $data_penj = array(
+                        'id_produk'         => (int)$sql->id,
+                        'id_user'           => $this->ion_auth->user()->row()->id,
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'item_name'         => $itm_nm,
+                        'item_value'        => $itm_val,
+                        'item_value_l1'     => $itm_l1,
+                        'item_value_l2'     => $itm_l2,
+                        'item_value_p1'     => $itm_p1,
+                        'item_value_p2'     => $itm_p2,
+                        'item_satuan'       => $itm_sat,
+                        'status'            => (int)$sql->status,
+                    );
+                    
+                    if (!crud::simpan('tbl_m_produk_ref_input', $data_penj)) {
+                        throw new Exception("Gagal menyimpan data item lab");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Item lab berhasil di tambahkan");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_barang_tambah.php?id='.$id.'#item-ref-input'));
+                    return;
+                }
                 redirect(base_url('master/data_barang_tambah.php?id='.$id.'#item-ref-input'));
             }
         } else {
@@ -3169,10 +3215,10 @@ class master extends CI_Controller {
     
     public function data_barang_simpan_nom() {
         if (Akses::aksesLogin() == TRUE) {
-            $id      = $this->input->post('id');
-            $ket     = $this->input->post('keterangan');
-            $harga_nm= str_replace('.','',$this->input->post('nominal'));
-            $harga_jl= str_replace('.','',$this->input->post('harga_jual'));
+            $id         = $this->input->post('id');
+            $ket        = $this->input->post('keterangan');
+            $harga_nm   = str_replace('.','',$this->input->post('nominal'));
+            $harga_jl   = str_replace('.','',$this->input->post('harga_jual'));
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
@@ -3432,14 +3478,10 @@ class master extends CI_Controller {
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('id', 'ID Barang', 'required');
-//            $this->form_validation->set_rules('item_periksa', 'Pemeriksaan', 'required');
-//            $this->form_validation->set_rules('item_nilai', 'Nilai', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
                     'id'            => form_error('id'),
-//                    'item_periksa'  => form_error('item_periksa'),
-//                    'item_nilai'    => form_error('item_nilai'),
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
@@ -3512,101 +3554,123 @@ class master extends CI_Controller {
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             } else {
-                $kodebar     = 'B'.sprintf("%010s", general::dekrip($id));
-                $sql_brg     = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
-                $sql_brg_sat = $this->db->where('id_produk', general::dekrip($id))->where('id_satuan', $satuan)->get('tbl_m_produk_satuan')->row();
-                $kodebar = 'B' . sprintf("%010s", general::dekrip($id));
-                
-                $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
-                $sql_brg2= $this->db->get('tbl_m_produk');
-                $sql_kat = $this->db->where('id', $kategori)->get('tbl_m_kategori')->row();
-                $sql_gdg = $this->db->get('tbl_m_gudang')->result();
-                
-                $kd_item = $sql_kat->kategori.($sql_brg2->num_rows() + 1);
-                
-                $data_prod = array(
-                    'tgl_modif'         => date('Y-m-d H:i:s'),
-                    'id_kategori'       => (!empty($kat) ? $kat : 0),
-                    'id_kategori_lab'   => (!empty($kat_lab) ? $kat_lab : 0),
-                    'id_merk'           => (!empty($merk) ? $merk : 0),
-                    'id_satuan'         => (!empty($satuan) ? $satuan : 0),
-                    'kode'              => $kode,
-                    'barcode'           => (!empty($barcode) ? $barcode : '899'.sprintf("%07s",$kode_blk)),
-                    'produk'            => trim($brg),                     
-                    'produk_alias'      => trim($brg_alias),                   
-                    'produk_kand'       => trim($brg_kand),
-                    'remun_tipe'        => (!empty($rem_tipe) ? $rem_tipe : '0'),
-                    'remun_nom'         => (!empty($rem_nom) ? general::format_angka_db($rem_nom) : 0),
-                    'remun_perc'        => (!empty($rem_perc) ? ($rem_perc != 'Infinity' ? general::format_angka_db($rem_perc) : 0) : 0),
-                    'apres_tipe'        => (!empty($aps_tipe) ? $aps_tipe : '0'),
-                    'apres_nom'         => (!empty($aps_nom) ? $aps_nom : '0'),
-                    'apres_perc'        => (!empty($aps_perc) ? $aps_perc : '0'),
-                    'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
-                    'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
-                    'harga_jual_het'    => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
-                    'jml_limit'         => (!empty($jml_lmt) ? $jml_lmt : '0'),
-                    'status_subt'       => (!empty($stat_subt) ? $stat_subt : '0'),
-                    'status_racikan'    => (!empty($tipe_rc) ? $tipe_rc : '0'),
-                    'status_etiket'     => (!empty($tipe_et) ? $tipe_et : '0'),
-                    'status'            => (!empty($tipe) ? $tipe : '0'),
-                );
-                
-                $data_prod_jl = array(
-                    'kode'              => $kode,
-                    'produk'            => trim($brg),
-                );
-                
-                $data_prod_hs = array(
-                    'kode'              => $kode,
-                    'produk'            => trim($brg),
-                );
-                
-                if($stat_subt == '1'){
-                    foreach ($sql_gdg as $gudang) {
-                        $sql_brg_st  = $this->db->where('id_produk', $sql_brg->id)->where('id_gudang', $gudang->id)->get('tbl_m_produk_stok');
-                        
-                        $data_stok = array(
-                            'id_produk'     => $sql_brg->id,
-                            'id_satuan'     => $sql_sat->id,
-                            'id_gudang'     => $gudang->id,
-                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-//                            'jml'           => '0',
-                            'jml_satuan'    => $sql_sat->jml,
-                            'satuan'        => $sql_sat->satuanTerkecil,
-                            'satuanKecil'   => $sql_sat->satuanTerkecil,
-                            'status'        => $gudang->status,
-                        );
-                        
-                        if($sql_brg_st->num_rows() == 0){
-                            $this->db->insert('tbl_m_produk_stok', $data_stok);
-                        }
-                    }                          
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_barang_tambah.php?id='.$id));
+                        return;
+                    }
+                    
+                    $kodebar     = 'B'.sprintf("%010s", general::dekrip($id));
+                    $sql_brg     = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
+                    $sql_brg_sat = $this->db->where('id_produk', general::dekrip($id))->where('id_satuan', $satuan)->get('tbl_m_produk_satuan')->row();
+                    $kodebar     = 'B' . sprintf("%010s", general::dekrip($id));
+                    
+                    $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
+                    $sql_brg2= $this->db->get('tbl_m_produk');
+                    $sql_kat = $this->db->where('id', $kat)->get('tbl_m_kategori')->row();
+                    $sql_gdg = $this->db->get('tbl_m_gudang')->result();
+                    
+                    $kd_item = $sql_kat->kategori.($sql_brg2->num_rows() + 1);
+                    
+                    $data_prod = array(
+                        'tgl_modif'         => date('Y-m-d H:i:s'),
+                        'id_kategori'       => (!empty($kat) ? $kat : 0),
+                        'id_kategori_lab'   => (!empty($kat_lab) ? $kat_lab : 0),
+                        'id_merk'           => (!empty($merk) ? $merk : 0),
+                        'id_satuan'         => (!empty($satuan) ? $satuan : 0),
+                        'kode'              => $kode,
+                        'barcode'           => (!empty($barcode) ? $barcode : '899'.sprintf("%07s",$kode_blk)),
+                        'produk'            => trim($brg),                     
+                        'produk_alias'      => trim($brg_alias),                   
+                        'produk_kand'       => trim($brg_kand),
+                        'remun_tipe'        => (!empty($rem_tipe) ? $rem_tipe : '0'),
+                        'remun_nom'         => (!empty($rem_nom) ? general::format_angka_db($rem_nom) : 0),
+                        'remun_perc'        => (!empty($rem_perc) ? ($rem_perc != 'Infinity' ? general::format_angka_db($rem_perc) : 0) : 0),
+                        'apres_tipe'        => (!empty($aps_tipe) ? $aps_tipe : '0'),
+                        'apres_nom'         => (!empty($aps_nom) ? $aps_nom : '0'),
+                        'apres_perc'        => (!empty($aps_perc) ? $aps_perc : '0'),
+                        'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
+                        'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
+                        'harga_jual_het'    => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
+                        'jml_limit'         => (!empty($jml_lmt) ? $jml_lmt : '0'),
+                        'status_subt'       => (!empty($stat_subt) ? $stat_subt : '0'),
+                        'status_racikan'    => (!empty($tipe_rc) ? $tipe_rc : '0'),
+                        'status_etiket'     => (!empty($tipe_et) ? $tipe_et : '0'),
+                        'status'            => (!empty($tipe) ? $tipe : '0'),
+                    );
+                    
+                    $data_prod_jl = array(
+                        'kode'              => $kode,
+                        'produk'            => trim($brg),
+                    );
+                    
+                    $data_prod_hs = array(
+                        'kode'              => $kode,
+                        'produk'            => trim($brg),
+                    );
+                    
+                    if($stat_subt == '1'){
+                        foreach ($sql_gdg as $gudang) {
+                            $sql_brg_st  = $this->db->where('id_produk', $sql_brg->id)->where('id_gudang', $gudang->id)->get('tbl_m_produk_stok');
+                            
+                            $data_stok = array(
+                                'id_produk'     => $sql_brg->id,
+                                'id_satuan'     => $sql_sat->id,
+                                'id_gudang'     => $gudang->id,
+                                'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                'jml_satuan'    => $sql_sat->jml,
+                                'satuan'        => $sql_sat->satuanTerkecil,
+                                'satuanKecil'   => $sql_sat->satuanTerkecil,
+                                'status'        => $gudang->status,
+                            );
+                            
+                            if($sql_brg_st->num_rows() == 0){
+                                if (!$this->db->insert('tbl_m_produk_stok', $data_stok)) {
+                                    throw new Exception("Gagal menambahkan stok produk");
+                                }
+                            }
+                        }                          
+                    }
+                    
+                    # Update data kode, detail penjualan, pembelian, history
+                    if (!$this->db->where('id_item', $sql_brg->id)->update('tbl_trans_medcheck_det', array('item' => trim($brg), 'kode' => $kode))) {
+                        throw new Exception("Gagal mengupdate data medcheck");
+                    }
+                    if (!$this->db->where('id_item', $sql_brg->id)->update('tbl_trans_jual_det', $data_prod_jl)) {
+                        throw new Exception("Gagal mengupdate data penjualan");
+                    }
+                    if (!$this->db->where('id_produk', $sql_brg->id)->update('tbl_trans_beli_po_det', $data_prod_jl)) {
+                        throw new Exception("Gagal mengupdate data pembelian PO");
+                    }
+                    if (!$this->db->where('id_produk', $sql_brg->id)->update('tbl_trans_beli_det', $data_prod_jl)) {
+                        throw new Exception("Gagal mengupdate data pembelian");
+                    }
+                    if (!$this->db->where('id_produk', $sql_brg->id)->update('tbl_m_produk_hist', $data_prod_hs)) {
+                        throw new Exception("Gagal mengupdate data history produk");
+                    }
+                    
+                    # Update data Produk
+                    if (!$this->db->where('id', $sql_brg->id)->update('tbl_m_produk', $data_prod)) {
+                        throw new Exception("Gagal mengupdate data produk");
+                    }
+                    
+                    # Sinkronkan dengan stok global
+                    $stok_glob = $this->db->select_sum('jml')->where('id_produk', $sql_brg->id)->get('tbl_m_produk_stok')->row();
+                    if (!$this->db->where('id', $sql_brg->id)->update('tbl_m_produk', array('jml' => $stok_glob->jml))) {
+                        throw new Exception("Gagal menyinkronkan stok global");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data barang berhasil disimpan");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_barang_tambah.php?id='.$id));
+                    return;
                 }
                 
-                # Update data kode, detail penjualan, pembelian, history
-                $this->db->where('id_item', $sql_brg->id)->update('tbl_trans_medcheck_det', $data_prod_jl);
-                $this->db->where('id_item', $sql_brg->id)->update('tbl_trans_jual_det', $data_prod_jl);
-                $this->db->where('id_produk', $sql_brg->id)->update('tbl_trans_beli_po_det', $data_prod_jl);
-                $this->db->where('id_produk', $sql_brg->id)->update('tbl_trans_beli_det', $data_prod_jl);
-                $this->db->where('id_produk', $sql_brg->id)->update('tbl_m_produk_hist', $data_prod_hs);
-                
-                # Update data Produk
-                $this->db->where('id', $sql_brg->id)->update('tbl_m_produk', $data_prod);
-                
-                # Sinkronkan dengan stok global
-                $stok_glob = $this->db->select_sum('jml')->where('id_produk', $sql_brg->id)->get('tbl_m_produk_stok')->row();
-                $this->db->where('id', $sql_brg->id)->update('tbl_m_produk', array('jml' => $stok_glob));
-                
-//                echo '<pre>';
-//                print_r($data_prod_jl);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($sql_brg_sat);
-//                echo '</pre>';
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data barang disimpan</div>');
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             }
         } else {

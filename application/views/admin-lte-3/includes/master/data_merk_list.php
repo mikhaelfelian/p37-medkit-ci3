@@ -50,7 +50,11 @@
                                         <td></td>
                                         <td><?php echo form_input(array('id' => 'merk', 'name' => 'merk', 'class' => 'form-control rounded-0', 'placeholder' => 'Merk ...')) ?></td>
                                         <td></td>
-                                        <td></td>
+                                        <td>
+                                            <button type="submit" class="btn btn-primary btn-flat rounded-0">
+                                                <i class="fas fa-search"></i> Cari
+                                            </button>
+                                        </td>
                                     </tr>
                                     <?php
                                     if (!empty($merk)) {
