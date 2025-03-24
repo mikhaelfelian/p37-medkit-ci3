@@ -42,7 +42,7 @@ $nm_file    = strtolower($pasien->nik);
                             </section>
                         </div>
                         <div class="card-footer p-0">
-                            <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
+                            <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block rounded-0"><i class="fa fa-camera"></i> Ambil Gambar</button>
                         </div>
                     </div>
                     <div class="card card-default">
@@ -58,12 +58,14 @@ $nm_file    = strtolower($pasien->nik);
                             </section>
                         </div>
                         <div class="card-footer p-0">
-                            <button type="button" onclick="takeSnapshot_id()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
+                            <button type="button" onclick="takeSnapshot_id()" class="btn btn-primary btn-flat btn-block rounded-0"><i class="fa fa-camera"></i> Ambil Gambar</button>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <?php echo form_open_multipart(base_url('master/data_pasien_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), 'autocomplete="off"') ?>
+                    <?php echo form_open_multipart(base_url('master/data_pasien_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), array('autocomplete' => 'off', 'id' => 'pasien_form')) ?>
+                    <?php echo add_form_protection(); ?>
+                    <?php echo add_double_submit_protection('pasien_form'); ?>
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Form Data Pasien</h3>
@@ -85,13 +87,13 @@ $nm_file    = strtolower($pasien->nik);
                                 <div class="col-md-6">
                                     <div class="form-group <?php echo (!empty($hasError['nik']) ? 'text-danger' : '') ?>">
                                         <label class="control-label">NIK* <small><i>(* KTP / Passport / KIA)</i></small></label>
-                                        <?php echo form_input(array('id' => 'nik', 'name' => 'nik', 'class' => 'form-control' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => $pasien->nik, 'placeholder' => 'Nomor Identitas ...')) ?>
+                                        <?php echo form_input(array('id' => 'nik', 'name' => 'nik', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => $pasien->nik, 'placeholder' => 'Nomor Identitas ...')) ?>
                                     </div>
                                     <div class="row">
                                         <div class="col-3">
                                             <div class="form-group <?php echo (!empty($hasError['gelar']) ? 'text-danger' : '') ?>">
                                                 <label class="control-label">Gelar*</label>
-                                                <select name="gelar" class="form-control <?php echo (!empty($hasError['gelar']) ? 'is-invalid' : '') ?>">
+                                                <select name="gelar" class="form-control rounded-0 <?php echo (!empty($hasError['gelar']) ? 'is-invalid' : '') ?>">
                                                     <option value="">- Pilih -</option>
                                                     <?php foreach ($gelar as $gelar) { ?>
                                                         <option value="<?php echo $gelar->id ?>" <?php echo ($gelar->id == $pasien->id_gelar ? 'selected' : '') ?>><?php echo $gelar->gelar ?></option>
@@ -102,14 +104,14 @@ $nm_file    = strtolower($pasien->nik);
                                         <div class="col-9">
                                             <div class="form-group <?php echo (!empty($hasError['nama']) ? 'text-danger' : '') ?>">
                                                 <label class="control-label">Nama Lengkap*</label>
-                                                <?php echo form_input(array('id' => 'nama', 'name' => 'nama', 'class' => 'form-control' . (!empty($hasError['nama']) ? ' is-invalid' : ''), 'value' => $pasien->nama, 'placeholder' => 'John Doe ...')) ?>
+                                                <?php echo form_input(array('id' => 'nama', 'name' => 'nama', 'class' => 'form-control rounded-0' . (!empty($hasError['nama']) ? ' is-invalid' : ''), 'value' => $pasien->nama, 'placeholder' => 'John Doe ...')) ?>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group <?php echo (!empty($hasError['jns_klm']) ? 'text-danger' : '') ?>">
                                         <label class="control-label">Jenis Kelamin*</label>
-                                        <select name="jns_klm" class="form-control <?php echo (!empty($hasError['jns_klm']) ? 'is-invalid' : '') ?>">
+                                        <select name="jns_klm" class="form-control rounded-0 <?php echo (!empty($hasError['jns_klm']) ? 'is-invalid' : '') ?>">
                                             <option value="">- Pilih -</option>
                                             <option value="L" <?php echo ('L' == $pasien->jns_klm ? 'selected' : '') ?>>Laki - laki</option>
                                             <option value="P" <?php echo ('P' == $pasien->jns_klm ? 'selected' : '') ?>>Perempuan</option>
@@ -117,41 +119,41 @@ $nm_file    = strtolower($pasien->nik);
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['tmp_lahir']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Tempat Lahir</label>
-                                        <?php echo form_input(array('id' => 'tmp_lahir', 'name' => 'tmp_lahir', 'class' => 'form-control', 'value' => $pasien->tmp_lahir, 'placeholder' => 'Semarang ...')) ?>
+                                        <?php echo form_input(array('id' => 'tmp_lahir', 'name' => 'tmp_lahir', 'class' => 'form-control rounded-0', 'value' => $pasien->tmp_lahir, 'placeholder' => 'Semarang ...')) ?>
                                     </div>
 
-                                    <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
-                                        <label class="control-label">Tgl Lahir</label>
+                                    <div class="form-group <?php echo (!empty($hasError['tgl_lahir']) ? 'text-danger' : '') ?>">
+                                        <label class="control-label">Tgl Lahir* <small><i>(* Required)</i></small></label>
                                         <div class="input-group mb-3">
                                             <div class="input-group-append">
-                                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                <span class="input-group-text rounded-0 <?php echo (!empty($hasError['tgl_lahir']) ? 'is-invalid' : '') ?>"><i class="fas fa-calendar"></i></span>
                                             </div>
-                                            <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control', 'value' => $this->tanggalan->tgl_indo8($pasien->tgl_lahir), 'readonly'=>'TRUE', 'placeholder' => 'Isikan dengan format 15-02-1992 ...')) ?>
+                                            <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control rounded-0' . (!empty($hasError['tgl_lahir']) ? ' is-invalid' : ''), 'value' => $this->tanggalan->tgl_indo8($pasien->tgl_lahir), 'readonly'=>'TRUE', 'placeholder' => 'Isikan dengan format 15-02-1992 ...')) ?>
                                         </div>                                        
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
                                         <label class="control-label">No. HP</label>
-                                        <?php echo form_input(array('id' => 'no_hp', 'name' => 'no_hp', 'class' => 'form-control', 'value' => $pasien->no_hp, 'placeholder' => 'Nomor kontak WA pasien / keluarga pasien ...')) ?>
+                                        <?php echo form_input(array('id' => 'no_hp', 'name' => 'no_hp', 'class' => 'form-control rounded-0', 'value' => $pasien->no_hp, 'placeholder' => 'Nomor kontak WA pasien / keluarga pasien ...')) ?>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputEmail3" class="control-label">Upload Foto</label>
-                                        <input type="file" name="fupload" class="form-control">
+                                        <input type="file" name="fupload" class="form-control rounded-0">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group <?php echo (!empty($hasError['nik']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Alamat KTP<small><i>* Sesuai Identitas</i></small></label>
-                                        <?php echo form_textarea(array('id' => 'alamat', 'name' => 'alamat', 'class' => 'form-control', 'value' => $pasien->alamat, 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat lengkap ...')) ?>
+                                        <?php echo form_textarea(array('id' => 'alamat', 'name' => 'alamat', 'class' => 'form-control rounded-0', 'value' => $pasien->alamat, 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat lengkap ...')) ?>
                                     </div>
 
                                     <div class="form-group <?php echo (!empty($hasError['nik']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Alamat Domisili<small><i>* Sesuai Domisili</i></small></label>
-                                        <?php echo form_textarea(array('id' => 'alamat_dom', 'name' => 'alamat_dom', 'class' => 'form-control', 'value' => $pasien->alamat_dom, 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat lengkap ...')) ?>
+                                        <?php echo form_textarea(array('id' => 'alamat_dom', 'name' => 'alamat_dom', 'class' => 'form-control rounded-0', 'value' => $pasien->alamat_dom, 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat lengkap ...')) ?>
                                     </div>
 
                                     <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Pekerjaan</label>
-                                        <select name="pekerjaan" class="form-control">
+                                        <select name="pekerjaan" class="form-control rounded-0">
                                             <option value="">- Pilih -</option>
                                             <?php foreach ($kerja as $kerja) { ?>
                                                 <option value="<?php echo $kerja->id ?>" <?php echo ($kerja->id == $pasien->id_pekerjaan ? 'selected' : '') ?>><?php echo $kerja->jenis ?></option>
@@ -161,7 +163,7 @@ $nm_file    = strtolower($pasien->nik);
 
                                     <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
                                         <label class="control-label">No. Rumah</label>
-                                        <?php echo form_input(array('id' => 'no_rmh', 'name' => 'no_rmh', 'class' => 'form-control', 'value' => $pasien->no_telp, 'placeholder' => 'Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...')) ?>
+                                        <?php echo form_input(array('id' => 'no_rmh', 'name' => 'no_rmh', 'class' => 'form-control rounded-0', 'value' => $pasien->no_telp, 'placeholder' => 'Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...')) ?>
                                     </div>
                                 </div>
                             </div>
@@ -172,7 +174,7 @@ $nm_file    = strtolower($pasien->nik);
                                     <!--<button type="button" onclick="window.location.href = '<?php // echo base_url('master/data_pasien_list.php')      ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>-->
                                 </div>
                                 <div class="col-lg-6 text-right">
-                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>
+                                    <button type="submit" class="btn btn-primary btn-flat rounded-0"><i class="fa fa-save"></i> Simpan</button>
                                 </div>
                             </div>                            
                         </div>

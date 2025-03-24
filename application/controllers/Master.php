@@ -7404,264 +7404,6 @@ class master extends CI_Controller {
             redirect();
         }
     }
-    
-    
-    public function data_biaya_list() {
-        if (Akses::aksesLogin() == TRUE) {
-            $query      = $this->input->get('q');
-            $hal        = $this->input->get('halaman');
-            $jml        = $this->input->get('jml');
-            $jml_hal    = (!empty($jml) ? $jml  : $this->db->where('tipe', 'keluar')->get('tbl_akt_kas')->num_rows());
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-            
-            $data['hasError'] = $this->session->flashdata('form_error');
-                        
-            $config['base_url']              = base_url('master/data_biaya_list.php?'.(isset($_GET['q']) ? '&q='.$_GET['q'].'&jml='.$_GET['jml'] : ''));
-            $config['total_rows']            = $jml_hal;
-            
-            $config['query_string_segment']  = 'halaman';
-            $config['page_query_string']     = TRUE;
-            $config['per_page']              = $pengaturan->jml_item;
-            $config['num_links']             = 2;
-            
-            $config['first_tag_open']        = '<li>';
-            $config['first_tag_close']       = '</li>';
-            
-            $config['prev_tag_open']         = '<li>';
-            $config['prev_tag_close']        = '</li>';
-            
-            $config['num_tag_open']          = '<li>';
-            $config['num_tag_close']         = '</li>';
-            
-            $config['next_tag_open']         = '<li>';
-            $config['next_tag_close']        = '</li>';
-            
-            $config['last_tag_open']         = '<li>';
-            $config['last_tag_close']        = '</li>';
-            
-            $config['cur_tag_open']          = '<li><a href="#"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
-            
-            $config['first_link']            = '&laquo;';
-            $config['prev_link']             = '&lsaquo;';
-            $config['next_link']             = '&rsaquo;';
-            $config['last_link']             = '&raquo;';
-            
-            
-            if(!empty($hal)){
-                if (!empty($query)) {
-                    $data['biaya'] = $this->db->select('DATE(tgl_simpan) as tgl, id, id_jenis, kode, keterangan, nominal')->where('tipe', 'keluar')->limit($config['per_page'],$hal)->like('nama', $query)->get('tbl_akt_kas')->result();
-                } else {
-                    $data['biaya'] = $this->db->select('DATE(tgl_simpan) as tgl, id, id_jenis, kode, keterangan, nominal')->where('tipe', 'keluar')->limit($config['per_page'],$hal)->order_by('id','asc')->get('tbl_akt_kas')->result();
-                }
-            }else{
-                if (!empty($query)) {
-                    $data['biaya'] = $this->db->select('DATE(tgl_simpan) as tgl, id, id_jenis, kode, keterangan, nominal')->where('tipe', 'keluar')->limit($config['per_page'],$hal)->like('nama', $query)->get('tbl_akt_kas')->result();
-                } else {
-                    $data['biaya'] = $this->db->select('DATE(tgl_simpan) as tgl, id, id_jenis, kode, keterangan, nominal')->where('tipe', 'keluar')->limit($config['per_page'])->order_by('id','asc')->get('tbl_akt_kas')->result();
-                }
-            }
-            
-            $this->pagination->initialize($config);
-            
-            $data['total_rows'] = $config['total_rows'];
-            $data['PerPage']    = $config['per_page'];
-            $data['pagination'] = $this->pagination->create_links();
-
-            $this->load->view('admin-lte-2/1_atas', $data);
-            $this->load->view('admin-lte-2/2_header', $data);
-//            $this->load->view('admin-lte-2/3_navbar', $data);
-            $this->load->view('admin-lte-2/includes/master/data_biaya_list', $data);
-            $this->load->view('admin-lte-2/5_footer', $data);
-            $this->load->view('admin-lte-2/6_bawah', $data);
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_biaya_tambah() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id   = $this->input->get('id');
-            
-            $data['no_nota']    = general::no_nota('','tbl_akt_kas', 'kode', "WHERE tipe='keluar'"); //no_nota($string,$tabel_nama, $tabel_kolom, $where)
-            $data['jenis']      = $this->db->get('tbl_akt_kas_jns')->result();
-            $data['biaya']      = $this->db->select('DATE(tgl_simpan) as tgl, id, id_jenis, kode, keterangan, nominal')->where('id', general::dekrip($id))->get('tbl_akt_kas')->row();
-
-            $this->load->view('admin-lte-2/1_atas', $data);
-            $this->load->view('admin-lte-2/2_header', $data);
-//            $this->load->view('admin-lte-2/3_navbar', $data);
-            $this->load->view('admin-lte-2/includes/master/data_biaya_tambah', $data);
-            $this->load->view('admin-lte-2/5_footer', $data);
-            $this->load->view('admin-lte-2/6_bawah', $data);
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_biaya_jns_simpan() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id           = $this->input->post('id');
-            $jenis        = $this->input->post('jenis');
-            $nominal      = str_replace('.','', $this->input->post('nominal'));
-            
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('jenis', 'jenis', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'jenis'     => form_error('jenis'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_biaya_tambah.php?case=jenis_biaya'.(!empty($id) ? '&id='.$id : '')));
-            } else {                
-                $data_penj = array(
-                    'jenis'      => $jenis,
-                    'keterangan' => '-',
-                    'nominal'    => $nominal,
-                );
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data jenis biaya disimpan</div>');
-                crud::simpan('tbl_akt_kas_jns', $data_penj);
-                redirect(base_url('master/data_biaya_tambah.php?case=jenis_biaya'.(!empty($id) ? '&id='.$id : '')));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_biaya_simpan() {
-        if (Akses::aksesLogin() == TRUE) {
-            $tgl          = explode('/',$this->input->post('tgl'));
-            $kode         = $this->input->post('kode');
-            $jenis        = $this->input->post('jenis');
-            $ket          = $this->input->post('keterangan');
-            $nominal      = str_replace('.','', $this->input->post('nominal'));
-            
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('kode', 'kode', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'kode'     => form_error('kode'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_biaya_tambah.php'));
-            } else {                
-                $data_penj = array(
-                    'tgl_simpan'  => $tgl[2].'-'.$tgl[0].'-'.$tgl[1].' '.date('H:i:s'),
-                    'kode'        => $kode,
-                    'id_user'     => $this->ion_auth->user()->row()->id,
-                    'id_jenis'    => $jenis,
-                    'keterangan'  => $ket,
-                    'nominal'     => $nominal,
-                    'debet'       => $nominal,
-                    'tipe'        => 'keluar',
-                    'status_kas'  => 'kas',
-                );
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data member berhasil diubah</div>');
-                crud::simpan('tbl_akt_kas', $data_penj);
-                redirect(base_url('master/data_biaya_list.php'));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_biaya_update() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id           = $this->input->post('id');
-            $tgl          = explode('/',$this->input->post('tgl'));
-            $kode         = $this->input->post('kode');
-            $jenis        = $this->input->post('jenis');
-            $ket          = $this->input->post('keterangan');
-            $nominal      = str_replace('.','', $this->input->post('nominal'));
-            
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('kode', 'Kode', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'kode'     => form_error('kode'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_biaya_tambah.php?id='.$id));
-            } else {                
-                $data_penj = array(
-                    'tgl_simpan'  => $tgl[2].'-'.$tgl[0].'-'.$tgl[1].' '.date('H:i:s'),
-                    'kode'        => $kode,
-                    'id_user'     => $this->ion_auth->user()->row()->id,
-                    'id_jenis'    => $jenis,
-                    'keterangan'  => $ket,
-                    'nominal'     => $nominal,
-                    'debet'       => $nominal,
-                    'tipe'        => 'keluar',
-                    'status_kas'  => 'kas',
-                );
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data biaya berhasil diubah</div>');
-                crud::update('tbl_akt_kas','id', general::dekrip($id),$data_penj);
-                redirect(base_url('master/data_biaya_tambah.php?id='.$id));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_biaya_hapus() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id = $this->input->get('id');
-            
-            if(!empty($id)){
-                crud::delete('tbl_akt_kas','id',general::dekrip($id));
-            }
-            
-            redirect(base_url('master/data_biaya_list.php'));
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_biaya_jns_hapus() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id  = $this->input->get('id');
-            $aid = $this->input->get('aid');
-            
-            if(!empty($aid)){
-                crud::delete('tbl_akt_kas_jns','id',general::dekrip($aid));
-            }
-            
-            redirect(base_url('master/data_biaya_tambah.php?case=jenis_biaya&id='.$id));
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }    
 
     public function data_pasien_list() {
         if (Akses::aksesLogin() == TRUE) {
@@ -7829,7 +7571,7 @@ class master extends CI_Controller {
             $nama         = $this->input->post('nama');
             $no_hp        = $this->input->post('no_hp');
             $tmp_lahir    = $this->input->post('tmp_lahir');
-            $tgl_lahir    = str_replace('/', '-', $this->input->post('tgl_lahir'));
+            $tgl_lahir    = Tanggalan::tgl_indo_sys($this->input->post('tgl_lahir'));
             $alamat       = $this->input->post('alamat');
             $jns_klm      = $this->input->post('jns_klm');
             $pekerjaan    = $this->input->post('pekerjaan');
@@ -7843,78 +7585,61 @@ class master extends CI_Controller {
             $this->form_validation->set_rules('gelar', 'Gelar', 'required');
             $this->form_validation->set_rules('nama', 'Nama Pasien', 'required');
             $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
+            $this->form_validation->set_rules('tgl_lahir', 'Tanggal Lahir', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
-                    'nik'     => form_error('nik'),
-                    'gelar'   => form_error('gelar'),
-                    'nama'    => form_error('nama'),
-                    'jns_klm' => form_error('jns_klm'),
+                    'nik'       => form_error('nik'),
+                    'gelar'     => form_error('gelar'),
+                    'nama'      => form_error('nama'),
+                    'jns_klm'   => form_error('jns_klm'),
+                    'tgl_lahir' => form_error('tgl_lahir'),
                 );
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_pasien_tambah.php'));
             } else {
-                $sql_num = $this->db->get('tbl_m_pasien')->num_rows() + 1;
-                $sql_glr = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
-                $kode    = sprintf('%05d', $sql_num);
-                $sql_kat = $this->db->get('tbl_m_kategori');
+                try {
+                    $sql_num = $this->db->get('tbl_m_pasien')->num_rows() + 1;
+                    $sql_glr = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
+                    $kode    = sprintf('%05d', $sql_num);
 
-                $data_pas = array(
-                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-                    'id_gelar'     => $gelar,
-                    'id_kategori'  => '1',
-                    'id_pekerjaan' => $pekerjaan,
-                    'kode'         => $kode,
-                    'kode_dpn'     => 'PKE',
-                    'nik'          => $nik,
-                    'nama'         => $nama,
-                    'nama_pgl'     => strtoupper($sql_glr->gelar.' '.$nama),
-                    'tmp_lahir'    => $tmp_lahir,
-                    'tgl_lahir'    => $this->tanggalan->tgl_indo_sys($tgl_lahir),
-                    'jns_klm'      => $jns_klm,
-                    'no_hp'        => $no_hp,
-                    'alamat'       => $alamat,
-                    'file_base64'  => $file,
-                    'status'       => '1'
-                );
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data member berhasil diubah</div>');
-                crud::simpan('tbl_m_pasien', $data_pas);
-//                
-//                $sql_max = $this->db->select_max('id')->get('tbl_m_pelanggan')->row();
-//                $sql_ckk = $this->db->where('id_pelanggan', general::dekrip($id))->get('tbl_m_pelanggan_diskon');
-//                
-//                foreach ($sql_kat->result() as $kat){                    
-//                    $data_disk = array(
-//                        'tgl_simpan'   => date('Y-m-d H:i:s'),
-//                        'id_pelanggan' => $sql_max->id,
-//                        'id_kategori'  => $kat->id,
-//                        'disk1'        => str_replace(',','.', $_POST['disk1'][$kat->id]),
-//                        'disk2'        => str_replace(',','.', $_POST['disk2'][$kat->id]),
-//                        'disk3'        => str_replace(',','.', $_POST['disk3'][$kat->id]),
-//                    );
-//                    
-//                    echo '<pre>';
-//                    print_r($data_disk);
-//                    
-//                    if($_POST['disk1'][$kat->id] != '0' AND $_POST['disk2'][$kat->id] != '0' AND $_POST['disk3'][$kat->id] != '0'){
-//                        crud::simpan('tbl_m_pelanggan_diskon',$data_disk);
-//                        crud::update('tbl_m_pelanggan','id', $sql_max->id, array('id_kategori' => $kat->id));
-//                    }
-//                }
-                
-                redirect(base_url('master/data_pasien_list.php'));
-//                echo strtotime($tgl_lahir);
-//                echo br();
-//                echo date('Y-m-d', strtotime($tgl_lahir));
-//                    echo '<pre>';
-//                    print_r($data_pas);
+                    $data_pas = array(
+                        'tgl_simpan'   => date('Y-m-d H:i:s'),
+                        'id_gelar'     => $gelar,
+                        'id_kategori'  => '1',
+                        'id_pekerjaan' => $pekerjaan,
+                        'kode'         => $kode,
+                        'kode_dpn'     => 'PKE',
+                        'nik'          => $nik,
+                        'nama'         => $nama,
+                        'nama_pgl'     => strtoupper($sql_glr->gelar.' '.$nama),
+                        'tmp_lahir'    => $tmp_lahir,
+                        'tgl_lahir'    => $tgl_lahir,
+                        'jns_klm'      => $jns_klm,
+                        'no_hp'        => $no_hp,
+                        'alamat'       => $alamat,
+                        'file_base64'  => $file,
+                        'status'       => '1'
+                    );
+
+                    // if (!crud::simpan('tbl_m_pasien', $data_pas)) {
+                    //     $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menyimpan data pasien");');
+                    //     throw new Exception("Gagal menyimpan data pasien");
+                    // }
+                    
+                    // $this->session->set_flashdata('master_toast', 'toastr.success("Data pasien berhasil disimpan");');
+                    // redirect(base_url('master/data_pasien_list.php'));                    
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_pasien_tambah.php'));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
+            redirect(base_url());
         }
     }
     
@@ -8268,6 +7993,29 @@ class master extends CI_Controller {
             }
             
             redirect(base_url('master/data_pasien_det.php?id='.$id));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+    public function set_cari_pasien() {
+        if (Akses::aksesLogin() == TRUE) {
+            $kode    = $this->input->post('kode');
+            $nik     = $this->input->post('nik');
+            $pasien  = $this->input->post('pasien');
+            
+            $jml = $this->db->like('kode', $kode)
+                            ->like('nik', $nik)
+                            ->like('nama_pgl', $pasien)
+                            ->get('tbl_m_pasien')->num_rows();
+
+            if($jml > 0){
+                redirect(base_url('master/data_pasien_list.php?'.(!empty($kode) ? 'filter_cm='.$kode.'&' : '').(!empty($nik) ? 'filter_nik='.$nik.'&' : '').(!empty($pasien) ? 'filter_nama='.$pasien.'&' : '').'jml='.$jml));
+            }else{
+                redirect(base_url('master/data_pasien_list.php'));
+            }
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -10274,29 +10022,6 @@ class master extends CI_Controller {
                 redirect(base_url('master/data_platform_list.php?' . (!empty($kode) ? 'filter_kode='.$kode.'&' : '').(!empty($akun) ? 'filter_akun='.$akun.'&' : '').(!empty($plat) ? 'filter_plat='.$plat : '') . '&jml=' . $jml));
             } else {
                 redirect(base_url('master/data_platform_list.php'));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-
-    public function set_cari_pasien() {
-        if (Akses::aksesLogin() == TRUE) {
-            $kode    = $this->input->post('kode');
-            $nik     = $this->input->post('nik');
-            $pasien  = $this->input->post('pasien');
-            
-            $jml = $this->db->like('kode', $kode)
-                            ->like('nik', $nik)
-                            ->like('nama_pgl', $pasien)
-                            ->get('tbl_m_pasien')->num_rows();
-
-            if($jml > 0){
-                redirect(base_url('master/data_pasien_list.php?'.(!empty($kode) ? 'filter_cm='.$kode.'&' : '').(!empty($nik) ? 'filter_nik='.$nik.'&' : '').(!empty($pasien) ? 'filter_nama='.$pasien.'&' : '').'jml='.$jml));
-            }else{
-                redirect(base_url('master/data_pasien_list.php'));
             }
         } else {
             $errors = $this->ion_auth->messages();

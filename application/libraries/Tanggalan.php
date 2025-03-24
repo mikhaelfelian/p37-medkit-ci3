@@ -13,7 +13,7 @@
  */
 class tanggalan {
 
-    function tgl_indo($tglan) {
+    public static function tgl_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('d-m-Y', strtotime($dta_tgl)) : '');
@@ -21,7 +21,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo2($tglan) {
+    public static function tgl_indo2($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('d-m-Y', strtotime($dta_tgl)) : '');
@@ -29,7 +29,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo3($tglan) {
+    public static function tgl_indo3($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('Y-m-d', strtotime($dta_tgl)) : '');
@@ -42,7 +42,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo4($tglan) {
+    public static function tgl_indo4($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('Y-m-d', strtotime($dta_tgl)) : '');
@@ -55,7 +55,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo5($tglan) {
+    public static function tgl_indo5($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00 00:00:00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('d-m-Y', strtotime($dta_tgl)) : '');
@@ -64,7 +64,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo6($tglan) {
+    public static function tgl_indo6($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('d/m/Y', strtotime($dta_tgl)) : '');
@@ -72,7 +72,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo7($tglan) {
+    public static function tgl_indo7($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('m/d/Y', strtotime($dta_tgl)) : '');
@@ -80,7 +80,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo8($tglan) {
+    public static function tgl_indo8($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('d-m-Y', strtotime($dta_tgl)) : '');
@@ -88,7 +88,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function bln_indo($tglan) {
+    public static function bln_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('m', strtotime($dta_tgl)) : '');
@@ -96,7 +96,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo_sys($tglan) {
+    public static function tgl_indo_sys($tglan) {
         $str_tgl    = $tglan; // str_replace('/', '-', $tglan);
         $dta_tgl    = ($str_tgl != '0000-00-00' ? strtotime($str_tgl) : '');
         $tgln       = (!empty($dta_tgl) ? date('Y-m-d', $dta_tgl) : '');
@@ -104,7 +104,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function tgl_indo_sys2($tglan) {
+    public static function tgl_indo_sys2($tglan) {
         $tgl = explode('/', $tglan);
         $tanggal = $tgl[0];
         $bulan = $tgl[1];
@@ -113,7 +113,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function wkt_indo($tglan) {
+    public static function wkt_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00 00:00:00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('H:i', strtotime($dta_tgl)) : '');
@@ -121,7 +121,7 @@ class tanggalan {
         return $tgle;
     }
 
-    function getBulan($bln) {
+    public static function getBulan($bln) {
         switch ($bln) {
             case 1:
                 return "01";
@@ -162,7 +162,7 @@ class tanggalan {
         }
     }
 
-    function hari_ini() {
+    public static function hari_ini() {
         $nm_hari = array(
             'Sun' => 'Minggu',
             'Mon' => 'Senin',
@@ -178,7 +178,7 @@ class tanggalan {
         return $hari_ini;
     }
 
-    function hari_ke($tanggal) {
+    public static function hari_ke($tanggal) {
         $nm_hari = array(
             'Sun' => 'Minggu',
             'Mon' => 'Senin',
@@ -194,7 +194,7 @@ class tanggalan {
         return $hari_ini;
     }
 
-    function bulan_ke($bln) {
+    public static function bulan_ke($bln) {
         switch ($bln) {
             case 1:
                 $bulan = "Januari";
@@ -237,7 +237,7 @@ class tanggalan {
         return $bulan;
     }
 
-    function usia($tglan) {
+    public static function usia($tglan) {
         $birthDate = new DateTime($tglan);
         $today = new DateTime("today");
         if ($birthDate > $today) {
@@ -250,7 +250,7 @@ class tanggalan {
         return ucwords($umur);
     }
 
-    function usia_angka($tglan) {
+    public static function usia_angka($tglan) {
         $birthDate = new DateTime($tglan);
         $today = new DateTime("today");
         if ($birthDate > $today) {
@@ -263,7 +263,7 @@ class tanggalan {
         return ucwords($umur);
     }
 
-    function usia_lkp($tglan) {
+    public static function usia_lkp($tglan) {
         $birthDate = new DateTime($tglan);
         $today = new DateTime("today");
 
@@ -281,7 +281,7 @@ class tanggalan {
         return $umur;
     }
 
-    function usia_hari($tgl_awal, $tgl_akhir) {
+    public static function usia_hari($tgl_awal, $tgl_akhir) {
         $birthDate = new DateTime($tgl_awal);
         $today = new DateTime($tgl_akhir);
         if ($birthDate > $today) {
@@ -295,7 +295,7 @@ class tanggalan {
         return ucwords($umur);
     }
 
-    function usia_wkt($tgl_awal, $tgl_akhir) {
+    public static function usia_wkt($tgl_awal, $tgl_akhir) {
         $awal   = date_create($tgl_awal);
         $akhir  = date_create($tgl_akhir); // waktu sekarang
         $diff   = date_diff($awal, $akhir);
@@ -330,7 +330,7 @@ class tanggalan {
 //        return ucwords($umur);
     }
 
-    function sejak($since) {
+    public static function sejak($since) {
         $timeCalc = strtotime(date('Y-m-d H:i:s')) - strtotime($since);
         
         if ($timeCalc >= (60 * 60 * 24 * 30 * 12 * 2)) {
@@ -360,7 +360,7 @@ class tanggalan {
         return $timeCalc;
     }
     
-    function jml_hari($tgl_awal, $tgl_akhir) {
+    public static function jml_hari($tgl_awal, $tgl_akhir) {
         $tg_awal = date('Y-m-d', strtotime($tgl_awal));
         
         $tgl1 = new DateTime($tg_awal);
@@ -370,7 +370,7 @@ class tanggalan {
         return $jarak->d;
     }
     
-    function wkt_teks($wkt) {
+    public static function wkt_teks($wkt) {
         $waktu = strtotime($wkt);
         
         $pagi1  = strtotime('05:00');
