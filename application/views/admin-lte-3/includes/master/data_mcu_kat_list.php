@@ -33,24 +33,24 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-condensed">
+                        <div class="card-body">
+                            <?php echo form_open(base_url('master/set_mcu_kat_cari.php'), array('method' => 'get')) ?>
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center">No.</th>
-                                        <!--<th>Kode</th>-->
                                         <th>Kategori</th>
                                         <th>Keterangan</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-<!--                                    <tr>
+                                   <tr>
                                         <td></td>
-                                        <td><?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control', 'placeholder' => 'Kode ...')) ?></td>
-                                        <td><?php echo form_input(array('id' => 'pasien', 'name' => 'pasien', 'class' => 'form-control', 'placeholder' => 'kategori ...')) ?></td>
+                                        <td><?php echo form_input(array('id' => 'kategori', 'name' => 'kategori', 'class' => 'form-control rounded-0', 'placeholder' => 'Kategori ...')) ?></td>
                                         <td></td>
-                                    </tr>-->
+                                        <td><button type="submit" class="btn btn-primary rounded-0"><i class="fa fa-search"></i> Cari</button></td>
+                                    </tr>
                                     <?php
                                     if (!empty($kategori)) {
                                         $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
@@ -64,9 +64,9 @@
                                                 <td>
                                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE) { ?>
                                                         <?php echo nbs() ?>
-                                                        <?php echo anchor(base_url('master/data_mcu_kat_tambah.php?id=' . general::enkrip($kategori->id)), '<i class="fa fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
+                                                        <?php echo anchor(base_url('master/data_mcu_kat_tambah.php?id=' . general::enkrip($kategori->id)), '<i class="fa fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs rounded-0" style="width: 55px;"') ?>
                                                         <?php echo nbs() ?>
-                                                        <?php echo anchor(base_url('master/data_mcu_kat_hapus.php?id=' . general::enkrip($kategori->id)), '<i class="fas fa-trash"></i> Hapus', 'onclick="return confirm(\'Hapus [' . $kategori->kategori . '] ? \')" class="btn btn-danger btn-flat btn-xs" style="width: 55px;"') ?>
+                                                        <?php echo anchor(base_url('master/data_mcu_kat_hapus.php?id=' . general::enkrip($kategori->id)), '<i class="fas fa-trash"></i> Hapus', 'onclick="return confirm(\'Hapus [' . $kategori->kategori . '] ? \')" class="btn btn-danger btn-flat btn-xs rounded-0" style="width: 55px;"') ?>
                                                     <?php } ?>
                                                 </td>
                                             </tr>
@@ -76,6 +76,7 @@
                                     ?>
                                 </tbody>
                             </table>
+                            <?php echo form_close() ?>
                         </div>
                     </div>
                 </div>
@@ -87,3 +88,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>

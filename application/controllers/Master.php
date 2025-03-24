@@ -407,15 +407,16 @@ class master extends CI_Controller {
     
     public function data_mcu_list() {
         if (Akses::aksesLogin() == TRUE) {
-            $query      = $this->input->get('q');
-            $hal        = $this->input->get('halaman');
-            $jml        = $this->input->get('jml');
-            $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_mcu'));
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            $pemeriksaan      = $this->input->get('pemeriksaan');
+            $kategori         = $this->input->get('kategori');
+            $hal              = $this->input->get('halaman');
+            $jml              = $this->input->get('jml');
+            $jml_hal          = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_mcu'));
+            $pengaturan       = $this->db->get('tbl_pengaturan')->row();
             
             $data['hasError'] = $this->session->flashdata('form_error');
                         
-            $config['base_url']               = base_url('master/data_mcu_list.php?'.(isset($_GET['q']) ? '&q='.$_GET['q'].'&jml='.$jml_hal : ''));
+            $config['base_url']               = base_url('master/data_mcu_list.php?'.(isset($_GET['pemeriksaan']) ? '&pemeriksaan='.$_GET['pemeriksaan'].'&kategori='.$_GET['kategori'].'&jml='.$jml_hal : ''));
             $config['total_rows']             = $jml_hal;
             
             $config['query_string_segment']  = 'halaman';
@@ -449,10 +450,10 @@ class master extends CI_Controller {
             
             
             if(!empty($hal)){
-                if (!empty($query)) {
+                if (!empty($pemeriksaan) || !empty($kategori)) {
                     $data['sql_mcu'] = $this->db->limit($config['per_page'],$hal)
-                                               ->like('pemeriksaan', $query)
-//                                               ->or_like('keterangan', $query)
+                                               ->like('pemeriksaan', $pemeriksaan)
+                                               ->like('id_kategori', $kategori)
                                                ->order_by('pemeriksaan','asc')
                                                ->get('tbl_m_mcu')->result();
                 } else {
@@ -461,10 +462,10 @@ class master extends CI_Controller {
                                                ->get('tbl_m_mcu')->result();
                 }
             }else{
-                if (!empty($query)) {
+                if (!empty($pemeriksaan) || !empty($kategori)) {
                     $data['sql_mcu'] = $this->db->limit($config['per_page'])
-                                               ->like('pemeriksaan', $query)
-//                                               ->or_like('keterangan', $query)
+                                               ->like('pemeriksaan', $pemeriksaan)
+                                               ->like('id_kategori', $kategori)
                                                ->order_by('pemeriksaan','asc')
                                                ->get('tbl_m_mcu')->result();
                 } else {
@@ -481,8 +482,10 @@ class master extends CI_Controller {
             $data['total_rows'] = $config['total_rows'];
             $data['PerPage']    = $config['per_page'];
             $data['pagination'] = $this->pagination->create_links();
-            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_mcu.php?'.(!empty($query) ? 'query='.$query : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
+            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_mcu.php?'.(!empty($pemeriksaan) ? 'pemeriksaan='.$pemeriksaan : '').(!empty($kategori) ? '&kategori='.$kategori : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
 
+            $data['sql_mcu_kat']= $this->db->order_by('id', 'ASC')->get('tbl_m_mcu_kat')->result();
+            
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
             $this->load->view('admin-lte-3/3_navbar', $data);
@@ -610,10 +613,20 @@ class master extends CI_Controller {
             redirect();
         }
     }
+
+    public function set_mcu_cari() {
+        if (Akses::aksesLogin() == TRUE) {
+            redirect(base_url('master/data_mcu_list.php?' . http_build_query($_POST)));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
     
     public function data_mcu_kat_list() {
         if (Akses::aksesLogin() == TRUE) {
-            $query      = $this->input->get('q');
+            $query      = $this->input->get('kategori');
             $hal        = $this->input->get('halaman');
             $jml        = $this->input->get('jml');
             $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_mcu_kat'));
@@ -820,6 +833,16 @@ class master extends CI_Controller {
             redirect();
         }
     }
+
+    public function set_mcu_kat_cari() {
+        if (Akses::aksesLogin() == TRUE) {
+            redirect(base_url('master/data_mcu_kat_list.php?' . http_build_query($_GET)));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
     
     /**
  * Function to display MCU Header data
@@ -831,7 +854,7 @@ class master extends CI_Controller {
  */
     public function data_mcu_header() {
         if (Akses::aksesLogin() == TRUE) {
-            $query      = $this->input->get('q');
+            $query      = $this->input->get('header');
             $hal        = $this->input->get('halaman');
             $jml        = $this->input->get('jml');
             $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_mcu_header'));
@@ -938,6 +961,17 @@ class master extends CI_Controller {
             redirect();
         }
     }
+
+    public function set_mcu_header_cari() {
+        if (Akses::aksesLogin() == TRUE) {
+            redirect(base_url('master/data_mcu_header_list.php?' . http_build_query($_POST)));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
 
     public function data_icd_list() {
         if (Akses::aksesLogin() == TRUE) {
@@ -1170,7 +1204,7 @@ class master extends CI_Controller {
     
     public function data_merk_list() {
         if (Akses::aksesLogin() == TRUE) {
-            $query      = $this->input->get('q');
+            $query      = $this->input->get('merk');
             $hal        = $this->input->get('halaman');
             $jml        = $this->input->get('jml');
             $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_merk'));
@@ -1215,7 +1249,6 @@ class master extends CI_Controller {
                 if (!empty($query)) {
                     $data['merk'] = $this->db->limit($config['per_page'],$hal)
                                                ->like('merk', $query)
-                                               ->or_like('keterangan', $query)
                                                ->order_by('merk','asc')
                                                ->get('tbl_m_merk')->result();
                 } else {
@@ -1227,7 +1260,6 @@ class master extends CI_Controller {
                 if (!empty($query)) {
                     $data['merk'] = $this->db->limit($config['per_page'],$hal)
                                                ->like('merk', $query)
-                                               ->or_like('keterangan', $query)
                                                ->order_by('merk','asc')
                                                ->get('tbl_m_merk')->result();
                 } else {
@@ -6248,22 +6280,17 @@ class master extends CI_Controller {
             redirect();
         }
     }
-    
-    
     public function data_mcu_perusahaan_list() {
         if (Akses::aksesLogin() == TRUE) {
             $hal            = $this->input->get('halaman');
-            $filter_kode    = $this->input->get('filter_kode');
-            $filter_nama    = $this->input->get('filter_nama');
-            $sort_type      = $this->input->get('sort_type');
-            $sort_order     = $this->input->get('sort_order');
+            $filter_nama    = $this->input->get('nama');
             $jml            = $this->input->get('jml');
-            $jml_hal        = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_pelanggan'));
+            $jml_hal        = (!empty($jml) ? $jml  : $this->db->get('tbl_m_pelanggan')->num_rows());
             $pengaturan     = $this->db->get('tbl_pengaturan')->row();
             
             $data['hasError'] = $this->session->flashdata('form_error');
                         
-            $config['base_url']              = base_url('master/data_mcu_perusahaan_list.php?'.(!empty($filter_kode) ? 'filter_kode='.$filter_kode.'&' : '').(!empty($filter_nama) ? 'filter_nama='.$filter_nama.'&' : '').'jml='.$_GET['jml']);
+            $config['base_url']              = base_url('master/data_mcu_perusahaan_list.php?'.(!empty($filter_nama) ? 'filter_nama='.$filter_nama.'&' : '').'jml='.$_GET['jml']);
             $config['total_rows']            = $jml_hal;
             
             $config['query_string_segment']  = 'halaman';
@@ -6281,7 +6308,7 @@ class master extends CI_Controller {
             $config['num_tag_close']         = '</li>';
             
             $config['next_tag_open']         = '<li class="page-item">';
-            $config['next_tag_close']        = '</li>';
+            $config['next_tag_close']       = '</li>';
             
             $config['last_tag_open']         = '<li class="page-item">';
             $config['last_tag_close']        = '</li>';
@@ -6297,31 +6324,29 @@ class master extends CI_Controller {
             
             
             if(!empty($hal)){
-                if (!empty($jml)) {
+                if (!empty($filter_nama)) {
                     $data['supplier'] = $this->db
                                              ->like('nama', $filter_nama)
-                                             ->like('kode', $filter_kode)
                                              ->limit($config['per_page'],$hal)
-                                             ->order_by('kode', 'desc')
+                                             ->order_by('nama', 'asc')
                                              ->get('tbl_m_pelanggan')->result();
                 } else {
                     $data['supplier'] = $this->db
                                              ->limit($config['per_page'],$hal)
-                                             ->order_by('kode', 'desc')
+                                             ->order_by('nama', 'asc')
                                              ->get('tbl_m_pelanggan')->result();
                 }
             }else{
-                if (!empty($jml)) {
+                if (!empty($filter_nama)) {
                     $data['supplier'] = $this->db
                                              ->like('nama', $filter_nama)
-                                             ->like('kode', $filter_kode)
                                              ->limit($config['per_page'])
-                                             ->order_by('kode', 'desc')
+                                             ->order_by('nama', 'asc')
                                              ->get('tbl_m_pelanggan')->result();
                 } else {
                     $data['supplier'] = $this->db
                                              ->limit($config['per_page'])
-                                             ->order_by('kode', 'desc')
+                                             ->order_by('nama', 'asc')
                                              ->get('tbl_m_pelanggan')->result();
                 }
             }
@@ -6335,7 +6360,7 @@ class master extends CI_Controller {
             $data['total_rows'] = $config['total_rows'];
             $data['PerPage']    = $config['per_page'];
             $data['pagination'] = $this->pagination->create_links();
-            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_mcu_perusahaan.php?'.(!empty($query) ? 'query='.$query : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
+            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_mcu_perusahaan.php?'.(!empty($filter_nama) ? 'filter_nama='.$filter_nama : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
 
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);

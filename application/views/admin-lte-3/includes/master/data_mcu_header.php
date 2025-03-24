@@ -43,16 +43,9 @@
                                 </ul>                                
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
-                            <?php if ($this->session->flashdata('message')) { ?>
-                                <div class="alert alert-dismissible fade show" role="alert">
-                                    <?php echo $this->session->flashdata('message'); ?>
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            <?php } ?>
-                            <table class="table table-condensed">
+                        <div class="card-body">
+                            <?php echo form_open(base_url('master/set_mcu_header_cari.php')); ?>
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center">No.</th>
@@ -64,7 +57,7 @@
                                     <tr>
                                         <td></td>
                                         <td><?php echo form_input(array('id' => 'header', 'name' => 'header', 'class' => 'form-control rounded-0', 'placeholder' => 'Header ...')) ?></td>
-                                        <td></td>
+                                        <td><button type="submit" class="btn btn-primary rounded-0"><i class="fas fa-search"></i> Cari</button></td>
                                     </tr>
                                     <?php
                                     if (!empty($sql_mcu_header)) {
@@ -86,6 +79,7 @@
                                     ?>
                                 </tbody>
                             </table>
+                            <?php echo form_close(); ?>
                         </div>
                     </div>
                 </div>
@@ -97,3 +91,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper --> 
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>

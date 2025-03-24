@@ -33,11 +33,11 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
+                        <div class="card-body">
                             <?php echo $this->session->flashdata('master'); ?>
+                            <?php echo form_open(base_url('master/data_mcu_perusahaan_list.php'), array('method' => 'get')); ?>
                             <table class="table table-striped">
                                 <thead>
-                                    <?php echo form_open(base_url('master/set_cari_supplier.php')) ?>
                                     <tr>
                                         <th class="text-center">No.</th>
                                         <th>Rekanan</th>
@@ -50,9 +50,8 @@
                                             <?php echo form_input(array('id' => 'nama', 'name' => 'nama', 'class' =>'form-control rounded-0', 'placeholder' => 'Isikan rekanan ...')) ?>
                                         </th>
                                         <th></th>
-                                        <th><button class="btn btn-primary btn-flat" type="submit"><i class="fa fa-search"></i> Filter</button></th>
+                                        <th><button class="btn btn-primary btn-flat rounded-0" type="submit"><i class="fa fa-search"></i> Filter</button></th>
                                     </tr>
-                                    <?php echo form_close() ?>
                                 </thead>
                                 <tbody>
                                     <?php
@@ -90,6 +89,7 @@
                                     ?>
                                 </tbody>
                             </table>
+                            <?php echo form_close(); ?>
                         </div>
                     </div>
                 </div>
@@ -101,3 +101,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>

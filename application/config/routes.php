@@ -124,19 +124,19 @@ $route['master/data_pasien_user_reset.php']             = "master/data_pasien_us
 $route['master/data_pasien_foto_reset.php']             = "master/data_pasien_foto_reset";
 $route['master/data_pasien_pdf.php']                    = "master/pdf_pasien";
 
-
-
 $route['master/data_mcu_list.php']                      = "master/data_mcu_list";
 $route['master/data_mcu_tambah.php']                    = "master/data_mcu_tambah";
 $route['master/data_mcu_simpan.php']                    = "master/data_mcu_simpan";
 $route['master/data_mcu_update.php']                    = "master/data_mcu_update";
 $route['master/data_mcu_hapus.php']                     = "master/data_mcu_hapus";
+$route['master/set_mcu_cari.php']                       = "master/set_mcu_cari";
 
 $route['master/data_mcu_kat_list.php']                  = "master/data_mcu_kat_list";
 $route['master/data_mcu_kat_tambah.php']                = "master/data_mcu_kat_tambah";
 $route['master/data_mcu_kat_simpan.php']                = "master/data_mcu_kat_simpan";
 $route['master/data_mcu_kat_update.php']                = "master/data_mcu_kat_update";
 $route['master/data_mcu_kat_hapus.php']                 = "master/data_mcu_kat_hapus";
+$route['master/set_mcu_kat_cari.php']                   = "master/set_mcu_kat_cari";
 
 $route['master/data_mcu_perusahaan_list.php']           = "master/data_mcu_perusahaan_list";
 $route['master/data_mcu_perusahaan_tambah.php']         = "master/data_mcu_perusahaan_tambah";
@@ -148,6 +148,7 @@ $route['master/set_mcu_perusahaan_cari.php']            = "master/set_cari_mcu_p
 $route['master/data_mcu_header_list.php']               = "master/data_mcu_header";
 $route['master/data_mcu_header_param_simpan.php']       = "master/data_mcu_header_simpan";
 $route['master/data_mcu_header_hapus.php']              = "master/data_mcu_header_hapus";
+$route['master/set_mcu_header_cari.php']                = "master/set_mcu_header_cari";
 
 $route['master/data_icd_list.php']                      = "master/data_icd_list";
 $route['master/data_icd_tambah.php']                    = "master/data_icd_tambah";
@@ -1032,30 +1033,6 @@ $route['laporan/set_lap_mutasi.php']                    = "laporan/set_lap_mutas
 $route['laporan/data_referall.php']                     = "laporan/data_referall";
 $route['laporan/set_data_referall.php']                 = "laporan/set_data_referall";
 $route['laporan/xls_data_referall.php']                 = "laporan/xls_data_referall";
-
-
-/* PAJAK */
-$route['pajak/input_retur_jual.php']                    = "pajak/input_retur_jual";
-$route['pajak/data_retur_jual_list.php']                = "pajak/data_retur_jual_list";
-
-$route['pajak/data_penj_list.php']                      = "pajak/data_penj_list";
-$route['pajak/data_pemb_jual_list.php']                 = "pajak/data_pemb_jual_list";
-$route['pajak/data_pemb_beli_list.php']                 = "pajak/data_pemb_beli_list";
-
-$route['pajak/input_trans_jual.php']                    = "pajak/input_trans_jual";
-$route['pajak/set_nota_jual_simpan.php']                = "pajak/set_nota_jual_simpan";
-$route['pajak/trans_jual_hapus.php']                    = "pajak/trans_jual_hapus";
-
-$route['pajak/set_cari_penj.php']                       = "pajak/set_cari_penj";
-$route['pajak/set_retur_jual_batal.php']                = "pajak/set_retur_jual_batal";
-$route['pajak/set_retur_beli_batal.php']                = "pajak/set_retur_beli_batal";
-$route['pajak/set_cari_penj.php']                       = "pajak/set_cari_penj";
-$route['pajak/set_cari_penj_retur.php']                 = "pajak/set_cari_penj_retur";
-$route['pajak/set_cari_penj_bayar.php']                 = "pajak/set_cari_penj_bayar";
-$route['pajak/set_cari_penawaran.php']                  = "pajak/set_cari_penawaran";
-$route['pajak/set_cari_pemb.php']                       = "pajak/set_cari_pemb";
-$route['pajak/set_cari_pemb_bayar.php']                 = "pajak/set_cari_pemb_bayar";
-$route['pajak/set_cari_po.php']                         = "pajak/set_cari_po";
 /* -- END -- */
 
 
@@ -1130,8 +1107,6 @@ $route['transaksi/cetak_nota_termal.php']               = "cetak/termal_ctk";
 $route['medcheck/add_param.php']                        = "medcheck/add_param";
 $route['medcheck/add_param_prod.php']                   = "medcheck/add_param_prod";
 $route['medcheck/search_parameters.php']                = "medcheck/search_parameters";
-
-$route['master/set_kategori_cari.php']                  = 'master/set_kategori_cari';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

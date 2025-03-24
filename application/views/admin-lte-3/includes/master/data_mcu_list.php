@@ -33,24 +33,31 @@
                                 </ul>                                
                             </div>
                         </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-condensed">
+                        <div class="card-body">
+                            <?php echo form_open(base_url('master/set_mcu_cari.php')) ?>
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center">No.</th>
                                         <th>Kategori</th>
                                         <th>Pemeriksaan</th>
-                                        <th>Keterangan</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-<!--                                    <tr>
+                                   <tr>
                                         <td></td>
-                                        <td><?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control', 'placeholder' => 'Kode ...')) ?></td>
-                                        <td><?php echo form_input(array('id' => 'pasien', 'name' => 'pasien', 'class' => 'form-control', 'placeholder' => 'kategori ...')) ?></td>
-                                        <td></td>
-                                    </tr>-->
+                                        <td>
+                                            <select id="kategori" name="kategori" class="form-control rounded-0">
+                                                <option value="">Kategori ...</option>
+                                                <?php foreach ($sql_mcu_kat as $kat) : ?>
+                                                    <option value="<?php echo $kat->id ?>"><?php echo $kat->kategori ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </td>
+                                        <td><?php echo form_input(array('id' => 'pemeriksaan', 'name' => 'pemeriksaan', 'class' => 'form-control rounded-0', 'placeholder' => 'Keterangan ...')) ?></td>
+                                        <td><button type="submit" class="btn btn-primary rounded-0"><i class="fa fa-search"></i> Search</button></td>
+                                    </tr>
                                     <?php
                                     if (!empty($sql_mcu)) {
                                         $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
@@ -61,7 +68,6 @@
                                                 <td class="text-center"><?php echo $no++ ?>.</td>
                                                 <td><?php echo $sql_kat->kategori ?></td>
                                                 <td><?php echo $mcu->pemeriksaan ?></td>
-                                                <td><?php echo $mcu->keterangan ?></td>
                                                 <td>
                                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE) { ?>
                                                         <?php echo nbs() ?>
@@ -77,6 +83,7 @@
                                     ?>
                                 </tbody>
                             </table>
+                            <?php echo form_close() ?>
                         </div>
                     </div>
                 </div>
@@ -88,3 +95,8 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('master_toast'); ?>
+    });
+</script>
