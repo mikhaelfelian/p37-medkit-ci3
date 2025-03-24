@@ -189,19 +189,43 @@
     });
 
     $(document).on('click', '#btn-submit', function () {
-        var signature = signaturePad.toDataURL();
+        if (signaturePad.isEmpty()) {
+            toastr.error("Silakan tanda tangan terlebih dahulu");
+            return;
+        }
 
+        var signature = signaturePad.toDataURL();        
         $.ajax({
-            url: "<?php echo base_url('medcheck/set_gc_update.php') ?>",
+            url: '<?php echo base_url('medcheck/set_gc_update'); ?>',
+            type: 'POST',
             data: {
                 id: "<?php echo general::enkrip($sql_dft_gc->id) ?>",
                 id_dft: "<?php echo general::enkrip($sql_dft->id) ?>",
-                foto: signature
+                foto: signature,
+                '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
             },
-            method: "POST",
-            success: function () {
-                toastr.success("TTD Berhasil disimpan");
-                window.location.href = '<?php echo base_url('medcheck/daftar_gc_det.php?dft=' . general::enkrip($sql_dft->id)) ?>';
+            beforeSend: function(xhr) {
+                $('#btn-submit').prop('disabled', true);
+                $('#btn-submit').html('<i class="fa fa-spin fa-spinner"></i> Processing...');
+                console.log('Request started');
+            },
+            complete: function() {
+                $('#btn-submit').prop('disabled', false);
+                $('#btn-submit').html('<i class="fa fa-save"></i> Simpan');
+                console.log('Request completed');
+            },
+            success: function(response, status, xhr) {
+                if (response && response.success) {
+                    toastr.success(response.message || "TTD Berhasil disimpan");
+                    setTimeout(function() {
+                        window.location.href = '<?php echo base_url('medcheck/daftar_gc_det.php?dft=' . general::enkrip($sql_dft->id)) ?>';
+                    }, 1500);
+                } else {
+                    toastr.error(response ? response.message : "Gagal menyimpan TTD");
+                }
+            },
+            error: function(xhr, status, error) {                
+                toastr.error("Terjadi kesalahan sistem. Silakan coba lagi.");
             }
         });
     });
@@ -210,3 +234,6 @@
         <?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>
+
+<!-- Add this right after the opening <head> tag -->
+<meta name="csrf-token" content="<?php echo $this->security->get_csrf_hash(); ?>">

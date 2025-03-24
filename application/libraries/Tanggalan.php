@@ -13,6 +13,13 @@
  */
 class tanggalan {
 
+    // Add CI instance
+    protected $CI;
+
+    public function __construct() {
+        $this->CI =& get_instance();
+    }
+
     public static function tgl_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -29,17 +36,11 @@ class tanggalan {
         return $tgle;
     }
 
-    public static function tgl_indo3($tglan) {
-        $str_tgl = $tglan;
-        $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
-        $tgln = (!empty($dta_tgl) ? date('Y-m-d', strtotime($dta_tgl)) : '');
-
-        $tgl = explode('-', $tgln);
-        $tanggal = $tgl[2];
-        $bulan = $this->bulan_ke($tgl[1]);
-        $tahun = $tgl[0];
-        $tgle = (!empty($tglan) ? $tanggal . ' ' . $bulan . ' ' . $tahun : '');
-        return $tgle;
+    public static function tgl_indo3($tgl) {
+        $tanggal = substr($tgl, 8, 2);
+        $bulan = self::getBulan(substr($tgl, 5, 2));
+        $tahun = substr($tgl, 0, 4);
+        return $tanggal . ' ' . $bulan . ' ' . $tahun;
     }
 
     public static function tgl_indo4($tglan) {
@@ -124,41 +125,29 @@ class tanggalan {
     public static function getBulan($bln) {
         switch ($bln) {
             case 1:
-                return "01";
-                break;
+                return "Januari";
             case 2:
-                return "02";
-                break;
+                return "Februari";
             case 3:
-                return "03";
-                break;
+                return "Maret";
             case 4:
-                return "04";
-                break;
+                return "April";
             case 5:
-                return "05";
-                break;
+                return "Mei";
             case 6:
-                return "06";
-                break;
+                return "Juni";
             case 7:
-                return "07";
-                break;
+                return "Juli";
             case 8:
-                return "08";
-                break;
+                return "Agustus";
             case 9:
-                return "09";
-                break;
+                return "September";
             case 10:
-                return "10";
-                break;
+                return "Oktober";
             case 11:
-                return "11";
-                break;
+                return "November";
             case 12:
-                return "12";
-                break;
+                return "Desember";
         }
     }
 

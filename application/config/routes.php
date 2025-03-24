@@ -327,6 +327,7 @@ $route['medcheck/data_satusehat.php']                   = "medcheck/data_satuseh
 $route['medcheck/register.php']                         = "home/register";
 $route['medcheck/set_register.php']                     = "home/set_register";
 $route['medcheck/set_pasien.php']                       = "medcheck/set_pasien";
+$route['medcheck/set_instansi.php']                     = "medcheck/set_instansi";
 
 // Konfirmasi Pasien Hadir
 $route['medcheck/set_pasien_konfirm.php']               = "medcheck/trans_medcheck_dft_konfirm";

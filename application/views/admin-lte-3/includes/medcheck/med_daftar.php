@@ -43,7 +43,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                         </div>
                         <div class="card-footer p-0">
                             <?php if (isset($_GET['tipe_pas'])) { ?>
-                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
+                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2' OR $_GET['tipe_pas'] == '3') { ?>
                                     <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>                                
                                     <button id="flip-btn" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
                                 <?php } ?>
@@ -64,7 +64,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                         </div>
                         <div class="card-footer p-0">
                             <?php if (isset($_GET['tipe_pas'])) { ?>
-                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
+                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2' OR $_GET['tipe_pas'] == '3') { ?>
                                     <button type="button" onclick="takeSnapshot_id()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
                                     <button id="flip-btn2" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
                                 <?php } ?>
@@ -103,8 +103,9 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                     <?php } ?>
                 </div>
                 <div class="col-md-9">
-                    <?php echo form_open(base_url('medcheck/daftar_' . (isset($_GET['dft']) ? 'update' : 'simpan') . '.php'), 'autocomplete="off"') ?>
-                    <div class="card card-default">
+                    <?php echo form_open(base_url('medcheck/daftar_' . (isset($_GET['dft']) ? 'update' : 'simpan') . '.php'), array('autocomplete' => 'off', 'id' => 'daftar_form')) ?>
+                    <?php echo add_form_protection(); ?>
+                    <div class="card card-default rounded-0">
                         <div class="card-header">
                             <h3 class="card-title">Form Pendaftaran Pasien</h3>
                             <div class="card-tools">
@@ -113,7 +114,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                 </ul>
                             </div>
                         </div>
-                        <div class="card-body table-responsive">
+                        <div class="card-body">
                             <?php echo $this->session->flashdata('master'); ?>
                             <?php $hasError = $this->session->flashdata('form_error'); ?>
                             <?php echo form_hidden('id', general::enkrip($pasien->id)) ?>
@@ -135,10 +136,10 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                                 ?>
                                                 <label class="control-label">Apakah Anda*</label>
                                                 <br/>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1&id_ant=' . $this->input->get('id') . '&antrian=' . $this->input->get('antrian')) ?>">
+                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id')) ? '&id_ant=' . $this->input->get('id') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
                                                     <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_lama">Pasien Lama</button>
                                                 </a>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2&id_ant=' . $this->input->get('id') . '&antrian=' . $this->input->get('antrian')) ?>">
+                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id')) ? '&id_ant=' . $this->input->get('id') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
                                                     <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_baru">Pasien Baru</button>
                                                 </a>
                                                 <?php
@@ -148,10 +149,10 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                                 ?>
                                                 <label class="control-label">Apakah Anda*</label>
                                                 <br/>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1&id_ant=' . $this->input->get('id_ant') . '&antrian=' . $this->input->get('antrian')) ?>">
+                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
                                                     <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_lama">Pasien Lama</button>
                                                 </a>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2&id_ant=' . $this->input->get('id_ant') . '&antrian=' . $this->input->get('antrian')) ?>">
+                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
                                                     <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_baru">Pasien Baru</button>
                                                 </a>
                                                 <?php
@@ -161,13 +162,17 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                                 ?>
                                                 <label class="control-label">Apakah Anda*</label>
                                                 <br/>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1&id_ant=' . $this->input->get('id_ant') . '&antrian=' . $this->input->get('antrian')) ?>">
+                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
                                                     <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_lama">Pasien Lama</button>
                                                 </a>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2&id_ant=' . $this->input->get('id_ant') . '&antrian=' . $this->input->get('antrian')) ?>">
+                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
                                                     <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_baru">Pasien Baru</button>
                                                 </a>
                                                 <?php
+                                                break;
+
+                                            case '3':
+                                                
                                                 break;
                                         }
                                         ?>
@@ -218,19 +223,20 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-
+                                    <?php if (isset($_GET['tipe_pas']) && $_GET['tipe_pas'] == '3'): ?>
+                                        <a href="<?php echo base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')); ?>" class="btn btn-primary btn-flat rounded-0">
+                                            <i class="fas fa-arrow-left"></i> Kembali
+                                        </a>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="col-lg-6 text-right">
-                                    <?php if (!empty($pasien) AND empty($_GET['act'])) { ?>
-                                        <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=' . $this->input->get('tipe_pas') . '&id_pasien=' . $this->input->get('id_pasien') . '&act=ubah_data') ?>">
-                                            <button type="button" class="btn btn-warning btn-flat"><i class="fa fa-user-nurse"></i> Ubah</button>
-                                        </a>
-                                    <?php } ?>
                                     <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-user-plus"></i> Daftar</button>
                                 </div>
                             </div>                            
                         </div>
                     </div>
+                    
+                    <?php echo add_double_submit_protection('daftar_form'); ?>
                     <?php echo form_close() ?>
                 </div>
             </div>
@@ -241,6 +247,41 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
+<!-- Add the Modal HTML at the bottom of the file -->
+<div class="modal fade" id="modalTambahKlinik">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h4 class="modal-title">Form Instansi / Perusahaan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">Instansi / Perusahaan</label>
+                    <?php echo form_input('instansi', '', 'id="instansi" class="form-control rounded-0" placeholder="Masukkan nama"'); ?>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Alamat</label>
+                    <?php echo form_input('instansi_almt', '', 'id="instansi_almt" class="form-control rounded-0" placeholder="Masukkan alamat"'); ?>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">CP</label>
+                    <?php echo form_input('instansi_cp', '', 'id="instansi_cp" class="form-control rounded-0" placeholder="Masukkan CP"'); ?>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">No. HP</label>
+                    <?php echo form_input('instansi_no_hp', '', 'id="instansi_no_hp" class="form-control rounded-0" placeholder="Masukkan nomor HP"'); ?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary rounded-0" onclick="submitForm()">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="<?php echo base_url('assets/theme/admin-lte-2/plugins/JAutoNumber/autonumeric.js') ?>"></script>
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.js') ?>"></script>
@@ -263,7 +304,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
 <!-- Page script -->
 <script type="text/javascript">
 <?php if (isset($_GET['tipe_pas'])) { ?>
-    <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
+    <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2' OR $_GET['tipe_pas'] == '3') { ?>
         /* Ambil gambar dari webcam */
         // minta izin user
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
@@ -410,7 +451,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
     <?php } ?>
 <?php } ?>
 
-    $(function () {        
+    $(function () {       
 <?php if ($_GET['tipe_pas'] == '1') { ?>
             $("#pasien_baru").hide();
             $("#foto_pasien").show();
@@ -522,5 +563,39 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                 }
             });
         });
+
+        <?php echo $this->session->flashdata('medcheck_toast'); ?>
+        <?php echo $this->session->flashdata('medcheck_file_toast'); ?>
+        <?php echo $this->session->flashdata('medcheck_file_id_toast'); ?>
     });
+
+    function submitForm() {
+        var formData = {
+            nama: $('#instansi').val(),
+            alamat: $('#instansi_almt').val(),
+            no_hp: $('#instansi_no_hp').val(),
+            cp: $('#instansi_cp').val(),
+            '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
+        };
+
+        $.ajax({
+            url: '<?php echo base_url('medcheck/set_instansi'); ?>',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    toastr.success('Data klinik berhasil disimpan');
+                    $('#modalTambahKlinik').modal('hide');
+                    location.reload();
+                } else {
+                    toastr.error(response.message || 'Gagal menyimpan data');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+                toastr.error('Terjadi kesalahan sistem');
+            }
+        });
+    }
 </script>

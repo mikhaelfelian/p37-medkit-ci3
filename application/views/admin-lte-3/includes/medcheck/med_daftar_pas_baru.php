@@ -3,7 +3,7 @@
     <section id="pasien_baru1">
         <div class="form-group <?php echo (!empty($hasError['nik']) ? 'text-danger' : '') ?>">
             <label class="control-label">NIK <small><i>(* KTP / Passport / KIA)</i></small></label>
-            <?php echo form_input(array('id' => 'nik_baru', 'name' => 'nik_baru', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->nik) ? $pasien->nik : $this->session->flashdata('nik_baru')), 'placeholder' => 'Nomor Identitas ...')) ?>
+            <?php echo form_input(array('id' => 'nik', 'name' => 'nik', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->nik) ? $pasien->nik : $this->session->flashdata('nik_baru')), 'placeholder' => 'Nomor Identitas ...')) ?>
         </div>
         <div class="row">
             <div class="col-3">
@@ -32,17 +32,17 @@
                 <option value="P" <?php echo (!empty($pasien->jns_klm) ? ('P' == $pasien->jns_klm ? 'selected' : '') : ('P' == $this->session->flashdata('jns_klm') ? 'selected' : '')) ?>>Perempuan</option>
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group <?php echo (!empty($hasError['tmp_lahir']) ? 'text-danger' : '') ?>">
             <label class="control-label">Tempat Lahir</label>
-            <?php echo form_input(array('id' => 'tmp_lahir', 'name' => 'tmp_lahir', 'class' => 'form-control rounded-0', 'value' => (!empty($pasien->tmp_lahir) ? $pasien->tmp_lahir : $this->session->flashdata('tmp_lahir')), 'placeholder' => 'Isikan Tempat Lahir ...')) ?>
+            <?php echo form_input(array('id' => 'tmp_lahir', 'name' => 'tmp_lahir', 'class' => 'form-control rounded-0' . (!empty($hasError['tmp_lahir']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->tmp_lahir) ? $pasien->tmp_lahir : $this->session->flashdata('tmp_lahir')), 'placeholder' => 'Isikan Tempat Lahir ...')) ?>
         </div>
-        <div class="form-group">
+        <div class="form-group <?php echo (!empty($hasError['tgl_lahir']) ? 'text-danger' : '') ?>">
             <label class="control-label">Tgl Lahir *(Tanggal-Bulan-Tahun) / dd-mm-yyyy</label>
             <div class="input-group mb-3">
                 <div class="input-group-append">
                     <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                 </div>
-                <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control rounded-0', 'value' => (!empty($pasien->tgl_lahir) ? $pasien->tgl_lahir : $this->session->flashdata('tgl_lahir')), 'placeholder' => 'Isi dengan format berikut : 17-08-1945 ...', 'readonly'=>'TRUE')) ?>
+                <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control rounded-0' . (!empty($hasError['tgl_lahir']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->tgl_lahir) ? $pasien->tgl_lahir : $this->session->flashdata('tgl_lahir')), 'placeholder' => 'Isi dengan format berikut : 17-08-1945 ...', 'readonly'=>'TRUE')) ?>
             </div>                                        
         </div>
         <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
@@ -83,10 +83,9 @@
             <select name="instansi" class="form-control rounded-0 select2bs4">
                 <option value="">- Pilih -</option>
                 <?php foreach ($this->db->get('tbl_m_pelanggan')->result() as $instansi) { ?>
-                    <option value="<?php echo $instansi->nama ?>" <?php echo (!empty($pasien->id_pekerjaan) ? ($instansi->nama == $pasien->instansi ? 'selected' : '') : (($kerja->id == $this->session->flashdata('pekerjaan') ? 'selected' : ''))) ?>><?php echo $instansi->nama ?></option>
+                    <option value="<?php echo $instansi->id ?>" <?php echo (!empty($pasien->id_pekerjaan) ? ($instansi->nama == $pasien->instansi ? 'selected' : '') : (($kerja->id == $this->session->flashdata('pekerjaan') ? 'selected' : ''))) ?>><?php echo $instansi->nama ?></option>
                 <?php } ?>
             </select>
-            <?php // echo form_input(array('id' => 'instansi', 'name' => 'instansi', 'class' => 'form-control rounded-0', 'value' => (!empty($pasien->instansi) ? $pasien->instansi : $this->session->flashdata('instansi')), 'placeholder' => 'Isikan nama Instansi / Perusahaan ...')) ?>
         </div>
     </section>
 </div>

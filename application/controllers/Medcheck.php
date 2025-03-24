@@ -1,10 +1,12 @@
 <?php
-
 /**
- * Description of transaksi
+ * Description of Medcheck controller
  *
- * @author USER
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2025-03-24
  */
+
 class medcheck extends CI_Controller {
     public $ciqrcode;
     public $benchmark;
@@ -68,7 +70,6 @@ class medcheck extends CI_Controller {
                                     ->like('pasien', str_replace("'", "''", $cs))
                                     ->like('id_poli', $pl)
                                     ->like('status_bayar', $by)
-//                                    ->group_by('tgl_simpan, pasien')
                                     ->get('v_medcheck_dokter')->num_rows();
                 }else{
                     $jml_sql = $this->db->where('status_hps', '0')
@@ -1974,8 +1975,7 @@ class medcheck extends CI_Controller {
             $id_pasien    = $this->input->post('id_pasien');
             $ant          = $this->input->post('antrian');
             $no_rm        = $this->input->post('no_rm');
-            $nik_lama     = $this->input->post('nik_lama');
-            $nik_baru     = $this->input->post('nik_baru');
+            $nik          = $this->input->post('nik');
             $gelar        = $this->input->post('gelar');
             $nama         = $this->input->post('nama');
             $no_hp        = $this->input->post('no_hp');
@@ -2001,313 +2001,39 @@ class medcheck extends CI_Controller {
             $dokter       = $this->input->post('dokter');
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
-            
-            // Pilih tipe pasien
-            switch ($tipe_pas){ 
-                
-                default:
-                    // value data pasien                        
-                    $this->session->set_flashdata('tipe_pas', $tipe_pas);
-                    $this->session->set_flashdata('nik_baru', $nik_baru);
-                    $this->session->set_flashdata('nama', $nama);
-                    $this->session->set_flashdata('tmp_lahir', $tmp_lahir);
-                    $this->session->set_flashdata('tgl_lahir', $tgl_lahir);
-                    $this->session->set_flashdata('jns_klm', $jns_klm);
-                    $this->session->set_flashdata('no_hp', $no_hp);
-                    $this->session->set_flashdata('no_rmh', $no_rmh);
-                    $this->session->set_flashdata('alamat', $alamat);
-                    $this->session->set_flashdata('alamat_dom', $alamat_dom);
-                    $this->session->set_flashdata('pekerjaan', $pekerjaan);
-                    $this->session->set_flashdata('poli', $poli);
-                    $this->session->set_flashdata('plat', $plat);
-                    $this->session->set_flashdata('dokter', $dokter);
-                    $this->session->set_flashdata('alergi', $alergi);
 
-                    $this->session->set_flashdata('master', '<div class="alert alert-danger">Silahkan pilih tipe pilihan pasien dahulu</div>');
-                    redirect(base_url('medcheck/daftar.php'));
-                    break;
-                
-                // Pasien Lama
-                case '1':
-                    $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-        
-                    $this->form_validation->set_rules('gelar', 'Gelar', 'required');
-                    $this->form_validation->set_rules('nama', 'Nama Pasien', 'required');
-                    $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
-                    $this->form_validation->set_rules('platform', 'Platform', 'required');
-                    $this->form_validation->set_rules('tipe_rawat', 'Tipe', 'required');
-                    
-        
-                    if ($this->form_validation->run() == FALSE) {
-                        $msg_error = array(
-                            'gelar'         => form_error('gelar'),
-                            'nama'          => form_error('nama'),
-                            'jns_klm'       => form_error('jns_klm'),
-                            'platform'      => form_error('platform'),
-                            'tipe_rawat'    => form_error('tipe_rawat'),
-                        );
-
-                        // value data pasien                        
-                        $this->session->set_flashdata('tipe_pas', $tipe_pas);
-                        $this->session->set_flashdata('nik_baru', $nik_baru);
-                        $this->session->set_flashdata('nama', $nama);
-                        $this->session->set_flashdata('tmp_lahir', $tmp_lahir);
-                        $this->session->set_flashdata('tgl_lahir', $tgl_lahir);
-                        $this->session->set_flashdata('jns_klm', $jns_klm);
-                        $this->session->set_flashdata('no_hp', $no_hp);
-                        $this->session->set_flashdata('no_rmh', $no_rmh);
-                        $this->session->set_flashdata('alamat', $alamat);
-                        $this->session->set_flashdata('alamat_dom', $alamat_dom);
-                        $this->session->set_flashdata('pekerjaan', $pekerjaan);
-                        $this->session->set_flashdata('poli', $poli);
-                        $this->session->set_flashdata('dokter', $dokter);
-                        $this->session->set_flashdata('alergi', $alergi);
-                        
-                        $this->session->set_flashdata('form_error', $msg_error);
-                        redirect(base_url('medcheck/daftar.php?tipe_pas='.$tipe_pas.'&id_ant='.'&id_pasien='.$id_pasien));
-                    } else {
-                        $tmsk    = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                        $sql_ins = $this->db->where('nama', $inst)->get('tbl_m_pelanggan')->row();
-                        $sql_cek1= $this->db->where('id', general::dekrip($id_pasien))->get('tbl_m_pasien');
-                        $sql_cek2= $this->db->like('nik', $nik)->get('tbl_m_pasien');
-                        
-                        if($sql_cek1->num_rows() > 0){
-//                            $sql_num    = $this->db->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                            $sql_num    = $this->db->select('COUNT(*) AS jml')->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                            $pasien     = $sql_cek1->row();
-                            $sql_glr    = $this->db->where('id', $pasien->id_gelar)->get('tbl_m_gelar')->row();
-//                            $no_urut    = $sql_num->num_rows() + 1;
-                            $no_urut    = $sql_num->row()->jml + 1;
-                            
-                        }elseif($sql_cek2->num_rows() > 0){
-//                            $sql_num    = $this->db->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                            $sql_num    = $this->db->select('COUNT(*) AS jml')->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                            $pasien     = $sql_cek2->row();
-                            $sql_glr    = $this->db->where('id', $pasien->id_gelar)->get('tbl_m_gelar')->row();
-//                            $no_urut    = $sql_num->num_rows() + 1;
-                            $no_urut    = $sql_num->row()->jml + 1;
-                            
-                        }else{
-                            $this->session->set_flashdata('master', '<div class="alert alert-danger">NIK atau No. RM Pasien tidak ditemukan di database !!</div>');
-                        }
-                        
-                        $data_pas = array(
-                            'tgl_simpan'   => date('Y-m-d H:i:s'),
-                            'tgl_masuk'    => $tmsk.' '.date('H:i:s'),
-                            'id_ant'       => (!empty($id_ant) ? $id_ant : 0),
-                            'id_pasien'    => general::dekrip($id_pasien),
-                            'id_gelar'     => (!empty($gelar) ? $gelar : '0'),
-                            'id_poli'      => (!empty($poli) ? $poli : '0'),
-                            'id_dokter'    => (!empty($dokter) ? $dokter : '0'),
-                            'id_pekerjaan' => (!empty($pekerjaan) ? $pekerjaan : '0'),
-                            'id_instansi'  => (!empty($inst) ? $sql_ins->id : '0'),
-                            'id_referall'  => (!empty($referall) ? $referall : '0'),
-                            'no_urut'      => $no_urut,
-                            'nik'          => $nik_lama,
-                            'nama'         => stripslashes($nama),
-                            'nama_pgl'     => stripslashes(strtoupper($sql_glr->gelar.' '.$nama)),
-                            'tmp_lahir'    => (!empty($tmp_lahir) ? $tmp_lahir : ''),
-                            'tgl_lahir'    => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                            'jns_klm'      => (!empty($jns_klm) ? $jns_klm : 0),
-                            'kontak'       => $no_hp,
-                            'kontak_rmh'   => $no_rmh,
-                            'alamat'       => $alamat,
-                            'alamat_dom'   => $alamat_dom,
-                            'instansi'          => $inst,
-                            'instansi_alamat'   => $inst_alamat,
-                            'file_base64'       => $file,
-                            'file_base64_id'    => $file_id,
-                            'alergi'       => $alergi,
-                            'tipe'         => (!empty($tipe) ? $tipe : '0'),
-                            'tipe_bayar'   => (!empty($plat) ? $plat : '0'),
-                            'tipe_rawat'   => (!empty($tipe_rwt) ? $tipe_rwt : '0'),
-                            'status'       => $tipe_pas,
-                            'status_akt'   => '0',
-                            'status_hdr'   => '0',
-                            'status_dft'   => '1',
-                        );
-
-                        $this->session->set_flashdata('master', '<div class="alert alert-success">Data member berhasil diubah</div>');
-
-                        $this->db->insert('tbl_pendaftaran', $data_pas);
-                        $last_id = crud::last_id();
-
-                        redirect(base_url('medcheck/data_pendaftaran.php?id='.general::enkrip($last_id).'&filter_tgl='.date('Y-m-d')));
-                    }
-                    break;
-                
-                // Pasien Baru
-                case '2':
-                    $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-        
-                    $this->form_validation->set_rules('gelar', 'Gelar', 'required');
-                    $this->form_validation->set_rules('nama', 'Nama Pasien', 'required');
-                    $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
-                    $this->form_validation->set_rules('alamat', 'Alamat', 'required');
-                    $this->form_validation->set_rules('platform', 'Platform', 'required');
-                    $this->form_validation->set_rules('tipe_rawat', 'Tipe', 'required');
-        
-                    if ($this->form_validation->run() == FALSE) {
-                        $msg_error = array(
-                            'gelar'     => form_error('gelar'),
-                            'nama'      => form_error('nama'),
-                            'jns_klm'   => form_error('jns_klm'),
-                            'alamat'    => form_error('alamat'),
-                            'platform'  => form_error('platform'),
-                            'tipe_rawat'=> form_error('tipe_rawat'),
-                        );
-                        
-                        // value data pasien
-                        $this->session->set_flashdata('nik_baru', $nik_baru);
-                        $this->session->set_flashdata('nama', $nama);
-                        $this->session->set_flashdata('tmp_lahir', $tmp_lahir);
-                        $this->session->set_flashdata('tgl_lahir', $tgl_lahir);
-                        $this->session->set_flashdata('jns_klm', $jns_klm);
-                        $this->session->set_flashdata('no_hp', $no_hp);
-                        $this->session->set_flashdata('no_rmh', $no_rmh);
-                        $this->session->set_flashdata('alamat', $alamat);
-                        $this->session->set_flashdata('alamat_dom', $alamat_dom);
-                        $this->session->set_flashdata('pekerjaan', $pekerjaan);
-                        $this->session->set_flashdata('poli', $poli);
-                        $this->session->set_flashdata('dokter', $dokter);
-                        $this->session->set_flashdata('alergi', $alergi);
-                        
-                        $this->session->set_flashdata('form_error', $msg_error);
-                        redirect(base_url('medcheck/daftar.php?tipe_pas='.$tipe_pas));
-                    } else {
-                        $tmsk    = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                        $sql_ins = $this->db->where('nama', $inst)->get('tbl_m_pelanggan')->row();
-//                        $sql_num = $this->db->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                        $sql_num = $this->db->select('COUNT(*) AS jml')->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                        $sql_glr = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
-                        $kode    = sprintf('%05d', $sql_num);
-                        $sql_kat = $this->db->get('tbl_m_kategori');
-                        
-                        # Check point
-                        $this->session->set_userdata('form_timestamp', $this->input->post('timestamp'));
-                        
-                        $sql_cek = $this->db->where('kode', $no_rm)->get('tbl_pendaftaran');
-                        
-//                        $no_urut = $sql_num->num_rows() + 1;
-                        $no_urut = $sql_num->row()->jml + 1;
-                        
-                        $data_pas = array(
-                            'tgl_simpan'   => date('Y-m-d H:i:s'),
-                            'tgl_masuk'    => $tmsk.' '.date('H:i:s'),
-                            'id_ant'       => (!empty($id_ant) ? $id_ant : 0),
-                            'id_gelar'     => (!empty($gelar) ? $gelar : 0),
-                            'id_poli'      => (!empty($poli) ? $poli : 0),
-                            'id_dokter'    => (!empty($dokter) ? $dokter : 0),
-                            'id_pekerjaan' => (!empty($pekerjaan) ? $pekerjaan : 0),
-                            'id_instansi'  => (!empty($inst) ? $sql_ins->id : '0'),
-                            'id_referall' => (!empty($referall) ? $referall : '0'),
-                            'tipe_bayar'   => (!empty($plat) ? $plat : '0'),
-                            'no_urut'      => $no_urut,
-                            'nik'          => $nik_baru,
-                            'nama'         => stripslashes($nama),
-                            'nama_pgl'     => stripslashes(strtoupper($sql_glr->gelar.' '.$nama)),
-                            'tmp_lahir'    => $tmp_lahir,
-                            'tgl_lahir'    => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                            'jns_klm'      => $jns_klm,
-                            'kontak'       => $no_hp,
-                            'kontak_rmh'   => $no_rmh,
-                            'alamat'       => (!empty($alamat) ? $alamat : ''),
-                            'alamat_dom'   => (!empty($alamat_dom) ? $alamat_dom : ''),
-                            'instansi'          => $inst,
-                            'instansi_alamat'   => $inst_alamat,
-                            'file_base64'       => (!empty($file) ? $file : '-'),
-                            'file_base64_id'    => $file_id,
-                            'alergi'       => $alergi,
-                            'tipe'         => (!empty($tipe) ? $tipe : '0'),
-                            'tipe_bayar'   => (!empty($plat) ? $plat : '0'),
-                            'tipe_rawat'   => (!empty($tipe_rwt) ? $tipe_rwt : '0'),
-                            'status'       => $tipe_pas,
-                            'status_akt'   => '0'
-                        );
-                                                
-                        # Transact SQL
-                        $this->db->trans_off();
-                        $this->db->trans_start();
-                        
-                        # Simpan ke tabel pendaftaran
-                        $this->db->insert('tbl_pendaftaran', $data_pas);
-                        $last_id = $this->db->insert_id();
-                        
-                        # Transact SQL End
-                        $this->db->trans_complete();
-                        
-//                        if ($this->db->trans_status() === FALSE) {
-//                            # Rollback jika gagal
-//                            $this->db->trans_rollback();
-//
-//                            # Tampilkan pesan error
-//                            $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Pendaftaran pasien gagal !!</div>');
-//                        }else{
-//                            $this->db->trans_commit();
-//                            
-//                            # Tampilkan pesan sukses
-//                            $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Pendaftaran pasien berhasil !!</div>'); 
-//                        }   
-//
-                        redirect(base_url('medcheck/data_pendaftaran.php?id='.general::enkrip($last_id).'&filter_tgl='.date('Y-m-d')));
-                    }
-                    break;
-            }
-        }else{
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();            
-        }
-    }
-    
-    public function trans_medcheck_dft_update() {
-        if (akses::aksesLogin() == TRUE) {
-            $dft          = $this->input->post('id_dft');
-            $id_pasien    = $this->input->post('id_pasien');
-            $no_rm        = $this->input->post('no_rm');
-            $nik_lama     = $this->input->post('nik_lama');
-            $nik_baru     = $this->input->post('nik_baru');
-            $gelar        = $this->input->post('gelar');
-            $nama         = $this->input->post('nama');
-            $no_hp        = $this->input->post('no_hp');
-            $no_rmh       = $this->input->post('no_rmh');
-            $tmp_lahir    = $this->input->post('tmp_lahir');
-            $tgl_lahir    = $this->input->post('tgl_lahir');
-            $alamat       = $this->input->post('alamat');
-            $alamat_dom   = $this->input->post('alamat_dom');
-            $jns_klm      = $this->input->post('jns_klm');
-            $pekerjaan    = $this->input->post('pekerjaan');
-            $tipe_pas     = $this->input->post('tipe_pas');
-            $file         = $this->input->post('file');
-            $file_id      = $this->input->post('file_id');
-            $alergi       = $this->input->post('alergi');
-            $inst         = $this->input->post('instansi');
-            $inst_alamat  = $this->input->post('instansi_almt');
-            
-            $tgl_masuk    = $this->input->post('tgl_masuk');
-            $plat         = $this->input->post('platform');
-            $poli         = $this->input->post('poli');
-            $dokter       = $this->input->post('dokter');
-            
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-            
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
+            $this->form_validation->set_rules('nik', 'NIK', 'required');
             $this->form_validation->set_rules('gelar', 'Gelar', 'required');
             $this->form_validation->set_rules('nama', 'Nama Pasien', 'required');
             $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
-//            $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+            $this->form_validation->set_rules('tmp_lahir', 'Tempat Lahir', 'required');
+            $this->form_validation->set_rules('tgl_lahir', 'Tanggal Lahir', 'required');
+            $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+            $this->form_validation->set_rules('platform', 'Platform', 'required');
+            $this->form_validation->set_rules('file', 'File', 'required');
+            $this->form_validation->set_rules('file_id', 'File ID', 'required');
+            $this->form_validation->set_rules('tipe_rawat', 'Tipe', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'gelar'   => form_error('gelar'),
-                    'nama'    => form_error('nama'),
-                    'jns_klm' => form_error('jns_klm'),
-//                    'alamat'  => form_error('alamat'),
-                );
-                
-                // value data pasien
-                $this->session->set_flashdata('nik_baru', $nik_baru);
+                $msg_error = [
+                    'nik'           => form_error('nik'),
+                    'gelar'         => form_error('gelar'),
+                    'nama'          => form_error('nama'),
+                    'jns_klm'       => form_error('jns_klm'),
+                    'tmp_lahir'     => form_error('tmp_lahir'),
+                    'tgl_lahir'     => form_error('tgl_lahir'),
+                    'alamat'        => form_error('alamat'),
+                    'platform'      => form_error('platform'),
+                    'file'          => form_error('file'),
+                    'file_id'       => form_error('file_id'),
+                    'tipe_rawat'    => form_error('tipe_rawat'),
+                ];
+
+                // value data pasien                        
+                $this->session->set_flashdata('tipe_pas', $tipe_pas);
+                $this->session->set_flashdata('nik_baru', $nik);
                 $this->session->set_flashdata('nama', $nama);
                 $this->session->set_flashdata('tmp_lahir', $tmp_lahir);
                 $this->session->set_flashdata('tgl_lahir', $tgl_lahir);
@@ -2320,81 +2046,310 @@ class medcheck extends CI_Controller {
                 $this->session->set_flashdata('poli', $poli);
                 $this->session->set_flashdata('dokter', $dokter);
                 $this->session->set_flashdata('alergi', $alergi);
-                
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('medcheck/daftar.php?tipe_pas='.$tipe_pas));
-            } else {
-                $tmsk    = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                $sql_num = $this->db->where('DATE(tgl_masuk)', $tmsk)->where('id_poli', $poli)->get('tbl_pendaftaran');
-                $sql_glr = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
-                $kode    = sprintf('%05d', $sql_num);
-                $sql_kat = $this->db->get('tbl_m_kategori');
-                
-                # Check point
-                $this->session->set_userdata('form_timestamp', $this->input->post('timestamp'));
-                
-                $sql_cek = $this->db->where('id', general::dekrip($dft))->get('tbl_pendaftaran');
-                
-                $no_urut = $sql_num->num_rows() + 1;
-                
-                $data_pas = array(
-                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-                    'tgl_masuk'    => date('Y-m-d'),
-                    'id_gelar'     => (!empty($gelar) ? $gelar : 0),
-                    'id_poli'      => (!empty($poli) ? $poli : 0),
-                    'id_dokter'    => (!empty($dokter) ? $dokter : 0),
-                    'id_pekerjaan' => (!empty($pekerjaan) ? $pekerjaan : 0),
-                    'nik'          => $nik_baru,
-                    'nama'         => $nama,
-                    'nama_pgl'     => strtoupper($sql_glr->gelar.' '.$nama),
-                    'tmp_lahir'    => $tmp_lahir,
-                    'tgl_lahir'    => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                    'jns_klm'      => $jns_klm,
-                    'kontak'       => $no_hp,
-                    'kontak_rmh'   => $no_rmh,
-                    'alamat'       => (!empty($alamat) ? $alamat : ''),
-                    'alamat_dom'   => (!empty($alamat_dom) ? $alamat_dom : ''),
-                    'instansi'          => $inst,
-                    'instansi_alamat'   => $inst_alamat,
-                    'file_base64'  => $file,
-                    'file_base64_id'=> $file_id,
-                    'alergi'       => $alergi,
-                    'tipe_bayar'   => (!empty($plat) ? $plat : '0'),
-                    'status_akt'   => '0'
-                );
-                
-//                echo general::dekrip($dft);
-//                echo '<pre>';
-//                print_r($data_pas);
-//                echo '</pre>';
 
-                # Transact SQL
-                $this->db->trans_off();
-                $this->db->trans_start();
+                // File Kosong
+                if(!empty($msg_error['file'])){
+                    $this->session->set_flashdata('medcheck_file_toast', 'toastr.error("Foto Pasien tidak boleh kosong.");');
+                }
+
+                if(!empty($msg_error['file_id'])){
+                    $this->session->set_flashdata('medcheck_file_id_toast', 'toastr.error("Foto Identitas tidak boleh kosong.");');
+                }
+
+                $this->session->set_flashdata('form_error', $msg_error);
+                // $this->session->set_flashdata('medcheck_toast', 'toastr.error("Validation error, please check the form again.");');
+                redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas . '&id_ant=' . '&id_pasien=' . $id_pasien));
+            } else {
+                // Check if this is a new patient registration (tipe_pas = 2)
+                if ($tipe_pas == '2') {
+                    // Check if NIK already exists in the database
+                    $sql_cek = $this->db->where('nik', $nik)
+                                               ->get('tbl_m_pasien')
+                                               ->row();
+                    
+                    if ($sql_cek) {
+                        // Set flash data for error message
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("NIK sudah terdaftar atas nama :<br/><b>'.$sql_cek->nama_pgl.'</b>.<br/>Silahkan gunakan pendaftaran pasien lama.");');
+                        
+                        // Preserve form data in session
+                        $this->session->set_flashdata('tipe_pas', $tipe_pas);
+                        $this->session->set_flashdata('nik_baru', $nik);
+                        $this->session->set_flashdata('nama', $nama);
+                        $this->session->set_flashdata('tmp_lahir', $tmp_lahir);
+                        $this->session->set_flashdata('tgl_lahir', $tgl_lahir);
+                        $this->session->set_flashdata('jns_klm', $jns_klm);
+                        $this->session->set_flashdata('no_hp', $no_hp);
+                        $this->session->set_flashdata('no_rmh', $no_rmh);
+                        $this->session->set_flashdata('alamat', $alamat);
+                        $this->session->set_flashdata('alamat_dom', $alamat_dom);
+                        $this->session->set_flashdata('pekerjaan', $pekerjaan);
+                        $this->session->set_flashdata('poli', $poli);
+                        $this->session->set_flashdata('dokter', $dokter);
+                        $this->session->set_flashdata('alergi', $alergi);
+                        
+                        // Redirect back to the registration form
+                        redirect(base_url('medcheck/daftar.php?tipe_pas=2'));
+                    }
+                }
+
                 
-                # Simpan ke tabel pendaftaran
-                $this->db->where('id', general::dekrip($dft))->update('tbl_pendaftaran', $data_pas);
-                $last_id = general::dekrip($dft);
-                
-                # Transact SQL End
-                $this->db->trans_complete();
-                
-//                if ($this->db->trans_status() === FALSE) {
-//                    # Rollback jika gagal
-//                    $this->db->trans_rollback();
-////
-//                    # Tampilkan pesan error
-//                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Pendaftaran pasien gagal !!</div>');
-//                }else{
-//                    $this->db->trans_commit();
-//                    
-//                    # Tampilkan pesan sukses
-//                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Pendaftaran pasien berhasil !!</div>'); 
-//                }           
-//
-                redirect(base_url('medcheck/data_pendaftaran.php?id='.general::enkrip($last_id).'&filter_tgl='.date('Y-m-d')));
+                $tmsk       = $this->tanggalan->tgl_indo_sys($tgl_masuk);
+                $sql_ins    = $this->db->where('id', $inst)->get('tbl_m_pelanggan')->row();
+                $sql_glr    = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
+
+                // Count the number of patients registered for the same day and same poli
+                $sql_num = $this->db->select('COUNT(*) AS jml')
+                                    ->where('DATE(tgl_masuk)', $tmsk)
+                                    ->where('id_poli', $poli)
+                                    ->get('tbl_pendaftaran');
+
+                // Generate sequential number for the patient
+                $no_urut = $sql_num->row()->jml + 1;
+
+                $data = [
+                    'tgl_simpan'        => date('Y-m-d H:i:s'),
+                    'tgl_masuk'         => $tmsk.' '.date('H:i:s'),
+                    'id_ant'            => (!empty($id_ant) ? $id_ant : 0),
+                    'id_pasien'         => general::dekrip($id_pasien),
+                    'id_gelar'          => (!empty($gelar) ? $gelar : '0'),
+                    'id_poli'           => (!empty($poli) ? $poli : '0'),
+                    'id_dokter'         => (!empty($dokter) ? $dokter : '0'),
+                    'id_pekerjaan'      => (!empty($pekerjaan) ? $pekerjaan : '0'),
+                    'id_instansi'       => (!empty($inst) ? $sql_ins->id : '0'),
+                    'id_referall'       => (!empty($referall) ? $referall : '0'),
+                    'no_urut'           => $no_urut,
+                    'nik'               => $nik,
+                    'nama'              => stripslashes($nama),
+                    'nama_pgl'          => stripslashes(strtoupper($sql_glr->gelar.' '.$nama)),
+                    'tmp_lahir'         => (!empty($tmp_lahir) ? $tmp_lahir : ''),
+                    'tgl_lahir'         => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
+                    'jns_klm'           => (!empty($jns_klm) ? $jns_klm : 0),
+                    'kontak'            => $no_hp,
+                    'kontak_rmh'        => $no_rmh,
+                    'alamat'            => $alamat,
+                    'alamat_dom'        => $alamat_dom,
+                    'instansi'          => $sql_ins->nama,
+                    'instansi_alamat'   => $sql_ins->alamat,
+                    'file_base64'       => $file,
+                    'file_base64_id'    => $file_id,
+                    'alergi'            => $alergi,
+                    'tipe'              => (!empty($tipe) ? $tipe : '0'),
+                    'tipe_bayar'        => (!empty($plat) ? $plat : '0'),
+                    'tipe_rawat'        => (!empty($tipe_rwt) ? $tipe_rwt : '0'),
+                    'status'            => $tipe_pas,
+                    'status_akt'        => '0',
+                    'status_hdr'        => '0',
+                    'status_dft'        => '1',
+                ];
+
+                try {
+                    // Start database transaction
+                    $this->db->trans_begin();
+                    
+                    // Check for form resubmission
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                        return;
+                    }
+                    
+                    // Insert data into the database
+                    $this->db->insert('tbl_pendaftaran', $data);
+                    
+                    // Check if the transaction was successful
+                    if ($this->db->trans_status() === FALSE) {
+                        // Something went wrong, rollback transaction
+                        $this->db->trans_rollback();
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Gagal menyimpan data pendaftaran. Silahkan coba lagi.");');
+                    } else {
+                        // All good, commit the transaction
+                        $this->db->trans_commit();
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pendaftaran berhasil disimpan.");');
+                    }
+                    
+                    // Redirect to appropriate page
+                    redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                    
+                } catch (Exception $e) {
+                    // Rollback transaction on exception
+                    $this->db->trans_rollback();
+                    
+                    // Set error message
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan sistem. Silahkan coba lagi.");');
+                    
+                    // Redirect back to form
+                    redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                }
             }
         }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();            
+        }
+    }
+    
+    public function trans_medcheck_dft_update() {
+        if (akses::aksesLogin() == TRUE) {
+            $dft          = $this->input->post('id_dft');
+            $id_ant       = $this->input->post('id_ant');
+            $id_pasien    = $this->input->post('id_pasien');
+            $ant          = $this->input->post('antrian');
+            $no_rm        = $this->input->post('no_rm');
+            $nik          = $this->input->post('nik');
+            $gelar        = $this->input->post('gelar');
+            $nama         = $this->input->post('nama');
+            $no_hp        = $this->input->post('no_hp');
+            $no_rmh       = $this->input->post('no_rmh');
+            $tmp_lahir    = $this->input->post('tmp_lahir');
+            $tgl_lahir    = $this->input->post('tgl_lahir');
+            $alamat       = $this->input->post('alamat');
+            $alamat_dom   = $this->input->post('alamat_dom');
+            $jns_klm      = $this->input->post('jns_klm');
+            $pekerjaan    = $this->input->post('pekerjaan');
+            $tipe_pas     = $this->input->post('tipe_pas');
+            $tipe_rwt     = $this->input->post('tipe_rawat');
+            $file         = $this->input->post('file');
+            $file_id      = $this->input->post('file_id');
+            $alergi       = $this->input->post('alergi');
+            $inst         = $this->input->post('instansi');
+            $inst_alamat  = $this->input->post('instansi_almt');
+            $referall     = $this->input->post('referall');
+            $tgl_masuk    = $this->input->post('tgl_masuk');
+            $plat         = $this->input->post('platform');
+            $tipe         = $this->input->post('tipe');
+            $poli         = $this->input->post('poli');
+            $dokter       = $this->input->post('dokter');
+            
+            $pengaturan   = $this->db->get('tbl_pengaturan')->row();
+
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
+            $this->form_validation->set_rules('nik', 'NIK', 'required');
+            $this->form_validation->set_rules('gelar', 'Gelar', 'required');
+            $this->form_validation->set_rules('nama', 'Nama Pasien', 'required');
+            $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
+            $this->form_validation->set_rules('tmp_lahir', 'Tempat Lahir', 'required');
+            $this->form_validation->set_rules('tgl_lahir', 'Tanggal Lahir', 'required');
+            $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+            $this->form_validation->set_rules('platform', 'Platform', 'required');
+            $this->form_validation->set_rules('tipe_rawat', 'Tipe', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = [
+                    'nik'           => form_error('nik'),
+                    'gelar'         => form_error('gelar'),
+                    'nama'          => form_error('nama'),
+                    'jns_klm'       => form_error('jns_klm'),
+                    'tmp_lahir'     => form_error('tmp_lahir'),
+                    'tgl_lahir'     => form_error('tgl_lahir'),
+                    'alamat'        => form_error('alamat'),
+                    'platform'      => form_error('platform'),
+                    'tipe_rawat'    => form_error('tipe_rawat'),
+                ];
+
+                // value data pasien                        
+                $this->session->set_flashdata('tipe_pas', $tipe_pas);
+                $this->session->set_flashdata('nik_baru', $nik);
+                $this->session->set_flashdata('nama', $nama);
+                $this->session->set_flashdata('tmp_lahir', $tmp_lahir);
+                $this->session->set_flashdata('tgl_lahir', $tgl_lahir);
+                $this->session->set_flashdata('jns_klm', $jns_klm);
+                $this->session->set_flashdata('no_hp', $no_hp);
+                $this->session->set_flashdata('no_rmh', $no_rmh);
+                $this->session->set_flashdata('alamat', $alamat);
+                $this->session->set_flashdata('alamat_dom', $alamat_dom);
+                $this->session->set_flashdata('pekerjaan', $pekerjaan);
+                $this->session->set_flashdata('poli', $poli);
+                $this->session->set_flashdata('dokter', $dokter);
+                $this->session->set_flashdata('alergi', $alergi);
+
+                $this->session->set_flashdata('form_error', $msg_error);
+                // $this->session->set_flashdata('medcheck_toast', 'toastr.error("Validation error, please check the form again.");');
+                redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas . '&id_ant=' . '&id_pasien=' . $id_pasien));
+            } else {               
+                $tmsk       = $this->tanggalan->tgl_indo_sys($tgl_masuk);
+                $sql_dft    = $this->db->where('id', general::dekrip($dft))->get('tbl_pendaftaran')->row();
+                $sql_ins    = $this->db->where('id', $inst)->get('tbl_m_pelanggan')->row();
+                $sql_glr    = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
+
+                // Count the number of patients registered for the same day and same poli
+                $sql_num = $this->db->select('COUNT(*) AS jml')
+                                    ->where('DATE(tgl_masuk)', $tmsk)
+                                    ->where('id_poli', $poli)
+                                    ->get('tbl_pendaftaran');
+
+                // Generate sequential number for the patient
+                $no_urut = $sql_num->row()->jml + 1;
+
+                $data = [
+                    'tgl_modif'        => date('Y-m-d H:i:s'),
+                    'id_gelar'          => (!empty($gelar) ? $gelar : '0'),
+                    'id_poli'           => (!empty($poli) ? $poli : '0'),
+                    'id_dokter'         => (!empty($dokter) ? $dokter : '0'),
+                    'id_pekerjaan'      => (!empty($pekerjaan) ? $pekerjaan : '0'),
+                    'id_instansi'       => (!empty($inst) ? $sql_ins->id : '0'),
+                    'id_referall'       => (!empty($referall) ? $referall : '0'),
+                    'no_urut'           => $no_urut,
+                    'nik'               => $nik,
+                    'nama'              => stripslashes($nama),
+                    'nama_pgl'          => stripslashes(strtoupper($sql_glr->gelar.' '.$nama)),
+                    'tmp_lahir'         => (!empty($tmp_lahir) ? $tmp_lahir : ''),
+                    'tgl_lahir'         => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
+                    'jns_klm'           => (!empty($jns_klm) ? $jns_klm : 0),
+                    'kontak'            => $no_hp,
+                    'kontak_rmh'        => $no_rmh,
+                    'alamat'            => $alamat,
+                    'alamat_dom'        => $alamat_dom,
+                    'instansi'          => $sql_ins->nama,
+                    'instansi_alamat'   => $sql_ins->alamat,
+                    'file_base64'       => (!empty($file) ? $file : $sql_dft->file_base64),
+                    'file_base64_id'    => (!empty($file_id) ? $file_id : $sql_dft->file_base64_id),
+                    'alergi'            => $alergi,
+                    'tipe'              => (!empty($tipe) ? $tipe : '0'),
+                    'tipe_bayar'        => (!empty($plat) ? $plat : '0'),
+                    'tipe_rawat'        => (!empty($tipe_rwt) ? $tipe_rwt : '0'),
+                ];
+
+                try {
+                    // Start database transaction
+                    $this->db->trans_begin();
+                    
+                    // Check for form resubmission
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                        return;
+                    }
+                    
+                    // Insert data into the database
+                    $this->db->where('id', general::dekrip($dft))->update('tbl_pendaftaran', $data);
+                     
+                    // Check if the transaction was successful
+                    if ($this->db->trans_status() === FALSE) {
+                        // Something went wrong, rollback transaction
+                        $this->db->trans_rollback();
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Gagal menyimpan data pendaftaran. Silahkan coba lagi.");');
+                    } else {
+                        // All good, commit the transaction
+                        $this->db->trans_commit();
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pendaftaran berhasil disimpan.");');
+                    }
+                    
+                    // Redirect to appropriate page
+                    redirect(base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')));
+                    
+                } catch (Exception $e) {
+                    // Rollback transaction on exception
+                    $this->db->trans_rollback();
+                    
+                    // Set error message
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan sistem. Silahkan coba lagi.");');
+                    
+                    // Redirect back to form
+                    redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                }
+            }
+        } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();            
@@ -3725,6 +3680,54 @@ class medcheck extends CI_Controller {
     }
     
 
+    public function set_instansi() {
+        if (akses::aksesLogin() == TRUE) {
+            $nama       = $this->input->post('nama');
+            $alamat     = $this->input->post('alamat');
+            $no_hp      = $this->input->post('no_hp');
+            $cp         = $this->input->post('cp');
+            $tipe       = $this->input->post('tipe');
+            $rute       = $this->input->post('route');
+            $idp        = $this->input->post('id_pasien');
+
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+    
+            $this->form_validation->set_rules('nama', 'Nama Rekanan', 'required');
+    
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = array(
+                    'nama' => form_error('nama_rekanan'),
+                );
+    
+                $this->session->set_flashdata('form_error', $msg_error);
+                echo json_encode(['error' => 'Validation failed. Please check the form again.']);
+            } else {
+                $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
+                $kode    = 'MCU-'.sprintf('%03d', $sql_num);
+
+                $data = array(
+                    'tgl_simpan' => date('Y-m-d H:i:s'),
+                    'tgl_modif'  => date('Y-m-d H:i:s'),
+                    'kode'       => $kode,
+                    'nama'       => $nama,
+                    'alamat'     => $alamat,
+                    'no_hp'      => $no_hp,
+                    'cp'         => $cp,
+                );
+    
+                try {
+                    crud::simpan('tbl_m_pelanggan', $data);
+                    echo json_encode(['success' => true, 'message' => 'Data berhasil disimpan.']);
+                } catch (Exception $e) {
+                    echo json_encode(['success' => false, 'message' => 'Gagal menyimpan data.']);
+                }
+            }
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();            
+        }
+    }
     
     public function set_gc_simpan() {
         if (akses::aksesLogin() == TRUE) {
@@ -3809,11 +3812,12 @@ class medcheck extends CI_Controller {
                 $sql_dft_gc = $this->db->where('id_pendaftaran', $sql_dft->id)->get('tbl_pendaftaran_gc')->row(); 
                 
                 # Config File Foto Pasien
-                $path               = 'file/gc/'.$sql_dft->id.'/';
+                $dir_gc           = FCPATH.'/';
+                $path             = 'file/gc/'.$sql_dft->id.'/';
                 
                 # Buat Folder Untuk Foto Pasien
-                if(!file_exists($path)){
-                    mkdir($path, 0777, true);
+                if(!file_exists($dir_gc.$path)){
+                    mkdir($dir_gc.$path, 0777, true);
                 }
 
                 # Simpan foto dari kamera ke dalam format file *.png dari base64
@@ -3821,21 +3825,30 @@ class medcheck extends CI_Controller {
                     $filename           = $path.'ttd_gc_'.$sql_dft->id.'.png';
                     general::base64_to_jpeg($foto, $filename);
                 }
+                
                                 
                 $data_pas = array(
                     'file_name' => $filename,
                 );
                 
-                $this->db->where('id', $sql_dft_gc->id)->update('tbl_pendaftaran_gc', $data_pas);
-                $last_id = $sql_dft_gc->id;
-                
-//                if($this->db->affected_rows() > 0){
-//                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Entri data persetujuan umum gagal !");');
-//                }else{
-//                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data persetujuan umum berhasil !");');
-//                }
-//                
-//                redirect(base_url('medcheck/daftar_gc_ttd.php?dft='.$id.'&id_dft='.general::enkrip($last_id)));
+                try {
+                    $this->db->where('id', $sql_dft_gc->id)->update('tbl_pendaftaran_gc', $data_pas);
+                    $last_id = $sql_dft_gc->id;
+
+                    header('Content-Type: application/json');
+                    echo json_encode(array(
+                        'success' => true,
+                        'message' => 'TTD Berhasil disimpan'
+                    ));
+                    return;
+                } catch (Exception $e) {
+                    header('Content-Type: application/json');
+                    echo json_encode(array(
+                        'success' => false,
+                        'message' => 'Gagal menyimpan TTD: ' . $e->getMessage()
+                    ));
+                    return;
+                }
             }
         }else{
             $errors = $this->ion_auth->messages();
@@ -13952,10 +13965,18 @@ public function set_medcheck_lab_adm_save() {
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Diwakili oleh ';
             $params['data'] .= strtoupper($this->ion_auth->user($sql_dft_gc->id_user)->row()->first_name) . ',';
             $params['data'] .= 'yang merupakan petugas yang bertugas pada tanggal ' . date('d/m/Y H:i') . '.';
-            $params['level'] = 'H';
-            $params['size'] = 2;
-            $params['savename'] = $qr_validasi;
-            $this->ciqrcode->generate($params);
+            
+            // Add this line to include QR library
+            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
+            
+            // Replace these 4 lines:
+            // $params['level'] = 'H';
+            // $params['size'] = 2;
+            // $params['savename'] = $qr_validasi;
+            // $this->ciqrcode->generate($params);
+            
+            // With this single line:
+            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
 

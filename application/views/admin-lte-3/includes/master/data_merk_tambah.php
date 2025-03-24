@@ -84,11 +84,6 @@
 </div>
 <!-- /.content-wrapper -->
 <script type="text/javascript">
-    /* 
-     * JavaScript for handling toast notifications
-     * Modified by: Mikhael Felian Waskito - mikhaelfelian@gmail.com
-     * Date: 2025-03-14
-     */
     $(function () {
         <?php echo $this->session->flashdata('master_toast'); ?>
     });
