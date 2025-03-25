@@ -142,9 +142,38 @@
                                                 <td style="width: 250px;">
                                                     <?php if ($penj->status_akt == '0') { ?>
                                                         <?php echo anchor(base_url('medcheck/set_pasien_konfirm.php?dft=' . general::enkrip($penj->id)), '<i class="fa fa-check"></i> Konfirm &raquo;', 'class="btn btn-' . ($gc->num_rows() == '0' ? 'danger' : 'success') . ' btn-flat btn-xs" style="width: 80px;"' . ($gc->num_rows() == '0' ? ' onclick="return confirm(\'Anda belum mengisi form GENERAL CONSENT, lanjutkan ?\')"' : '')) . br() ?>
-                                                    <?php } else { ?>
-                                                        <?php echo anchor(base_url('medcheck/set_pasien.php?dft=' . general::enkrip($penj->id)), '<i class="fa fa-shopping-cart"></i> Input &raquo;', 'class="btn btn-warning btn-flat btn-xs" style="width: 80px;"') . br() ?>
+                                                    <?php } else { 
+                                                        $process_token = md5(uniqid(rand(), true));
+                                                        $this->session->set_userdata('process_token_'.$penj->id, $process_token);
+                                                    ?>
+                                                        <form id="form_<?php echo $penj->id; ?>" method="POST" action="<?php echo base_url('medcheck/set_pasien.php'); ?>" style="display:inline;">
+                                                            <?php 
+                                                            // Get CSRF token from database session
+                                                            $csrf = array(
+                                                                'name' => $this->security->get_csrf_token_name(),
+                                                                'hash' => $this->security->get_csrf_hash()
+                                                            );
+                                                            ?>
+                                                            <input type="hidden" name="<?php echo $csrf['name']; ?>" value="<?php echo $csrf['hash']; ?>" />
+                                                            <?php echo add_form_protection(); ?>
+                                                            <input type="hidden" name="dft" value="<?php echo general::enkrip($penj->id); ?>">
+                                                            <input type="hidden" name="process_token" value="<?php echo $process_token; ?>">
+                                                            <button type="submit" class="btn btn-warning btn-flat btn-xs submit-btn" style="width: 80px;">
+                                                                <i class="fa fa-shopping-cart"></i> Input &raquo;
+                                                            </button>
+                                                        </form>
+                                                        <script>
+                                                        document.getElementById('form_<?php echo $penj->id; ?>').addEventListener('submit', function(e) {
+                                                            if (this.getAttribute('data-submitted')) {
+                                                                e.preventDefault();
+                                                                return false;
+                                                            }
+                                                            this.setAttribute('data-submitted', 'true');
+                                                        });
+                                                        </script>
+                                                        <?php echo add_double_submit_protection('form_'.$penj->id); ?>
                                                     <?php } ?>
+                                                    <br/>
                                                     <?php echo anchor(base_url('medcheck/daftar.php?tipe_pas=3&dft=' . general::enkrip($penj->id)), '<i class="fa fa-edit"></i> Ubah &raquo;', 'class="btn btn-warning btn-flat btn-xs" style="width: 80px;"') . br() ?>
                                                     <?php echo anchor(base_url('medcheck/daftar_gc.php?tipe_pas=3&dft=' . general::enkrip($penj->id)), '<i class="fa fa-signature"></i> Form GC &raquo;', 'class="btn btn-info btn-flat btn-xs" style="width: 80px;"') . br() ?>
                                                     <?php echo anchor(base_url('medcheck/cetak_label_json_dft.php?dft=' . general::enkrip($penj->id)), '<i class="fa fa-print"></i> Label &raquo;', 'class="btn btn-primary btn-flat btn-xs" style="width: 80px;" target="_blank"') . br() ?>

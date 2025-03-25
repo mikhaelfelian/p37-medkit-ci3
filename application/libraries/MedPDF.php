@@ -1,8 +1,5 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
-
-<?php
-
-require(APPPATH . '/third_party/Fpdf/fpdf.php');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+require_once APPPATH.'third_party/Fpdf/fpdf.php';
 
 /**
  * Description of Pdf
