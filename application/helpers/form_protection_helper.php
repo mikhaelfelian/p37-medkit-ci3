@@ -26,32 +26,14 @@ if (!function_exists('check_form_submitted')) {
         $CI =& get_instance();
         $submitted_forms = $CI->session->userdata('submitted_forms');
         
-        if (empty($submitted_forms)) {
-            $submitted_forms = array();
-        }
-        
         if (in_array($form_id, $submitted_forms)) {
             return true;
-        }
-        
-        // Mark form as submitted
-        mark_form_submitted($form_id);
-        return false;
-    }
-}
-
-if (!function_exists('mark_form_submitted')) {
-    function mark_form_submitted($form_id) {
-        $CI =& get_instance();
-        $submitted_forms = $CI->session->userdata('submitted_forms');
-        
-        if (empty($submitted_forms)) {
-            $submitted_forms = array();
         }
         
         // Add form ID to submitted forms
         $submitted_forms[] = $form_id;
         $CI->session->set_userdata('submitted_forms', $submitted_forms);
+        return false;
     }
 }
 

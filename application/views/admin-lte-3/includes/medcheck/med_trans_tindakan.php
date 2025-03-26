@@ -27,7 +27,8 @@
                     <?php if ($sql_medc->status < 5) { ?>
                     <?php $hasError = $this->session->flashdata('form_error'); ?>
                     <?php $jml      = $this->session->flashdata('jml'); ?>
-                    <?php echo form_open_multipart(base_url('medcheck/cart_medcheck_simpan.php'), 'autocomplete="off"') ?>                    
+                    <?php echo form_open(base_url('medcheck/cart_medcheck_simpan.php'), array('autocomplete' => 'off', 'id' => 'medcheck_form')) ?>                    
+                    <?php echo add_form_protection(); ?>
                     <!-- Default box -->
                     <div class="card">
                         <div class="card-header">
@@ -36,7 +37,6 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 col-md-12 col-lg-12 order-2 order-md-1">
-                                    <?php echo $this->session->flashdata('medcheck'); ?>
                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                     <?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
                                     <?php echo form_hidden('status', $this->input->get('status')); ?>
@@ -116,7 +116,6 @@
                             </div>
                         </div>
                         <!-- /.card-body -->
-                        <!-- /.card-body -->
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
@@ -128,6 +127,7 @@
                             </div>                            
                         </div>
                     </div>
+                    <?php echo add_double_submit_protection('medcheck_form'); ?>
                     <?php echo form_close() ?>
                     <!-- /.card -->
                     <?php } ?>
@@ -327,5 +327,10 @@
                         .appendTo(ul);
             };
 <?php } ?>
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        <?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>

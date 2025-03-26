@@ -62,152 +62,125 @@ class medcheck extends CI_Controller {
                 $pl      = $this->input->get('filter_poli');
                 $jml     = $this->input->get('jml');
 
+                # Prepare common query conditions
+                $tgl_filter = $this->tanggalan->tgl_indo_sys($tg);
+                $pasien_filter = str_replace("'", "''", $cs);
+                
                 # Jika User dokter, maka pilih rajal dan ranap
                 if(akses::hakDokter()){
-                    $jml_sql = $this->db
-                                    ->where('id_dokter', $id_user)
-                                    ->like('tipe', $tp)
-                                    ->like('pasien', str_replace("'", "''", $cs))
-                                    ->like('id_poli', $pl)
-                                    ->like('status_bayar', $by)
-                                    ->get('v_medcheck_dokter')->num_rows();
+                    $this->db->select('COUNT(*) as count')
+                             ->from('v_medcheck_dokter')
+                             ->where('id_dokter', $id_user);
+                    
+                    if(!empty($tp)) $this->db->like('tipe', $tp);
+                    if(!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
+                    if(!empty($pl)) $this->db->like('id_poli', $pl);
+                    if(isset($by)) $this->db->like('status_bayar', $by);
+                    if(!empty($sp)) $this->db->like('status_periksa', $sp);
+                    
+                    $jml_sql = $this->db->get()->row()->count;
                 }else{
-                    $jml_sql = $this->db->where('status_hps', '0')
-                                        ->where('status_pos', '0')
-                                        ->like('DATE(tgl_simpan)', $this->tanggalan->tgl_indo_sys($tg))
-                                        ->like('tipe', $tp)
-                                        ->like('id_dokter', ($id_grup->name == 'dokter' ? $id_user : ''), ($id_grup->name == 'dokter' ? 'none' : ''))
-                                        ->like('id', general::dekrip($id))
-                                        ->like('id_poli', $poli)
-                                        ->like('pasien', str_replace("'", "''", $cs))
-                                        ->like('tipe', $tp)
-                                        ->like('status_bayar', $by)
-                                        ->like('status_periksa', $sp)
-                                        ->order_by('id','desc')
-                                        ->get('v_medcheck')->num_rows();                
+                    $this->db->select('COUNT(*) as count')
+                             ->from('tbl_trans_medcheck')
+                             ->where('status_hps', '0')
+                             ->where('status_pos', '0');
+                    
+                    if(!empty($tgl_filter)) $this->db->like('DATE(tgl_simpan)', $tgl_filter);
+                    if(!empty($tp)) $this->db->like('tipe', $tp);
+                    if($id_grup->name == 'dokter') $this->db->like('id_dokter', $id_user);
+                    if(!empty($id)) $this->db->like('id', general::dekrip($id));
+                    if(!empty($pl)) $this->db->like('id_poli', $pl);
+                    if(!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
+                    if(isset($by)) $this->db->like('status_bayar', $by);
+                    if(!empty($sp)) $this->db->like('status_periksa', $sp);
+                    
+                    $jml_sql = $this->db->get()->row()->count;                
                 }
 
-                if(!empty($jml)){
-                    $jml_hal = $jml;
-                }else{
-                    $jml_hal = $jml_sql;
-                }
+                $jml_hal = !empty($jml) ? $jml : $jml_sql;
                 /* -- End Blok Filter -- */
 
                 /* -- Form Error -- */
-                $data['hasError']                = $this->session->flashdata('form_error');
+                $data['hasError'] = $this->session->flashdata('form_error');
 
                 /* -- Blok Pagination -- */
-                $config['base_url']              = base_url('medcheck/index.php?tipe=1'.(!empty($cs) ? '&filter_nama='.$cs : '').(!empty($tg) ? '&filter_tgl='.$tg : '').(!empty($tp) ? '&filter_tipe='.$tp : '').(!empty($sp) ? '&filter_periksa='.$sp : '').(isset($by) ? '&filter_bayar='.$by : '').(!empty($jml_hal) ? '&jml='.$jml_hal : ''));
-                $config['total_rows']            = $jml_hal;
+                $config['base_url'] = base_url('medcheck/index.php?tipe=1'
+                    .(!empty($cs) ? '&filter_nama='.$cs : '')
+                    .(!empty($tg) ? '&filter_tgl='.$tg : '')
+                    .(!empty($tp) ? '&filter_tipe='.$tp : '')
+                    .(!empty($sp) ? '&filter_periksa='.$sp : '')
+                    .(isset($by) ? '&filter_bayar='.$by : '')
+                    .(!empty($jml_hal) ? '&jml='.$jml_hal : ''));
+                    
+                $config['total_rows'] = $jml_hal;
+                $config['query_string_segment'] = 'halaman';
+                $config['page_query_string'] = TRUE;
+                $config['per_page'] = $pengaturan->jml_item;
+                $config['num_links'] = 2;
 
-                $config['query_string_segment']  = 'halaman';
-                $config['page_query_string']     = TRUE;
-                $config['per_page']              = $pengaturan->jml_item;
-                $config['num_links']             = 2;
-
-                $config['first_tag_open']        = '<li class="page-item">';
-                $config['first_tag_close']       = '</li>';
-
-                $config['prev_tag_open']         = '<li class="page-item">';
-                $config['prev_tag_close']        = '</li>';
-
-                $config['num_tag_open']          = '<li class="page-item">';
-                $config['num_tag_close']         = '</li>';
-
-                $config['next_tag_open']         = '<li class="page-item">';
-                $config['next_tag_close']        = '</li>';
-
-                $config['last_tag_open']         = '<li class="page-item">';
-                $config['last_tag_close']        = '</li>';
-
-                $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-                $config['cur_tag_close']         = '</b></a></li>';
-
-                $config['first_link']            = '&laquo;';
-                $config['prev_link']             = '&lsaquo;';
-                $config['next_link']             = '&rsaquo;';
-                $config['last_link']             = '&raquo;';
-                $config['anchor_class']          = 'class="page-link"';
+                $config['first_tag_open'] = '<li class="page-item">';
+                $config['first_tag_close'] = '</li>';
+                $config['prev_tag_open'] = '<li class="page-item">';
+                $config['prev_tag_close'] = '</li>';
+                $config['num_tag_open'] = '<li class="page-item">';
+                $config['num_tag_close'] = '</li>';
+                $config['next_tag_open'] = '<li class="page-item">';
+                $config['next_tag_close'] = '</li>';
+                $config['last_tag_open'] = '<li class="page-item">';
+                $config['last_tag_close'] = '</li>';
+                $config['cur_tag_open'] = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+                $config['cur_tag_close'] = '</b></a></li>';
+                $config['first_link'] = '&laquo;';
+                $config['prev_link'] = '&lsaquo;';
+                $config['next_link'] = '&rsaquo;';
+                $config['last_link'] = '&raquo;';
+                $config['anchor_class'] = 'class="page-link"';
                 /* -- End Blok Pagination -- */
+
+                $limit = $config['per_page'];
+                $offset = !empty($hal) ? $hal : 0;
 
                 // Jika User dokter, maka pilih rajal dan ranap
                 if(akses::hakDokter() == TRUE){
-                    if (!empty($hal)) {
-                        $data['penj'] = $this->db
-                                             ->where('id_dokter', $id_user)
-                                             ->like('tipe', $tp)
-                                             ->like('pasien', str_replace("'", "''", $cs))
-                                             ->like('id_poli', $pl)
-                                             ->like('status_bayar', $by)
-                                             ->like('status_periksa', $sp)
-                                             ->limit($config['per_page'], $hal)
-                                             ->get('v_medcheck_dokter')->result();
-                    } else {
-                        $data['penj'] = $this->db
-                                             ->where('id_dokter', $id_user)
-                                             ->like('tipe', $tp)
-                                             ->like('pasien', str_replace("'", "''", $cs))
-                                             ->like('id_poli', $pl)
-                                             ->like('status_bayar', $by)
-                                             ->like('status_periksa', $sp)
-                                             ->limit($config['per_page'])
-//                                             ->group_by('tgl_simpan, pasien')
-                                             ->get('v_medcheck_dokter')->result();
-                    }         
+                    $this->db->select('*')
+                             ->from('v_medcheck_dokter')
+                             ->where('id_dokter', $id_user);
+                    
+                    if(!empty($tp)) $this->db->like('tipe', $tp);
+                    if(!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
+                    if(!empty($pl)) $this->db->like('id_poli', $pl);
+                    if(isset($by)) $this->db->like('status_bayar', $by);
+                    if(!empty($sp)) $this->db->like('status_periksa', $sp);
+                    
+                    $this->db->limit($limit, $offset);
+                    $data['penj'] = $this->db->get()->result();
                 }else{
-                    // Bukan Dokter
-                    if (!empty($hal)) {                        
-                               $kueri = "SELECT
-                                            tbl_trans_medcheck.id, tbl_trans_medcheck.id_user, tbl_trans_medcheck.id_dokter, tbl_trans_medcheck.id_nurse, tbl_trans_medcheck.id_analis,
-                                            tbl_trans_medcheck.id_pasien, tbl_trans_medcheck.id_poli, tbl_trans_medcheck.id_dft, tbl_trans_medcheck.id_ant, tbl_trans_medcheck.id_kasir, tbl_trans_medcheck.id_instansi, 
-                                            tbl_trans_medcheck.id_encounter, tbl_trans_medcheck.id_condition, tbl_trans_medcheck.id_post_location,
-                                            tbl_trans_medcheck.id_icd, tbl_trans_medcheck.id_icd10, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.tgl_modif, tbl_trans_medcheck.tgl_masuk, 
-                                            tbl_trans_medcheck.tgl_periksa, tbl_trans_medcheck.tgl_periksa_lab, tbl_trans_medcheck.tgl_periksa_rad, tbl_trans_medcheck.tgl_periksa_pen, 
-                                            tbl_trans_medcheck.tgl_ranap, tbl_trans_medcheck.tgl_keluar, tbl_trans_medcheck.tgl_bayar, tbl_trans_medcheck.tgl_ttd,
-                                            tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_akun, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.poli, tbl_trans_medcheck.dokter_nik AS nik_dokter, tbl_trans_medcheck.dokter AS nama_dokter, tbl_trans_medcheck.pasien_nik AS nik_pasien, tbl_trans_medcheck.pasien, tbl_trans_medcheck.tgl_lahir, tbl_trans_medcheck.keluhan, tbl_trans_medcheck.ttv,
-                                            tbl_trans_medcheck.ttv_st, tbl_trans_medcheck.ttv_bb, tbl_trans_medcheck.ttv_tb, tbl_trans_medcheck.ttv_td, tbl_trans_medcheck.ttv_sistole, tbl_trans_medcheck.ttv_diastole, tbl_trans_medcheck.ttv_nadi, tbl_trans_medcheck.ttv_laju, tbl_trans_medcheck.ttv_saturasi, tbl_trans_medcheck.ttv_skala,
-                                            tbl_trans_medcheck.diagnosa, tbl_trans_medcheck.anamnesa, tbl_trans_medcheck.pemeriksaan, tbl_trans_medcheck.program, tbl_trans_medcheck.alergi,
-                                            tbl_trans_medcheck.metode, tbl_trans_medcheck.platform, tbl_trans_medcheck.jml_total, tbl_trans_medcheck.jml_dp,
-                                            tbl_trans_medcheck.jml_diskon, tbl_trans_medcheck.jml_potongan, tbl_trans_medcheck.jml_potongan_poin, tbl_trans_medcheck.jml_subtotal, tbl_trans_medcheck.jml_ppn, tbl_trans_medcheck.ppn, tbl_trans_medcheck.jml_gtotal, tbl_trans_medcheck.jml_bayar, tbl_trans_medcheck.jml_kembali, tbl_trans_medcheck.jml_kurang, tbl_trans_medcheck.jml_poin, tbl_trans_medcheck.jml_poin_nom,
-                                            tbl_trans_medcheck.tipe, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.status, tbl_trans_medcheck.status_bayar, tbl_trans_medcheck.status_nota, tbl_trans_medcheck.status_hps, tbl_trans_medcheck.status_pos, tbl_trans_medcheck.status_periksa
-                                        FROM tbl_trans_medcheck
-                                        WHERE tbl_trans_medcheck.status_hps='0' AND tbl_trans_medcheck.status_pos='0' 
-                                        AND DATE(tgl_simpan) LIKE '%". $this->tanggalan->tgl_indo_sys($tg)."%'
-                                        AND pasien LIKE '%". str_replace("'", "''", $cs)."%'
-                                        AND tipe LIKE '%". $tp."%'
-                                        AND status_bayar LIKE '%". $by."%'
-                                        AND id_poli LIKE '%". $pl."%'
-                                        GROUP BY DATE_FORMAT(tbl_trans_medcheck.tgl_simpan, '%Y-%m-%d %H'), DATE_FORMAT(tbl_trans_medcheck.tgl_masuk, '%Y-%m-%d %H'), tbl_trans_medcheck.keluhan, tbl_trans_medcheck.tipe, tbl_trans_medcheck.id_pasien
-                                        ORDER BY tbl_trans_medcheck.id DESC LIMIT ".$config['per_page'].", ".$hal;
-
-                        $data['penj']   = $this->db->query($kueri)->result();
-                    } else {                                             
-                               $kueri = "SELECT
-                                            tbl_trans_medcheck.id, tbl_trans_medcheck.id_user, tbl_trans_medcheck.id_dokter, tbl_trans_medcheck.id_nurse, tbl_trans_medcheck.id_analis,
-                                            tbl_trans_medcheck.id_pasien, tbl_trans_medcheck.id_poli, tbl_trans_medcheck.id_dft, tbl_trans_medcheck.id_ant, tbl_trans_medcheck.id_kasir, tbl_trans_medcheck.id_instansi, 
-                                            tbl_trans_medcheck.id_encounter, tbl_trans_medcheck.id_condition, tbl_trans_medcheck.id_post_location,
-                                            tbl_trans_medcheck.id_icd, tbl_trans_medcheck.id_icd10, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.tgl_modif, tbl_trans_medcheck.tgl_masuk, 
-                                            tbl_trans_medcheck.tgl_periksa, tbl_trans_medcheck.tgl_periksa_lab, tbl_trans_medcheck.tgl_periksa_rad, tbl_trans_medcheck.tgl_periksa_pen, 
-                                            tbl_trans_medcheck.tgl_ranap, tbl_trans_medcheck.tgl_keluar, tbl_trans_medcheck.tgl_bayar, tbl_trans_medcheck.tgl_ttd,
-                                            tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_akun, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.poli, tbl_trans_medcheck.dokter_nik AS nik_dokter, tbl_trans_medcheck.dokter AS nama_dokter, tbl_trans_medcheck.pasien_nik AS nik_pasien, tbl_trans_medcheck.pasien, tbl_trans_medcheck.tgl_lahir, tbl_trans_medcheck.keluhan, tbl_trans_medcheck.ttv,
-                                            tbl_trans_medcheck.ttv_st, tbl_trans_medcheck.ttv_bb, tbl_trans_medcheck.ttv_tb, tbl_trans_medcheck.ttv_td, tbl_trans_medcheck.ttv_sistole, tbl_trans_medcheck.ttv_diastole, tbl_trans_medcheck.ttv_nadi, tbl_trans_medcheck.ttv_laju, tbl_trans_medcheck.ttv_saturasi, tbl_trans_medcheck.ttv_skala,
-                                            tbl_trans_medcheck.diagnosa, tbl_trans_medcheck.anamnesa, tbl_trans_medcheck.pemeriksaan, tbl_trans_medcheck.program, tbl_trans_medcheck.alergi,
-                                            tbl_trans_medcheck.metode, tbl_trans_medcheck.platform, tbl_trans_medcheck.jml_total, tbl_trans_medcheck.jml_dp,
-                                            tbl_trans_medcheck.jml_diskon, tbl_trans_medcheck.jml_potongan, tbl_trans_medcheck.jml_potongan_poin, tbl_trans_medcheck.jml_subtotal, tbl_trans_medcheck.jml_ppn, tbl_trans_medcheck.ppn, tbl_trans_medcheck.jml_gtotal, tbl_trans_medcheck.jml_bayar, tbl_trans_medcheck.jml_kembali, tbl_trans_medcheck.jml_kurang, tbl_trans_medcheck.jml_poin, tbl_trans_medcheck.jml_poin_nom,
-                                            tbl_trans_medcheck.tipe, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.status, tbl_trans_medcheck.status_bayar, tbl_trans_medcheck.status_nota, tbl_trans_medcheck.status_hps, tbl_trans_medcheck.status_pos, tbl_trans_medcheck.status_periksa
-                                        FROM tbl_trans_medcheck
-                                        WHERE tbl_trans_medcheck.status_hps='0' AND tbl_trans_medcheck.status_pos='0' 
-                                        AND DATE(tgl_simpan) LIKE '%". $this->tanggalan->tgl_indo_sys($tg)."%'
-                                        AND pasien LIKE '%". str_replace("'", "''", $cs)."%'
-                                        AND tipe LIKE '%". $tp."%'
-                                        AND status_bayar LIKE '%". $by."%'
-                                        AND id_poli LIKE '%". $pl."%'
-                                        GROUP BY DATE_FORMAT(tbl_trans_medcheck.tgl_simpan, '%Y-%m-%d %H'), DATE_FORMAT(tbl_trans_medcheck.tgl_masuk, '%Y-%m-%d %H'), tbl_trans_medcheck.keluhan, tbl_trans_medcheck.tipe, tbl_trans_medcheck.id_pasien
-                                        ORDER BY tbl_trans_medcheck.id DESC LIMIT ".$config['per_page'];
-                                
-                        $data['penj']   = $this->db->query($kueri)->result();
-                    }
+                    // Optimize query for non-doctor users
+                    $select_fields = "id, id_user, id_dokter, id_nurse, id_analis, id_pasien, id_poli, id_dft, id_ant, id_kasir, id_instansi, 
+                                    id_encounter, id_condition, id_post_location, id_icd, id_icd10, tgl_simpan, tgl_modif, tgl_masuk, 
+                                    tgl_periksa, tgl_periksa_lab, tgl_periksa_rad, tgl_periksa_pen, tgl_ranap, tgl_keluar, tgl_bayar, tgl_ttd,
+                                    no_rm, no_akun, no_nota, poli, dokter_nik AS nik_dokter, dokter AS nama_dokter, pasien_nik AS nik_pasien, 
+                                    pasien, tgl_lahir, keluhan, ttv, ttv_st, ttv_bb, ttv_tb, ttv_td, ttv_sistole, ttv_diastole, ttv_nadi, 
+                                    ttv_laju, ttv_saturasi, ttv_skala, diagnosa, anamnesa, pemeriksaan, program, alergi, metode, platform, 
+                                    jml_total, jml_dp, jml_diskon, jml_potongan, jml_potongan_poin, jml_subtotal, jml_ppn, ppn, jml_gtotal, 
+                                    jml_bayar, jml_kembali, jml_kurang, jml_poin, jml_poin_nom, tipe, tipe_bayar, status, status_bayar, 
+                                    status_nota, status_hps, status_pos, status_periksa";
+                    
+                    $this->db->select($select_fields)
+                             ->from('tbl_trans_medcheck')
+                             ->where('status_hps', '0')
+                             ->where('status_pos', '0');
+                    
+                    if(!empty($tgl_filter)) $this->db->like('DATE(tgl_simpan)', $tgl_filter);
+                    if(!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
+                    if(!empty($tp)) $this->db->like('tipe', $tp);
+                    if(isset($by)) $this->db->like('status_bayar', $by);
+                    if(!empty($pl)) $this->db->like('id_poli', $pl);
+                    
+                    $this->db->order_by('id', 'DESC')
+                             ->limit($limit, $offset);
+                    
+                    $data['penj'] = $this->db->get()->result();
                 }
 
                 $this->pagination->initialize($config);
@@ -218,19 +191,31 @@ class medcheck extends CI_Controller {
                 $data['pagination'] = $this->pagination->create_links();
                 /* --End Blok pagination-- */
 
+                // Load only necessary data
                 $data['kmr_label']      = $this->crud->kmr_label();
                 $data['kmr_kaps']       = $this->crud->kmr_kapasitas();
-                $data['sql_kamar']      = $this->db->select('id, kode, kamar, jml, jml_max, style')->where('status', '1')->get('tbl_m_kamar')->result();
-                $data['sql_kary_jdwl']  = $this->db->select('tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, tbl_m_poli.lokasi, tbl_m_karyawan_jadwal.hari_1, tbl_m_karyawan_jadwal.hari_2, tbl_m_karyawan_jadwal.hari_3, tbl_m_karyawan_jadwal.hari_4, tbl_m_karyawan_jadwal.hari_5, tbl_m_karyawan_jadwal.hari_6, tbl_m_karyawan_jadwal.hari_7, tbl_m_karyawan_jadwal.waktu')
+                $data['sql_kamar']      = $this->db->select('id, kode, kamar, jml, jml_max, style')
+                                                   ->where('status', '1')
+                                                   ->get('tbl_m_kamar')
+                                                   ->result();
+                
+                $data['sql_kary_jdwl']  = $this->db->select('tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, 
+                                                            tbl_m_poli.lokasi, tbl_m_karyawan_jadwal.hari_1, tbl_m_karyawan_jadwal.hari_2, 
+                                                            tbl_m_karyawan_jadwal.hari_3, tbl_m_karyawan_jadwal.hari_4, 
+                                                            tbl_m_karyawan_jadwal.hari_5, tbl_m_karyawan_jadwal.hari_6, 
+                                                            tbl_m_karyawan_jadwal.hari_7, tbl_m_karyawan_jadwal.waktu')
+                                                   ->from('tbl_m_karyawan_jadwal')
                                                    ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_m_karyawan_jadwal.id_karyawan')
                                                    ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_m_karyawan_jadwal.id_poli')
-                                                   ->get('tbl_m_karyawan_jadwal')->result();
+                                                   ->get()
+                                                   ->result();
+                
                 $data['sql_poli']       = $this->db->get('tbl_m_poli')->result();
                 $data['pengaturan']     = $pengaturan;
             }
 
             /* Sidebar Menu */
-            $data['sidebar']    = 'admin-lte-3/includes/medcheck/sidebar_med';
+            $data['sidebar'] = 'admin-lte-3/includes/medcheck/sidebar_med';
             /* --- Sidebar Menu --- */   
 
             /* Load view tampilan */
@@ -1961,7 +1946,7 @@ class medcheck extends CI_Controller {
                     
                     // Update data in the database
                     $this->db->where('id', general::dekrip($id))->update('tbl_pendaftaran', $data_pas);
-                    $last_id = general::dekrip($id);
+                $last_id = general::dekrip($id);                
                     
                     // Check if the transaction was successful
                     if ($this->db->trans_status() === FALSE) {
@@ -2187,7 +2172,7 @@ class medcheck extends CI_Controller {
                     }
                     
                     // Redirect to appropriate page
-                    redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                    redirect(base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')));
                     
                 } catch (Exception $e) {
                     // Rollback transaction on exception
@@ -3003,17 +2988,26 @@ class medcheck extends CI_Controller {
     
     public function trans_medcheck_hapus() {
         if (akses::aksesLogin() == TRUE) {
-            $id                   = $this->input->get('id');
-            $userid               = $this->ion_auth->user()->row()->id;
+            $id     = $this->input->get('id');
+            $userid = $this->ion_auth->user()->row()->id;
             
-            $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
+            $decrypted_id = general::dekrip($id);
+            // Get the record type before updating to use in redirect
+            $tipe = $this->db->select('tipe')
+                            ->where('id', $decrypted_id)
+                            ->get('tbl_trans_medcheck')
+                            ->row()
+                            ->tipe;
             
-            if($sql_medc->num_rows() > 0){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil dihapus</div>');
-                crud::update('tbl_trans_medcheck', 'id', general::dekrip($id), array('status_hps'=>'1'));
+            // Direct update without fetching the entire record first
+            $affected_rows = $this->db->where('id', $decrypted_id)
+                                     ->update('tbl_trans_medcheck', array('status_hps' => '1'));
+            
+            if($affected_rows > 0){
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dihapus");');
             }
             
-            redirect(base_url('medcheck/index.php?tipe='.$sql_medc->row()->tipe));
+            redirect(base_url('medcheck/index.php?tipe='.$tipe));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -3541,7 +3535,6 @@ class medcheck extends CI_Controller {
                                         ->like('pasien', $cs)
                                         ->like('DATE(tgl_masuk)', $this->tanggalan->tgl_indo_sys($tg))
                                         ->limit($config['per_page'],$hal)
-             //                           ->group_by('tgl_masuk, pasien')
                                         ->order_by('tgl_simpan','desc')
                                         ->get('v_medcheck')->result();
             }else{
@@ -3851,9 +3844,9 @@ class medcheck extends CI_Controller {
                 );
                 
                 try {
-                    $this->db->where('id', $sql_dft_gc->id)->update('tbl_pendaftaran_gc', $data_pas);
-                    $last_id = $sql_dft_gc->id;
-
+                $this->db->where('id', $sql_dft_gc->id)->update('tbl_pendaftaran_gc', $data_pas);
+                $last_id = $sql_dft_gc->id;
+                
                     header('Content-Type: application/json');
                     echo json_encode(array(
                         'success' => true,
@@ -3875,136 +3868,318 @@ class medcheck extends CI_Controller {
             redirect();            
         }
     }
-    
     public function set_medcheck() {
-        if (akses::aksesLogin() != TRUE) {
-            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
-            redirect();
-            return;
-        }
+        if (akses::aksesLogin() == TRUE) {
+            $pasien     = $this->input->post('id_pasien');
+            $dft_id     = $this->input->post('dft_id');
+            $ant_id     = $this->input->post('ant_id');
+            $dokter     = $this->input->post('dokter');
+            $poli       = $this->input->post('poli');
+            $keluhan    = $this->input->post('keluhan');
+            $ttv        = $this->input->post('ttv');
+            $ttv_st     = $this->input->post('ttv_st');
+            $ttv_bb     = $this->input->post('ttv_bb');
+            $ttv_tb     = $this->input->post('ttv_tb');
+            $ttv_td     = $this->input->post('ttv_td');
+            $ttv_sst    = $this->input->post('ttv_sistole');
+            $ttv_dst    = $this->input->post('ttv_diastole');
+            $ttv_ndi    = $this->input->post('ttv_nadi');
+            $ttv_lju    = $this->input->post('ttv_laju');
+            $ttv_sat    = $this->input->post('ttv_saturasi');
+            $ttv_skl    = $this->input->post('ttv_skala');
+            $alergi     = $this->input->post('alergi');
+            $tipe       = $this->input->post('tipe');
+            $kategori   = $this->input->post('kategori');
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            $pengaturan2= $this->db->where('id', $this->ion_auth->user()->row()->id_app)->get('tbl_pengaturan_cabang')->row();
 
-        try {
-            // Check for double submission - use simple timestamp check instead
-            $last_submit = $this->session->userdata('last_medcheck_submit');
-            if ($last_submit && (time() - $last_submit) < 5) { // 5 second window
-                throw new Exception("Mohon tunggu beberapa saat sebelum submit kembali.");
-            }
-            $this->session->set_userdata('last_medcheck_submit', time());
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
-            // Get all inputs at once
-            $inputs = $this->input->post(null, true);
+            $this->form_validation->set_rules('id_pasien', 'Nama Pasien', 'required');
+            $this->form_validation->set_rules('tipe', 'Tipe', 'required');
+            $this->form_validation->set_rules('poli', 'Klinik', 'required');
+            $this->form_validation->set_rules('dokter', 'Dokter', 'required');
+            $this->form_validation->set_rules('keluhan', 'Keluhan', 'required');
+            $this->form_validation->set_rules('ttv_st', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_bb', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_tb', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_saturasi', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_sistole', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_diastole', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_nadi', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_laju', 'ID', 'required');
+            $this->form_validation->set_rules('ttv_skala', 'ID', 'required');
+            
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = [
+                    'tipe'          => form_error('tipe'),
+                    'pasien'        => form_error('id_pasien'),
+                    'poli'          => form_error('poli'),
+                    'dokter'        => form_error('dokter'),
+                    'keluhan'       => form_error('keluhan'),
+                    'ttv_st'        => form_error('ttv_st'),
+                    'ttv_bb'        => form_error('ttv_bb'),
+                    'ttv_tb'        => form_error('ttv_tb'),
+                    'ttv_saturasi'  => form_error('ttv_saturasi'),
+                    'ttv_sistole'   => form_error('ttv_sistole'),
+                    'ttv_diastole'  => form_error('ttv_diastole'),
+                    'ttv_nadi'      => form_error('ttv_nadi'),
+                    'ttv_laju'      => form_error('ttv_laju'),
+                    'ttv_skala'     => form_error('ttv_skala'),
+                ];
 
-            // Quick validation for required fields
-            $required_fields = ['id_pasien', 'tipe', 'poli', 'dokter', 'keluhan',
-                'ttv_st', 'ttv_bb', 'ttv_tb', 'ttv_saturasi', 'ttv_sistole',
-                'ttv_diastole', 'ttv_nadi', 'ttv_laju', 'ttv_skala'];
+                $this->session->set_flashdata('form_error', $msg_error); 
+                
+                $this->session->set_flashdata('keluhan', $keluhan);
+                $this->session->set_flashdata('ttv_st', $ttv_st);
+                $this->session->set_flashdata('ttv_bb', $ttv_bb);
+                $this->session->set_flashdata('ttv_tb', $ttv_tb);
+                $this->session->set_flashdata('ttv_td', $ttv_td);
+                $this->session->set_flashdata('ttv_sistole', $ttv_sst);
+                $this->session->set_flashdata('ttv_diastole', $ttv_dst);
+                $this->session->set_flashdata('ttv_nadi', $ttv_ndi);
+                $this->session->set_flashdata('ttv_laju', $ttv_lju);
+                $this->session->set_flashdata('ttv_saturasi', $ttv_sat);
+                $this->session->set_flashdata('ttv_skala', $ttv_skl);
 
-            foreach ($required_fields as $field) {
-                if (empty($inputs[$field])) {
-                    throw new Exception("Field {$field} harus diisi.");
+                redirect(base_url('medcheck/tambah.php'.(!empty($dft_id) ? '?dft_pas='.general::enkrip($pasien).'&dft_id='.general::enkrip($dft_id) : '')));
+            } else {
+                $sql_dft    = $this->db->where('id', (!empty($dft_id) ? $dft_id : '0'))->get('tbl_pendaftaran')->row();
+                $sql_dft_gc = $this->db->where('id_pendaftaran', $sql_dft->id)->get('tbl_pendaftaran_gc');
+                $sql_pas    = $this->db->where('id', $pasien)->get('tbl_m_pasien')->row();
+                
+                $sql_rm     = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck');
+                $str_rm     = $sql_rm->num_rows() + 1;
+                $no_rm      = date('ymd').sprintf('%04d', $str_rm);
+                
+                $sql_no     = $this->db->select_max('id')->get('tbl_trans_medcheck')->row();
+                $sql_akun   = $this->db->select('COUNT(id) AS jml')->where('DATE(tgl_simpan)', date('Y-m-d'))->get('tbl_trans_medcheck')->row();
+                $str_akun   = $sql_akun->jml + 1;
+                $no_akun    = strtoupper(date('Mdy').sprintf('%04d', $str_akun));
+                $nomor_id   = $sql_no->id + 1;
+                
+                $data = [
+                    'id_app'       => $this->ion_auth->user()->row()->id_app,
+                    'id_user'      => $this->ion_auth->user()->row()->id,
+                    'id_nurse'     => $this->ion_auth->user()->row()->id,
+                    'id_pasien'    => (!empty($pasien) ? $pasien : '0'),
+                    'id_dokter'    => (!empty($dokter) ? $dokter : '0'),
+                    'id_poli'      => (!empty($poli) ? $poli :'0'),
+                    'id_dft'       => (!empty($dft_id) ? $dft_id : '0'),
+                    'id_ant'       => (!empty($ant_id) ? $ant_id : '0'),
+                    'id_referall'  => $sql_dft->id_referall,
+                    'tgl_simpan'   => date('Y-m-d H:i:s'),
+                    'tgl_masuk'    => date('Y-m-d H:i:s'),
+                    'pasien'       => $sql_pas->nama_pgl,
+                    'keluhan'      => $keluhan,
+                    'ttv'          => (!empty($ttv) ? $ttv : ''),
+                    'ttv_st'       => $ttv_st,
+                    'ttv_bb'       => $ttv_bb,
+                    'ttv_tb'       => $ttv_tb,
+                    'ttv_td'       => $ttv_td,
+                    'ttv_sistole'  => $ttv_sst,
+                    'ttv_diastole' => $ttv_dst,
+                    'ttv_nadi'     => $ttv_ndi,
+                    'ttv_laju'     => $ttv_lju,
+                    'ttv_saturasi' => $ttv_sat,
+                    'ttv_skala'    => $ttv_skl,
+                    'alergi'       => $sql_dft->alergi,
+                    'tipe'         => (!empty($tipe) ? $tipe : '0'),
+                    'no_rm'        => $no_rm,
+                    'no_akun'      => $no_akun,
+                    'tipe_bayar'   => (!empty($sql_dft->tipe_bayar) ? $sql_dft->tipe_bayar : '0'),
+                    'status'       => '1',
+                    'status_nota'  => '1',
+                ];
+                
+                /* Transaksi Database */
+                try {
+                    // Set cache lock to prevent concurrent processing
+                    $lock_key = 'medcheck_process_lock_' . $pasien . '_' . $dft_id;
+                    
+                    // Check if cache driver is loaded properly
+                    if (!isset($this->cache) || !isset($this->cache->file)) {
+                        // Load cache driver if not already loaded
+                        $this->load->driver('cache', array('adapter' => 'file'));
+                    }
+                    
+                    $cache_result = $this->cache->file->get($lock_key);
+                    
+                    if ($cache_result !== FALSE) {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Proses sedang berlangsung, mohon tunggu...");');
+                        redirect(base_url('medcheck/index.php?tipe='.$tipe));
+                        return;
+                    }
+                    
+                    // Set lock for 30 seconds
+                    $this->cache->save($lock_key, TRUE, 30);
+                    
+                    // Start transaction
+                    $this->db->trans_begin();
+
+                # Masukkan ke tabel medcheck
+                $this->db->insert('tbl_trans_medcheck', $data);
+                $last_id = crud::last_id();
+                
+                # Masukkan data dokter jadi satu di tabel raber
+                    $data_dokter = [
+                    'id_medcheck'   => $last_id,
+                    'id_user'       => $this->ion_auth->user()->row()->id,
+                    'id_pasien'     => (!empty($pasien) ? $pasien : '0'),
+                    'id_dokter'     => (!empty($dokter) ? $dokter : '0'),
+                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                    'keterangan'    => '',
+                    'status'        => '1'
+                    ];
+                
+                $this->db->insert('tbl_trans_medcheck_dokter', $data_dokter);
+                
+                # Masukkan GC ke tabel riwayat berkas
+                    $data_file_gc = [
+                    'id_medcheck'       => $last_id,
+                    'id_pasien'         => (!empty($pasien) ? $pasien : '0'),
+                    'id_user'           => $this->ion_auth->user()->row()->id,
+                    'tgl_simpan'        => date('Y-m-d H:i:s'),
+                    'tgl_masuk'         => date('Y-m-d H:i'),
+                    'judul'             => 'SURAT PERSETUJUAN UMUM',
+                    'file_name'         => '/surat/print_pdf_gc.php?dft='.general::enkrip($sql_dft_gc->row()->id),
+                    'file_ext'          => '.pdf',
+                    'file_type'         => 'application/pdf',
+                    'status'            => '2',
+                    ];
+                
+                # Jika GC dibuat maka simpan berkas ke tabel berkas
+                if($sql_dft_gc->num_rows() > 0){
+                    $this->db->insert('tbl_trans_medcheck_file', $data_file_gc);
                 }
+                
+                # Jika tipe medcheck lab atau radiologi
+                if($tipe == '1'){                   
+                    $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_lab')->num_rows() + 1;
+                    $no_surat   = sprintf('%03d', $nomer).'/'.$pengaturan->kode_surat.'/'.date('m').'/'.date('Y');
+                    $grup       = $this->ion_auth->get_users_groups()->row();
+                    $is_farm    = ($grup->name == 'analis' ? '2' : '0');
+                    $is_farm_id = ($grup->name == 'analis' ? $this->ion_auth->user()->row()->id : '0');
+                    $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
+                
+                        $data_lab = [
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => date('Y-m-d H:i:s'),
+                        'id_medcheck'   => $last_id,
+                        'id_pasien'     => $pasien,
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'id_analis'     => $is_farm_id,
+                        'id_dokter'     => $is_doc_id,
+                        'no_lab'        => $no_surat,
+                        'status'        => '0',
+                        'status_cvd'    => '0',
+                        ];
+                    
+                    # Simpan ke tabel lab
+                    $this->db->insert('tbl_trans_medcheck_lab', $data_lab);                
+                }elseif($tipe == '4'){
+                    $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_rad')->num_rows() + 1;
+                    $no_surat   = sprintf('%03d', $nomer).'/'.$pengaturan->kode_rad.'/'.date('m').'/'.date('Y');
+                    $grup       = $this->ion_auth->get_users_groups()->row();
+                    $is_rad     = ($grup->name == 'radiografer' ? '2' : '0');
+                    $is_rad_id  = ($grup->name == 'radiografer' ? $this->ion_auth->user()->row()->id : '0');
+                    $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
+                   
+                        $data_rad = [
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => date('Y-m-d H:i:s'),
+                        'id_medcheck'   => $last_id,
+                        'id_pasien'     => $pasien,
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'id_radiografer'=> $is_rad_id,
+                        'id_dokter'     => $is_doc_id,
+                        'no_rad'        => $no_surat,
+                        'no_sample'     => '-',
+                        'status'        => '0',
+                        ];
+                    
+                    # Simpan ke tabel rad
+                    $this->db->insert('tbl_trans_medcheck_rad', $data_rad);
+                }
+
+                # Update ke tabel pendaftaran
+                    $this->db->where('id', $dft_id)->update('tbl_pendaftaran', ['status_akt' => '2', 'file_base64'=>'']);
+
+                # Upload file foto
+                $kode   = sprintf('%05d', $sql_pas->kode);
+                $no_rm  = strtolower($pengaturan->kode_pasien).$kode;
+                $path   = 'file/pasien/'.$no_rm.'/';
+                $folder = realpath('./'.$path);
+
+                if (!empty($_FILES['fupload']['name'])) {
+                    $config['upload_path']      = $folder;
+                    $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
+                    $config['remove_spaces']    = TRUE;
+                    $config['overwrite']        = TRUE;
+                        $config['file_name']        = 'profile_'.$no_rm;
+                    $this->load->library('upload', $config);
+
+                    if (!$this->upload->do_upload('fupload')) {
+                            // Log error but continue processing
+                            log_message('error', 'File upload failed: ' . $this->upload->display_errors());
+                    } else {
+                            $f = $this->upload->data();
+                        
+                        # Data File
+                            $data_file = [
+                            'file_name'     => $path.$f['orig_name'],
+                            'file_type'     => $f['file_type'],
+                            'file_ext'      => $f['file_ext'],
+                            ];
+
+                        # Simpan File Gambar ke tabel
+                        $this->db->where('id', $sql_pas->id)->update('tbl_m_pasien', $data_file);
+                    }
+                }
+                
+                    # Commit transaction if all operations successful
+                if ($this->db->trans_status() === FALSE) {
+                        throw new Exception("Database transaction failed");
+                    }
+                    
+                    $this->db->trans_commit();
+            
+                    // Clear the lock
+                    if ($this->cache->file) {
+                        $this->cache->file->delete($lock_key);
+                    }
+
+                    # Buat session jika sudah berhasil commit
+                    $this->session->set_userdata('trans_medcheck', $data);
+
+                    # Tampilkan pesan sukses
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data Medical Checkup Sudah disimpan!!");');
+                } catch (Exception $e) {
+                    # Rollback transaction on error
+                    $this->db->trans_rollback();
+        
+                    // Safely delete cache if it exists
+                    if ($this->cache->file) {
+                        $this->cache->file->delete($lock_key);
+                    }
+                    
+                    # Log the error
+                    log_message('error', 'Medical Checkup Error: ' . $e->getMessage());
+                    
+                    # Tampilkan pesan error
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data Medical Checkup gagal disimpan: ' . $e->getMessage() . '");');
+                }
+
+                redirect(base_url('medcheck/index.php?tipe='.$tipe));
             }
-
-            // Start transaction
-            $this->db->trans_begin();
-
-            // Get required data in single queries
-            $sql_data = $this->_get_required_data($inputs['dft_id'], $inputs['id_pasien']);
-
-            // Generate numbers efficiently
-            $numbers = $this->_generate_numbers();
-
-            // Prepare main data array
-            $data = [
-                'id_app' => $this->ion_auth->user()->row()->id_app,
-                'id_user' => $this->ion_auth->user()->row()->id,
-                'id_nurse' => $this->ion_auth->user()->row()->id,
-                'id_pasien' => $inputs['id_pasien'] ?? '0',
-                'id_dokter' => $inputs['dokter'] ?? '0',
-                'id_poli' => $inputs['poli'] ?? '0',
-                'id_dft' => $inputs['dft_id'] ?? '0',
-                'id_ant' => $inputs['ant_id'] ?? '0',
-                'id_referall' => $sql_data['dft']->id_referall ?? null,
-                'tgl_simpan' => date('Y-m-d H:i:s'),
-                'tgl_masuk' => date('Y-m-d H:i:s'),
-                'pasien' => $sql_data['pas']->nama_pgl ?? '',
-                'keluhan' => $inputs['keluhan'],
-                'ttv_st' => $inputs['ttv_st'],
-                'ttv_bb' => $inputs['ttv_bb'],
-                'ttv_tb' => $inputs['ttv_tb'],
-                'ttv_sistole' => $inputs['ttv_sistole'],
-                'ttv_diastole' => $inputs['ttv_diastole'],
-                'ttv_nadi' => $inputs['ttv_nadi'],
-                'ttv_laju' => $inputs['ttv_laju'],
-                'ttv_saturasi' => $inputs['ttv_saturasi'],
-                'ttv_skala' => $inputs['ttv_skala'],
-                'alergi' => $sql_data['dft']->alergi ?? '',
-                'tipe' => $inputs['tipe'] ?? '0',
-                'no_rm' => $numbers['rm'],
-                'no_akun' => $numbers['akun'],
-                'status' => '1',
-                'status_nota' => '1'
-            ];
-
-            // Insert main record
-            $this->db->insert('tbl_trans_medcheck', $data);
-            $last_id = $this->db->insert_id();
-
-            // Handle related records based on type
-            $this->_handle_related_records($last_id, $inputs, $sql_data, $numbers);
-
-            // Update pendaftaran status - use simple update
-            $this->db->where('id', $inputs['dft_id'])
-                    ->update('tbl_pendaftaran', ['status_akt' => '2', 'file_base64' => '']);
-
-            // Handle file upload if exists
-            if (!empty($_FILES['fupload']['name'])) {
-                $this->_handle_file_upload($sql_data['pas'], $sql_data['pengaturan']);
-            }
-
-            $this->db->trans_commit();
-            $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data berhasil disimpan!");');
-        } catch (Exception $e) {
-            $this->db->trans_rollback();
-            log_message('error', 'Medical checkup error: ' . $e->getMessage());
-            $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . str_replace('"', '\"', $e->getMessage()) . '");');
-        }
-
-        redirect(base_url('medcheck/index.php?tipe=' . ($inputs['tipe'] ?? '')));
-    }
-
-// Helper methods
-    private function _get_required_data($dft_id, $pasien_id) {
-        // Get all required data in single query
-        $dft = $this->db->where('id', $dft_id)->get('tbl_pendaftaran')->row();
-        $pas = $this->db->where('id', $pasien_id)->get('tbl_m_pasien')->row();
-        $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
-        return ['dft' => $dft, 'pas' => $pas, 'pengaturan' => $pengaturan];
-    }
-
-    private function _generate_numbers() {
-        // Generate all numbers in single query
-        $counts = $this->db->select('
-        (SELECT COUNT(*) FROM tbl_trans_medcheck WHERE MONTH(tgl_simpan) = MONTH(CURRENT_DATE()) AND YEAR(tgl_simpan) = YEAR(CURRENT_DATE())) as rm_count,
-        (SELECT COUNT(*) FROM tbl_trans_medcheck WHERE DATE(tgl_simpan) = CURRENT_DATE()) as akun_count
-    ')->get()->row();
-
-        return [
-            'rm' => date('ymd') . sprintf('%04d', ($counts->rm_count + 1)),
-            'akun' => strtoupper(date('Mdy') . sprintf('%04d', ($counts->akun_count + 1)))
-        ];
-    }
-
-    private function _handle_related_records($last_id, $inputs, $sql_data, $numbers) {
-        // Handle all related records based on type
-        if ($inputs['tipe'] == '1') {
-            $this->_handle_lab_record($last_id, $inputs, $sql_data);
-        } elseif ($inputs['tipe'] == '4') {
-            $this->_handle_rad_record($last_id, $inputs, $sql_data);
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
         }
     }
-  
+    
+    
     public function set_pasien() {
         if (akses::aksesLogin() != TRUE) {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -4057,14 +4232,15 @@ class medcheck extends CI_Controller {
             
             try {
                 $this->db->trans_begin();
-                
+
+                // Data Pengaturan here
                 $pengaturan = $this->db->get('tbl_pengaturan')->row();
                 $sql_dft    = $this->db->where('id', general::dekrip($id))->get('tbl_pendaftaran')->row();
                 $sql_cek    = $this->db->where('nik', $sql_dft->nik)->where('nama', $sql_dft->nama)->where('alamat', $sql_dft->alamat)->get('tbl_m_pasien');
                 $sql_num    = $this->db->order_by('id', 'DESC')->limit(1)->get('tbl_m_pasien')->row();
                 $num        = $sql_num->id + 1;
                 
-                $data_pas = array(
+                $data_pas = [
                     'tgl_simpan'        => $sql_dft->tgl_simpan,
                     'tgl_modif'         => $sql_dft->tgl_simpan,
                     'id_gelar'          => $sql_dft->id_gelar,
@@ -4073,7 +4249,7 @@ class medcheck extends CI_Controller {
                     'kode_dpn'          => $pengaturan->kode_pasien,
                     'nik'               => $sql_dft->nik,
                     'nama'              => $sql_dft->nama,
-                    'nama_pgl'          => general::bersih($sql_dft->nama_pgl),
+                    'nama_pgl'          => $this->general->bersih($sql_dft->nama_pgl),
                     'tmp_lahir'         => $sql_dft->tmp_lahir,
                     'tgl_lahir'         => $sql_dft->tgl_lahir,
                     'jns_klm'           => $sql_dft->jns_klm,
@@ -4086,16 +4262,13 @@ class medcheck extends CI_Controller {
                     'alergi'            => $sql_dft->alergi,                  
                     'status'            => '1',
                     'status_pas'        => $sql_dft->status,
-                );
-                
-                /* Transaksi Database */
-                $this->db->query('SET autocommit = 0;');
-                $this->db->trans_start();
+                ];
                 
                 if($sql_dft->status == '2'){
                     // Nek kembar, wajib tendang su
                     if($sql_cek->num_rows() > 0){
                         $pasien_id  = $sql_cek->row()->id;
+                        $id_user    = $sql_cek->row()->id_user;
                         $sql_poin   = $this->db->where('id_pasien', $pasien_id)->get('tbl_m_pasien_poin');
 
                         # Update data pasien
@@ -4103,13 +4276,13 @@ class medcheck extends CI_Controller {
                         
                         # cek udah ada param poin belum, kalo belum buat parameternya
                         if($sql_poin->num_rows() == 0){
-                            $data_poin = array(
+                            $data_poin = [
                                 'id_pasien'     => $pasien_id,
                                 'tgl_simpan'    => date('Y-m-d H:i:s'),
                                 'jml_poin'      => 0,
                                 'jml_poin_nom'  => 0,
                                 'status'        => '1',
-                            );
+                            ];
 
                             $this->db->insert('tbl_m_pasien_poin', $data_poin);
                         }
@@ -4119,13 +4292,13 @@ class medcheck extends CI_Controller {
                         $this->db->insert('tbl_m_pasien', $data_pas);
                         $last_id = crud::last_id();
                                         
-                        $data_poin = array(
+                        $data_poin = [
                             'id_pasien'     => $last_id,
                             'tgl_simpan'    => date('Y-m-d H:i:s'),
                             'jml_poin'      => 0,
                             'jml_poin_nom'  => 0,
                             'status'        => '1',
-                        );
+                        ];
                         
                         $this->db->insert('tbl_m_pasien_poin', $data_poin);
                     }
@@ -4136,26 +4309,26 @@ class medcheck extends CI_Controller {
                 }
                 
                 # Config File Foto Pasien
-                $dir_file           = FCPATH.'/';
+                $dir                = FCPATH.'/';
                 $kode               = sprintf('%05d', $last_id);
                 $no_rm              = strtolower($pengaturan->kode_pasien).$kode;
                 $path               = 'file/pasien/'.$no_rm.'/';
                 
                 # Buat Folder Untuk Foto Pasien
-                if(!file_exists($dir_file.$path)){
-                    mkdir($dir_file.$path, 0777, true);
+                if(!file_exists($dir.$path)){
+                    mkdir($dir.$path, 0777, true);
                 }
                 
                 # Simpan foto dari kamera ke dalam format file *.png dari base64
                 if (!empty($sql_dft->file_base64)) {
                     $filename           = $path.'profile_'.$kode.'.png';
-                    general::base64_to_jpeg($sql_dft->file_base64, $filename);
+                    general::base64_to_jpeg($sql_dft->file_base64, $dir.$filename);
                 }
                 
                 # Simpan foto dari kamera ke dalam format file *.png dari base64 KTP / ID PASIEN
                 if (!empty($sql_dft->file_base64_id)) {
                     $filename_id        = $path.'ID_'.$kode.'.png';
-                    general::base64_to_jpeg($sql_dft->file_base64_id, $filename_id);
+                    general::base64_to_jpeg($sql_dft->file_base64_id, $dir.$filename_id);
                 }
                 
                 # Integrasi data pasien untuk akses login pasien
@@ -4167,7 +4340,7 @@ class medcheck extends CI_Controller {
                 
                 # Cek username tersebut sudah pernah di pakai atau belum
                 if($sql_user->num_rows() == 0){
-                    $data_user = array(
+                    $data_user = [
                         'email'         => $email,
                         'first_name'    => $sql_dft->nama,
                         'nama'          => $sql_dft->nama_pgl,
@@ -4177,7 +4350,7 @@ class medcheck extends CI_Controller {
                         'file_name'     => (file_exists($filename) ? $filename : ''),
                         'username'      => $no_rm,
                         'tipe'          => '2',
-                    );
+                    ];
                     
                     # Simpan ke modul user
                     $this->ion_auth->register($user, $pass2, $email, $data_user, array('15'));
@@ -4185,7 +4358,7 @@ class medcheck extends CI_Controller {
                     $sql_user_ck = $this->db->select('id, username')->where('username', $user)->get('tbl_ion_users')->row();
                     $id_user = $sql_user_ck->id;
                 }else{
-                    $data_user = array(
+                    $data_user = [
                         'email'         => $email,
                         'first_name'    => $sql_dft->nama,
                         'nama'          => $sql_dft->nama_pgl,
@@ -4196,17 +4369,17 @@ class medcheck extends CI_Controller {
                         'username'      => $no_rm,
                         'password'      => $pass2,
                         'tipe'          => '2',
-                    );
+                    ];
                     
                     $this->ion_auth->update($id_user, $data_user);
                     $id_user = $sql_user_rw->id;                    
                 }
                 
                 # Simpan ID User dari tabel ion_users ke tabel pasien
-                $data_pas_upd = array(
+                $data_pas_upd = [
                     'id_user' => $id_user,
                     'kode'    => $kode,
-                );
+                ];
                 
                 $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_pas_upd); 
 
@@ -4214,31 +4387,31 @@ class medcheck extends CI_Controller {
                 # Cek File Foto Pasien
                 if (!empty($sql_dft->file_base64)) {
                     # Data File
-                    $data_file = array(
+                    $data_file = [
                         'file_name'     => (file_exists($filename) ? $filename : ''),
                         'file_type'     => (file_exists($filename) || file_exists($filename_id) ? 'image/png' : ''),
                         'file_ext'      => (file_exists($filename) || file_exists($filename_id) ? '.png' : ''),
-                    );
+                    ];
 
                     # Simpan File Gambar ke tabel
                     $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_file);
                     
                     # Hapus gambar pada pendaftaran supaya tidak penuh
-                    $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', array('file_base64'=>''));
+                    $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', ['file_base64'=>'']);
                 }
                     
                 # Cek File ID
                 if (!empty($sql_dft->file_base64_id)) {
                     # Data File
-                    $data_file_id = array(
+                    $data_file_id = [
                         'file_name_id'  => (file_exists($filename_id) ? $filename_id : ''),
-                    );
+                    ];
 
                     # Simpan File Gambar ke tabel
                     $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_file_id);
                     
                     # Hapus gambar pada pendaftaran supaya tidak penuh
-                    $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', array('file_base64_id'=>''));
+                    $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', ['file_base64_id'=>'']);
                 }
                 
                 if ($this->db->trans_status() === FALSE) {
@@ -4252,7 +4425,6 @@ class medcheck extends CI_Controller {
                 
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pasien sudah disimpan!");');
                 redirect(base_url('medcheck/tambah.php?dft_pas='.general::enkrip($last_id).'&dft_id='.general::enkrip($sql_dft->id)));
-                
             } catch (Exception $e) {
                 $this->db->trans_rollback();
                 $this->cache->file->delete($lock_key);
@@ -4266,7 +4438,7 @@ class medcheck extends CI_Controller {
             redirect('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d'));
         }
     }
-    
+
     public function set_medcheck_update() {
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->post('id');
@@ -4818,480 +4990,182 @@ class medcheck extends CI_Controller {
         }
     }
 
-    public function set_medcheck_proses(){
-        if (akses::aksesLogin() == TRUE) {
-            $id         = $this->input->post('id');
-            $status     = $this->input->post('status');
-            
+    public function set_medcheck_proses() {
+        if (!akses::aksesLogin()) {
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+            return;
+        }
+    
+        // Validate input
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                );
-
-                $this->session->set_flashdata('anamnesa', $msg_error);
-
-                redirect(base_url('medcheck/tambah.php?id='.$id));
-            } else {
-                $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_medc_det   = $this->db->select('SUM(potongan) AS potongan, SUM(diskon) AS diskon, SUM(subtotal) AS subtotal')->where('id_medcheck', $sql_medc->id)->where('status_pkt', '0')->get('tbl_trans_medcheck_det')->row();   
-                $sql_medc_det2  = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->result(); 
-                $sql_poin       = $this->db->where('id_pasien', $sql_medc->id_pasien)->get('tbl_m_pasien_poin'); 
-                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-                
-
-                $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->num_rows() + 1;
-                $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $nomer);
-                
-                $jml_total      = $sql_medc_det->subtotal + $sql_medc_det->potongan + $sql_medc_det->diskon;
-                $jml_pot        = $sql_medc_det->potongan;
-                $jml_diskon     = $sql_medc_det->diskon;
-                $diskon         = ($jml_diskon / $jml_total) * 100;
-                $jml_subtotal   = $sql_medc_det->subtotal;
-                $ppn            = $pengaturan->ppn;
-                $jml_ppn        = $pengaturan->ppn;
-                $jml_gtotal     = ceil($sql_medc_det->subtotal);
-                
-                $data = array(
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'no_nota'       => $no_nota,
-                    'jml_total'     => (float)$jml_total,
-                    'jml_diskon'    => (float)$jml_diskon,
-                    'diskon'        => ($diskon > 1 ? (float)round($diskon, 2) : '0'),
-                    'jml_potongan'  => (float)$jml_pot,
-                    'jml_subtotal'  => (float)$jml_subtotal,
-                    'jml_gtotal'    => (float)$jml_subtotal,
-                    'status'        => '5',
-                );
-                
-                # Transactional Database
-                $this->db->trans_off();
-                $this->db->trans_start();
-                
-                # Kueri MySQL tulis disini
-                if($sql_medc->status < 5){
-                    # Update data nota dll
+            $this->session->set_flashdata('anamnesa', ['id' => form_error('id')]);
+            redirect(base_url('medcheck/tambah.php?id='.$this->input->post('id')));
+            return;
+        }
+    
+        // Start transaction
+        $this->db->trans_begin();
+    
+        try {
+            // Get main data
+            $id = $this->input->post('id');
+            $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+            
+            if (!$sql_medc) {
+                throw new Exception("Data medcheck tidak ditemukan");
+            }
+    
+            if ($sql_medc->status >= 5) {
+                throw new Exception("Transaksi sudah pernah di proses");
+            }
+    
+            // Get details data
+            $sql_medc_det = $this->db->select('SUM(potongan) AS potongan, SUM(diskon) AS diskon, SUM(subtotal) AS subtotal')
+                                    ->where('id_medcheck', $sql_medc->id)
+                                    ->where('status_pkt', '0')
+                                    ->get('tbl_trans_medcheck_det')
+                                    ->row();
+    
+            // Generate invoice number
+            $nomer = $this->db->where('MONTH(tgl_simpan)', date('m'))
+                             ->where('YEAR(tgl_simpan)', date('Y'))
+                             ->get('tbl_trans_medcheck')
+                             ->num_rows() + 1;
+            $no_nota = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $nomer);
+    
+            // Calculate totals
+            $jml_total = $sql_medc_det->subtotal + $sql_medc_det->potongan + $sql_medc_det->diskon;
+            $diskon = ($jml_total > 0) ? ($sql_medc_det->diskon / $jml_total) * 100 : 0;
+    
+            // Update main transaction
+            $data = [
+                'tgl_modif' => date('Y-m-d H:i:s'),
+                'no_nota' => $no_nota,
+                'jml_total' => (float)$jml_total,
+                'jml_diskon' => (float)$sql_medc_det->diskon,
+                'diskon' => ($diskon > 1 ? (float)round($diskon, 2) : '0'),
+                'jml_potongan' => (float)$sql_medc_det->potongan,
+                'jml_subtotal' => (float)$sql_medc_det->subtotal,
+                'jml_gtotal' => (float)$sql_medc_det->subtotal,
+                'status' => '5',
+            ];
+    
                     $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', $data);           
                       
-                    foreach ($sql_medc_det2 as $medc_det){
-                        $sql_item        = $this->db->where('id', $medc_det->id_item)->get('tbl_m_produk')->row();
-                        $sql_item_ref    = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref');   
-                        $sql_satuan      = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                        $sql_gudang      = $this->db->where('status', '1')->get('tbl_m_gudang')->row();         # Cek gudang aktif dari gudang utama
-    
-                          
-                        # Item racikan kumpulkan dahulu disini
-                        if(!empty($medc_det->resep)){
-                              foreach (json_decode($medc_det->resep) as $rc){
-                                  $sql_item_rc          = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
-                                  $sql_gudang_stok_rc   = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rc->id)->get('tbl_m_produk_stok')->row();
-                                  
-                                  # Cek resep Item stockable atau tidak ? 
-                                  if($sql_item_rc->status_subt == '1'){
-                                      $jml_akhir_rc         = $sql_item_rc->jml - $rc->jml;
-                                      $jml_akhir_rc_stk     = $sql_gudang_stok_rc->jml - $rc->jml;
-                                      
-                                      $data_item_rc = array(
-                                          'tgl_modif'  => date('Y-m-d H:i:s'),
-                                          'jml'        => $jml_akhir_rc, # ($jml_akhir_rc < 0 ? 0 : (int) $jml_akhir_rc)
-                                      );
-                                      
-                                      $data_item_rc_stk = array(
-                                          'tgl_modif'  => date('Y-m-d H:i:s'),
-                                          'jml'        => $jml_akhir_rc_stk,
-                                      );
-                                      
-                                      $data_stok_trace_rc = array(
-                                          'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                          'tgl_masuk'         => $sql_medc->tgl_masuk,
-                                          'id_medcheck'       => $sql_medc->id,
-                                          'id_medcheck_det'   => $rc->id, 
-                                          'id_gudang'         => $sql_gudang->id, 
-                                          'id_item'           => $sql_item_rc->id,
-                                          'item'              => $sql_item_rc->produk,
-                                          'stok_awal'         => $sql_gudang_stok_rc->jml, 
-                                          'jml'               => $rc->jml, 
-                                          'stok_akhir'        => $jml_akhir_rc_stk, 
-                                          'keterangan'        => 'Racikan',
-                                          'status'            => $sql_item_rc->status,
-                                      );
-                                      
-                                      $data_penj_hist_rc = array(
-                                          'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                          'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                          'id_gudang'     => $sql_gudang->id,
-                                          'id_pelanggan'  => $sql_medc->id_pasien,
-                                          'id_produk'     => $sql_item_rc->id,
-                                          'id_user'       => $this->ion_auth->user()->row()->id,
-                                          'id_penjualan'  => $sql_medc->id,
-                                          'no_nota'       => $no_nota,
-                                          'kode'          => $sql_item_rc->kode,
-                                          'produk'        => $sql_item_rc->produk,
-                                          'keterangan'    => $sql_medc->pasien.' - RACIKAN',
-                                          'jml'           => (int)$rc->jml,
-                                          'jml_satuan'    => (int)$sql_satuan->jml,
-                                          'satuan'        => $sql_satuan->satuanTerkecil,
-                                          'nominal'       => (float)$rc->harga,
-                                          'status'        => '4'
-                                      );
-                                      
-//                                      # Kurangi stok di database item yang relate ke racikan
-//                                      $this->db->where('id', $rc->id_item)->update('tbl_m_produk', $data_item_rc);
-//                                      
-//                                      # Kurangi stok sesuai gudang utama
-//                                      $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rc->id)->update('tbl_m_produk_stok', $jml_akhir_rc_stk);
-//                                      
-                                      # Simpan ke tabel riwayat produk
-                                      $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rc);
-                                      
-                                      # Simpan ke tabel stok produk trace
-                                      $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rc);
-                                  }
-                              }
-                          }                      
-                        # -- END OF RACIKAN
-                          
-                        # Cek Item Produk non resep stockable
-                        if($sql_item->status_subt == '1'){
-//                                $sql_gudang_stok = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
-                                $sql_gudang_stok = $this->db->select('SUM(jml) AS jml')->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
-                                $jml_akhir       = $sql_item->jml - $medc_det->jml;
-                                $jml_akhir_stk   = $sql_gudang_stok->jml - $medc_det->jml;
-                                                    
-                                $data_item = array(
-                                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                                    'jml'        => $jml_akhir,     # ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
-                                );
-                                                    
-                                $data_item_stk = array(
-                                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                                    'jml'        => $jml_akhir_stk, # ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
-                                );
-                                                    
-                                $data_stok_trace = array(
-                                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                    'tgl_masuk'         => $sql_medc->tgl_masuk,
-                                    'id_medcheck'       => $sql_medc->id,
-                                    'id_medcheck_det'   => $medc_det->id, 
-                                    'id_gudang'         => $sql_gudang->id, 
-                                    'id_item'           => $sql_item->id, 
-                                    'item'              => $sql_item->produk, 
-                                    'stok_awal'         => $sql_gudang_stok->jml, 
-                                    'jml'               => $medc_det->jml, 
-                                    'stok_akhir'        => $jml_akhir_stk, 
-                                    'status'            => $sql_item->status, 
-                                );
-                                
-                                $data_penj_hist = array(
-                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                    'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                    'id_gudang'     => $sql_gudang->id,
-                                    'id_pelanggan'  => $sql_medc->id_pasien,
-                                    'id_produk'     => $sql_item->id,
-                                    'id_user'       => $this->ion_auth->user()->row()->id,
-                                    'id_penjualan'  => $sql_medc->id,
-                                    'no_nota'       => $no_nota,
-                                    'kode'          => $sql_item->kode,
-                                    'produk'        => $sql_item->produk,
-                                    'keterangan'    => $sql_medc->pasien,
-                                    'jml'           => (int)$medc_det->jml,
-                                    'jml_satuan'    => (int)$sql_satuan->jml,
-                                    'satuan'        => $sql_satuan->satuanTerkecil,
-                                    'nominal'       => (float)$medc_det->harga,
-                                    'status'        => '4'
-                                );
-                                
-//                                # Kurangi Stok Item Stockable Non Racikan
-//                                $this->db->where('id', $sql_item->id)->update('tbl_m_produk', $data_item);
-//                                
-//                                # Kurangi Stok Item Stockable Non Racikan yang terdapat di gudang utama
-//                                $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item->id)->update('tbl_m_produk_stok', $data_item_stk);
-                                
-                                # Simpan ke tabel riwayat produk
-                                $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
-                                
-                                # Simpan ke tabel stok produk trace
-                                $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
-                          }                      
-                        # -- END OF ITEM
-                          
-                        # Jika punya refrensi item, maka jabarkan dulu
-                        if($sql_item_ref->num_rows() > 0){
-                                foreach ($sql_item_ref->result() as $reff){
-                                    $sql_item_rf        = $this->db->where('id', $reff->id_produk_item)->get('tbl_m_produk')->row();
-                                    $sql_item_sat_rf    = $this->db->where('id', $reff->id_satuan)->get('tbl_m_satuan')->row();
-                                    $sql_gudang_stok    = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rf->id)->get('tbl_m_produk_stok')->row();
-                                    $rf_subtot          = $sql_item_rf->harga_jual * $reff->jml;
-                                  
-                                    # Cek apakah stockabel
-                                    if($sql_item_rf->status_subt == '1'){
-                                        $jml_akhir_reff     = $sql_item_rf->jml - ($reff->jml * $medc_det->jml);
-                                        $jml_akhir_reff_stk = $sql_gudang_stok->jml - ($reff->jml * $medc_det->jml);
-                                  
-                                        $data_item_reff = array(
-                                            'tgl_modif'  => date('Y-m-d H:i:s'),
-                                            'jml'        => $jml_akhir_reff
-                                        );
-                                  
-                                        $data_item_reff_stk = array(
-                                            'tgl_modif'  => date('Y-m-d H:i:s'),
-                                            'jml'        => $jml_akhir_reff_stk
-                                        );
-                                        
-                                        $data_stok_trace_rf = array(
-                                            'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                            'tgl_masuk'         => $sql_medc->tgl_masuk,
-                                            'id_medcheck'       => $sql_medc->id,
-                                            'id_medcheck_det'   => $medc_det->id, 
-                                            'id_gudang'         => $sql_gudang_stok->id_gudang, 
-                                            'id_item'           => $sql_item_rf->id,
-                                            'item'              => $sql_item_rf->produk, 
-                                            'stok_awal'         => $sql_gudang_stok->jml, 
-                                            'jml'               => ($reff->jml * $medc_det->jml), 
-                                            'stok_akhir'        => $jml_akhir_reff_stk,
-                                            'keterangan'        => 'Reff',
-                                            'status'            => $sql_item_rf->status,
-                                        );
-                                                                        
-                                        $data_penj_hist_rf = array(
-                                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                            'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                            'id_gudang'     => $sql_gudang->id,
-                                            'id_pelanggan'  => $sql_medc->id_pasien,
-                                            'id_produk'     => $sql_item_rf->id,
-                                            'id_user'       => $this->ion_auth->user()->row()->id,
-                                            'id_penjualan'  => $sql_medc->id,
-                                            'no_nota'       => $no_nota,
-                                            'kode'          => $sql_item_rf->kode,
-                                            'produk'        => $sql_item_rf->produk,
-                                            'keterangan'    => $sql_medc->pasien.' - REFERENCE ITEM',
-                                            'jml'           => (int)($reff->jml * $medc_det->jml),
-                                            'jml_satuan'    => (int)$sql_satuan->jml,
-                                            'satuan'        => $sql_satuan->satuanTerkecil,
-                                            'nominal'       => (float)$medc_det->harga,
-                                            'status'        => '4'
-                                        );
-                                        
-                                        $data_det = array(
-                                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                            'tgl_modif'     => date('Y-m-d H:i:s'),
-                                            'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                            'id_medcheck'   => (int)$sql_medc->id,
-                                            'id_item'       => (int)$sql_item_rf->id,
-                                            'id_item_kat'   => (int)$sql_item_rf->id_kategori,
-                                            'id_item_sat'   => (int)$sql_item_rf->id_satuan,
-                                            'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                                            'id_dokter'     => (int)$sql_medc->id_dokter,
-                                            'kode'          => $sql_item_rf->kode,
-                                            'item'          => $sql_item_rf->produk,
-                                            'jml'           => (int)$reff->jml,
-                                            'jml_satuan'    => $sql_item_sat_rf->jml, 
-                                            'harga'         => $sql_item_rf->harga,
-                                            'subtotal'      => $rf_subtot,
-                                            'satuan'        => $sql_item_sat_rf->satuanBesar,
-                                            'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                                            'status_pkt'    => '1',
-                                        );  
-                                                                            
-//                                        # Kurangi stok, untuk item referensinya jika statusnya stockable
-//                                        $this->db->where('id', $sql_item_rf->id)->update('tbl_m_produk', $data_item_reff);
-//                                                                            
-//                                        # Kurangi stok, untuk item referensinya jika statusnya stockable yang ada pada gudang utama
-//                                        $this->db->where('id_produk', $sql_item_rf->id)->update('tbl_m_produk_stok', $data_item_reff_stk);
-                                        
-                                        # Simpan te tabel riwayat produk
-                                        $this->db->insert('tbl_trans_medcheck_det', $data_det);
-                                        
-                                        # Simpan te tabel riwayat produk
-                                        $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rf);
-                                
-                                        # Simpan ke tabel stok produk trace
-                                        $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rf);
-                                    }
-                                }
-                            }
-                          
-                        # Kalau remun tidak kosong, maka lakukan simpan
-                        # Remun untuk menghitung pendapatan dokter                        
-                        if($sql_item->remun_tipe > 0){
-                            # Cek Remun (lab atau radiologi)
-                            if($sql_item->status == '5'){
-                                $sql_rad    = $this->db->where('id', $medc_det->id_rad)->get('tbl_trans_medcheck_rad')->row();
-                                $dokter     = (!empty($sql_rad->id_dokter) ? $sql_rad->id_dokter : $medc_det->id_dokter); 
-                            }else{
-                                $dokter     = $medc_det->id_dokter; 
-                            }
-                            
-                            $sql_cek_remun = $this->db
-                                                  ->where('id_medcheck', $sql_medc->id)
-                                                  ->where('id_medcheck_det', $medc_det->id)
-                                                  ->where('id_dokter', $medc_det->id_dokter)
-                                                  ->where('id_item', $sql_item->id)
-                                                  ->get('tbl_trans_medcheck_remun');
-                            
-                            # Tentukan remun tipenya dan hitung total remunnya
-                            $remun      = ($sql_item->remun_tipe == '2' ? $sql_item->remun_nom : (($sql_item->remun_perc / 100) * $medc_det->harga));
-                            $remun_tot  = $remun * $medc_det->jml;
-                            
-                            $data_remun = array(
-                                'id_medcheck'       => (int)$sql_medc->id,
-                                'id_medcheck_det'   => (int)$medc_det->id,
-                                'id_dokter'         => (int)$dokter,
-                                'id_item'           => (int)$sql_item->id,
-                                'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                'item'              => $sql_item->produk,
-                                'harga'             => (float)$medc_det->harga,
-                                'jml'               => (float)$medc_det->jml,
-                                'remun_perc'        => (float)$sql_item->remun_perc,
-                                'remun_nom'         => (float)$sql_item->remun_nom,
-                                'remun_tipe'        => (int)$sql_item->remun_tipe,
-                                'remun_subtotal'    => (float)$remun_tot,
-                            );
-
-                            # Cek jika ada tidak ada value kembar
-                            if($sql_cek_remun->num_rows() == 0){
-                                # Simpan ke tabel Remun
-                                $this->db->insert('tbl_trans_medcheck_remun', $data_remun);
-                            }
-                        }
-                          
-                        # Kalau apresiasi tidak kosong, maka lakukan simpan
-                        # Apresiasi untuk menghitung pendapatan dari lab
-                        if($sql_item->apres_tipe > 0){
-                            # Cek Apresiasi asas (lab atau radiologi)
-                            if(!empty($medc_det->id_rad)){
-                                $sql_rad    = $this->db->where('id', $medc_det->id_rad)->get('tbl_trans_medcheck_rad')->row();
-                                $dokter     = (!empty($sql_rad->id_dokter_kirim) ? $sql_rad->id_dokter_kirim : $medc_det->id_dokter); 
-                            }elseif(!empty($medc_det->id_lab)){
-                                $sql_lab    = $this->db->where('id', $medc_det->id_lab)->get('tbl_trans_medcheck_lab')->row();
-                                $dokter     = (!empty($sql_lab->id_dokter) ? $sql_lab->id_dokter : $medc_det->id_dokter);                                
-                            }else{
-                                $dokter     = $medc_det->id_dokter; 
-                            }
-                            
-                            
-                            $sql_cek_apres = $this->db
-                                                  ->where('id_medcheck', $sql_medc->id)
-                                                  ->where('id_medcheck_det', $medc_det->id)
-                                                  ->where('id_dokter', $medc_det->id_dokter)
-                                                  ->where('id_item', $sql_item->id)
-                                                  ->get('tbl_trans_medcheck_apres');
-                            
-                            # Tentukan apresiasi tipenya dan hitung total remunnya
-                            $apres      = ($sql_item->apres_tipe == '2' ? $sql_item->apres_nom : (($sql_item->apres_perc / 100) * $medc_det->harga));
-                            $apres_tot  = $apres * $medc_det->jml;
-                            
-                            $data_apres = array(
-                                'id_medcheck'       => (int)$sql_medc->id,
-                                'id_medcheck_det'   => (int)$medc_det->id,
-                                'id_dokter'         => (int)$dokter,
-                                'id_item'           => (int)$sql_item->id,
-                                'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                'item'              => $sql_item->produk,
-                                'harga'             => (float)$medc_det->harga,
-                                'jml'               => (float)$medc_det->jml,
-                                'apres_perc'        => (float)$sql_item->apres_perc,
-                                'apres_nom'         => (float)$sql_item->apres_nom,
-                                'apres_tipe'        => (int)$sql_item->apres_tipe,
-                                'apres_subtotal'    => (float)$apres_tot,
-                            );
-                            
-                            # Cek jika ada tidak ada value kembar
-                            if($sql_cek_apres->num_rows() == 0){
-                                # Simpan ke tabel Apres
-                                $this->db->insert('tbl_trans_medcheck_apres', $data_apres);
-                            }
-                        }
-                    }
-                    
-                    # Setelah semua proses tersimpan, saat nya mengurangi stok
-                    # Ambil data dari tabel tracer stok sementara
-                    $sql_medc_stok = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_stok')->result();
-                    
-                    foreach ($sql_medc_stok as $stok){
-                        # Ambil data stok dari item dari gudang dan item terkait
-                        $sql_gudang_stok    = $this->db->where('id_gudang', $stok->id_gudang)->where('id_produk', $stok->id_item)->get('tbl_m_produk_stok')->row();
-                        
-                        # Hitung ulang secara live, stok saat ini dikurangi stok yang keluar
-                        $stok_akhir         = $sql_gudang_stok->jml - $stok->jml;
-                        
-                        # Kumpulkan informasi pengurangan stok disini
-                        $data_stok = array(
-                            'tgl_modif' => date('Y-m-d H:i:s'),
-                            'jml'       => $stok_akhir
-                        );
-                        
-                        # Simpan stok akhir ke tabel gudang,update stok nya
-                        $this->db->where('id', $sql_gudang_stok->id)->update('tbl_m_produk_stok', $data_stok);
-                        
-                        # Kumpulkan informasi pengurangan stok pada tabel tracer stok disini
-                        $data_stok_trace = array(
-                            'stok_awal'     => $sql_gudang_stok->jml,
-                            'stok_akhir'    => $stok_akhir
-                        );
-                        
-                        # Update pada tabel tracer stok nya
-                        $this->db->where('id', $stok->id)->update('tbl_trans_medcheck_stok', $data_stok_trace);
-                        
-                        # Sinkronkan stok atas dan bawah, kemudian jumlahkan dengan sum dan catat sementara
-                        $stok_glob = $this->db->select_sum('jml')->where('id_produk', $stok->id_item)->get('tbl_m_produk_stok')->row();
-                        
-                        # Stok atas bawah yang sinkron, catat disini
-                        $data_stok_glob = array(
-                            'tgl_modif' => date('Y-m-d H:i:s'),
-                            'jml'       => $stok_glob->jml
-                        );
-                        
-                        # Simpan stok akhir global ke tabel master item utama
-                        $this->db->where('id', $stok->id_item)->update('tbl_m_produk', $data_stok_glob);
-                    }
-
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil di proses !!</div>');
-                }else{
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Transaksi sudah pernah di proses !!</div>');
-                }
-                
-                # Poin Pasien
-                if($sql_poin->num_rows() == 0){
-                    $data_poin = array(
-                        'id_pasien'     => $sql_medc->id_pasien,
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                        'jml_poin'      => 0,
-                        'jml_poin_nom'  => 0,
-                        'status'        => 1,
-                    );
-                    
-                    $this->db->insert('tbl_m_pasien_poin', $data_poin);
-                }
-                
-                $this->db->trans_complete();
-                
-                # Kirim pesan gagal atau sukses
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback
-                    $this->db->trans_rollback();
-
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Transaksi gagal di proses !!</div>');
-                } else {
-                    # Complete
-                    $this->db->trans_commit();
-
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil di proses !!</div>');
-                }
-                
-                redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
+            // Process details
+            $sql_medc_det2 = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->result();
+            foreach ($sql_medc_det2 as $medc_det) {
+                $this->_process_detail_item($medc_det, $sql_medc, $no_nota);
             }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
+    
+            // Process stock updates
+            $this->_update_stock($sql_medc->id);
+    
+            // Create or update patient points
+            $this->_handle_patient_points($sql_medc->id_pasien);
+    
+            // Commit transaction
+            $this->db->trans_commit();
+            $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil di proses !!</div>');
+    
+        } catch (Exception $e) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error: ' . $e->getMessage() . '</div>');
+            log_message('error', 'Medcheck process error: ' . $e->getMessage());
+        }
+    
+        redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
+    }
+    
+    // Helper methods
+    private function _process_detail_item($medc_det, $sql_medc, $no_nota) {
+        $sql_item = $this->db->where('id', $medc_det->id_item)->get('tbl_m_produk')->row();
+        $sql_gudang = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
+    
+        // Process recipe items if exists
+        if (!empty($medc_det->resep)) {
+            $this->_process_recipe_items($medc_det->resep, $sql_medc, $sql_gudang, $no_nota);
+        }
+    
+        // Process main item if stockable
+        if ($sql_item->status_subt == '1') {
+            $this->_process_stockable_item($sql_item, $medc_det, $sql_medc, $sql_gudang, $no_nota);
+        }
+    
+        // Process reference items if exists
+        $sql_item_ref = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref');
+        if ($sql_item_ref->num_rows() > 0) {
+            $this->_process_reference_items($sql_item_ref->result(), $medc_det, $sql_medc, $sql_gudang, $no_nota);
+        }
+    
+        // Process remuneration if configured
+        if ($sql_item->remun_tipe > 0) {
+            $this->_process_remuneration($sql_item, $medc_det, $sql_medc);
+        }
+    
+        // Process appreciation if configured
+        if ($sql_item->apres_tipe > 0) {
+            $this->_process_appreciation($sql_item, $medc_det, $sql_medc);
         }
     }
-
+    
+    private function _update_stock($medcheck_id) {
+        $sql_medc_stok = $this->db->where('id_medcheck', $medcheck_id)->get('tbl_trans_medcheck_stok')->result();
+        
+        foreach ($sql_medc_stok as $stok) {
+            $sql_gudang_stok = $this->db->where('id_gudang', $stok->id_gudang)
+                                       ->where('id_produk', $stok->id_item)
+                                       ->get('tbl_m_produk_stok')
+                                       ->row();
+    
+            $stok_akhir = $sql_gudang_stok->jml - $stok->jml;
+    
+            // Update stock in warehouse
+            $this->db->where('id', $sql_gudang_stok->id)
+                     ->update('tbl_m_produk_stok', [
+                            'tgl_modif' => date('Y-m-d H:i:s'),
+                         'jml' => $stok_akhir
+                     ]);
+    
+            // Update stock trace
+            $this->db->where('id', $stok->id)
+                     ->update('tbl_trans_medcheck_stok', [
+                         'stok_awal' => $sql_gudang_stok->jml,
+                         'stok_akhir' => $stok_akhir
+                     ]);
+    
+            // Update global stock
+            $stok_glob = $this->db->select_sum('jml')
+                                 ->where('id_produk', $stok->id_item)
+                                 ->get('tbl_m_produk_stok')
+                                 ->row();
+    
+            $this->db->where('id', $stok->id_item)
+                     ->update('tbl_m_produk', [
+                            'tgl_modif' => date('Y-m-d H:i:s'),
+                         'jml' => $stok_glob->jml
+                     ]);
+        }
+    }
+    
+    private function _handle_patient_points($patient_id) {
+        $sql_poin = $this->db->where('id_pasien', $patient_id)->get('tbl_m_pasien_poin');
+        
+        if ($sql_poin->num_rows() == 0) {
+            $this->db->insert('tbl_m_pasien_poin', [
+                'id_pasien' => $patient_id,
+                'tgl_simpan' => date('Y-m-d H:i:s'),
+                'tgl_modif' => date('Y-m-d H:i:s'),
+                'jml_poin' => 0,
+                'jml_poin_nom' => 0,
+                'status' => 1
+            ]);
+        }
+    }
 
     public function set_medcheck_proses_batal(){
         if (akses::aksesLogin() == TRUE) {
@@ -11770,115 +11644,147 @@ public function set_medcheck_lab_adm_save() {
 
             $this->form_validation->set_rules('id', 'ID', 'required');
             $this->form_validation->set_rules('id_item', 'Kode', 'required');
+            $this->form_validation->set_rules('kode', 'Kode', 'required');
             $this->form_validation->set_rules('harga', 'Harga', 'required');
             $this->form_validation->set_rules('jml', 'Jml', 'required|greater_than[0]');
             
             $this->form_validation->set_message('greater_than', 'Harap gunakan menu retur. Kolom %s harus lebih besar dari 0');        
             
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'        => form_error('id'),
-                    'kode'      => form_error('id_item'),
+                    'id_item'   => form_error('id_item'),
+                    'kode'      => form_error('kode'),
                     'harga'     => form_error('harga'),
                     'jml'       => form_error('jml'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 $this->session->set_flashdata('jml', $jml);
                 
                 redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
             } else {
-                $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_item   = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
-                $sql_medc_ck= $this->db->where('id_medcheck', general::dekrip($id))->where('id_item', general::dekrip($id_item))->get('tbl_trans_medcheck_det');
-                $sql_radg_ck= $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
-                $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                $harga      = general::format_angka_db($hrg);
-                $potongan   = general::format_angka_db($pot);
-                $jml_pot    = $potongan * $jml;
-                $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
-                
-                $disk1      = $harga - (($diskon1 / 100) * $harga);
-                $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
-                $diskon     = $harga - $disk3;
-                $subtotal   = ($disk3 - $potongan) * (int)$jml;
+                try {
+                    // Check for form resubmission
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
+                        return;
+                    }
+                    
+                    // Check if cache library is loaded
+                    if (!isset($this->cache) || !is_object($this->cache)) {
+                        $this->load->driver('cache', array('adapter' => 'file'));
+                    }
+                    
+                    // Create a cache lock to prevent race conditions
+                    $lock_key = 'medcheck_cart_lock_' . general::dekrip($id) . '_' . general::dekrip($id_item);
+                    if ($this->cache->get($lock_key)) {
+                        throw new Exception("Proses sedang berlangsung, silahkan coba beberapa saat lagi.");
+                    }
+                    
+                    // Set lock for 30 seconds
+                    $this->cache->save($lock_key, true, 30);
+                    
+                    $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                    $sql_item   = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
+                    $sql_medc_ck= $this->db->where('id_medcheck', general::dekrip($id))->where('id_item', general::dekrip($id_item))->get('tbl_trans_medcheck_det');
+                    $sql_radg_ck= $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
+                    $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
+                    $harga      = (float)general::format_angka_db($hrg);
+                    $potongan   = (float)general::format_angka_db($pot);
+                    $jml_pot    = $potongan * (int)$jml;
+                    $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
+                    
+                    $disk1      = $harga - (($diskon1 / 100) * $harga);
+                    $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
+                    $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
+                    $diskon     = $harga - $disk3;
+                    $subtotal   = ($disk3 - $potongan) * (int)$jml;
 
-                $data = array(
-                    'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                    'id_medcheck'   => (int)$sql_medc->id,
-                    'id_item'       => (int)$sql_item->id,
-                    'id_item_kat'   => (int)$sql_item->id_kategori,
-                    'id_item_sat'   => (int)$sql_item->id_satuan,
-                    'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                    'id_dokter'     => (int)$dokter,
-                    'id_lab'        => (int)general::dekrip($id_lab),
-                    'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
-                    'id_rad'        => (int)general::dekrip($id_rad),
-                    'kode'          => $sql_item->kode,
-                    'item'          => $sql_item->produk,
-                    'keterangan'    => $keterangan,
-                    'hasil_lab'     => $hasil,
-                    'harga'         => $harga,
-                    'jml'           => (int)$jml,
-                    'jml_satuan'    => '1',
-                    'satuan'        => $sql_sat->satuanTerkecil,
-                    'disk1'         => (float)$diskon1,
-                    'disk2'         => (float)$diskon2,
-                    'disk3'         => (float)$diskon3,
-                    'diskon'        => (float)$diskon,
-                    'potongan'      => (float)general::format_angka_db($jml_pot),
-                    'subtotal'      => (float)$subtotal,
-                    'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                    'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
-                );  
-                
-                # Cek apakah sudah di posting atau belum ?
-                # Kalau sudah yg bisa input hny rad, lab, dokter
-                if($sql_medc->status < 5){
-                    # Start Transact SQL
-                    $this->db->trans_off();
-                    $this->db->trans_start();
+                    $data = [
+                        'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                        'id_medcheck'   => (int)$sql_medc->id,
+                        'id_item'       => (int)$sql_item->id,
+                        'id_item_kat'   => (int)$sql_item->id_kategori,
+                        'id_item_sat'   => (int)$sql_item->id_satuan,
+                        'id_user'       => (int)$this->ion_auth->user()->row()->id,
+                        'id_dokter'     => (int)$dokter,
+                        'id_lab'        => (int)general::dekrip($id_lab),
+                        'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
+                        'id_rad'        => (int)general::dekrip($id_rad),
+                        'kode'          => $sql_item->kode,
+                        'item'          => $sql_item->produk,
+                        'keterangan'    => $keterangan,
+                        'hasil_lab'     => $hasil,
+                        'harga'         => $harga,
+                        'jml'           => (int)$jml,
+                        'jml_satuan'    => '1',
+                        'satuan'        => $sql_sat->satuanTerkecil,
+                        'disk1'         => (float)$diskon1,
+                        'disk2'         => (float)$diskon2,
+                        'disk3'         => (float)$diskon3,
+                        'diskon'        => (float)$diskon,
+                        'potongan'      => (float)$jml_pot,
+                        'subtotal'      => (float)$subtotal,
+                        'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
+                        'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
+                    ]; 
                     
-                    # Simpan pada tabel medcheck det
-                    $this->db->insert('tbl_trans_medcheck_det', $data);
-
-                    $this->db->trans_complete();
-                    
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data item sudah disimpan !!</div>');                    
-                }else{
-                    
-                    if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakRad() == TRUE OR akses::hakAnalis() == TRUE){
+                    # Cek apakah sudah di posting atau belum ?
+                    # Kalau sudah yg bisa input hny rad, lab, dokter
+                    if($sql_medc->status < 5){
                         # Start Transact SQL
-                        $this->db->trans_off();
-                        $this->db->trans_start();
-                    
+                        $this->db->trans_begin();
+                        
                         # Simpan pada tabel medcheck det
                         $this->db->insert('tbl_trans_medcheck_det', $data);
 
-                        $this->db->trans_complete();
-                    
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data berhasil !");');
-//                        $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data item sudah disimpan !!</div>');   
-                    }else{
-                        $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Transaksi ini sudah diposting, sehingga tidak di perbolehkan menambah entrian</div>');
+                        if ($this->db->trans_status() === FALSE) {
+                            $this->db->trans_rollback();
+                            throw new Exception("Gagal menyimpan data item.");
+                        } else {
+                            $this->db->trans_commit();
+                            $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data item berhasil disimpan!");');
+                        }
+                    } else {
+                        if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakRad() == TRUE OR akses::hakAnalis() == TRUE){
+                            # Start Transact SQL
+                            $this->db->trans_begin();
+                        
+                            # Simpan pada tabel medcheck det
+                            $this->db->insert('tbl_trans_medcheck_det', $data);
+
+                            if ($this->db->trans_status() === FALSE) {
+                                $this->db->trans_rollback();
+                                throw new Exception("Gagal menyimpan data item.");
+                            } else {
+                                $this->db->trans_commit();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data berhasil!");');
+                            }
+                        } else {
+                            throw new Exception("Transaksi ini sudah diposting, sehingga tidak diperbolehkan menambah entrian.");
+                        }
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
+                } finally {
+                    // Release the lock if cache is loaded
+                    if (isset($lock_key) && isset($this->cache) && is_object($this->cache)) {
+                        $this->cache->delete($lock_key);
                     }
                 }
                 
                 redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.(!empty($id_lab) ? '&id_lab='.$id_lab : '').(!empty($id_rad) ? '&id_rad='.$id_rad : '').(!empty($id_resep) ? '&id_resep='.$id_resep : '').'&status='.$status.(!empty($rute) ? '&route='.$rute : '')));
-               
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }      
+    }     
 
     public function cart_medcheck_retur_ranap() {
         if (akses::aksesLogin() == TRUE) {
@@ -13327,11 +13233,32 @@ public function set_medcheck_lab_adm_save() {
             $rute       = $this->input->get('route');
             
             if(!empty($id)){
-                crud::delete('tbl_trans_medcheck_det', 'id', general::dekrip($id));
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Item berhasil di hapus</div>');
+                try {
+                    $this->db->trans_begin();
+                    
+                    // Delete the item from medcheck details
+                    crud::delete('tbl_trans_medcheck_det', 'id', general::dekrip($id));
+                    
+                    // Commit transaction if successful
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Item berhasil di hapus");');
+                } catch (Exception $e) {
+                    // Rollback transaction if error occurs
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
+                    log_message('error', 'Medcheck item delete error: ' . $e->getMessage());
+                }
             }
             
-            redirect(base_url((!empty($rute) ? $rute : 'medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id_nota.(!empty($id_rad) ? '&id_rad='.$id_rad.'&' : '').(!empty($id_lab) ? '&id_lab='.$id_lab.'&' : '').'&status='.$status)));
+            // Build redirect URL
+            $redirect_url = !empty($rute) ? $rute : 'medcheck/tambah.php?';
+            $redirect_url .= !empty($act) ? 'act='.$act.'&' : '';
+            $redirect_url .= 'id='.$id_nota;
+            $redirect_url .= !empty($id_rad) ? '&id_rad='.$id_rad : '';
+            $redirect_url .= !empty($id_lab) ? '&id_lab='.$id_lab : '';
+            $redirect_url .= '&status='.$status;
+            
+            redirect(base_url($redirect_url));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');

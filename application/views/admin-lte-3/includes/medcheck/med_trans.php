@@ -25,14 +25,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <?php 
-                    $form_id = 'form_medcheck_' . time();
-                    echo form_open_multipart(
-                        base_url('medcheck/set_medcheck'), // Remove .php extension
-                        'id="'.$form_id.'" autocomplete="off"'
-                    );
-                    echo add_form_protection(); // Add form protection
-                    ?>
+                    <?php echo form_open_multipart(base_url('medcheck/set_medcheck.php'), array('autocomplete' => 'off', 'id' => 'form_medc')) ?>
+                    <?php echo add_form_protection(); ?>
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Form Medical Checkup</h3>
@@ -178,23 +172,17 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <!--<button type="button" onclick="window.location.href = '<?php echo base_url('master/data_kategori_list.php') ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>-->
+                                    <button type="button" onclick="window.location.href = '<?php echo base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')) ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>
                                 </div>
                                 <div class="col-lg-6 text-right">
-                                    <button type="submit" name="action" value="clear" class="btn btn-warning btn-flat">
-                                        <i class="fa fa-undo"></i> Bersih
-                                    </button>
-                                    <button type="submit" name="action" value="save" class="btn btn-primary btn-flat submit-btn">
-                                        <i class="fa fa-save"></i> Set Periksa
-                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i>
+                                        Set Periksa</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <?php 
-                    echo add_double_submit_protection($form_id); // Add JavaScript protection
-                    echo form_close(); 
-                    ?>
+                    <?php echo add_double_submit_protection('form_medc'); ?>
+                    <?php echo form_close() ?>
                 </div>
             </div>
             <!-- /.row -->
@@ -204,41 +192,25 @@
     <!-- /.content -->
 </div>
 <!--/.content-wrapper-->
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery/jquery.min.js') ?>"></script>
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.js') ?>"></script>
-
-<!-- Use older version of autoNumeric -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/autonumeric/2.0.13/autoNumeric.min.js"></script>
+<script src="<?php echo base_url('assets/theme/admin-lte-2/plugins/JAutoNumber/autonumeric.js') ?>"></script>
+<script src="<?php echo base_url('assets/theme/admin-lte-2/plugins/jQueryUI/jquery-ui.js') ?>"></script>
+<link href="<?php echo base_url('assets/theme/admin-lte-2/plugins/jQueryUI') ?>/jquery-ui.min.css" rel="stylesheet">
 
 <!-- Select2 -->
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/js/select2.full.min.js') ?>"></script>
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>">
+<link rel="stylesheet"
+    href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
-<!-- Page script -->
+<!-- Update your JavaScript code -->
 <script type="text/javascript">
     $(function () {
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-        
-        // Simple number formatting without autoNumeric
-        $("input[id=ttv]").on('input', function() {
-            var value = this.value.replace(/[^\d.,]/g, '')  // Remove non-numeric chars except . and ,
-                                   .replace(/,/g, '.')       // Replace , with .
-                                   .replace(/\.(?=.*\.)/g, ''); // Keep only last decimal
-            
-            if(value) {
-                var num = parseFloat(value);
-                if(!isNaN(num)) {
-                    this.value = num.toLocaleString('id-ID', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    }).replace(/\./g, ',');
-                }
-            }
-        });
+
+        // Initialize AutoNumeric on all inputs with id="ttv"
+        $("input[id=ttv]").autoNumeric({ aSep: '.', aDec: ',', aPad: false });
 
         // Data Pasien
         $('#pasien').autocomplete({
@@ -274,45 +246,5 @@
                 .append("<a>" + item.nik + "</a> <a>(" + item.jns_klm + ")</a></br><a>" + item.nama + "</a></br><a>" + item.alamat + "<br/>--------------------------------------------------------------</a>")
                 .appendTo(ul);
         };
-
-        // Add form submission handler
-        $('#<?php echo $form_id ?>').on('submit', function(e) {
-            var submitButton = $(this).find('button[type="submit"][name="action"][value="save"]');
-            
-            // If it's the clear button, don't prevent submission
-            if (e.originalEvent && $(e.originalEvent.submitter).attr('value') === 'clear') {
-                return true;
-            }
-
-            // Check if already submitted
-            if (submitButton.hasClass('disabled')) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Disable the submit button
-            submitButton.addClass('disabled').prop('disabled', true);
-            submitButton.html('<i class="fas fa-spinner fa-spin"></i> Processing...');
-
-            // Continue with form submission
-            return true;
-        });
-
-        // Initialize toastr
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "timeOut": "5000"
-        };
-
-        // Display toast if exists
-        <?php if ($this->session->flashdata('medcheck_toast')): ?>
-            <?php echo $this->session->flashdata('medcheck_toast'); ?>
-        <?php endif; ?>
     });
 </script>
-
-<!-- Add this near your other script tags -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">

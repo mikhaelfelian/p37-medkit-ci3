@@ -235,12 +235,13 @@
     $(function () {
         $("#tgl").datepicker({
             format: 'mm/dd/yyyy',
-            //defaultDate: "+1w",
             SetDate: new Date(),
             changeMonth: true,
             changeYear: true,
             yearRange: '2022:<?php echo date('Y') ?>',
             autoclose: true
         });
+
+        <?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>
