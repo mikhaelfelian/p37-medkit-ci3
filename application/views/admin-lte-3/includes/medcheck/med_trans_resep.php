@@ -10,7 +10,8 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo base_url('medcheck/index.php') ?>">Medical Checkup</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo base_url('medcheck/index.php') ?>">Medical
+                                Checkup</a></li>
                         <li class="breadcrumb-item active">Farmasi</li>
                     </ol>
                 </div><!-- /.col -->
@@ -43,12 +44,14 @@
                                 <tr>
                                     <th class="text-left">Tgl Lahir</th>
                                     <th class="text-center">:</th>
-                                    <td class="text-left"><?php echo $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir); ?></td>
+                                    <td class="text-left">
+                                        <?php echo $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir); ?></td>
                                 </tr>
                                 <tr>
                                     <th class="text-left">Usia</th>
                                     <th class="text-center">:</th>
-                                    <td class="text-left"><?php echo $this->tanggalan->usia_lkp($sql_pasien->tgl_lahir); ?></td>
+                                    <td class="text-left">
+                                        <?php echo $this->tanggalan->usia_lkp($sql_pasien->tgl_lahir); ?></td>
                                 </tr>
                                 <tr>
                                     <th class="text-left">Alamat</th>
@@ -60,12 +63,12 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-                                
-                            </div>
+
+                                </div>
                                 <div class="col-lg-6 text-right">
-                                
+
+                                </div>
                             </div>
-                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -99,20 +102,20 @@
                                 <tr>
                                     <th class="text-left">Petugas</th>
                                     <th class="text-center">:</th>
-                                    <td class="text-left"><?php echo $this->ion_auth->user($sql_medc->id_user)->row()->first_name; ?></td>
+                                    <td class="text-left">
+                                        <?php echo $this->ion_auth->user($sql_medc->id_user)->row()->first_name; ?></td>
                                 </tr>
                             </table>
                         </div>
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <!--<button type="button" onclick="window.location.href = '<?php echo base_url('master/data_kategori_list.php') ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>-->
+
                                 </div>
                                 <div class="col-lg-6 text-right">
-                                    <!--<button type="submit" class="btn btn-warning btn-flat"><i class="fa fa-undo"></i> Bersih</button>-->
-                                    <!--<button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>-->
+
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,7 +135,7 @@
                                         <th class="text-left">Item</th>
                                         <th class="text-right">Jml</th>
                                         <th class="text-center">#</th>
-                                    </tr>                                    
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <?php
@@ -144,7 +147,7 @@
                                         <?php $sql_item = $this->db->where('id', $cart->id_item)->get('tbl_m_produk')->row(); ?>
                                         <?php $sql_racikan = $this->db->select('SUM(subtotal) AS harga')->where('id_resep_det', $cart->id)->get('tbl_trans_medcheck_resep_det_rc')->row(); ?>
                                         <?php $sql_racikan_dt = $this->db->select('*')->where('id_resep_det', $cart->id)->get('tbl_trans_medcheck_resep_det_rc')->result(); ?>
-                                        <?php $sr = $sr + $cart->status_resep; ?>                                    
+                                        <?php $sr = $sr + $cart->status_resep; ?>
                                         <tr>
                                             <th class="text-center">
                                                 <?php if ($sql_medc_res_rw->status == '0') { ?>
@@ -202,19 +205,21 @@
                                             <tr>
                                                 <td colspan="2"></td>
                                                 <td class="text-left" colspan="3">
-                                                    <strong>BAHAN RACIKAN :</strong><br/>
+                                                    <strong>BAHAN RACIKAN :</strong><br />
                                                     <?php foreach ($sql_racikan_dt as $racikan) { ?>
                                                         <?php if ($sql_medc_res_rw->status < 4) { ?>
                                                             <small><i><?php echo anchor(base_url('medcheck/cart_medcheck_resep_rc_hps.php?id=' . $this->input->get('id') . '&id_resep=' . $this->input->get('id_resep') . '&item_id_det=' . general::enkrip($racikan->id_resep_det) . '&status=' . $this->input->get('status') . '&item_id=' . general::enkrip($racikan->id)), '<i class="fa fa-remove"></i>' . nbs(2), 'class="text-danger" onclick="return confirm(\'Hapus [' . $racikan->item . '] ?\')"') ?></i></small>
                                                         <?php } ?>
                                                         <small><i><?php echo $racikan->item; ?></i></small>
-                                                        <small><i>(<?php echo (float) $racikan->jml . ' ' . $racikan->satuan; ?>) [Rp. <?php echo general::format_angka($racikan->subtotal); ?>]</i></small><br/>
+                                                        <small><i>(<?php echo (float) $racikan->jml . ' ' . $racikan->satuan; ?>)
+                                                                [Rp.
+                                                                <?php echo general::format_angka($racikan->subtotal); ?>]</i></small><br />
                                                     <?php } ?>
                                                 </td>
                                             </tr>
                                         <?php } ?>
                                         <?php $no++; ?>
-                                    <?php } ?>                                            
+                                    <?php } ?>
                                     <tr>
                                         <th class="text-right" colspan="3">Subtotal</th>
                                         <th class="text-right">
@@ -224,13 +229,15 @@
                                         </th>
                                     </tr>
                                 </tbody>
-                            </table>                        
+                            </table>
                         </div>
 
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)) ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
+                                    <button type="button" class="btn btn-primary btn-flat"
+                                        onclick="window.location.href = '<?php echo base_url('medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)) ?>'"><i
+                                            class="fas fa-arrow-left"></i> Kembali</button>
                                 </div>
                                 <div class="col-lg-6 text-right">
                                     <?php if (!empty($sql_medc_res_dt)) { ?>
@@ -245,13 +252,14 @@
                                                 <?php echo form_hidden('status', $sql_medc->status); ?>
                                                 <?php echo form_hidden('status_res', '1'); ?>
 
-                                                <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-paper-plane"></i> Kirim</button>
+                                                <button type="submit" class="btn btn-primary btn-flat"><i
+                                                        class="fas fa-paper-plane"></i> Kirim</button>
                                                 <?php echo form_close(); ?>
                                                 <?php
                                                 break;
 
                                             case '1':
-                                                if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
+                                                if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner() == TRUE or akses::hakFarmasi() == TRUE) {
                                                     ?>
                                                     <?php echo form_open_multipart(base_url('medcheck/set_medcheck_resep_stat.php'), 'autocomplete="off"') ?>
                                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
@@ -259,7 +267,8 @@
                                                     <?php echo form_hidden('id_farmasi', general::enkrip($this->ion_auth->row()->id)); ?>
                                                     <?php echo form_hidden('status', $sql_medc->status); ?>
                                                     <?php echo form_hidden('status_res', '2'); ?>
-                                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-check"></i> Konfirm</button>
+                                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-check"></i>
+                                                        Konfirm</button>
 
                                                     <?php echo form_close(); ?>
                                                     <?php
@@ -267,14 +276,15 @@
                                                 break;
 
                                             case '2':
-                                                if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
+                                                if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner() == TRUE or akses::hakFarmasi() == TRUE) {
                                                     ?>
                                                     <?php if ($sql_medc_res_rw->status == '2') { ?>
                                                         <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses_farm.php'), 'autocomplete="off"') ?>
                                                         <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                                         <?php echo form_hidden('id_resep', $this->input->get('id_resep')); ?>
 
-                                                        <button type="submit" class="btn btn-success btn-flat"><i class="fas fa-shopping-cart"></i> Proses</button>
+                                                        <button type="submit" class="btn btn-success btn-flat"><i
+                                                                class="fas fa-shopping-cart"></i> Proses</button>
                                                         <?php echo form_close(); ?>
                                                     <?php } ?>
                                                     <?php
@@ -282,14 +292,16 @@
                                                 break;
 
                                             case '4':
-                                                if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
+                                                if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner() == TRUE or akses::hakFarmasi() == TRUE) {
                                                     ?>
                                                     <?php if ($sql_medc->status < 5) { ?>
                                                         <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses_farm_batal.php'), 'autocomplete="off"') ?>
                                                         <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                                         <?php echo form_hidden('id_resep', $this->input->get('id_resep')); ?>
 
-                                                        <button type="submit" class="btn btn-danger btn-flat" onclick="return confirm('Apakah ingin melakukan pembatalan resep dengan no [<?php echo $sql_medc_res_rw->no_resep; ?>] ?')"><i class="fas fa-file-pr"></i> Batalkan</button>
+                                                        <button type="submit" class="btn btn-danger btn-flat"
+                                                            onclick="return confirm('Apakah ingin melakukan pembatalan resep dengan no [<?php echo $sql_medc_res_rw->no_resep; ?>] ?')"><i
+                                                                class="fas fa-file-pr"></i> Batalkan</button>
                                                         <?php echo form_close(); ?>
                                                     <?php } ?>
                                                     <?php
@@ -299,11 +311,11 @@
                                         ?>
                                     <?php } ?>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
-                <?php if (isset($_GET['act']) AND $_GET['act'] == 'resep_edit_form') { ?>
+                <?php if (isset($_GET['act']) and $_GET['act'] == 'resep_edit_form') { ?>
                     <div class="col-md-6">
                         <?php $hasError = $this->session->flashdata('form_error'); ?>
                         <?php echo form_open_multipart(base_url('medcheck/cart_medcheck_resep_upd2.php'), 'autocomplete="off"') ?>
@@ -312,7 +324,8 @@
                         <?php echo form_hidden('id_item_resep', general::enkrip($sql_medc_res_dt_rw->id)); ?>
                         <?php echo form_hidden('status', $this->input->get('status')); ?>
 
-                        <input type="hidden" id="harga" name="harga" value="<?php echo (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : '0'); ?>">
+                        <input type="hidden" id="harga" name="harga"
+                            value="<?php echo (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : '0'); ?>">
 
                         <div class="card card-default">
                             <div class="card-header">
@@ -320,14 +333,16 @@
                             </div>
                             <div class="card-body table-responsive">
                                 <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
-                                    <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
+                                    <label for="inputEmail3"
+                                        class="col-sm-3 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
                                     <div class="col-sm-9">
                                         <?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control pull-right' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Kode / Nama / Alias Obat ...', 'value' => $sql_produk->kode)) ?>
                                     </div>
                                 </div>
                                 <?php if (!empty($sql_produk)) { ?>
                                     <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo (akses::hakDokter() == TRUE ? 'Obat' : 'Item / Obat') ?></label>
+                                        <label for="inputEmail3"
+                                            class="col-sm-3 col-form-label"><?php echo (akses::hakDokter() == TRUE ? 'Obat' : 'Item / Obat') ?></label>
                                         <div class="col-sm-9">
                                             <?php echo form_input(array('id' => 'item', 'name' => 'item', 'class' => 'form-control pull-right', 'value' => $sql_produk->produk, 'readonly' => 'true')) ?>
                                         </div>
@@ -401,18 +416,21 @@
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Cara Minum</label>
                                         <div class="col-sm-12">
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '1')) ?> Sebelum Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '1')) ?>
+                                            Sebelum Makan
                                             <?php echo nbs(2) ?>
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '2')) ?> Saat Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '2')) ?>
+                                            Saat Makan
                                             <?php echo nbs(2) ?>
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '3')) ?> Sesudah Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '3')) ?>
+                                            Sesudah Makan
                                             <?php echo nbs(2) ?>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Catatan</label>
                                         <div class="col-sm-12">
-                                            <?php echo form_input(array('id' => '', 'name' => 'keterangan', 'class' => 'form-control pull-right text-left', 'placeholder' => 'Inputkan Catatan ...', 'value'=>$sql_medc_res_dt_rw->keterangan)) ?>
+                                            <?php echo form_input(array('id' => '', 'name' => 'keterangan', 'class' => 'form-control pull-right text-left', 'placeholder' => 'Inputkan Catatan ...', 'value' => $sql_medc_res_dt_rw->keterangan)) ?>
                                         </div>
                                     </div>
                                 <?php } else { ?>
@@ -451,10 +469,14 @@
                                         <div class="col-sm-3">
                                             <select name="dos_wkt" class="form-control">
                                                 <option value="">- Pilih -</option>
-                                                <option value="1" <?php echo ($dosis_edt[4] == 'Menit' ? 'selected' : '') ?>>Menit</option>
-                                                <option value="2" <?php echo ($dosis_edt[4] == 'Jam' ? 'selected' : '') ?>>Jam</option>
-                                                <option value="3" <?php echo ($dosis_edt[4] == 'Hari' ? 'selected' : '') ?>>Hari</option>
-                                                <option value="4" <?php echo ($dosis_edt[4] == 'Minggu' ? 'selected' : '') ?>>Minggu</option>
+                                                <option value="1" <?php echo ($dosis_edt[4] == 'Menit' ? 'selected' : '') ?>>Menit
+                                                </option>
+                                                <option value="2" <?php echo ($dosis_edt[4] == 'Jam' ? 'selected' : '') ?>>Jam
+                                                </option>
+                                                <option value="3" <?php echo ($dosis_edt[4] == 'Hari' ? 'selected' : '') ?>>Hari
+                                                </option>
+                                                <option value="4" <?php echo ($dosis_edt[4] == 'Minggu' ? 'selected' : '') ?>>
+                                                    Minggu</option>
                                             </select>
                                         </div>
                                     </div>
@@ -469,16 +491,19 @@
                                         <div class="col-sm-9">
                                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                                 <label class="btn btn-light active">
-                                                    <input type="radio" name="tipe" id="option_a1" autocomplete="off" value="1" <?php echo ($sql_medc_res_dt_rw->status_resep == '1' ? 'checked="TRUE"' : '') ?>>  <i class="fas fa-check text-success"></i>
+                                                    <input type="radio" name="tipe" id="option_a1" autocomplete="off" value="1"
+                                                        <?php echo ($sql_medc_res_dt_rw->status_resep == '1' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-check text-success"></i>
                                                 </label>
                                                 <label class="btn btn-light">
-                                                    <input type="radio" name="tipe" id="option_a2" autocomplete="off" value="2" <?php echo ($sql_medc_res_dt_rw->status_resep == '2' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-edit text-primary"></i>
+                                                    <input type="radio" name="tipe" id="option_a2" autocomplete="off" value="2"
+                                                        <?php echo ($sql_medc_res_dt_rw->status_resep == '2' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-edit text-primary"></i>
                                                 </label>
                                                 <label class="btn btn-light">
-                                                    <input type="radio" name="tipe" id="option_a3" autocomplete="off" value="3" <?php echo ($sql_medc_res_dt_rw->status_resep == '3' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-xmark text-danger"></i>
+                                                    <input type="radio" name="tipe" id="option_a3" autocomplete="off" value="3"
+                                                        <?php echo ($sql_medc_res_dt_rw->status_resep == '3' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-xmark text-danger"></i>
                                                 </label>
                                             </div>
-                                            <br/>
+                                            <br />
                                             <i>* Status untuk farmasi, diterima, ganti obat / item, dibatalkan</i>
                                         </div>
                                     </div>
@@ -496,7 +521,7 @@
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Catatan</label>
                                         <div class="col-sm-12">
-                                            <?php echo form_input(array('id' => '', 'name' => 'keterangan', 'class' => 'form-control pull-right text-left', 'placeholder' => 'Inputkan Catatan ...', 'value'=>$sql_medc_res_dt_rw->status_mkn)) ?>
+                                            <?php echo form_input(array('id' => '', 'name' => 'keterangan', 'class' => 'form-control pull-right text-left', 'placeholder' => 'Inputkan Catatan ...', 'value' => $sql_medc_res_dt_rw->status_mkn)) ?>
                                         </div>
                                     </div>
                                 <?php } ?>
@@ -505,18 +530,21 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <?php if (!empty($sql_medc_res_dt_rw)) { ?>
-                                            <button type="button" onclick="window.location.href = '<?php echo base_url('medcheck/resep/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status')); ?>'" class="btn btn-danger btn-flat"><i class="fas fa-refresh"></i> Reset</button>
+                                            <button type="button"
+                                                onclick="window.location.href = '<?php echo base_url('medcheck/resep/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status')); ?>'"
+                                                class="btn btn-danger btn-flat"><i class="fas fa-refresh"></i> Reset</button>
                                         <?php } ?>
                                     </div>
                                     <div class="col-lg-6 text-right">
-                                        <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-save"></i> Simpan</button>
+                                        <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-save"></i>
+                                            Simpan</button>
                                     </div>
-                                </div>                            
+                                </div>
                             </div>
                         </div>
                         <?php echo form_close(); ?>
                     </div>
-                <?php } elseif (isset($_GET['act']) AND $_GET['act'] == 'resep_racikan_form') { ?>
+                <?php } elseif (isset($_GET['act']) and $_GET['act'] == 'resep_racikan_form') { ?>
                     <div class="col-md-6">
                         <?php $hasError = $this->session->flashdata('form_error'); ?>
                         <?php echo form_open_multipart(base_url('medcheck/cart_medcheck_resep_rc.php'), 'autocomplete="off"') ?>
@@ -527,7 +555,8 @@
                         <?php echo form_hidden('id_item_rc', $this->input->get('id_item')); ?>
                         <?php echo form_hidden('status', $this->input->get('status')); ?>
 
-                        <input type="hidden" id="harga" name="harga" value="<?php echo (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : '0'); ?>">
+                        <input type="hidden" id="harga" name="harga"
+                            value="<?php echo (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : '0'); ?>">
 
                         <div class="card card-default">
                             <div class="card-header">
@@ -535,14 +564,16 @@
                             </div>
                             <div class="card-body table-responsive">
                                 <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
-                                    <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
+                                    <label for="inputEmail3"
+                                        class="col-sm-3 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
                                     <div class="col-sm-9">
                                         <?php echo form_input(array('id' => 'kode_rc', 'name' => 'kode_rc', 'class' => 'form-control pull-right' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Kode / Nama / Alias Obat ...', 'value' => $sql_produk->kode)) ?>
                                     </div>
                                 </div>
                                 <?php if (!empty($sql_produk)) { ?>
                                     <div class="form-group row">
-                                        <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo (akses::hakDokter() == TRUE ? 'Obat' : 'Bahan') ?></label>
+                                        <label for="inputEmail3"
+                                            class="col-sm-3 col-form-label"><?php echo (akses::hakDokter() == TRUE ? 'Obat' : 'Bahan') ?></label>
                                         <div class="col-sm-9">
                                             <?php echo form_input(array('id' => 'item_rc', 'name' => 'item_rc', 'class' => 'form-control pull-right', 'value' => $sql_produk->produk, 'readonly' => 'true')) ?>
                                         </div>
@@ -595,11 +626,14 @@
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Cara Minum</label>
                                         <div class="col-sm-12">
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '1')) ?> Sebelum Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '1')) ?>
+                                            Sebelum Makan
                                             <?php echo nbs(2) ?>
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '2')) ?> Saat Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '2')) ?>
+                                            Saat Makan
                                             <?php echo nbs(2) ?>
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '3')) ?> Sesudah Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '3')) ?>
+                                            Sesudah Makan
                                             <?php echo nbs(2) ?>
                                         </div>
                                     </div>
@@ -619,11 +653,17 @@
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Cara Minum</label>
                                         <div class="col-sm-12">
-                                            <input type="radio" name="status_mkn" value="1" checked="<?php echo ($sql_medc_res_dt_rw->status_mkn == '1' ? 'TRUE' : '') ?>"> Sebelum Makan
+                                            <input type="radio" name="status_mkn" value="1"
+                                                checked="<?php echo ($sql_medc_res_dt_rw->status_mkn == '1' ? 'TRUE' : '') ?>">
+                                            Sebelum Makan
                                             <?php echo nbs(2) ?>
-                                            <input type="radio" name="status_mkn" value="1" checked="<?php echo ($sql_medc_res_dt_rw->status_mkn == '2' ? 'TRUE' : '') ?>"> Saat Makan
+                                            <input type="radio" name="status_mkn" value="1"
+                                                checked="<?php echo ($sql_medc_res_dt_rw->status_mkn == '2' ? 'TRUE' : '') ?>">
+                                            Saat Makan
                                             <?php echo nbs(2) ?>
-                                            <input type="radio" name="status_mkn" value="1" checked="<?php echo ($sql_medc_res_dt_rw->status_mkn == '3' ? 'TRUE' : '') ?>"> Sesudah Makan
+                                            <input type="radio" name="status_mkn" value="1"
+                                                checked="<?php echo ($sql_medc_res_dt_rw->status_mkn == '3' ? 'TRUE' : '') ?>">
+                                            Sesudah Makan
                                             <?php echo nbs(2) ?>
                                         </div>
                                     </div>
@@ -638,16 +678,19 @@
                                         <div class="col-sm-9">
                                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                                 <label class="btn btn-light active">
-                                                    <input type="radio" name="tipe" id="option_a1" autocomplete="off" value="1" <?php echo ($sql_medc_res_dt_rw->status_resep == '1' ? 'checked="TRUE"' : '') ?>>  <i class="fas fa-check text-success"></i>
+                                                    <input type="radio" name="tipe" id="option_a1" autocomplete="off" value="1"
+                                                        <?php echo ($sql_medc_res_dt_rw->status_resep == '1' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-check text-success"></i>
                                                 </label>
                                                 <label class="btn btn-light">
-                                                    <input type="radio" name="tipe" id="option_a2" autocomplete="off" value="2" <?php echo ($sql_medc_res_dt_rw->status_resep == '2' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-edit text-primary"></i>
+                                                    <input type="radio" name="tipe" id="option_a2" autocomplete="off" value="2"
+                                                        <?php echo ($sql_medc_res_dt_rw->status_resep == '2' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-edit text-primary"></i>
                                                 </label>
                                                 <label class="btn btn-light">
-                                                    <input type="radio" name="tipe" id="option_a3" autocomplete="off" value="3" <?php echo ($sql_medc_res_dt_rw->status_resep == '3' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-xmark text-danger"></i>
+                                                    <input type="radio" name="tipe" id="option_a3" autocomplete="off" value="3"
+                                                        <?php echo ($sql_medc_res_dt_rw->status_resep == '3' ? 'checked="TRUE"' : '') ?>> <i class="fas fa-xmark text-danger"></i>
                                                 </label>
                                             </div>
-                                            <br/>
+                                            <br />
                                             <i>* Status untuk farmasi, diterima, ganti obat / item, dibatalkan</i>
                                         </div>
                                     </div>
@@ -656,12 +699,15 @@
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <button type="button" onclick="window.location.href = '<?php echo base_url('medcheck/resep/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status')); ?>'" class="btn btn-danger btn-flat"><i class="fas fa-refresh"></i> Reset</button>
+                                        <button type="button"
+                                            onclick="window.location.href = '<?php echo base_url('medcheck/resep/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status')); ?>'"
+                                            class="btn btn-danger btn-flat"><i class="fas fa-refresh"></i> Reset</button>
                                     </div>
                                     <div class="col-lg-6 text-right">
-                                        <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-save"></i> Simpan</button>
+                                        <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-save"></i>
+                                            Simpan</button>
                                     </div>
-                                </div>                            
+                                </div>
                             </div>
                         </div>
                         <?php echo form_close(); ?>
@@ -677,7 +723,8 @@
                             <?php echo form_hidden('status', $this->input->get('status')); ?>
                             <?php echo form_hidden('act', $this->input->get('act')); ?>
 
-                            <input type="hidden" id="harga" name="harga" value="<?php echo (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : '0'); ?>">
+                            <input type="hidden" id="harga" name="harga"
+                                value="<?php echo (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : '0'); ?>">
 
                             <div class="card card-default">
                                 <div class="card-header">
@@ -685,14 +732,16 @@
                                 </div>
                                 <div class="card-body table-responsive">
                                     <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
-                                        <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
+                                        <label for="inputEmail3"
+                                            class="col-sm-3 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
                                         <div class="col-sm-9">
                                             <?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control pull-right' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Kode / Nama / Alias Obat ...', 'value' => $sql_produk->kode)) ?>
                                         </div>
                                     </div>
                                     <?php if (!empty($sql_produk)) { ?>
                                         <div class="form-group row">
-                                            <label for="inputEmail3" class="col-sm-3 col-form-label"><?php echo (akses::hakDokter() == TRUE ? 'Obat' : 'Item / Obat') ?></label>
+                                            <label for="inputEmail3"
+                                                class="col-sm-3 col-form-label"><?php echo (akses::hakDokter() == TRUE ? 'Obat' : 'Item / Obat') ?></label>
                                             <div class="col-sm-9">
                                                 <?php echo form_input(array('id' => 'item', 'name' => 'item', 'class' => 'form-control pull-right', 'value' => $sql_produk->produk, 'readonly' => 'true')) ?>
                                             </div>
@@ -759,18 +808,21 @@
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Cara Minum</label>
                                         <div class="col-sm-12">
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '1')) ?> Sebelum Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '1')) ?>
+                                            Sebelum Makan
                                             <?php echo nbs(2) ?>
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '2')) ?> Saat Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '2')) ?>
+                                            Saat Makan
                                             <?php echo nbs(2) ?>
-                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '3')) ?> Sesudah Makan
+                                            <?php echo form_radio(array('id' => '', 'name' => 'status_mkn', 'value' => '3')) ?>
+                                            Sesudah Makan
                                             <?php echo nbs(2) ?>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-12 col-form-label">Catatan</label>
                                         <div class="col-sm-12">
-                                            <?php echo form_input(array('id' => '', 'name' => 'keterangan', 'class' => 'form-control pull-right text-left', 'placeholder' => 'Inputkan Catatan ...', 'value'=>$sql_medc_res_dt_rw->keterangan)) ?>
+                                            <?php echo form_input(array('id' => '', 'name' => 'keterangan', 'class' => 'form-control pull-right text-left', 'placeholder' => 'Inputkan Catatan ...', 'value' => $sql_medc_res_dt_rw->keterangan)) ?>
                                         </div>
                                     </div>
                                 </div>
@@ -780,9 +832,10 @@
 
                                         </div>
                                         <div class="col-lg-6 text-right">
-                                            <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-save"></i> Simpan</button>
+                                            <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-save"></i>
+                                                Simpan</button>
                                         </div>
-                                    </div>                            
+                                    </div>
                                 </div>
                             </div>
                             <?php echo form_close(); ?>
@@ -804,7 +857,7 @@
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
-        $("input[id=harga]").autoNumeric({aSep: '.', aDec: ',', aPad: false});
+        $("input[id=harga]").autoNumeric({ aSep: '.', aDec: ',', aPad: false });
 
         var dateToday = new Date();
         $("input[id=tgl]").datepicker({
@@ -815,8 +868,8 @@
             autoclose: true
         });
 
-<?php if (!empty($sql_medc->id)) { ?>
-    <?php if ($_GET['act'] == 'resep_racikan_form') { ?>
+        <?php if (!empty($sql_medc->id)) { ?>
+            <?php if ($_GET['act'] == 'resep_racikan_form') { ?>
                 // Data Item Cart
                 $('#kode_rc').autocomplete({
                     source: function (request, response) {
@@ -848,11 +901,11 @@
                     // Format the list menu output of the autocomplete
                 }).data("ui-autocomplete")._renderItem = function (ul, item) {
                     return $("<li></li>")
-                            .data("item.autocomplete", item)
-                            .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
-                            .appendTo(ul);
+                        .data("item.autocomplete", item)
+                        .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
+                        .appendTo(ul);
                 };
-    <?php } else { ?>
+            <?php } else { ?>
                 // Data Item Cart
                 $('#kode').autocomplete({
                     source: function (request, response) {
@@ -884,11 +937,11 @@
                     // Format the list menu output of the autocomplete
                 }).data("ui-autocomplete")._renderItem = function (ul, item) {
                     return $("<li></li>")
-                            .data("item.autocomplete", item)
-                            .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
-                            .appendTo(ul);
+                        .data("item.autocomplete", item)
+                        .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
+                        .appendTo(ul);
                 };
-    <?php } ?>
-<?php } ?>
+            <?php } ?>
+        <?php } ?>
     });
 </script>
