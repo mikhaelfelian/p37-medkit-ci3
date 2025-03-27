@@ -2,8 +2,11 @@
 <?php
 /**
  * Description of transaksi
- *
- * @author mike
+ * 
+ * Modified by : 
+ *      Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ *      2025-03-14
+ * github mikhaelfelian
  */
 class Pos extends CI_Controller {
     //put your code here

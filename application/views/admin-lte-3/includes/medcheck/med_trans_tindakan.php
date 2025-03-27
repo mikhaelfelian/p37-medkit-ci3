@@ -329,8 +329,3 @@
 <?php } ?>
     });
 </script>
-<script type="text/javascript">
-    $(function () {
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
-    });
-</script>

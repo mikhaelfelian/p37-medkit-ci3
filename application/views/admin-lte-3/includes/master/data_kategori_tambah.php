@@ -74,8 +74,3 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<script type="text/javascript">
-    $(function () {
-        <?php echo $this->session->flashdata('master_toast'); ?>
-    });
-</script>
