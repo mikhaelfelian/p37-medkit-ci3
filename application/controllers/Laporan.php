@@ -7091,6 +7091,7 @@ class laporan extends CI_Controller {
             $hal        = $this->input->get('halaman');
             $poli       = $this->input->get('poli');
             $tipe       = $this->input->get('tipe');
+            $tipe_byr   = $this->input->get('tipe_byr');
             $plat       = $this->input->get('plat');
             $pasien_id  = $this->input->get('id_pasien');
             $pasien     = $this->input->get('pasien');
@@ -7223,17 +7224,44 @@ class laporan extends CI_Controller {
                     $sql_poli   = $this->db->where('id', $omset->id_poli)->get('tbl_m_poli')->row();
                     $sql_kary   = $this->db->where('id_user', $omset->id_dokter)->get('tbl_m_karyawan')->row();
                     $sql_remun  = $this->db->where('id_medcheck_det', $omset->id_medcheck_det)->get('tbl_trans_medcheck_remun')->row();
-                    $sql_plat   = $this->db->select('tbl_trans_medcheck_plat.id, tbl_trans_medcheck_plat.id_platform, tbl_m_platform.platform AS metode, tbl_trans_medcheck_plat.platform, tbl_trans_medcheck_plat.keterangan, tbl_trans_medcheck_plat.nominal, tbl_m_platform.status_akt')
-                                           ->where('tbl_trans_medcheck_plat.id_medcheck', $omset->id)
+                    
+                    // Get platform data
+                    $sql_plat   = $this->db->select('tbl_trans_medcheck_plat.id, tbl_trans_medcheck_plat.id_platform, tbl_m_platform.platform AS metode, tbl_trans_medcheck_plat.platform, tbl_trans_medcheck_plat.keterangan, tbl_trans_medcheck_plat.nominal, tbl_m_platform.status_akt, tbl_m_platform.kode, tbl_m_platform.akun')
+                                           ->where('tbl_trans_medcheck_plat.id_medcheck', $omset->id_medcheck)
                                            ->join('tbl_m_platform', 'tbl_m_platform.id=tbl_trans_medcheck_plat.id_platform', 'left')
                                            ->get('tbl_trans_medcheck_plat');
-                    $sql_plat2  = $this->db->where('id', $omset->metode)->get('tbl_m_platform')->row();
-                    $subtotal   = $omset->harga * $omset->jml;
-                    $diskon     = $omset->diskon + $omset->potongan + $omset->potongan_poin;
-                    $remun_nom  = ($sql_remun->remun_tipe == '2' ? $sql_remun->remun_nom : (($sql_remun->remun_perc / 100) * $omset->harga));
-                    $remun_tot  = $remun->remun_subtotal * $omset->jml;
-                    $is_split   = ($sql_plat->num_rows() > 1 ? 'PIUTANG' : ($sql_plat2->status_akt == '1' ? strtoupper($sql_plat2->platform) : 'PIUTANG')); 
                     
+                    // Get platform details
+                    $sql_plat2  = $this->db->where('id', $omset->metode)->get('tbl_m_platform')->row();
+                    
+                    // Calculate values
+                    $subtotal   = $omset->harga * $omset->jml;
+                    $diskon     = isset($omset->diskon) ? $omset->diskon : 0;
+                    $diskon    += isset($omset->potongan) ? $omset->potongan : 0;
+                    $diskon    += isset($omset->potongan_poin) ? $omset->potongan_poin : 0;
+                    
+                    // Calculate remuneration if exists
+                    $remun_nom  = 0;
+                    $remun_tot  = 0;
+                    if(isset($sql_remun) && !empty($sql_remun)) {
+                        $remun_nom = ($sql_remun->remun_tipe == '2' ? $sql_remun->remun_nom : (($sql_remun->remun_perc / 100) * $omset->harga));
+                        $remun_tot = isset($sql_remun->remun_subtotal) ? $sql_remun->remun_subtotal * $omset->jml : 0;
+                    }
+                    
+                    // Determine payment type - Group asuransi as PIUTANG
+                    $is_split = 'PIUTANG';
+                    if ($sql_plat->num_rows() <= 1) {
+                        if (isset($sql_plat2) && $sql_plat2->status_akt == '1') {
+                            // Check if it's asuransi type
+                            if (strtolower($sql_plat2->platform) == 'asuransi') {
+                                $is_split = 'PIUTANG';
+                            } else {
+                                $is_split = strtoupper($sql_plat2->platform);
+                            }
+                        }
+                    }
+                    
+                    // Set cell styles
                     $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':B'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $objPHPExcel->getActiveSheet()->getStyle('C'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
                     $objPHPExcel->getActiveSheet()->getStyle('D'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -7245,33 +7273,46 @@ class laporan extends CI_Controller {
                     $objPHPExcel->getActiveSheet()->getStyle('P'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                     $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                     
+                    // Customer code handling
+                    $customer_code = 'UMUM';
+                    if(isset($sql_plat2) && $sql_plat2->status_akt != '1' && !empty($sql_plat2->kode)) {
+                        $customer_code = $sql_plat2->kode;
+                    }
+                    
+                    // Account code handling
+                    $account_code = '';
+                    if(isset($sql_plat2) && !empty($sql_plat2->akun)) {
+                        $account_code = $sql_plat2->akun;
+                    }
+                    
+                    // Set cell values
                     $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, $this->tanggalan->tgl_indo5($omset->tgl_simpan))
-                            ->setCellValue('B'.$cell, $omset->no_akun)
-                            ->setCellValue('C'.$cell, $omset->pasien)
+                            ->setCellValue('A'.$cell, isset($omset->tgl_simpan) ? $this->tanggalan->tgl_indo5($omset->tgl_simpan) : '')
+                            ->setCellValue('B'.$cell, isset($omset->no_akun) ? $omset->no_akun : '')
+                            ->setCellValue('C'.$cell, isset($omset->pasien) ? $omset->pasien : '')
                             ->setCellValue('D'.$cell, $is_split)
-                            ->setCellValue('E'.$cell, ($sql_plat2->status_akt == '1' ? 'UMUM' : $sql_plat2->kode))
+                            ->setCellValue('E'.$cell, $customer_code)
                             ->setCellValue('F'.$cell, '')
                             ->setCellValue('G'.$cell, 'IDR')
                             ->setCellValue('H'.$cell, '1')
                             ->setCellValue('I'.$cell, '99')
                             ->setCellValue('J'.$cell, 'N/A')
                             ->setCellValue('K'.$cell, '99')
-                            ->setCellValue('L'.$cell, $omset->kode)
+                            ->setCellValue('L'.$cell, isset($omset->kode) ? $omset->kode : '')
                             ->setCellValue('M'.$cell, '')
                             ->setCellValue('N'.$cell, (!empty($omset->satuan) ? strtolower(ucfirst($omset->satuan)) : 'Pcs'))
-                            ->setCellValue('O'.$cell, (float) ($omset->jml > 0 ? $omset->jml : ''))
-                            ->setCellValue('P'.$cell, $omset->harga)
+                            ->setCellValue('O'.$cell, (float) (isset($omset->jml) && $omset->jml > 0 ? $omset->jml : ''))
+                            ->setCellValue('P'.$cell, isset($omset->harga) ? $omset->harga : 0)
                             ->setCellValue('Q'.$cell, '')
                             ->setCellValue('R'.$cell, round($diskon, 2))
-                            ->setCellValue('S'.$cell, $omset->item)
+                            ->setCellValue('S'.$cell, isset($omset->item) ? $omset->item : '')
                             ->setCellValue('T'.$cell, '')
                             ->setCellValue('U'.$cell, '99')
                             ->setCellValue('V'.$cell, 'N/A')
                             ->setCellValue('W'.$cell, '99')
                             ->setCellValue('X'.$cell, '')
-                            ->setCellValue('Y'.$cell, ($omset->metode == '1' ? 'TRUE' : 'FALSE'))
-                            ->setCellValue('Z'.$cell, $sql_plat2->akun)
+                            ->setCellValue('Y'.$cell, (isset($omset->metode) && $omset->metode == '1' ? 'TRUE' : 'FALSE'))
+                            ->setCellValue('Z'.$cell, $account_code)
                             ->setCellValue('AA'.$cell, 'draft')
                             ->setCellValue('AB'.$cell, '')
                             ->setCellValue('AC'.$cell, '')
@@ -7279,10 +7320,10 @@ class laporan extends CI_Controller {
                             ->setCellValue('AE'.$cell, '')
                             ->setCellValue('AF'.$cell, '')
                             ->setCellValue('AG'.$cell, '')
-                            ->setCellValue('AH'.$cell, $this->tanggalan->tgl_indo7($omset->tgl_masuk))
+                            ->setCellValue('AH'.$cell, isset($omset->tgl_masuk) ? $this->tanggalan->tgl_indo7($omset->tgl_masuk) : '')
                             ->setCellValue('AI'.$cell, '')
                             ->setCellValue('AJ'.$cell, '')
-                            ->setCellValue('AK'.$cell, $this->tanggalan->tgl_indo7($omset->tgl_bayar))
+                            ->setCellValue('AK'.$cell, isset($omset->tgl_bayar) ? $this->tanggalan->tgl_indo7($omset->tgl_bayar) : '')
                             ->setCellValue('AL'.$cell, '');
 
                     $no++;
@@ -7318,7 +7359,7 @@ class laporan extends CI_Controller {
                     ->setCategory("Untuk mencetak nota dot matrix");
 
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
+            // Redirect output to a client's web browser (Excel5)
             header('Content-Type: application/vnd.ms-excel');
             // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="data_omset_lap_zahir.xls"');
