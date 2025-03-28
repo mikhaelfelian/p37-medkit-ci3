@@ -19797,12 +19797,7 @@ public function set_medcheck_lab_adm_save() {
 
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
 
-            // Clear any previous output buffers and headers
-            while (ob_get_level()) {
-                ob_end_clean();
-            }
-            
-            // Output PDF
+            ob_end_clean();
             $pdf->Output($sql_pasien->nama_pgl . '_KWI' . '.pdf', $type);
             exit;
         } else {
