@@ -19797,9 +19797,14 @@ public function set_medcheck_lab_adm_save() {
 
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
 
-            ob_start();
+            // Clear any previous output buffers and headers
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+            
+            // Output PDF
             $pdf->Output($sql_pasien->nama_pgl . '_KWI' . '.pdf', $type);
-            ob_end_flush();
+            exit;
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
