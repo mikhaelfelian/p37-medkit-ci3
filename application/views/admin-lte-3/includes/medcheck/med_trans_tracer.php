@@ -123,30 +123,9 @@
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
 
-<!--TinyMCE Editor-->
-<script src="https://cdn.tiny.cloud/1/791yvh8m8x15hn314u1az9ucxk0sz0qflojtqo5y4z1ygmbm/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
-        /*
-         tinymce.init({
-         selector: 'textarea',
-         menubar: '',
-         toolbar_location: 'bottom',
-         plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-         toolbar: 'undo redo | bold italic underline | numlist bullist | charmap | removeformat',
-         height: "250",
-         typography_default_lang: 'en-US',
-         charmap_append: [
-<?php // for($x = 28; $x <=42; $x++){     ?>
-         ["85<?php // echo $x     ?>","sepertiga"],
-<?php // }     ?>              
-         ]
-         });
-         */
-
-
 <?php if (!empty($sql_medc_rm_rw)) { ?>
             // Autocomplete INA-CBG
             $('#icd').autocomplete({

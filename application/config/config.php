@@ -460,7 +460,7 @@ $config['global_xss_filtering'] = FALSE;
 $config['csrf_protection'] = TRUE;
 $config['csrf_token_name'] = 'medkit_tokens';
 $config['csrf_cookie_name'] = 'medkit_cookies';
-$config['csrf_expire'] = 7200;
+$config['csrf_expire'] = 14400;
 $config['csrf_regenerate'] = TRUE;
 $config['csrf_exclude_uris'] = array(
     'api/.*' // Example: exclude all API routes
