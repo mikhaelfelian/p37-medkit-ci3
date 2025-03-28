@@ -1,4 +1,4 @@
-<li class="nav-header">MEDICAL CHECK</li>
+<li class="nav-header">MEDICAL CHECK JEMBOT</li>
 <?php foreach ($this->ion_auth->modules_menu() as $menu) { ?>
     <?php if ($menu->is_sidebar == '1') { ?>
         <li class="nav-item">
