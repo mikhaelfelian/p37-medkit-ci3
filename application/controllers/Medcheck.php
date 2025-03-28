@@ -112,49 +112,49 @@ class medcheck extends CI_Controller {
                     .(isset($by) ? '&filter_bayar='.$by : '')
                     .(!empty($jml_hal) ? '&jml='.$jml_hal : ''));
                     
-                $config['total_rows'] = $jml_hal;
+                $config['total_rows']           = $jml_hal;
                 $config['query_string_segment'] = 'halaman';
-                $config['page_query_string'] = TRUE;
-                $config['per_page'] = $pengaturan->jml_item;
-                $config['num_links'] = 2;
+                $config['page_query_string']    = TRUE;
+                $config['per_page']             = $pengaturan->jml_item;
+                $config['num_links']            = 2;
 
-                $config['first_tag_open'] = '<li class="page-item">';
-                $config['first_tag_close'] = '</li>';
-                $config['prev_tag_open'] = '<li class="page-item">';
-                $config['prev_tag_close'] = '</li>';
-                $config['num_tag_open'] = '<li class="page-item">';
-                $config['num_tag_close'] = '</li>';
-                $config['next_tag_open'] = '<li class="page-item">';
-                $config['next_tag_close'] = '</li>';
-                $config['last_tag_open'] = '<li class="page-item">';
-                $config['last_tag_close'] = '</li>';
-                $config['cur_tag_open'] = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-                $config['cur_tag_close'] = '</b></a></li>';
-                $config['first_link'] = '&laquo;';
-                $config['prev_link'] = '&lsaquo;';
-                $config['next_link'] = '&rsaquo;';
-                $config['last_link'] = '&raquo;';
-                $config['anchor_class'] = 'class="page-link"';
+                $config['first_tag_open']       = '<li class="page-item">';
+                $config['first_tag_close']      = '</li>';
+                $config['prev_tag_open']        = '<li class="page-item">';
+                $config['prev_tag_close']       = '</li>';
+                $config['num_tag_open']         = '<li class="page-item">';
+                $config['num_tag_close']        = '</li>';
+                $config['next_tag_open']        = '<li class="page-item">';
+                $config['next_tag_close']       = '</li>';
+                $config['last_tag_open']        = '<li class="page-item">';
+                $config['last_tag_close']       = '</li>';
+                $config['cur_tag_open']         = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+                $config['cur_tag_close']        = '</b></a></li>';
+                $config['first_link']           = '&laquo;';
+                $config['prev_link']            = '&lsaquo;';
+                $config['next_link']            = '&rsaquo;';
+                $config['last_link']            = '&raquo;';
+                $config['anchor_class']         = 'class="page-link"';
                 /* -- End Blok Pagination -- */
 
                 $limit = $config['per_page'];
                 $offset = !empty($hal) ? $hal : 0;
 
                 // Jika User dokter, maka pilih rajal dan ranap
-                if(akses::hakDokter() == TRUE){
+                if (akses::hakDokter() == TRUE) {
                     $this->db->select('*')
                              ->from('v_medcheck_dokter')
                              ->where('id_dokter', $id_user);
                     
-                    if(!empty($tp)) $this->db->like('tipe', $tp);
-                    if(!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
-                    if(!empty($pl)) $this->db->like('id_poli', $pl);
-                    if(isset($by)) $this->db->like('status_bayar', $by);
-                    if(!empty($sp)) $this->db->like('status_periksa', $sp);
+                    if (!empty($tp)) $this->db->like('tipe', $tp);
+                    if (!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
+                    if (!empty($pl)) $this->db->like('id_poli', $pl);
+                    if (isset($by)) $this->db->like('status_bayar', $by);
+                    if (!empty($sp)) $this->db->like('status_periksa', $sp);
                     
                     $this->db->limit($limit, $offset);
                     $data['penj'] = $this->db->get()->result();
-                }else{
+                } else {
                     // Optimize query for non-doctor users
                     $select_fields = "id, id_user, id_dokter, id_nurse, id_analis, id_pasien, id_poli, id_dft, id_ant, id_kasir, id_instansi, 
                                     id_encounter, id_condition, id_post_location, id_icd, id_icd10, tgl_simpan, tgl_modif, tgl_masuk, 
@@ -171,11 +171,11 @@ class medcheck extends CI_Controller {
                              ->where('status_hps', '0')
                              ->where('status_pos', '0');
                     
-                    if(!empty($tgl_filter)) $this->db->like('DATE(tgl_simpan)', $tgl_filter);
-                    if(!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
-                    if(!empty($tp)) $this->db->like('tipe', $tp);
-                    if(isset($by)) $this->db->like('status_bayar', $by);
-                    if(!empty($pl)) $this->db->like('id_poli', $pl);
+                    if (!empty($tgl_filter)) $this->db->like('DATE(tgl_simpan)', $tgl_filter);
+                    if (!empty($pasien_filter)) $this->db->like('pasien', $pasien_filter);
+                    if (!empty($tp)) $this->db->like('tipe', $tp);
+                    if (isset($by)) $this->db->like('status_bayar', $by);
+                    if (!empty($pl)) $this->db->like('id_poli', $pl);
                     
                     $this->db->order_by('id', 'DESC')
                              ->limit($limit, $offset);
