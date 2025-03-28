@@ -37,14 +37,17 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 col-md-12 col-lg-12 order-2 order-md-1">
-                                    <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
-                                    <?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
-                                    <?php echo form_hidden('status', $this->input->get('status')); ?>
+                                    <?php echo form_hidden('id', !empty($sql_medc->id) ? general::enkrip($sql_medc->id) : ''); ?>
+                                    <?php echo form_hidden('id_item', !empty($sql_produk->id) ? general::enkrip($sql_produk->id) : ''); ?>
+                                    <?php echo form_hidden('status', !empty($this->input->get('status')) ? $this->input->get('status') : ''); ?>
                                     <?php echo form_hidden('status_item', '2'); ?>
-                                    <input type="hidden" id="id_dokter" name="id_dokter">
-                    
+                                    <input type="hidden" id="id_dokter" name="id_dokter" value="<?php echo !empty($id_dokter) ? $id_dokter : ''; ?>">
+                     
                                     <div class="row">
                                         <div class="col-md-6">
+<pre>
+<?php print_r($sql_produk); ?>
+</pre>
                                             <?php if (!empty($sql_produk)) { ?>
                                                 <?php if ($sql_medc->tipe == '3') { ?>
                                                     <div class="form-group row">
