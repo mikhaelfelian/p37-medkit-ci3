@@ -23,4 +23,4 @@ jobs:
         ssh -o StrictHostKeyChecking=no esensiaco@svr.esensia.co.id "
           cd /home/esensiaco/public_html/dev.esensia.co.id &&
           git pull origin main &&
-          exit"
+          exit" 
