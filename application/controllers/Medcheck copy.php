@@ -13673,7 +13673,16 @@ public function set_medcheck_lab_adm_save() {
             $sql_dft_gc         = $this->db->where('id', general::dekrip($id))->get('tbl_pendaftaran_gc')->row();
             $sql_dft            = $this->db->where('id', $sql_dft_gc->id_pendaftaran)->get('tbl_pendaftaran')->row();
             
+            $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+            $sql_medc_srt       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck_surat_inform')->row(); 
+            $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
+            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
+            $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
+            $sql_dokter2        = $this->db->where('id_user', $sql_medc_srt->id_dokter)->get('tbl_m_karyawan')->row();
+            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             
             $this->load->library('MedPDF');
             $pdf = new MedPDF('P', 'cm', array(21.5,33));
@@ -13690,6 +13699,9 @@ public function set_medcheck_lab_adm_save() {
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
+//            $pdf->Ln(0);
+//            $pdf->SetFont('Arial', 'B', '10');
+//            $pdf->Cell(19, .5, 'Nomor : ' . $sql_dft->no_surat, 0, 1, 'C');
             $pdf->Ln(); 
 
             // Blok Paragraf Pertama
@@ -13706,6 +13718,19 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(12, .5, strtoupper($sql_dft_gc->nama), '0', 0, 'L', $fill);
             $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '10');
+//            $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
+//            $pdf->Cell(4.5, .5, 'Tanggal Lahir', '0', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(12, .5, ($sql_dft_gc->tgl_lahir != '0000-00-00' ? $this->tanggalan->tgl_indo2($sql_dft_gc->tgl_lahir) . ' (' . $this->tanggalan->usia($sql_dft_gc->tgl_lahir) . ')' : '-') . (!empty($sql_dft_gc->jns_klm) ? ' / ' . general::jns_klm($sql_dft_gc->jns_klm) : ''), '0', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '10');
+//            $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
+//            $pdf->Cell(4.5, .5, 'Alamat', '0', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->MultiCell(12.5, .5, $sql_dft_gc->alamat, '', 'L', $fill);
             $pdf->SetFont('Arial', 'B', '10');
             $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'Hubungan dengan pasien', '0', 0, 'L', $fill);
@@ -13756,6 +13781,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '10');
             $pdf->MultiCell(12.5, .5, $sql_dft->alamat, '', 'L', $fill);
+//                    $pdf->Ln();
             $pdf->SetFont('Arial', 'B', '10');
             $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'Tanggal Masuk', '0', 0, 'L', $fill);
@@ -13774,8 +13800,16 @@ public function set_medcheck_lab_adm_save() {
             $params['data'] .= strtoupper($this->ion_auth->user($sql_dft_gc->id_user)->row()->first_name) . ',';
             $params['data'] .= 'yang merupakan petugas yang bertugas pada tanggal ' . date('d/m/Y H:i') . '.';
             
+            // Add this line to include QR library
             require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
             
+            // Replace these 4 lines:
+            // $params['level'] = 'H';
+            // $params['size'] = 2;
+            // $params['savename'] = $qr_validasi;
+            // $this->ciqrcode->generate($params);
+            
+            // With this single line:
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
@@ -13813,13 +13847,13 @@ public function set_medcheck_lab_adm_save() {
 
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             ob_end_clean();
-            $pdf->Output($sql_dft->nama_pgl. '.pdf', $type);
+            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }    
+    }
     
     public function pdf_medcheck_surat() {
         if (akses::aksesLogin() == TRUE) {
@@ -13845,9 +13879,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);
                         
             // Blok Isi Surat
             switch ($sql_medc_srt->tipe){                
@@ -15108,33 +15140,33 @@ public function set_medcheck_lab_adm_save() {
             }
             
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+            $gambar4            = $qr_validasi; 
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $gambar5            = $qr_dokter;        
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
+//            $pdf->SetY(-10.5);
             $pdf->Image($gambar4,2,$pdf->GetY() + 1,2,2);
             $pdf->Image($gambar5,12.5,$pdf->GetY()+1,2,2);
             
+//            $pdf->SetY(-11.5);
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
             $pdf->Cell(7.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_srt->tgl_simpan), '', 0, 'L', $fill);
@@ -15146,9 +15178,11 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(7.5, .5, (!empty($ket) ? $ket : 'Dokter Pemeriksa'), '0', 0, 'L', $fill);
             $pdf->Ln(2.5);
             
+//            $pdf->SetY(-8.5);
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
             $pdf->MultiCell(7.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), 0, 'J', $fill);
+//            $pdf->Ln();
                     
             $pdf->SetFillColor(235, 232, 228);
             $pdf->SetTextColor(0);
@@ -15161,11 +15195,10 @@ public function set_medcheck_lab_adm_save() {
             ob_end_flush();
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
-    
     
     public function pdf_medcheck_surat_inform() {
         if (akses::aksesLogin() == TRUE) {
@@ -15660,9 +15693,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             # Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);  
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -15967,30 +15998,31 @@ public function set_medcheck_lab_adm_save() {
                 $pdf->Cell(18, .5, 'periodic examinations need to be carried out.', '', 0, 'L', $fill);
                 $pdf->Ln();
             }
+           
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+//            $gambar4            = base_url('file/qr/validasi-'.$sql_pasien->id.'.png');         
+            $gambar4            = $qr_validasi;         
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $gambar5            = $qr_dokter;
+//            $gambar5            = base_url('file/qr/dokter-'.strtolower($sql_dokter2->id).'.png');
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             # Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -16154,9 +16186,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);     
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -16268,29 +16298,29 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
            
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+//            $gambar4            = base_url('file/qr/validasi-'.$sql_pasien->id.'.png');         
+            $gambar4            = $qr_validasi;         
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $gambar5            = $qr_dokter;
+//            $gambar5            = base_url('file/qr/dokter-'.strtolower($sql_dokter2->id).'.png');
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -16363,9 +16393,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);     
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -16502,29 +16530,26 @@ public function set_medcheck_lab_adm_save() {
             
             // QR GENERATOR VALIDASI
             $pdf->SetY(-11);
-            
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
-            
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
+                    
+            $gambar4            = $qr_validasi;         
+                        
             // QR GENERATOR DOKTER
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
+            $gambar5            = $qr_dokter;
             
-            // Gambar VALIDASI  
+            // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
             $pdf->Image($gambar5,12,$getY,2,2);
@@ -16620,9 +16645,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);     
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -16715,33 +16738,29 @@ public function set_medcheck_lab_adm_save() {
             
             // QR GENERATOR VALIDASI
             $pdf->SetY(-11);
-            
-            // Create folder if not exists
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
-
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
+                    
+            $gambar4            = $qr_validasi;         
+                        
             // QR GENERATOR DOKTER
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
-            // Gambar VALIDASI  
+            $gambar5            = $qr_dokter;
+            
+            // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-            $pdf->Image($gambar4, 2, $getY, 2, 2);
-            $pdf->Image($gambar5, 12, $getY, 2, 2);
+            $pdf->Image($gambar4,2,$getY,2,2);
+            $pdf->Image($gambar5,12,$getY,2,2);
             
             
             $pdf->SetFont('Arial', '', '10');
@@ -16775,6 +16794,198 @@ public function set_medcheck_lab_adm_save() {
         }
     }
     
+    public function cetak_audiometri() {
+        if (akses::aksesLogin() == TRUE) {
+            try {
+                // Get and validate ID
+                $id = $this->security->xss_clean($this->input->get('id'));
+                if (empty($id)) {
+                    throw new Exception('ID tidak valid');
+                }
+
+                $id_dec = general::dekrip($id);
+                $gambar2 = FCPATH . '/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+                $judul = "HASIL PEMERIKSAAN LABORATORIUM";
+                $judul2 = "Laboratory Result";
+
+                // Get audiometri data with proper error handling
+                $query = $this->db->select('
+                    tbl_trans_medcheck_lab_audiometri.*,
+                    tbl_trans_medcheck.pasien,
+                    tbl_trans_medcheck.no_rm,
+                    tbl_trans_medcheck.tgl_masuk as tgl_periksa,
+                    tbl_m_pasien.kode_dpn,
+                    tbl_m_pasien.kode,
+                    tbl_m_pasien.nama_pgl,
+                    tbl_m_pasien.tgl_lahir,
+                    tbl_m_pasien.jns_klm as jk,
+                    tbl_m_pasien.alamat,
+                    tbl_m_karyawan.nama_dpn,
+                    tbl_m_karyawan.nama,
+                    tbl_m_karyawan.nama_blk
+                ')
+                        ->from('tbl_trans_medcheck_lab_audiometri')
+                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_lab_audiometri.id_medcheck')
+                        ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
+                        ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_lab_audiometri.id_user', 'left')
+                        ->where('tbl_trans_medcheck_lab_audiometri.id', $id_dec);
+
+                $result = $query->get();
+
+                if (!$result) {
+                    throw new Exception('Error executing query: ' . $this->db->error()['message']);
+                }
+
+                $audiometri = $result->row();
+
+                if (!$audiometri) {
+                    throw new Exception('Data audiometri tidak ditemukan');
+                }
+
+                // Get settings with error handling
+                $pengaturan = $this->db->get('tbl_pengaturan');
+                if (!$pengaturan) {
+                    throw new Exception('Error getting settings: ' . $this->db->error()['message']);
+                }
+                $pengaturan = $pengaturan->row();
+
+                // Create PDF
+                $this->load->library('MedLabPDF');
+                $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+                $pdf->SetAutoPageBreak('auto', 6.5);
+                $pdf->SetMargins(1,0.35,1);
+                $pdf->header = 0;
+                $pdf->addPage('','',false);
+
+                // Set default font
+                $pdf->SetFont('Arial', '', 10);
+
+                // Header
+                if (file_exists('./assets/img/' . $pengaturan->logo)) {
+                    $pdf->Image('./assets/img/' . $pengaturan->logo, 1, 0.5, 2);
+                }
+
+                # Gambar Watermark Tengah
+//                $pdf->Image($gambar2, 0.5, 0.4, 1.5, 1.9);
+//
+//                # Blok Judul
+//                $pdf->SetFont('Arial', 'B', '13');
+//                $pdf->Cell(1.9, 0.05, $judul, 0, 1, 'C');
+//                $pdf->Ln(0);
+//                $pdf->SetFont('Arial', 'Bi', '13');
+//                $pdf->Cell(1.9, 0.05, $judul2, 'B', 1, 'C');
+//                $pdf->Ln();
+//
+//                # Blok Dokter Penanggung Jawab
+//                $pdf->SetFont('Arial', 'B', '9');
+//                $pdf->Cell(0.9, 0.05, '', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.4, 0.05, 'Dokter Penanggung Jawab', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.05, 0.05, ':', '0', 0, 'C', $fill);
+//                $pdf->SetFont('Arial', 'B', '9');
+//                $pdf->Cell(0.55, 0.05, '1. dr. ANITA TRI HASTUTI, Sp.PK', '', 0, 'L', $fill);
+//                $pdf->Ln();
+//                $pdf->Cell(0.9, 0.05, '', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.4, 0.05, '', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.05, 0.05, '', '0', 0, 'C', $fill);
+//                $pdf->Cell(0.55, 0.05, '2. dr. YENI JAMILAH, Sp.MK', '', 0, 'L', $fill);
+//                $pdf->Ln();
+
+                // Title
+                $pdf->SetFont('Arial', 'B', 11);
+                $pdf->Cell(19, 0.5, 'HASIL PEMERIKSAAN AUDIOMETRI', 0, 1, 'C');
+                $pdf->Ln(0.5);
+
+                // Patient Info
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->Cell(3, 0.5, 'Nama Pasien', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(6.5, 0.5, $audiometri->nama_pgl, 0, 0);
+                $pdf->Cell(3, 0.5, 'No. RM', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(5.5, 0.5, $audiometri->no_rm, 0, 1);
+
+                $pdf->Cell(3, 0.5, 'Tgl Lahir', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(6.5, 0.5, $this->tanggalan->tgl_indo($audiometri->tgl_lahir), 0, 0);
+                $pdf->Cell(3, 0.5, 'Jenis Kelamin', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(5.5, 0.5, ($audiometri->jk == 'L' ? 'Laki-laki' : 'Perempuan'), 0, 1);
+
+                $pdf->Cell(3, 0.5, 'Alamat', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(15.5, 0.5, $audiometri->alamat, 0, 1);
+
+                $pdf->Ln(0.5);
+
+                // Examination Info
+                $pdf->Cell(3, 0.5, 'Tgl Periksa', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(15.5, 0.5, $this->tanggalan->tgl_indo($audiometri->tgl_masuk), 0, 1);
+
+                $pdf->Ln(0.5);
+
+                // Results
+                $pdf->SetFont('Arial', 'B', 10);
+                $pdf->Cell(19, 0.5, 'HASIL PEMERIKSAAN:', 0, 1);
+                $pdf->Ln(0.2);
+
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->MultiCell(19, 0.5, $audiometri->hasil, 0, 'L');
+
+                // Add audiometri image if exists
+                if (!empty($audiometri->nama_file)) {
+                    $pdf->Ln(0.5);
+                    $image_path = FCPATH . 'file/pasien/' . strtolower($audiometri->kode_dpn . $audiometri->kode) . '/audiometri/' . $audiometri->nama_file;
+                    
+                    if (file_exists($image_path)) {
+                        $ext = strtolower(pathinfo($image_path, PATHINFO_EXTENSION));
+                        if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png') {
+                            list($width, $height) = getimagesize($image_path);
+                            $aspect = $width / $height;
+                            
+                            // Set max width to 18cm (page width minus margins)
+                            $max_width = 18;
+                            $new_width = min($width/10, 9);
+                            $new_height = $new_width / $aspect;
+                            
+                            // Center the image
+                            $x = (21 - $new_width) / 2;
+                            try {
+                                $pdf->Image($image_path, $x, $pdf->GetY(), $new_width);
+                                $pdf->Ln($new_height + 0.5);
+                            } catch (Exception $e) {
+                                log_message('error', 'Failed to load image: ' . $image_path . ' - ' . $e->getMessage());
+                            }
+                        }
+                    } else {
+                        log_message('error', 'Image file not found: ' . $image_path);
+                    }
+                }
+
+                $pdf->Ln(1);
+
+                // Signature
+                $pdf->Cell(9.5, 0.5, '', 0, 0);
+                $pdf->Cell(9.5, 0.5, 'Pemeriksa,', 0, 1, 'C');
+                $pdf->Ln(1.5);
+
+                $pdf->Cell(9.5, 0.5, '', 0, 0);
+                $pdf->Cell(9.5, 0.5, (!empty($audiometri->nama_dpn) ? $audiometri->nama_dpn . ' ' : '').$audiometri->nama.(!empty($audiometri->nama_blk) ? ', ' . $audiometri->nama_blk : ''), 0, 1, 'C');
+
+                ob_start();
+                $pdf->Output('Hasil_Audiometri_' . $audiometri->no_rm . '.pdf', 'I');
+                ob_end_flush();
+            } catch (Exception $e) {
+                log_message('error', $e->getMessage());
+                $this->session->set_flashdata('error', $e->getMessage());
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+        } else {
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
     public function pdf_medcheck_pen_hrv() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
@@ -16814,9 +17025,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);     
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -16922,29 +17131,92 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             $pdf->Ln();
             
-                      
+           
+//            // QR GENERATOR VALIDASI
+//            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh petugas '.$this->ion_auth->user($sql_medc_pen->id_user)->row()->first_name;
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_validasi;
+//            $this->ciqrcode->generate($params);  
+//            
+//            $gambar6            = $qr_validasi;  
+//            
+//            // Gambar VALIDASI
+//            $getY = $pdf->GetY() + 1;
+//            $pdf->Image($gambar6,14,10.5,2,2);
+//            
+//            $pdf->Cell(9.5, .5, '', 'L', 0, 'L', $fill);
+//            $pdf->Cell(9.5, .5, '('.$this->ion_auth->user($sql_medc_pen->id_user)->row()->first_name.')', 'R', 0, 'C', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Times', 'B', '10');
+//            $pdf->Cell(19, .5, 'Hasil Pembacaan :', '1', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Times', '', '10');
+//            $pdf->Cell(9.5, .5, 'Mean Heart Rate (bpm)', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_mhr, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'SDNN (ms)', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_sdnn, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'RMSSD (ms)', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_rmssd, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'PSI', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_psi, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'LH / HF', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_lhhf, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'Ectopic Beat', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_eb, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'Autonomic Nervous System', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_ans, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'Pressure Index', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_pi, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'Emotional State', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_es, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'RRV', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_rrv, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->MultiCell(19, .5, 'Komentar : '.$sql_medc_pen->keterangan, '1', 'L');
+//            
+//            
+//            $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
+//            $pdf->Ln();
+           
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['data'] .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
-            
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
+                     
+            $gambar4            = $qr_validasi;         
+                        
             // QR GENERATOR DOKTER
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
+            $gambar5            = $qr_dokter;
+//            $gambar5            = base_url('file/qr/dokter-'.strtolower($sql_dokter2->id).'.png');
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
@@ -16982,7 +17254,224 @@ public function set_medcheck_lab_adm_save() {
             redirect();
         }
     }
-        
+    
+//    public function pdf_medcheck_pen_hrv2() {
+//        if (akses::aksesLogin() == TRUE) {
+//            $setting            = $this->db->get('tbl_pengaturan')->row();
+//            $id_medcheck        = $this->input->get('id');
+//            $id_pen             = $this->input->get('id_pen');
+//            $status_ctk         = $this->input->get('status_ctk');
+//            
+//            $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+//            $sql_medc_pen       = $this->db->where('id', general::dekrip($id_pen))->get('tbl_trans_medcheck_pen_hrv')->row();
+//            $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
+//            $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
+//            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
+//            $sql_dokter         = $this->db->where('id_user', (!empty($sql_medc_pen->id_dokter) ? $sql_medc_pen->id_dokter : $sql_medc->id_dokter))->get('tbl_m_karyawan')->row();
+//            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
+//            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
+//            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
+//            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+//            $sess_print         = $this->session->userdata('lab_print');
+//            
+//            $judul              = "HASIL PEMBACAAN HRV";
+//
+//            $this->load->library('MedLabPDF');
+//            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+//            $pdf->SetAutoPageBreak('auto', 7);
+//            $pdf->SetMargins(1,0.35,1);
+//            $pdf->header = 0;
+//            $pdf->addPage('','',false);
+//            
+//            // Gambar Watermark Tengah
+//            $pdf->Image($gambar2,5,4,15,19);     
+//            
+//            # Blok Judul & ID Pasien
+//            $pdf->SetFont('Arial', 'B', '13');
+//            $pdf->Cell(7, .5, '', 'LTR', 0, 'L', $fill);
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->Cell(2, .5, 'Nama', 'T', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', 'T', 0, 'C', $fill);
+//            $pdf->Cell(9.5, .5, $sql_pasien->nama_pgl.' ('.$sql_pasien->jns_klm.')', 'TR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '13');
+//            $pdf->Cell(7, .5, $judul, 'LR', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->Cell(2, .5, 'No. RM', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(9.5, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '13');
+//            $pdf->Cell(7, .5, '', 'LBR', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->Cell(2, .5, 'Tanggal Lahir', 'LB', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', 'B', 0, 'C', $fill);
+//            $pdf->Cell(9.5, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), 'BR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            
+//            # Blok Lampiran hasil EKG
+//            $pdf->SetFont('Times', '', '10');
+//            $pdf->Cell(19, .5, 'Tempelkan mulai dari sini :', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Times', 'B', '13');
+//            $pdf->Cell(19, .5, 'Terlampir', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Times', '', '10');
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            
+//           
+//            // QR GENERATOR VALIDASI
+//            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh petugas '.$this->ion_auth->user($sql_medc_pen->id_user)->row()->first_name;
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_validasi;
+//            $this->ciqrcode->generate($params);  
+//            
+//            $gambar6            = $qr_validasi;  
+//            
+//            // Gambar VALIDASI
+//            $getY = $pdf->GetY() + 1;
+//            $pdf->Image($gambar6,14,10.5,2,2);
+//            
+//            $pdf->Cell(9.5, .5, '', 'L', 0, 'L', $fill);
+//            $pdf->Cell(9.5, .5, '('.$this->ion_auth->user($sql_medc_pen->id_user)->row()->first_name.')', 'R', 0, 'C', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Times', 'B', '10');
+//            $pdf->Cell(19, .5, 'Hasil Pembacaan :', '1', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Times', '', '10');
+//            $pdf->Cell(4, .5, 'Mean Heart Rate (bpm)', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_mhr, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'SDNN (ms)', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_sdnn, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'RMSSD (ms)', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_rmssd, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'PSI', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_psi, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'LH / HF', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_lhhf, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'Ectopic Beat', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_eb, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'Autonomic Nervous System', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_ans, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'Pressure Index', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_pi, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(4, .5, 'Emotional State', 'L', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(5, .5, $sql_medc_pen->hsl_es, '', 0, 'L', $fill);
+//            $pdf->Cell(2.5, .5, 'RRV', '', 0, 'L', $fill);
+//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, $sql_medc_pen->hsl_rrv, 'R', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->MultiCell(19, .5, 'Komentar : '.$sql_medc_pen->keterangan, '1', 'L');
+//            
+//            
+//            $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
+//            $pdf->Ln();
+//           
+//            // QR GENERATOR VALIDASI
+//            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_validasi;
+//            $this->ciqrcode->generate($params);
+//                     
+//            $gambar4            = $qr_validasi;         
+//                        
+//            // QR GENERATOR DOKTER
+//            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_dokter;
+//            $this->ciqrcode->generate($params);
+//            
+//            $gambar5            = $qr_dokter;
+////            $gambar5            = base_url('file/qr/dokter-'.strtolower($sql_dokter2->id).'.png');
+//            
+//            // Gambar VALIDASI
+//            $getY = $pdf->GetY() + 1;
+//            $pdf->Image($gambar4,2,$getY,2,2);
+//            $pdf->Image($gambar5,12,$getY,2,2);
+//            
+//            
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Cell(7.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_pen->tgl_masuk), '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '10');
+//            $pdf->Cell(4, .5, 'Validasi', '0', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(7.5, .5, 'Dokter Yang Memeriksa,', '0', 0, 'L', $fill);
+//            $pdf->Ln(2.5);
+//            
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Cell(7.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Cell(7.5, .5, $sql_dokter2->nik, '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            
+//            $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+//
+//            ob_start();
+//            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
+//            ob_end_flush();
+//        } else {
+//            $errors = $this->ion_auth->messages();
+//            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+//            redirect();
+//        }
+//    }
+    
     public function pdf_medcheck_rad() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
@@ -17023,9 +17512,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage();
             
             // Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
-            }
+            $pdf->Image($gambar2,5,4,17,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
@@ -17096,29 +17583,27 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
 
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+            $gambar4            = $qr_validasi; 
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter_rad->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter_rad->nama_dpn) ? $sql_dokter_rad->nama_dpn.' ' : '').$sql_dokter_rad->nama.(!empty($sql_dokter_rad->nama_blk) ? ', '.$sql_dokter_rad->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter_rad->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter_rad->nama_dpn) ? $sql_dokter_rad->nama_dpn.' ' : '').$sql_dokter_rad->nama.(!empty($sql_dokter_rad->nama_blk) ? ', '.$sql_dokter_rad->nama_blk : '').']';
+            $gambar5            = $qr_dokter;  
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -17192,9 +17677,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
@@ -17404,36 +17887,48 @@ public function set_medcheck_lab_adm_save() {
                 }
             }
             $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
-
-            // Create folder if it doesn't exist
-            $folder_path = FCPATH.'file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
+//            
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '11');
+//            $pdf->Cell(19, .5, 'SARAN', '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->MultiCell(19, .5, $sql_medc_rsm->saran, '', 'J', false);
+//            $pdf->Ln();            
+//            $pdf->SetFont('Arial', 'B', '11');
+//            $pdf->Cell(19, .5, 'KESIMPULAN', '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->MultiCell(19, .5, $sql_medc_rsm->kesimpulan, '', 'J', false);
+//            $pdf->Ln();
 
             // QR GENERATOR VALIDASI
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+            $gambar4            = $qr_validasi; 
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $gambar5            = $qr_dokter;
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
             $pdf->Image($gambar5,13.5,$getY,2,2);
+            
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
             $pdf->Cell(8.5, .5, '', '', 0, 'L', $fill);
@@ -17505,9 +18000,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
@@ -17607,31 +18100,28 @@ public function set_medcheck_lab_adm_save() {
             $pdf->MultiCell(19, .5, $sql_medc_rsm->kesimpulan, '', 'J', false);
             $pdf->Ln();
 
-            // Create folder if it doesn't exist
-            $folder_path = FCPATH.'file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
             // QR GENERATOR VALIDASI
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+            $gambar4            = $qr_validasi; 
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $gambar5            = $qr_dokter;
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -17708,9 +18198,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '11');
@@ -17797,6 +18285,32 @@ public function set_medcheck_lab_adm_save() {
             $fill = FALSE;
             $no_trp = 1;
             foreach ($sql_medc_res_det as $trp){
+//                $pdf->SetFont('Arial', '', 8);
+////                $pdf->Cell(1, 0.5, $no_trp, 'LR', 0, 'C', $fill);
+//
+//                $x = $pdf->GetX() + 1; // Mengambil posisi X saat ini dan menambahkan offset
+//                $y = $pdf->GetY(); // Mengambil posisi Y saat ini
+//
+//                $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
+//
+//                $pdf->MultiCell(1, 0.5, $no_trp, 'LR', 'C', $fill);
+//                $x += 0;
+//                $pdf->MultiCell(6, 0.5, $trp->param, 'R', 'L', $fill);
+//                $x += 5; // Menambahkan offset X untuk selanjutnya
+//
+//                $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
+//
+//                $pdf->MultiCell(12, 0.5, $trp->param_nilai, 'R', 'L', $fill);
+//
+//                $pdf->SetFont('Arial', '', '8');
+//                $pdf->Cell(1, .5, $no_trp, '', 0, 'C', $fill);
+//                $pdf->Cell(6, .5, ucwords($trp->param), '', 0, 'L', $fill);
+////                $pdf->SetFont('Arial', '', '8');
+////                $pdf->Cell(12, .5, $trp->param_nilai, 'R', 0, 'L', $fill);
+//                $pdf->MultiCell(12, .5, str_replace('#', ' ', $trp->param_nilai), '', 'L', $fill,$pdf->GetX(),15);
+////                $pdf->Ln();
+
+
                 $pdf->SetFont('Arial', '', '8');
                 $pdf->Cell(1, .5, $no_trp, '', 0, 'C', $fill);
                 $pdf->Cell(6, .5, ucwords($trp->item), '', 0, 'L', $fill);
@@ -17804,37 +18318,34 @@ public function set_medcheck_lab_adm_save() {
                 
                 $no_trp++;
             }
-            
             $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
-            // Create folder if it doesn't exist
-            $folder_path = FCPATH.'file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
 
             // QR GENERATOR VALIDASI
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+            $gambar4            = $qr_validasi; 
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+            $gambar5            = $qr_dokter;
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
-            $pdf->Image($gambar5,13.5,$getY,2,2);
+            $pdf->Image($gambar5,13.80,$getY,2,2);
             
             $pdf->SetFont('Arial', '', '8');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -17952,9 +18463,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '11');
@@ -18098,7 +18607,121 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
             $pdf->MultiCell(9.5, .5, $sql_medc_ass->askep_tujuan, '', 'J');
             $x += 5;
-                                
+            
+//            
+////            $pdf->SetFont('Arial', 'B', '8');
+////            $pdf->Cell(4, .5, 'ICD 10', '', 0, 'L', $fill);
+////            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+////            $pdf->Ln();
+//            
+//            $n = 1;
+//            foreach ($sql_medc_icd as $icd){
+//                if($n == 1){
+//                    $pdf->SetFont('Arial', 'B', '8');
+//                    $pdf->Cell(4, .5, 'ICD 10', '', 0, 'L', $fill);
+//                    $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//                }else{
+//                    $pdf->SetFont('Arial', '', '8');
+//                    $pdf->Cell(4.5, .5, '', '', 0, 'L', $fill);
+//                }
+//                $pdf->SetFont('Arial', '', '8');
+//                $pdf->Cell(14.5, .5, '- '.$icd->diagnosa_en, '', 0, 'L', $fill);
+//                $pdf->Ln();
+//                
+//                $n++;
+//            }
+//            $pdf->Ln();
+//            
+//            $pdf->SetFont('Arial', 'B', '8');
+//            $pdf->Cell(19, .5, 'TERAPI PULANG', 'TB', 0, 'C', $fill);
+//            $pdf->Ln(); 
+//            
+//            $pdf->Cell(1, .5, 'No.', 'B', 0, 'C', $fill);
+//            $pdf->Cell(6, .5, 'Nama Obat', 'B', 0, 'L', $fill);
+//            $pdf->Cell(12, .5, 'Catatan', 'B', 0, 'L', $fill);
+//            $pdf->Ln();    
+//            
+//            $fill = FALSE;
+//            $no_trp = 1;
+//            foreach ($sql_medc_res_det as $trp){
+////                $pdf->SetFont('Arial', '', 8);
+//////                $pdf->Cell(1, 0.5, $no_trp, 'LR', 0, 'C', $fill);
+////
+////                $x = $pdf->GetX() + 1; // Mengambil posisi X saat ini dan menambahkan offset
+////                $y = $pdf->GetY(); // Mengambil posisi Y saat ini
+////
+////                $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
+////
+////                $pdf->MultiCell(1, 0.5, $no_trp, 'LR', 'C', $fill);
+////                $x += 0;
+////                $pdf->MultiCell(6, 0.5, $trp->param, 'R', 'L', $fill);
+////                $x += 5; // Menambahkan offset X untuk selanjutnya
+////
+////                $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
+////
+////                $pdf->MultiCell(12, 0.5, $trp->param_nilai, 'R', 'L', $fill);
+////
+////                $pdf->SetFont('Arial', '', '8');
+////                $pdf->Cell(1, .5, $no_trp, '', 0, 'C', $fill);
+////                $pdf->Cell(6, .5, ucwords($trp->param), '', 0, 'L', $fill);
+//////                $pdf->SetFont('Arial', '', '8');
+//////                $pdf->Cell(12, .5, $trp->param_nilai, 'R', 0, 'L', $fill);
+////                $pdf->MultiCell(12, .5, str_replace('#', ' ', $trp->param_nilai), '', 'L', $fill,$pdf->GetX(),15);
+//////                $pdf->Ln();
+//
+//
+//                $pdf->SetFont('Arial', '', '8');
+//                $pdf->Cell(1, .5, $no_trp, '', 0, 'C', $fill);
+//                $pdf->Cell(6, .5, ucwords($trp->item), '', 0, 'L', $fill);
+//                $pdf->MultiCell(12, .5, $trp->dosis.' '.(!empty($trp->dosis_ket) ? '('.$trp->dosis_ket.')' : '').(!empty($trp->keterangan) ? ' / '.$trp->keterangan : ''), '', 'L', $fill,$pdf->GetX(),15);
+//                
+//                $no_trp++;
+//            }
+//            $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
+
+//            // QR GENERATOR VALIDASI
+//            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+////            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+////            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_validasi; 
+//            $this->ciqrcode->generate($params);
+//            
+//            $gambar4            = $qr_validasi; 
+//                        
+//            // QR GENERATOR DOKTER
+//            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_dokter;
+//            $this->ciqrcode->generate($params);
+//            
+//            $gambar5            = $qr_dokter;
+//            
+//            // Gambar VALIDASI
+//            $getY = $pdf->GetY() + 1;
+//            $pdf->Image($gambar4,2,$getY,2,2);
+//            $pdf->Image($gambar5,13.80,$getY,2,2);
+//            
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Cell(8.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '9');
+//            $pdf->Cell(4, .5, 'Petugas', '0', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->Cell(8.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_rsm->tgl_masuk), '0', 0, 'C', $fill);
+//            $pdf->Ln(2.5);
+//            
+//            $pdf->SetFont('Arial', '', '9');
+//            $pdf->Cell(10.5, .5, $this->ion_auth->user($sql_medc_rsm->id_user)->row()->first_name, '0', 0, 'L', $fill);
+//            $pdf->Cell(8.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk.' ' : ''), '0', 0, 'C', $fill);
+//            $pdf->Ln();
+                    
             $pdf->SetFillColor(235, 232, 228);
             $pdf->SetTextColor(0);
             $pdf->SetFont('Arial', '', '8');
@@ -18108,6 +18731,53 @@ public function set_medcheck_lab_adm_save() {
             ob_start();
             $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
             ob_end_flush();
+//            
+//            $sql_cek_file = $this->db->where('id_resume', $sql_medc_rsm->id)->get('tbl_trans_medcheck_file');
+//            
+//            if($sql_cek_file->num_rows() == 0){
+//                $this->load->helper('download');
+//                
+//               $folder      = realpath('./file/pasien/'.$kode_pasien);
+//               $filename    = $folder.'/kontol.pdf';
+//               $fdata       = (base_url('medcheck/surat/cetak_pdf_rsm_rnp.php?id='.$id_medcheck.'&id_resm='.$id_rsm));
+//               $fbase64     = 'data:application/pdf;base64,'.base64_encode(file_get_contents($pdf->Output($sql_pasien->nama_pgl. '.pdf', $type)));
+//                
+//                $data_file = array(
+//                   'id_medcheck'   => $sql_medc->id,
+//                   'id_pasien'     => $sql_medc->id_pasien,
+//                   'id_user'       => $this->ion_auth->user()->row()->id,
+//                   'tgl_simpan'    => date('Y-m-d H:i:s'),
+//                   'tgl_masuk'     => date('Y-m-d H:i'),
+//                   'judul'         => 'ppp',
+//                   'keterangan'    => 'hhh',
+////                   'file_name_ori' => $f['client_name'],
+//                   'file_name'     => $filename,
+//                   'file_ext'      => $f['file_ext'],
+//                   'file_type'     => $f['file_type'],
+//                   'file_base64'   => '-',
+//                   'status'        => '1',
+//               );
+//                
+//                crud::simpan('tbl_trans_medcheck_file', $data_file);
+//                
+//                force_download($filename, $fdata);
+//            }
+//            
+//                        $data_file = array(
+//                            'id_medcheck'   => $sql_medc->id,
+//                            'id_pasien'     => $sql_medc->id_pasien,
+//                            'id_user'       => $this->ion_auth->user()->row()->id,
+//                            'tgl_simpan'    => date('Y-m-d H:i:s'),
+//                            'tgl_masuk'     => date('Y-m-d H:i'),
+//                            'judul'         => $judul,
+//                            'keterangan'    => $ket,
+//                            'file_name_ori' => $f['client_name'],
+//                            'file_name'     => $f['file_name'],
+//                            'file_ext'      => $f['file_ext'],
+//                            'file_type'     => $f['file_type'],
+////                            'file_base64'   => $file64,
+//                            'status'        => '1',
+//                        );
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -18180,13 +18850,14 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             # Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            $pdf->Image($gambar2,5,4,15,19);  
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
+//            $pdf->Ln(0);
+//            $pdf->SetFont('Arial', 'Bi', '13');
+//            $pdf->Cell(19, .5, $judul2, 'B', 1, 'C');
             $pdf->Ln();
             
             # Blok ID PASIEN
@@ -18667,6 +19338,8 @@ public function set_medcheck_lab_adm_save() {
             # -- END
             
             # ISI BLOK 13
+//            $setYAss13 = $setYAss12 + 1;
+//            $pdf->SetXY(1,$setYAss13);
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(19, .5, 'Pemeriksaan Gigi', '', 0, 'L', $fill);
             $pdf->Ln();
@@ -18711,31 +19384,31 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(3, .5, '*Radix', '', 0, 'L', $fill);
             $pdf->Ln(1);
             # --- END BLOK 13 --
-            // Create folder if it doesn't exist
-            $folder_path = FCPATH.'file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
 
             // QR GENERATOR VALIDASI
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+//            $gambar4            = base_url('file/qr/validasi-'.$sql_pasien->id.'.png');         
+            $gambar4            = $qr_validasi;         
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
             
-            // QR GENERATOR DOKTER 
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $gambar5            = $qr_dokter;
+//            $gambar5            = base_url('file/qr/dokter-'.strtolower($sql_dokter2->id).'.png');
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_dokter;
-
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -18802,9 +19475,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage();
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
-            }
+            $pdf->Image($gambar2,5,4,17,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
@@ -18937,31 +19608,29 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(3, .5, ($jml_kembali >= 0 ? general::format_angka($jml_kembali) : 0), '', 0, 'R', $fill);
             
             $pdf->Ln(1);
-            // Create folder if it doesn't exist
-            $folder_path = FCPATH.'file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
+            
             // QR GENERATOR VALIDASI
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
-            
+            $gambar4            = $qr_validasi;
+                        
             // QR GENERATOR PETUGAS KASIR
-            $qr_kasir = $folder_path.'/qr-kasir-'.strtolower(md5($kasir)).'.png';
-            $params['data'] = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
+            $qr_kasir           = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-kasir-'.strtolower(md5($kasir)).'.png';
+            $params['data']     = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_kasir;
+            $this->ciqrcode->generate($params);
             
-            \QRcode::png($params['data'], $qr_kasir, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_kasir;
-
+            $gambar5            = $qr_kasir;
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,1,$getY,2,2);
@@ -19017,9 +19686,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage();
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
-            }
+            $pdf->Image($gambar2,5,4,17,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
@@ -19134,37 +19801,30 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln(1);
             
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
-            
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
-            
+            $gambar4            = $qr_validasi;
+                        
             // QR GENERATOR PETUGAS KASIR
-            $qr_kasir = $folder_path.'/qr-kasir-'.strtolower(md5($kasir)).'.png';
-            $params['data'] = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
+            $qr_kasir           = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-kasir-'.strtolower(md5($kasir)).'.png';
+            $params['data']     = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_kasir;
+            $this->ciqrcode->generate($params);
             
-            \QRcode::png($params['data'], $qr_kasir, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_kasir;
+            $gambar5            = $qr_kasir;
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-            if (file_exists($gambar4)) {
-                $pdf->Image($gambar4,1,$getY,2,2);
-            }
-            if (file_exists($gambar5)) {
-                $pdf->Image($gambar5,12.5,$getY,2,2);
-            }
+            $pdf->Image($gambar4,1,$getY,2,2);
+            $pdf->Image($gambar5,12.5,$getY,2,2);
 
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -19195,6 +19855,7 @@ public function set_medcheck_lab_adm_save() {
     public function pdf_medcheck_nota_ranap2() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
+//            $id                 = $this->input->get('id');
             $id_medcheck        = $this->input->get('id');
             
             $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
@@ -19219,9 +19880,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage();
             
             // Gambar Watermark Tengah
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
-            }
+            $pdf->Image($gambar2,5,4,17,19);
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '14');
@@ -19287,6 +19946,7 @@ public function set_medcheck_lab_adm_save() {
                 // Detail Pemeriksaan dan hasilnya
                 $sub = 0;
                 foreach ($sql_medc_itm as $medc){                  
+//                    if ($medc->jml >= 0) {
                         $sub = $sub + $medc->subtotal;
                         
                         if($medc->jml > 0){
@@ -19310,6 +19970,7 @@ public function set_medcheck_lab_adm_save() {
                         }
                         
                         $no++;
+//                    }
                 }
                 
                 // Kolom Subtotal
@@ -19376,37 +20037,31 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln(1);
             
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+//            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi; 
+            $this->ciqrcode->generate($params);
             
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['level'] = QR_ECLEVEL_H;
-            $params['size'] = 2;
-            
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
-            
+            $gambar4            = $qr_validasi;
+                        
             // QR GENERATOR PETUGAS KASIR
-            $qr_kasir = $folder_path.'/qr-kasir-'.strtolower(md5($kasir)).'.png';
-            $params['data'] = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
+            $qr_kasir           = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-kasir-'.strtolower(md5($kasir)).'.png';
+            $params['data']     = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_kasir;
+            $this->ciqrcode->generate($params);
             
-            \QRcode::png($params['data'], $qr_kasir, QR_ECLEVEL_H, 2, 2);
-
-            $gambar5 = $qr_kasir;
+            $gambar5            = $qr_kasir;
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-            if (file_exists($gambar4)) {
-                $pdf->Image($gambar4,1,$getY,2,2);
-            }
-            if (file_exists($gambar5)) {
-                $pdf->Image($gambar5,12.5,$getY,2,2);
-            }
+            $pdf->Image($gambar4,1,$getY,2,2);
+            $pdf->Image($gambar5,12.5,$getY,2,2);
 
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -19440,40 +20095,19 @@ public function set_medcheck_lab_adm_save() {
             $setting = $this->db->get('tbl_pengaturan')->row();
             $id_medcheck = $this->input->get('id');
             
-            $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
-            $sql_medc_plat      = $this->db->where('id_medcheck', $sql_medc->id)->get('v_medcheck_plat')->result();
-            $sql_medc_det       = $this->db->where('id_medcheck', $sql_medc->id)
-                                          ->where('status_pkt', '0')
-                                          ->group_by('id_item_kat')
-                                          ->get('tbl_trans_medcheck_det')
-                                          ->result();
-            
-            $sql_medc_det_sum   = $this->db->select('SUM(diskon) AS diskon, SUM(potongan) AS potongan, SUM(subtotal) AS subtotal')
-                                          ->where('id_medcheck', $sql_medc->id)
-                                          ->get('tbl_trans_medcheck_det')
-                                          ->row();
-            
-            $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)
-                                          ->get('tbl_m_pasien')
-                                          ->row();
-            
-            $sql_pasien_poin    = $this->db->where('id_pasien', $sql_medc->id_pasien)
-                                          ->get('tbl_m_pasien_poin')
-                                          ->row();
-            
-            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)
-                                          ->get('tbl_m_jenis_kerja')
-                                          ->row();
-            
-            $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)
-                                          ->get('tbl_m_karyawan')
-                                          ->row();
-            
-            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
-            $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
+            $sql_medc = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+            $sql_medc_plat = $this->db->where('id_medcheck', $sql_medc->id)->get('v_medcheck_plat')->result();
+            $sql_medc_det = $this->db->where('id_medcheck', $sql_medc->id)->where('status_pkt', '0')->group_by('id_item_kat')->get('tbl_trans_medcheck_det')->result();
+            $sql_medc_det_sum = $this->db->select('SUM(diskon) AS diskon, SUM(potongan) AS potongan, SUM(subtotal) AS subtotal')->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->row();
+            $sql_pasien = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
+            $sql_pasien_poin = $this->db->where('id_pasien', $sql_medc->id_pasien)->get('tbl_m_pasien_poin')->row();
+            $sql_pekerjaan = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
+            $sql_dokter = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
+            $kode_pasien = $sql_pasien->kode_dpn.$sql_pasien->kode;
+            $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+            $kasir = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
 
             $judul = "KWITANSI ".strtoupper(general::status_rawat2($sql_medc->tipe));
             
@@ -19895,6 +20529,9 @@ public function set_medcheck_lab_adm_save() {
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es3.png'; // base_url('file/img/logo-header-es3.png');
             $gambar4            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es4.png'; // base_url('file/img/img/logo-header-es4.png');
             $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
+
+            $judul  = "RESUME MEDIS";
+            $judul2 = "Medical Resume Result";
             
             $this->load->library('MedLblPDF');
             $pdf = new MedLblPDF('P', 'cm', array(21.5,33));
@@ -19903,21 +20540,13 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
                         
             // Gambar Logo Atas 1
-            if (file_exists($gambar1)) {
-                $pdf->Image($gambar1, 1.3, 1.15, 1.94, 1.21);
-            }
+            $pdf->Image($gambar1, 1.3, 1.15, 1.94, 1.21);
             // Gambar Logo Atas 2
-            if (file_exists($gambar2)) {
-                $pdf->Image($gambar2, 8.7, 1.15, 1.02, 1.15);
-            }
+            $pdf->Image($gambar2, 8.7, 1.15, 1.02, 1.15);
             // Gambar Logo Atas 3
-            if (file_exists($gambar3)) {
-                $pdf->Image($gambar3, 9.85, 1.15, 0.71, 1.59);
-            }
+            $pdf->Image($gambar3, 9.85, 1.15, 0.71, 1.59);
             // Gambar Logo Atas 4
-            if (file_exists($gambar4)) {
-                $pdf->Image($gambar4, 10.75, 1.15, 1.17, 1.23);
-            }
+            $pdf->Image($gambar4, 10.75, 1.15, 1.17, 1.23);
 
             $pdf->SetFont('Arial', '', '9');
             $pdf->Cell(11, 1.75, '', 'B', 0, 'L', $fill);
@@ -20111,7 +20740,52 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(6, .3, $this->ion_auth->user($sql_medc->id_farmasi)->row()->first_name, '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(2, .3, $this->tanggalan->tgl_indo5($sql_medc->tgl_ttd), '', 0, 'L', $fill);
-                        
+            
+            
+//            // QR GENERATOR VALIDASI
+//            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+//            $params['data']     = 'https://verify.esensia.co.id/?id='.general::enkrip($sql_medc_srt->id).'&id_pasien='.general::enkrip($sql_pasien->id).'&role=surat';
+////            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+////            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_validasi; 
+//            $this->ciqrcode->generate($params);
+//            
+//            $gambar4            = $qr_validasi; 
+//                        
+//            // QR GENERATOR DOKTER
+//            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
+//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
+//            $params['level']    = 'H';
+//            $params['size']     = 2;
+//            $params['savename'] = $qr_dokter;
+//            $this->ciqrcode->generate($params);
+//            
+//            $gambar5            = $qr_dokter;
+            
+//            $pdf->Image($gambar5,13.5,$getY,2,2);
+//            
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Cell(8.5, .5, '', '', 0, 'L', $fill);
+//            $pdf->Ln();
+//            $pdf->SetFont('Arial', 'B', '10');
+//            $pdf->Cell(4, .5, 'Validasi', '0', 0, 'C', $fill);
+//            $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(8.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_rsm->tgl_masuk), '0', 0, 'C', $fill);
+//            $pdf->Ln(2.5);
+//            
+//            $pdf->SetFont('Arial', '', '10');
+//            $pdf->Cell(10.5, .5, '', '0', 0, 'L', $fill);
+//            $pdf->Cell(8.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk.' ' : ''), '0', 0, 'C', $fill);
+//            $pdf->Ln();
+//                    
+//            $pdf->SetFillColor(235, 232, 228);
+//            $pdf->SetTextColor(0);
+//            $pdf->SetFont('Arial', '', '10');
+            
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();

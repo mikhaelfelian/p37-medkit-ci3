@@ -1,18 +1,23 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
-
 <?php
-
-require(APPPATH . '/third_party/Fpdf/fpdf.php');
+require_once APPPATH.'third_party/Fpdf/fpdf.php';
 
 /**
  * Description of Pdf
  *
- * @author mike
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2025-03-24
  */
 class MedRadPDF extends FPDF {
-
     private $nm_dokter;
     private $no_sip;
+
+    // Store doctor info as class properties
+    public function setDoctorInfo($dokter, $no_sip) {
+        $this->nm_dokter = $dokter;
+        $this->no_sip = $no_sip;
+    }
 
     public function Header() {
         $CI = & get_instance();
@@ -30,15 +35,18 @@ class MedRadPDF extends FPDF {
         $this->SetFont('Courier', 'B', '14');
         $this->Ln(2);
 
-        # Gambar Logo updated 2023-12-19 23:11
-        $this->Image($gambar1, 1, 1, 10, 2.3);
+        // Gambar Logo Atas
+        if(file_exists($gambar1)) {
+            $this->Image($gambar1, 1, 1, 10, 2.3);
+        }
     }
 
     public function Footer() {
         $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
         // Gambar Watermark Bawah
-        $this->Image($gambar3, 0, 26, 22, 7, 'png');
+        if(file_exists($gambar3)) {
+            $this->Image($gambar3, 0, 26, 22, 7, 'png');
+        }
     }
 }
-

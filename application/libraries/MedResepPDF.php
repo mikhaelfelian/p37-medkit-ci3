@@ -1,24 +1,31 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
-
-require(APPPATH . '/libraries/fpdf.php');
+require_once APPPATH.'third_party/Fpdf/fpdf.php';
 
 /**
  * Description of Pdf
  *
- * @author mike
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2025-03-24
  */
 class MedResepPDF extends FPDF {
 
     private $nm_dokter;
     private $no_sip;
 
-    public function header($dokter, $no_sip) {
+    // Store doctor info as class properties
+    public function setDoctorInfo($dokter, $no_sip) {
+        $this->nm_dokter = $dokter;
+        $this->no_sip = $no_sip;
+    }
+
+    public function Header() {
         $CI = & get_instance();
         $CI->load->database();
 
         $setting = $CI->db->get('tbl_pengaturan')->row();
-        $gambar1 = base_url('assets/theme/admin-lte-3/dist/img/logo-header-es.png');
+        $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es.png';
 
         $this->Ln(0.25);
         $this->SetFont('Arial', 'B', '7');
@@ -28,6 +35,8 @@ class MedResepPDF extends FPDF {
         $this->Ln(0.5);
 
         // Gambar Logo Atas 1
-        $this->Image($gambar1, 1, 0.25, 5, 1.3);
+        if(file_exists($gambar1)) {
+            $this->Image($gambar1, 1, 0.25, 5, 1.3);
+        }
     }
 }

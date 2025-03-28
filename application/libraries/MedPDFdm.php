@@ -1,17 +1,20 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
-require(APPPATH . '/third_party/Fpdf/fpdf.php');
+require_once APPPATH.'third_party/Fpdf/fpdf.php';
 
 /**
  * Description of Pdf
  *
- * @author mike
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2025-03-24
  */
 class MedPDFdm extends FPDF {
     private $nm_dokter;
     private $no_sip;
 
-    public function setDokterInfo($dokter, $no_sip) {
+    // Store doctor info as class properties
+    public function setDoctorInfo($dokter, $no_sip) {
         $this->nm_dokter = $dokter;
         $this->no_sip = $no_sip;
     }
@@ -21,36 +24,36 @@ class MedPDFdm extends FPDF {
         $CI->load->database();
 
         $setting = $CI->db->get('tbl_pengaturan')->row();
-        $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es1.png';
-        $gambar2 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es2.png';
-        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es3.png';
-        $gambar4 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es4.png';
+        $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/kop_es_bw_197x234.png';
 
-        $this->Ln(0.75);
-        $this->SetFont('Arial', 'B', '12');
-        $this->SetTextColor(0,146,63,255);
-        $this->Cell(11.5, .5, '', '', 0, 'L', FALSE);
-        $this->Cell(4, .5, $setting->judul, '', 0, 'L', FALSE);
-        $this->Ln(0.5);
-        $this->SetFont('Courier', 'B', '14');
-        $this->Cell(2.75, .5, '', '', 0, 'L', FALSE);
-        $this->Cell(16.25, .5, '', '', 0, 'L', FALSE);
-        $this->Ln(2);
+        // Logo
+        if(file_exists($gambar1)) {
+            $this->Image($gambar1, 0.75, 0.25, 2, 2.5); // Adjusted size and position for the logo
+        }
 
-        // Gambar Logo Atas 1
-        $this->Image($gambar1, 1, 1, 3.80, 1.80);
-        // Gambar Logo Atas 2
-        $this->Image($gambar2, 5.20, 1, 2.2, 1.80);
-        // Gambar Logo Atas 3
-        $this->Image($gambar3, 7.80, 1, 1.5, 1.80);
-        // Gambar Logo Atas 4
-        $this->Image($gambar4, 9.80, 1, 2.25, 1.80);
+        // Clinic Name
+        $this->SetFont('Times', 'B', 14);
+        $this->SetTextColor(0, 150, 0); // Green color
+        $this->Cell(2, 0.7, '', 0, 0); // Space after logo
+        $this->MultiCell(8, 0.7, $setting->judul, '', 'C');
+
+        // Address
+        $this->SetFont('Arial', '', 10);
+        $this->SetTextColor(0, 0, 0); // Black color
+        $this->Cell(2, 0.5, '', 0, 0); // Space after logo
+        $this->Cell(9, 0.5, $setting->alamat, 0, 1, 'L');
+
+        // Contact Info
+        $this->Cell(2, 0.5, '', 'B', 0); // Space after logo
+        $this->Cell(9, 0.5, $setting->tlp, 'B', 1, 'L');
     }
 
-//    public function footer($dokter, $no_sip) {
-//        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
-//
-//        // Gambar Watermark Bawah
-//        $this->Image($gambar3, 0, 25.75, 21.5, 7, 'png');
-//    }
+    public function Footer() {
+        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+
+        // Gambar Watermark Bawah
+        if(file_exists($gambar3)) {
+            $this->Image($gambar3, 0, 25.75, 21.5, 7, 'png');
+        }
+    }
 }
