@@ -1,15 +1,16 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Description of Tanggalan controller
+ *
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @created by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2025-03-14
  */
 
 /**
- * Description of tanggalan
- *
- * @author mike
+ * Class for handling date formatting and calculations
+ * Used for converting dates between formats, calculating ages and time differences
  */
 class tanggalan {
 
@@ -20,6 +21,9 @@ class tanggalan {
         $this->CI =& get_instance();
     }
 
+    /**
+     * Format date to Indonesian format (dd-mm-yyyy)
+     */
     public static function tgl_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -28,6 +32,9 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Alternative format for Indonesian date (dd-mm-yyyy)
+     */
     public static function tgl_indo2($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -36,6 +43,9 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Format date to Indonesian format with month name (dd Month yyyy)
+     */
     public static function tgl_indo3($tgl) {
         $tanggal = substr($tgl, 8, 2);
         $bulan = self::getBulan(substr($tgl, 5, 2));
@@ -43,6 +53,9 @@ class tanggalan {
         return $tanggal . ' ' . $bulan . ' ' . $tahun;
     }
 
+    /**
+     * Format date to Indonesian format (dd/Month)
+     */
     public static function tgl_indo4($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -50,12 +63,15 @@ class tanggalan {
 
         $tgl = explode('-', $tgln);
         $tanggal = $tgl[2];
-        $bulan = $this->bulan_ke($tgl[1]);
+        $bulan = self::bulan_ke($tgl[1]);
         $tahun = $tgl[0];
         $tgle = (!empty($tglan) ? $tanggal . '/' . $bulan : '');
         return $tgle;
     }
 
+    /**
+     * Format date and time to Indonesian format (dd-mm-yyyy HH:ii)
+     */
     public static function tgl_indo5($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00 00:00:00' ? $str_tgl : '');
@@ -65,14 +81,20 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Format date to Indonesian format with day name (Day, dd/mm/yyyy)
+     */
     public static function tgl_indo6($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
         $tgln = (!empty($dta_tgl) ? date('d/m/Y', strtotime($dta_tgl)) : '');
-        $tgle = $this->hari_ke($tglan) . ', ' . $tgln;
+        $tgle = self::hari_ke($tglan) . ', ' . $tgln;
         return $tgle;
     }
 
+    /**
+     * Format date to mm/dd/yyyy
+     */
     public static function tgl_indo7($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -81,6 +103,9 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Format date to dd-mm-yyyy
+     */
     public static function tgl_indo8($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -89,6 +114,9 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Get month number (mm)
+     */
     public static function bln_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00' ? $str_tgl : '');
@@ -97,14 +125,20 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Format date to system format (yyyy-mm-dd)
+     */
     public static function tgl_indo_sys($tglan) {
-        $str_tgl    = $tglan; // str_replace('/', '-', $tglan);
+        $str_tgl    = $tglan;
         $dta_tgl    = ($str_tgl != '0000-00-00' ? strtotime($str_tgl) : '');
         $tgln       = (!empty($dta_tgl) ? date('Y-m-d', $dta_tgl) : '');
         $tgle       = $tgln;
         return $tgle;
     }
 
+    /**
+     * Convert dd/mm/yyyy to yyyy-mm-dd
+     */
     public static function tgl_indo_sys2($tglan) {
         $tgl = explode('/', $tglan);
         $tanggal = $tgl[0];
@@ -114,6 +148,9 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Get time in HH:ii format
+     */
     public static function wkt_indo($tglan) {
         $str_tgl = $tglan;
         $dta_tgl = ($str_tgl != '0000-00-00 00:00:00' ? $str_tgl : '');
@@ -122,6 +159,9 @@ class tanggalan {
         return $tgle;
     }
 
+    /**
+     * Get Indonesian month name
+     */
     public static function getBulan($bln) {
         switch ($bln) {
             case 1:
@@ -151,6 +191,9 @@ class tanggalan {
         }
     }
 
+    /**
+     * Get current day name in Indonesian
+     */
     public static function hari_ini() {
         $nm_hari = array(
             'Sun' => 'Minggu',
@@ -167,6 +210,9 @@ class tanggalan {
         return $hari_ini;
     }
 
+    /**
+     * Get day name in Indonesian for a given date
+     */
     public static function hari_ke($tanggal) {
         $nm_hari = array(
             'Sun' => 'Minggu',
@@ -183,6 +229,9 @@ class tanggalan {
         return $hari_ini;
     }
 
+    /**
+     * Get Indonesian month name for a given month number
+     */
     public static function bulan_ke($bln) {
         switch ($bln) {
             case 1:
@@ -226,6 +275,9 @@ class tanggalan {
         return $bulan;
     }
 
+    /**
+     * Calculate age in years from birthdate
+     */
     public static function usia($tglan) {
         $birthDate = new DateTime($tglan);
         $today = new DateTime("today");
@@ -239,6 +291,9 @@ class tanggalan {
         return ucwords($umur);
     }
 
+    /**
+     * Calculate age in years only from birthdate
+     */
     public static function usia_angka($tglan) {
         $birthDate = new DateTime($tglan);
         $today = new DateTime("today");
@@ -252,24 +307,26 @@ class tanggalan {
         return ucwords($umur);
     }
 
+    /**
+     * Calculate complete age (years, months, days) from birthdate
+     */
     public static function usia_lkp($tglan) {
         $birthDate = new DateTime($tglan);
         $today = new DateTime("today");
 
         $str_tgl = $tglan;
         if ($str_tgl != '0000-00-00') {
-//            exit("0 Tahun 0 Bulan 0 Hari");
-//        }else{            
             $y = $today->diff($birthDate)->y;
             $m = $today->diff($birthDate)->m;
             $d = $today->diff($birthDate)->d;
             $umur = $y . " tahun " . $m . " bulan " . $d . " hari";
-            //}else{
-            //    $umur = "0 Tahun 0 Bulan 0 Hari";            
         }
         return $umur;
     }
 
+    /**
+     * Calculate days and hours between two dates
+     */
     public static function usia_hari($tgl_awal, $tgl_akhir) {
         $birthDate = new DateTime($tgl_awal);
         $today = new DateTime($tgl_akhir);
@@ -284,9 +341,12 @@ class tanggalan {
         return ucwords($umur);
     }
 
+    /**
+     * Calculate time difference between two dates
+     */
     public static function usia_wkt($tgl_awal, $tgl_akhir) {
         $awal   = date_create($tgl_awal);
-        $akhir  = date_create($tgl_akhir); // waktu sekarang
+        $akhir  = date_create($tgl_akhir);
         $diff   = date_diff($awal, $akhir);
         $usia   = ($diff->d > 0 ? $diff->d.' Hari ' : '').($diff->h > 0 ? $diff->h.' Jam ' : '').($diff->i > 0 ? $diff->i.' Menit' : '');;
                 
@@ -303,22 +363,11 @@ class tanggalan {
         }
         
         return ucwords($umur);
-        
-        
-        
-//        $birthDate = new DateTime($tgl_awal);
-//        $today = new DateTime($tgl_akhir);
-//        if ($birthDate > $today) {
-//            return "0 Jam 0 Menit";
-//        }
-//
-//        $j = $today->diff($birthDate)->h;
-//        $m = $today->diff($birthDate)->i;
-//        $d = $today->diff($birthDate)->s;
-//        $umur = ($j > 0 ? $j . " Jam " . $m . " Menit" : $m . " Menit");
-//        return ucwords($umur);
     }
 
+    /**
+     * Calculate time elapsed since a given date
+     */
     public static function sejak($since) {
         $timeCalc = strtotime(date('Y-m-d H:i:s')) - strtotime($since);
         
@@ -349,6 +398,9 @@ class tanggalan {
         return $timeCalc;
     }
     
+    /**
+     * Calculate number of days between two dates
+     */
     public static function jml_hari($tgl_awal, $tgl_akhir) {
         $tg_awal = date('Y-m-d', strtotime($tgl_awal));
         
@@ -359,6 +411,9 @@ class tanggalan {
         return $jarak->d;
     }
     
+    /**
+     * Get time of day text (Pagi/Siang/Sore/Malam)
+     */
     public static function wkt_teks($wkt) {
         $waktu = strtotime($wkt);
         

@@ -1,7 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
-
-require(APPPATH . '/libraries/fpdf.php');
+require_once APPPATH.'third_party/Fpdf/fpdf.php';
 
 /**
  * Description of Pdf
@@ -13,12 +12,17 @@ class MedLabPDF extends FPDF {
     private $nm_dokter;
     private $no_sip;
 
-    public function header($dokter, $no_sip) {
+    // Store doctor info as class properties
+    public function setDoctorInfo($dokter, $no_sip) {
+        $this->nm_dokter = $dokter;
+        $this->no_sip = $no_sip;
+    }
+
+    public function Header() {
         $CI = & get_instance();
         $CI->load->database();
 
         $setting = $CI->db->get('tbl_pengaturan')->row();
-//        $gambar1 = base_url('assets/theme/admin-lte-3/dist/img/logo-header-es.png');
         $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es.png';
 
         $this->Ln(0.25);
@@ -31,13 +35,17 @@ class MedLabPDF extends FPDF {
         $this->Ln(1.5);
 
         // Gambar Logo Atas 1
-        $this->Image($gambar1, 1, 0.25, 10, 2.3);
+        if(file_exists($gambar1)) {
+            $this->Image($gambar1, 1, 0.25, 10, 2.3);
+        }
     }
 
-    public function footer($dokter, $no_sip) {
-        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+    public function Footer() {
+        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
         // Gambar Watermark Bawah
-        $this->Image($gambar3, 0, 25.75, 21.5, 7, 'png');
+        if(file_exists($gambar3)) {
+            $this->Image($gambar3, 0, 25.75, 21.5, 7, 'png');
+        }
     }
 }
