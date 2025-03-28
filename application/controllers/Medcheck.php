@@ -19640,51 +19640,51 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetMargins(0.75, 0.5, 0.75); 
             $pdf->addPage();
             
+            $fill = FALSE;
             $pdf->Ln(0.20);
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1.5, 0.25, 'No. Faktur', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1.5, 0.25, 'No. Faktur', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(5.5, 0.25, $sql_medc->no_nota, '', 'L');
+            $pdf->Cell(5.5, 0.25, $sql_medc->no_nota, '', 0, 'L', $fill);
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1, 0.25, 'No. RM', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1, 0.25, 'No. RM', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(1.5, 0.25, $sql_pasien->kode, '', 'L');
+            $pdf->Cell(1.5, 0.25, $sql_pasien->kode, '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1.5, 0.25, 'Nama', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1.5, 0.25, 'Nama', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(5.5, 0.25, $sql_pasien->nama_pgl, '', 'L');
+            $pdf->Cell(5.5, 0.25, $sql_pasien->nama_pgl, '', 0, 'L', $fill);
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1, 0.25, 'Tanggal', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1, 0.25, 'Tanggal', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(1.5, 0.25, $this->tanggalan->tgl_indo2($sql_medc->tgl_masuk).' '.$this->tanggalan->wkt_indo($sql_medc->tgl_masuk).'-'.$this->tanggalan->wkt_indo($sql_medc->tgl_bayar), '', 'L');
+            $pdf->Cell(1.5, 0.25, $this->tanggalan->tgl_indo2($sql_medc->tgl_masuk).' '.$this->tanggalan->wkt_indo($sql_medc->tgl_masuk).'-'.$this->tanggalan->wkt_indo($sql_medc->tgl_bayar), '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1.5, 0.25, 'Tgl Lahir', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1.5, 0.25, 'Tgl Lahir', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(5.5, 0.25, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir), '', 'L');
+            $pdf->Cell(5.5, 0.25, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir), '', 0, 'L', $fill);
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1, 0.25, 'Poli', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1, 0.25, 'Poli', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(1.5, 0.25, $sql_poli->lokasi, '', 'L');
+            $pdf->Cell(1.5, 0.25, $sql_poli->lokasi, '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1.5, 0.25, 'Telp / HP', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1.5, 0.25, 'Telp / HP', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->Cell(5.5, 0.25, $sql_pasien->no_hp, '', 'L');
+            $pdf->Cell(5.5, 0.25, $sql_pasien->no_hp, '', 0, 'L', $fill);
             $pdf->SetFont('Times', 'B', '8');
-            $pdf->Cell(1, 0.25, 'Kasir', 0, 'L');
-            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->Cell(1, 0.25, 'Kasir', '', 0, 'L', $fill);
+            $pdf->Cell(0.25, 0.25, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Times', '', '8');
-            $pdf->MultiCell(3, 0.25, (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name), '', 'L');
-            
+            $pdf->MultiCell(3, 0.25, (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name), 0, 'L');
             // Isi Nota
             $pdf->SetFont('Times', 'B', '8');
             $pdf->Cell(5.5, 0.35, 'Item', 'TB', 0, 'L', $fill);
@@ -19797,15 +19797,16 @@ public function set_medcheck_lab_adm_save() {
 
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
 
-            ob_end_clean();
+            ob_start();
             $pdf->Output($sql_pasien->nama_pgl . '_KWI' . '.pdf', $type);
-            exit;
+            ob_end_flush();
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
             redirect();
         }
     }
+    
     
     # LABEL
     public function pdf_medcheck_label() {
