@@ -3,7 +3,7 @@ name: Deploy to cPanel
 on:
   push:
     branches:
-      - main
+      - main  # Ubah jika branch utama kamu bukan main
 
 jobs:
   deploy:
@@ -16,11 +16,11 @@ jobs:
     - name: Setup SSH Connection
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.SSH_MEDKIT_CI3 }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to cPanel
       run: |
         ssh -o StrictHostKeyChecking=no esensiaco@svr.esensia.co.id "
           cd /home/esensiaco/public_html/dev.esensia.co.id &&
           git pull origin main &&
-          exit" 
+          exit"
