@@ -45,9 +45,6 @@
                      
                                     <div class="row">
                                         <div class="col-md-6">
-<pre>
-<?php print_r($sql_produk); ?>
-</pre>
                                             <?php if (!empty($sql_produk)) { ?>
                                                 <?php if ($sql_medc->tipe == '3') { ?>
                                                     <div class="form-group row">
