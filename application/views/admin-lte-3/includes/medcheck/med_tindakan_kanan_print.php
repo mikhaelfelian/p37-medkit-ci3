@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-body">
+    <div class="card-body rounded-0">
         <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakKasir() == TRUE) { ?>
             <?php // if ($gtotal > 0 AND $sql_medc->status < 5) { ?>
             <?php if ($sql_medc->status < 5 AND $sql_medc->status_bayar == 0) { ?>
