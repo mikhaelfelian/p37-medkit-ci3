@@ -26,9 +26,10 @@
                 <div class="col-lg-8">
                     <?php // if ($sql_medc->status < 5) { ?>
                         <!--Form Input Dokter ini hanya muncul ketika transaksi belum lunas-->
-                        <?php echo form_open_multipart(base_url('medcheck/dokter/set_medcheck_doc.php'), 'autocomplete="off"') ?>
+                        <?php echo form_open_multipart(base_url('medcheck/dokter/set_medcheck_doc.php'), 'id="raber_form" autocomplete="off"') ?>
                         <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                         <?php echo form_hidden('status', $this->input->get('status')); ?>
+                        <?php echo add_form_protection(); ?>
 
                         <div class="card">
                             <div class="card-header">
@@ -50,7 +51,7 @@
                                 <div class="form-group row">
                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Catatan</label>
                                     <div class="col-sm-7">
-                                        <?php echo form_textarea(array('id' => 'catatan', 'name' => 'catatan', 'class' => 'form-control', 'value' => $pasien->alamat, 'style' => 'height: 210px;', 'placeholder' => 'Catatan perawat ...')) ?>
+                                        <?php echo form_textarea(array('id' => 'catatan', 'name' => 'catatan', 'class' => 'form-control rounded-0', 'value' => $pasien->alamat, 'style' => 'height: 210px;', 'placeholder' => 'Catatan perawat ...')) ?>
                                     </div>
                                 </div>
                             </div>
@@ -66,6 +67,7 @@
                                 </div>                            
                             </div>
                         </div>
+                        <?php echo add_double_submit_protection('raber_form'); ?>
                         <?php echo form_close(); ?>
                     <?php // } ?>
 
@@ -153,7 +155,9 @@
     $(function () {
         $("#harga").autoNumeric({aSep: '.', aDec: ',', aPad: false});
         $('.select2bs4').select2({
-            theme: 'bootstrap4'
+            theme: 'bootstrap4',
+            containerCssClass: 'select2-container rounded-0',
+            dropdownCssClass: 'select2-dropdown rounded-0'
         });
     });
 </script>
