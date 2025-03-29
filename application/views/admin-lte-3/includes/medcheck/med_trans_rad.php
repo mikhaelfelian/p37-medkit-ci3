@@ -124,8 +124,7 @@
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {                
-        $("#harga").autoNumeric({aSep: '.', aDec: ',', aPad: false});        
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
+        $("#harga").autoNumeric({aSep: '.', aDec: ',', aPad: false});
 
         // Select2   
         $('.select2bs4').select2({theme: 'bootstrap4'});

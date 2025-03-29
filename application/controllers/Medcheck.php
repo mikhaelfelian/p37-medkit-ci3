@@ -2409,7 +2409,6 @@ class medcheck extends CI_Controller {
             $data['kategori']     = $this->db->get('tbl_m_kategori')->result();
             $data['poli']         = $this->db->where('status','1')->get('tbl_m_poli')->result();
             $data['sql_doc']      = $this->db->where('id_user_group', '10')->where('status_aps', '0')->order_by('nama, status_aps', 'asc')->get('tbl_m_karyawan')->result();              
-            $data['sql_doc_rad']  = $this->db->where('id_poli', '76')->order_by('nama', 'asc')->get('v_master_dokter')->result();              
             $data['sql_dft_pas']  = $this->db->where('id', general::dekrip($dft_pas))->get('tbl_m_pasien')->row();
             $data['sql_dft_id']   = $this->db->where('id', general::dekrip($dft_id))->get('tbl_pendaftaran')->row();
             $data['sql_dft_gc']   = $this->db->where('id_pendaftaran', $data['sql_dft_id']->id)->get('tbl_pendaftaran_gc')->row(); 
@@ -2492,6 +2491,8 @@ class medcheck extends CI_Controller {
                         break;
                     
                     case '5':
+                        $data['sql_doc_rad']  = $this->db->where('id_poli', '76')->order_by('nama', 'asc')->get('v_master_dokter')->result();              
+            
                         $view = 'med_trans_rad';
                         break;
                     
@@ -4871,9 +4872,9 @@ class medcheck extends CI_Controller {
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('anamnesa', $msg_error);
 
@@ -4882,43 +4883,51 @@ class medcheck extends CI_Controller {
                 $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
                 $sql_cek    = $this->db->where('id_medcheck', $sql_medc->id)->where('id_dokter', $dokter)->get('tbl_trans_medcheck_dokter');
                 
-                $data = array(
+                $data = [
                     'id_medcheck'   => $sql_medc->id,
                     'id_user'       => $this->ion_auth->user()->row()->id,
                     'id_pasien'     => $sql_medc->id_pasien,
                     'id_dokter'     => $dokter,
                     'tgl_simpan'    => date('Y-m-d H:i:s'),
                     'keterangan'    => $catatan
-                );
+                ];
                 
                 # Cek jika sudah ada nama dokter sama dengan dokter utama tendang
-                if($sql_medc->id_dokter == $dokter){
+                if ($sql_medc->id_dokter == $dokter) {
                     # Tampilkan bahwa sudah ada value kembar
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger"> <b>'.$this->ion_auth->user($sql_medc->id_dokter)->row()->first_name.'</b> sudah di atur sebagai dokter utama,<br/>silahkan memilih nama lain !!</div>');                    
-                }else{
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$this->ion_auth->user($sql_medc->id_dokter)->row()->first_name.' sudah di atur sebagai dokter utama, silahkan memilih nama lain!");');                    
+                } else {
                     # Cek jika sudah ada id_medcheck dan nama dokter yang sama silahkan tendang
                     if ($sql_cek->num_rows() > 0) {
                         # Tampilkan bahwa sudah ada value kembar
-                        $this->session->set_flashdata('medcheck', '<div class="alert alert-danger"><b>'.$this->ion_auth->user($dokter)->row()->first_name.'</b> sudah tersimpan sebelumnya, silahkan cek pada daftar dokter !!</div>');
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$this->ion_auth->user($dokter)->row()->first_name.' sudah tersimpan sebelumnya, silahkan cek pada daftar dokter!");');
                     } else {
-                        # Transact SQL
-                        $this->db->trans_start();
+                        try {
+                            # Transact SQL
+                            $this->db->trans_start();
 
-                        # Masukkan ke tabel medcheck_dokter
-                        $this->db->insert('tbl_trans_medcheck_dokter', $data);
+                            # Masukkan ke tabel medcheck_dokter
+                            $this->db->insert('tbl_trans_medcheck_dokter', $data);
 
-                        # Cek status transact MySQL
-                        if ($this->db->trans_status() === FALSE) {
-                            # Rollback jika gagal
+                            # Cek status transact MySQL
+                            if ($this->db->trans_status() === FALSE) {
+                                # Rollback jika gagal
+                                $this->db->trans_rollback();
+
+                                # Tampilkan pesan error
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data rawat bersama gagal disimpan!");');
+                            } else {
+                                $this->db->trans_complete();
+
+                                # Tampilkan pesan sukses jika sudah berhasil commit
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data rawat bersama disimpan!");');
+                            }
+                        } catch (Exception $e) {
+                            # Rollback jika terjadi exception
                             $this->db->trans_rollback();
-
+                            
                             # Tampilkan pesan error
-                            $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Data rawat bersama gagal disimpan !!</div>');
-                        } else {
-                            $this->db->trans_complete();
-
-                            # Tampilkan pesan sukses jika sudah berhasil commit
-                            $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data rawat bersama disimpan !!</div>');
+                            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
                         }
                     }
                 }
@@ -4939,8 +4948,33 @@ class medcheck extends CI_Controller {
             $status     = $this->input->get('status');
             
             if(!empty($id)){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Item berhasil di hapus</div>');
-                crud::delete('tbl_trans_medcheck_dokter', 'id', general::dekrip($id_item));
+                try {
+                    # Transact SQL
+                    $this->db->trans_start();
+                    
+                    # Delete data
+                    $this->db->where('id', general::dekrip($id_item))->delete('tbl_trans_medcheck_dokter');
+                    
+                    # Cek status transact MySQL
+                    if ($this->db->trans_status() === FALSE) {
+                        # Rollback jika gagal
+                        $this->db->trans_rollback();
+                        
+                        # Tampilkan pesan error
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data dokter gagal dihapus!");');
+                    } else {
+                        $this->db->trans_complete();
+                        
+                        # Tampilkan pesan sukses jika sudah berhasil commit
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data dokter berhasil dihapus!");');
+                    }
+                } catch (Exception $e) {
+                    # Rollback jika terjadi exception
+                    $this->db->trans_rollback();
+                    
+                    # Tampilkan pesan error
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
+                }
             }
             
             redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
@@ -7055,9 +7089,18 @@ public function set_medcheck_lab_adm_save() {
             $id     = $this->input->get('id');
             $status = $this->input->get('status');
             
-            if(!empty($id)){
+            try {
+                if(empty($id)) {
+                    throw new Exception("ID tidak boleh kosong");
+                }
+                
                 $sql_doc_rad= $this->db->where('id', '271')->get('v_master_dokter')->row(); 
                 $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck'); 
+                
+                if($sql_medc->num_rows() == 0) {
+                    throw new Exception("Data medcheck tidak ditemukan");
+                }
+                
                 $pengaturan = $this->db->get('tbl_pengaturan')->row();
                    
                 $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_rad')->num_rows() + 1;
@@ -7067,7 +7110,7 @@ public function set_medcheck_lab_adm_save() {
                 $is_rad_id  = ($grup->name == 'radiografer' ? $this->ion_auth->user()->row()->id : '0');
                 $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : $sql_doc_rad->id_user);
                
-                $data = array(
+                $data = [
                     'tgl_simpan'    => date('Y-m-d H:i:s'),
                     'tgl_masuk'     => date('Y-m-d H:i:s'),
                     'id_medcheck'   => $sql_medc->row()->id,
@@ -7078,34 +7121,31 @@ public function set_medcheck_lab_adm_save() {
                     'no_rad'        => $no_surat,
                     'no_sample'     => '-',
                     'status'        => '0',
-                );
+                ];
                 
-                if($sql_medc->num_rows() > 0){
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data permintaan radiologi di buat</div>');
-                    crud::simpan('tbl_trans_medcheck_rad', $data);
-                    $last_id = crud::last_id();
-                    
-                    $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', array('tgl_periksa_rad'=>date('Y-m-d H:i:s')));
-                    
-                    redirect(base_url('medcheck/tambah.php?act='.($grup->name == 'dokter' ? 'rad_input' : 'rad_surat').'&id='.general::enkrip($sql_medc->row()->id).'&id_rad='.general::enkrip($last_id).'&status='.$status));
-                }else{
-                    redirect(base_url('medcheck/tambah.php?id='.general::enkrip($sql_medc->row()->id).'&status='.$status));
+                $this->db->trans_begin();
+                
+                $this->db->insert('tbl_trans_medcheck_rad', $data);
+                $last_id = $this->db->insert_id();
+                
+                $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', ['tgl_periksa_rad' => date('Y-m-d H:i:s')]);
+                
+                if ($this->db->trans_status() === FALSE) {
+                    $this->db->trans_rollback();
+                    throw new Exception("Gagal menyimpan data radiologi");
+                } else {
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data permintaan radiologi berhasil dibuat")');
                 }
                 
-//                echo '<pre>';
-//                print_r($data);
-//                
-//                if($sql_medc->num_rows() > 0){
-//                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data permintaan lab di buat</div>');
-//                    crud::simpan('tbl_trans_medcheck_lab', $data);
-//                    $last_id = crud::last_id();
-//                    
-//                    redirect(base_url('medcheck/tambah.php?id='.general::enkrip($sql_medc->row()->id).'&id_lab='.general::enkrip($last_id).'&status='.$status));
-//                }else{
-//                    redirect(base_url('medcheck/tambah.php?id='.general::enkrip($sql_medc->row()->id).'&status='.$status));
-//                }
-            }else{
-//                redirect(base_url('medcheck/tambah.php?id='.general::enkrip($sql_medc->row()->id).'&status='.$status));
+                redirect(base_url('medcheck/tambah.php?act='.($grup->name == 'dokter' ? 'rad_input' : 'rad_surat').'&id='.general::enkrip($sql_medc->row()->id).'&id_rad='.general::enkrip($last_id).'&status='.$status));
+            } catch (Exception $e) {
+                if ($this->db->trans_status() === FALSE) {
+                    $this->db->trans_rollback();
+                }
+                
+                $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$e->getMessage().'")');
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -7187,31 +7227,31 @@ public function set_medcheck_lab_adm_save() {
             $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
             
             if($sql_medc->num_rows() > 0){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil dihapus</div>');
-                
-                /* Transaksi Database */
-                $this->db->trans_begin();
+                try {
+                    /* Transaksi Database */
+                    $this->db->trans_begin();
 
-                # Hapus ke tabel medcheck det
-                $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_det');
-                $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_det');
-                $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_file');
-                
-                # Hapus ke tabel medcheck lab
-                $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad');
+                    # Hapus ke tabel medcheck det
+                    $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_det');
+                    $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_det');
+                    $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_file');
+                    
+                    # Hapus ke tabel medcheck lab
+                    $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad');
 
-                # Cek status transact MySQL
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback jika gagal
+                    # Commit jika semua query berhasil
+                    if ($this->db->trans_status() === FALSE) {
+                        # Rollback jika gagal
+                        $this->db->trans_rollback();
+                        throw new Exception("Gagal menghapus data radiologi");
+                    } else {
+                        $this->db->trans_commit();
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data radiologi berhasil dihapus");');
+                    }
+                } catch (Exception $e) {
+                    # Pastikan rollback jika ada exception
                     $this->db->trans_rollback();
-
-                    # Tampilkan pesan error
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Data lab gagal dihapus !!</div>');
-                } else {
-                    $this->db->trans_commit();
-
-                    # Tampilkan pesan sukses jika sudah berhasil commit
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data lab berhasil dihapus !!</div>');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
                 }
             }
 

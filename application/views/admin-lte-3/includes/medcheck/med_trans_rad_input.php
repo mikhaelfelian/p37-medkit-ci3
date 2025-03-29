@@ -1,12 +1,13 @@
 <?php if ($sql_medc->status < 5) { ?>
-<?php echo form_open_multipart(base_url('medcheck/cart_medcheck_simpan.php'), 'autocomplete="off"') ?>
-<?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
-<?php echo form_hidden('id_rad', general::enkrip($sql_medc_rad_rw->id)); ?>
-<?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
+<?php echo form_open(base_url('medcheck/cart_medcheck_simpan.php'), 'id="rad_input_form" autocomplete="off"') ?>
+<?php echo form_hidden('id', !empty($sql_medc->id) ? general::enkrip($sql_medc->id) : ''); ?>
+<?php echo form_hidden('id_rad', !empty($sql_medc_rad_rw->id) ? general::enkrip($sql_medc_rad_rw->id) : ''); ?>
+<?php echo form_hidden('id_item', !empty($sql_produk->id) ? general::enkrip($sql_produk->id) : ''); ?>
 <?php echo form_hidden('status', $this->input->get('status')); ?>
 <?php echo form_hidden('status_item', '5'); ?>
 <?php echo form_hidden('act', $this->input->get('act')); ?>
-<?php echo form_hidden('route', $this->input->get('route')); ?>
+<?php echo form_hidden('route', uri_string() . '?' . $_SERVER['QUERY_STRING']); ?>
+<?php echo add_form_protection(); ?>
 <input type="hidden" id="id_dokter" name="id_dokter">
 
 <!-- Default box -->
@@ -61,16 +62,16 @@
     </div>
     <!-- /.card-body -->
     <div class="card-footer">
-        <?php echo form_open(base_url('medcheck/set_medcheck_rad_upd.php'), 'autocomplete="off"') ?>
-        <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
-        <?php echo form_hidden('id_user', $sql_medc_rad_rw->id_radiografer); ?>
-        <?php echo form_hidden('id_rad', general::enkrip($sql_medc_rad_rw->id)); ?>
-        <?php echo form_hidden('no_sampel', $sql_medc_rad_rw->no_sample); ?>
-        <?php echo form_hidden('dokter', $sql_medc_rad_rw->id_dokter); ?>
-        <?php echo form_hidden('dokter_kirim', $sql_medc_rad_rw->id_dokter_kirim); ?>
-        <?php echo form_hidden('kesan', $sql_medc_rad_rw->kesan); ?>
-        <?php echo form_hidden('status', $this->input->get('status')); ?>
-        <?php echo form_hidden('status_rad', '4'); ?>
+        <?php //echo form_open(base_url('medcheck/set_medcheck_rad_upd.php'), 'autocomplete="off"') ?>
+        <?php //echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
+        <?php //echo form_hidden('id_user', $sql_medc_rad_rw->id_radiografer); ?>
+        <?php //echo form_hidden('id_rad', general::enkrip($sql_medc_rad_rw->id)); ?>
+        <?php //echo form_hidden('no_sampel', $sql_medc_rad_rw->no_sample); ?>
+        <?php //echo form_hidden('dokter', $sql_medc_rad_rw->id_dokter); ?>
+        <?php //echo form_hidden('dokter_kirim', $sql_medc_rad_rw->id_dokter_kirim); ?>
+        <?php //echo form_hidden('kesan', $sql_medc_rad_rw->kesan); ?>
+        <?php //echo form_hidden('status', $this->input->get('status')); ?>
+        <?php //echo form_hidden('status_rad', '4'); ?>
         <div class="row">
             <div class="col-lg-6">
                 <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url(!empty($_GET['route']) ? $this->input->get('route') : 'medcheck/tambah.php?id='.general::enkrip($sql_medc->id).'&status=5') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
@@ -79,10 +80,10 @@
                 <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>
             </div>
         </div>
-        <?php echo form_close(); ?>
     </div>
 </div>
 <!-- /.card -->
+<?php echo add_double_submit_protection('rad_input_form'); ?>
 <?php echo form_close() ?>
 <?php } ?>
 
