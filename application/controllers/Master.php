@@ -1087,11 +1087,6 @@ class master extends CI_Controller {
             $kode     = $this->input->post('kode');
             $diagnosa = $this->input->post('diagnosa');
             $ket      = $this->input->post('keterangan');
-            $harga    = $this->input->post('harga');
-            $harga1   = $this->input->post('harga1');
-            $harga2   = $this->input->post('harga2');
-            $harga3   = $this->input->post('harga3');
-            $tipe     = $this->input->post('tipe');
             $tipe_icd = $this->input->post('tipe_icd');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
@@ -1100,31 +1095,39 @@ class master extends CI_Controller {
             $this->form_validation->set_rules('diagnosa', 'Diagnosa', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'kode'        => form_error('kode'),
-                    'diagnosa'    => form_error('diagnosa'),
-                );
+                $msg_error = [
+                    'kode'     => form_error('kode'),
+                    'diagnosa' => form_error('diagnosa'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_icd_tambah.php?id='.$id));
+                redirect(base_url('master/data_icd_tambah.php'));
             } else {                
-                $data = array(
+                $data = [
                     'id_user'       => $this->ion_auth->user()->row()->id,
                     'tgl_simpan'    => date('Y-m-d H:i:s'),
                     'kode'          => $kode,
                     'diagnosa'      => $diagnosa,
                     'keterangan'    => $ket,
-                    'harga'         => (!empty($harga) ? general::format_angka_db($harga) : '0'),
-                    'harga1'        => (!empty($harga1) ? general::format_angka_db($harga1) : '0'),
-                    'harga2'        => (!empty($harga2) ? general::format_angka_db($harga2) : '0'),
-                    'harga3'        => (!empty($harga3) ? general::format_angka_db($harga3) : '0'),
-                    'status'        => (!empty($tipe) ? (int)$tipe : '0'),
                     'status_icd'    => (!empty($tipe_icd) ? (int)$tipe_icd : '0'),
-                );
+                ];
                 
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data ICD disimpan</div>');
-                crud::simpan('tbl_m_icd', $data);
-                redirect(base_url('master/data_icd_list.php'));
+                try {
+                    $this->db->trans_start();
+                    $this->db->insert('tbl_m_icd', $data);
+                    $this->db->trans_complete();
+                    
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception("Gagal menyimpan data ICD");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data ICD berhasil disimpan");');
+                    redirect(base_url('master/data_icd_list.php'));
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_icd_tambah.php'));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();

@@ -61,9 +61,6 @@
                                     if (!empty($sales)) {
                                         $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
                                         foreach ($sales as $sales) {
-                                            $sql_kel = $this->db->where('id_aps', $sales->id)->get('tbl_m_aps_kel');
-                                            $sql_pnd = $this->db->where('id_aps', $sales->id)->get('tbl_m_aps_pend');
-                                            $sql_srt = $this->db->where('id_aps', $sales->id)->get('tbl_m_aps_sert');
                                             ?>
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?>.</td>
