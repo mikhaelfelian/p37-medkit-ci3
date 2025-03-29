@@ -26,7 +26,7 @@
                 <div class="col-lg-8">
                     <?php $hasError = $this->session->flashdata('form_error'); ?>
                     <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakDokter() == TRUE) { ?>
-                        <?php echo form_open_multipart(base_url('medcheck/set_medcheck_icd.php'), 'autocomplete="off"') ?>
+                        <?php echo form_open(base_url('medcheck/set_medcheck_icd.php'), 'autocomplete="off"') ?>
                         <?php echo form_hidden('id', $this->input->get('id')) ?>
                         <?php echo form_hidden('status', '1') ?>
                         <?php echo form_hidden('status_icd', '1') ?>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="card-body">
                             <div class="input-group input-group">
-                                <?php echo form_input(array('id' => 'icd', 'name' => '', 'class' => 'form-control' . (!empty($hasError['icd']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan ICD 10 menggunakan bahasa inggris ...')) ?>
+                                <?php echo form_input(array('id' => 'icd', 'name' => '', 'class' => 'form-control rounded-0' . (!empty($hasError['icd']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan ICD 10 menggunakan bahasa inggris ...')) ?>
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn-<?php echo (!empty($hasError['icd']) ? 'danger' : 'info') ?> btn-flat"><i class="fa fa-plus"></i></button>
                                 </span>
@@ -92,7 +92,7 @@
                     
                     <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakFisioterapi() == TRUE) { ?>
                         <?php $hasError = $this->session->flashdata('form_error'); ?>
-                        <?php echo form_open_multipart(base_url('medcheck/set_medcheck_upd.php'), 'autocomplete="off"') ?>
+                        <?php echo form_open(base_url('medcheck/set_medcheck_upd.php'), 'autocomplete="off"') ?>
                         <?php echo form_hidden('id', $this->input->get('id')) ?>
                         <?php echo form_hidden('status', '2') ?>
                         <?php echo form_hidden('route', '&status=1') ?>
@@ -113,20 +113,20 @@
                                                 <div class="form-group">
                                                     <label class="control-label">Anamnesa</label>
                                                     <div class="input-group mb-3">
-                                                        <?php echo form_textarea(array('id' => 'anamnesa', 'name' => 'anamnesa', 'class' => 'form-control pull-right' . (!empty($hasError['anamnesa']) ? ' is-invalid' : ''), 'value' => $sql_medc->anamnesa, 'placeholder' => 'Isikan Anamnesa ...', 'style' => 'height: 123px;')) ?>
+                                                        <?php echo form_textarea(array('id' => 'anamnesa', 'name' => 'anamnesa', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['anamnesa']) ? ' is-invalid' : ''), 'value' => $sql_medc->anamnesa, 'placeholder' => 'Isikan Anamnesa ...', 'style' => 'height: 123px;')) ?>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="control-label">Pemeriksaan</label>
                                                     <div class="input-group mb-3">
-                                                        <?php echo form_textarea(array('id' => 'pemeriksaan', 'name' => 'pemeriksaan', 'class' => 'form-control pull-right', 'value' => $sql_medc->pemeriksaan, 'placeholder' => 'Isikan Pemeriksaan ...', 'style' => 'height: 123px;')) ?>
+                                                        <?php echo form_textarea(array('id' => 'pemeriksaan', 'name' => 'pemeriksaan', 'class' => 'form-control rounded-0 pull-right', 'value' => $sql_medc->pemeriksaan, 'placeholder' => 'Isikan Pemeriksaan ...', 'style' => 'height: 123px;')) ?>
                                                     </div>
                                                 </div>
                                                 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakFisioterapi() == TRUE) { ?>
                                                     <div class="form-group">
                                                         <label class="control-label">Keluhan</label>
                                                         <div class="input-group mb-3">
-                                                            <?php echo form_textarea(array('id' => 'keluhan', 'name' => 'keluhan', 'class' => 'form-control pull-right', 'value' => $sql_medc->keluhan, 'placeholder' => 'Isikan Keluhan ...', 'style' => 'height: 211px;')) ?>
+                                                            <?php echo form_textarea(array('id' => 'keluhan', 'name' => 'keluhan', 'class' => 'form-control rounded-0 pull-right', 'value' => $sql_medc->keluhan, 'placeholder' => 'Isikan Keluhan ...', 'style' => 'height: 211px;')) ?>
                                                         </div>
                                                     </div>
                                                 <?php } else { ?>
@@ -137,14 +137,14 @@
                                                 <div class="form-group">
                                                     <label class="control-label">Diagnosa</label>
                                                     <div class="input-group mb-3">
-                                                        <?php echo form_textarea(array('id' => 'diagnosa', 'name' => 'diagnosa', 'class' => 'form-control pull-right', 'value' => $sql_medc->diagnosa, 'placeholder' => 'Isikan Diagnosa ...', 'style' => 'height: 123px;')) ?>
+                                                        <?php echo form_textarea(array('id' => 'diagnosa', 'name' => 'diagnosa', 'class' => 'form-control rounded-0 pull-right', 'value' => $sql_medc->diagnosa, 'placeholder' => 'Isikan Diagnosa ...', 'style' => 'height: 123px;')) ?>
                                                     </div>
                                                 </div>
                                                 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakDokter() == TRUE OR akses::hakFisioterapi() == TRUE) { ?>
                                                     <div class="form-group">
                                                         <label class="control-label">Program</label>
                                                         <div class="input-group mb-3">
-                                                            <?php echo form_textarea(array('id' => 'program', 'name' => 'program', 'class' => 'form-control pull-right', 'value' => $sql_medc->program, 'placeholder' => 'Isikan Program (Khusus Dokter) ...', 'style' => 'height: 123px;')) ?>
+                                                            <?php echo form_textarea(array('id' => 'program', 'name' => 'program', 'class' => 'form-control rounded-0 pull-right', 'value' => $sql_medc->program, 'placeholder' => 'Isikan Program (Khusus Dokter) ...', 'style' => 'height: 123px;')) ?>
                                                         </div>
                                                     </div>
                                                 <?php } else { ?>
@@ -155,7 +155,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label">Alergi</label>
                                                         <div class="input-group mb-3">
-                                                            <?php echo form_textarea(array('id' => 'alergi', 'name' => 'alergi', 'class' => 'form-control pull-right', 'value' => $sql_medc->alergi, 'placeholder' => 'Isikan Alergi ...', 'style' => 'height: 211px;')) ?>
+                                                            <?php echo form_textarea(array('id' => 'alergi', 'name' => 'alergi', 'class' => 'form-control rounded-0 pull-right', 'value' => $sql_medc->alergi, 'placeholder' => 'Isikan Alergi ...', 'style' => 'height: 211px;')) ?>
                                                         </div>
                                                     </div>
                                                 <?php } else { ?>
@@ -167,7 +167,7 @@
                                                             <div class="form-group">
                                                                 <label class="control-label">TTV</label>
                                                                 <div class="input-group mb-3">
-                                                    <?php echo form_textarea(array('id' => 'ttv', 'name' => 'ttv', 'class' => 'form-control pull-right', 'value' => $sql_medc->ttv, 'placeholder' => 'Isikan TTV ...', 'style' => 'height: 211px;')) ?>
+                                                    <?php echo form_textarea(array('id' => 'ttv', 'name' => 'ttv', 'class' => 'form-control rounded-0 pull-right', 'value' => $sql_medc->ttv, 'placeholder' => 'Isikan TTV ...', 'style' => 'height: 211px;')) ?>
                                                                 </div>
                                                             </div>
                                                 <?php } else { ?>
@@ -183,41 +183,41 @@
                                                     <div class="form-group row">
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Suhu Tubuh</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_st', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Suhu Tubuh ...', 'value' => $sql_medc->ttv_st)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_st', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Suhu Tubuh ...', 'value' => $sql_medc->ttv_st)) ?>
                                                         </div>
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Berat Badan</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_bb', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Berat Badan ...', 'value' => $sql_medc->ttv_bb)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_bb', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Berat Badan ...', 'value' => $sql_medc->ttv_bb)) ?>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Tinggi Badan</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_tb', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Tinggi Badan ...', 'value' => $sql_medc->ttv_tb)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_tb', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Tinggi Badan ...', 'value' => $sql_medc->ttv_tb)) ?>
                                                         </div>
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Nadi</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_nadi', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Tinggi Badan ...', 'value' => $sql_medc->ttv_nadi)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_nadi', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Tinggi Badan ...', 'value' => $sql_medc->ttv_nadi)) ?>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Sistole</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_sistole', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Sistole ...', 'value' => $sql_medc->ttv_sistole)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_sistole', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Sistole ...', 'value' => $sql_medc->ttv_sistole)) ?>
                                                         </div>
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Diastole</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_diastole', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Diastole ...', 'value' => $sql_medc->ttv_diastole)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_diastole', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Diastole ...', 'value' => $sql_medc->ttv_diastole)) ?>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Laju Napas</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_laju', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Laju Napas ...', 'value' => $sql_medc->ttv_laju)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_laju', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Laju Napas ...', 'value' => $sql_medc->ttv_laju)) ?>
                                                         </div>
                                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Saturasi</label>
                                                         <div class="col-sm-3">
-                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_saturasi', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Saturasi ...', 'value' => $sql_medc->ttv_saturasi)) ?>
+                                                            <?php echo form_input(array('id' => 'ttv', 'name' => 'ttv_saturasi', 'class' => 'form-control rounded-0 pull-right', 'placeholder' => 'Saturasi ...', 'value' => $sql_medc->ttv_saturasi)) ?>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
@@ -298,10 +298,6 @@
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/moment/moment.min.js') ?>"></script>
 <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">
 
-<!-- Toastr -->
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
-
 <script type="text/javascript">
     $(function () {
         $("input[id=ttv]").autoNumeric({aSep: '.', aDec: ',', aPad: false}); 
@@ -340,7 +336,5 @@
                     .append("<a>[" + item.kode + "] " + item.diagnosa_en + "</a>")
                     .appendTo(ul);
         };
-
-<?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>
