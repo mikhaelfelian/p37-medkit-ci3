@@ -24,7 +24,7 @@
                 <?php foreach ($sql_medc_res->result() as $resep) { ?>
                     <tr>
                         <td class="text-center" style="width: 50px;">
-                            <?php if ($sql_medc->status < 5) { ?>
+                            <?php if ($sql_medc->status < 5 && $resep->status != 4) { ?>
                                 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE) { ?>
                                     <?php echo anchor(base_url('medcheck/resep/hapus.php?id=' . $this->input->get('id') . '&item_id=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-trash"></i>', 'class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus [' . $resep->no_resep . '] ?\')"') ?>
                                 <?php } else { ?>
