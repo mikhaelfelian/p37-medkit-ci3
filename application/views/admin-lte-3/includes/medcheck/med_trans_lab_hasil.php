@@ -1,10 +1,12 @@
-<?php echo form_open_multipart(base_url('medcheck/cart_medcheck_lab_nilai.php'), 'autocomplete="off"') ?>
+<?php echo form_open(base_url('medcheck/cart_medcheck_lab_nilai.php'), array('autocomplete' => 'off', 'id' => 'lab_hasil_form')) ?>
 <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
 <?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
 <?php echo form_hidden('id_lab', $this->input->get('id_lab')); ?>
 <?php echo form_hidden('status', $this->input->get('status')); ?>
 <?php echo form_hidden('id_det', $this->input->get('id_item')); ?>
 <?php echo form_hidden('act', 'lab_input'); ?>
+<?php echo form_hidden('route', uri_string() . '?' . $_SERVER['QUERY_STRING']); ?>
+<?php echo add_form_protection(); ?>
 
 <div class="card">
     <div class="card-header">
@@ -76,4 +78,6 @@
         </div>                            
     </div>
 </div>
+
+<?php echo add_double_submit_protection('lab_hasil_form'); ?>
 <?php echo form_close() ?>

@@ -114,10 +114,6 @@
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
-<!-- Toastr -->
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
-
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
@@ -208,8 +204,5 @@
                         .appendTo(ul);
             };
         <?php } ?>
-    
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
-        <?php echo $this->session->flashdata('master_toast'); ?>
     });
 </script>

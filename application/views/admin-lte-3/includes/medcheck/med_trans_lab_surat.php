@@ -1,9 +1,11 @@
-<?php echo form_open(base_url('medcheck/set_medcheck_lab_upd.php'), 'autocomplete="off"') ?>
+<?php echo form_open(base_url('medcheck/set_medcheck_lab_upd.php'), 'autocomplete="off" id="lab_surat_form"') ?>
 <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
 <?php echo form_hidden('id_lab', general::enkrip($sql_medc_lab_rw->id)); ?>
 <?php echo form_hidden('id_analis', (!empty($sql_medc_lab_rw->id_analis) ? general::enkrip($sql_medc_lab_rw->id_analis) : general::enkrip($this->ion_auth->user()->row()->id))); ?>
 <?php echo form_hidden('status', $this->input->get('status')); ?>
 <?php echo form_hidden('act', $this->input->get('act')); ?>
+<?php echo form_hidden('route', uri_string() . '?' . $_SERVER['QUERY_STRING']); ?>
+<?php echo add_form_protection(); ?>
 
 <div class="card">
     <div class="card-header">
@@ -89,4 +91,5 @@
         </div>                            
     </div>
 </div>
+<?php echo add_double_submit_protection('lab_surat_form'); ?>
 <?php echo form_close() ?>

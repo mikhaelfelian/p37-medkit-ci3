@@ -11644,7 +11644,6 @@ public function set_medcheck_lab_adm_save() {
 
             $this->form_validation->set_rules('id', 'ID', 'required');
             $this->form_validation->set_rules('id_item', 'Kode', 'required');
-            $this->form_validation->set_rules('harga', 'Harga', 'required');
             $this->form_validation->set_rules('jml', 'Jml', 'required|greater_than[0]');
             
             $this->form_validation->set_message('greater_than', 'Harap gunakan menu retur. Kolom %s harus lebih besar dari 0');        
@@ -11653,85 +11652,88 @@ public function set_medcheck_lab_adm_save() {
                 $msg_error = [
                     'id'        => form_error('id'),
                     'kode'      => form_error('id_item'),
-                    'harga'     => form_error('harga'),
                     'jml'       => form_error('jml'),
                 ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 $this->session->set_flashdata('jml', $jml);
                 
-                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
+                if (!empty($rute)) {
+                    redirect(base_url($rute));
+                } else {
+                    redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
+                }
             } else {
                 try {
                     // Check if cache library is loaded
                     if (!isset($this->cache) || !is_object($this->cache)) {
                         $this->load->driver('cache', array('adapter' => 'file'));
                     }
-                    
+
                     // Create a cache lock to prevent race conditions
                     $lock_key = 'medcheck_cart_lock_' . general::dekrip($id) . '_' . general::dekrip($id_item);
                     if ($this->cache->get($lock_key)) {
                         throw new Exception("Proses sedang berlangsung, silahkan coba beberapa saat lagi.");
                     }
-                    
+
                     // Set lock for 30 seconds
                     $this->cache->save($lock_key, true, 30);
-                    
-                $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_item   = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
-                $sql_medc_ck= $this->db->where('id_medcheck', general::dekrip($id))->where('id_item', general::dekrip($id_item))->get('tbl_trans_medcheck_det');
-                $sql_radg_ck= $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
-                $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                    $harga      = (float)general::format_angka_db($hrg);
-                    $potongan   = (float)general::format_angka_db($pot);
-                    $jml_pot    = $potongan * (int)$jml;
-                $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
-                
-                $disk1      = $harga - (($diskon1 / 100) * $harga);
-                $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
-                $diskon     = $harga - $disk3;
-                $subtotal   = ($disk3 - $potongan) * (int)$jml;
+
+                    $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                    $sql_item    = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
+                    $sql_medc_ck = $this->db->where('id_medcheck', general::dekrip($id))->where('id_item', general::dekrip($id_item))->get('tbl_trans_medcheck_det');
+                    $sql_radg_ck = $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
+                    $sql_sat     = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
+                    $harga       = (float)general::format_angka_db($hrg);
+                    $potongan    = (float)general::format_angka_db($pot);
+                    $jml_pot     = $potongan * (int)$jml;
+                    $dokter      = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
+
+                    $disk1       = $harga - (($diskon1 / 100) * $harga);
+                    $disk2       = $disk1 - (($diskon2 / 100) * $disk1);
+                    $disk3       = $disk2 - (($diskon3 / 100) * $disk2);
+                    $diskon      = $harga - $disk3;
+                    $subtotal    = ($disk3 - $potongan) * (int)$jml;
 
                     $data = [
-                    'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                    'id_medcheck'   => (int)$sql_medc->id,
-                    'id_item'       => (int)$sql_item->id,
-                    'id_item_kat'   => (int)$sql_item->id_kategori,
-                    'id_item_sat'   => (int)$sql_item->id_satuan,
-                    'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                    'id_dokter'     => (int)$dokter,
-                    'id_lab'        => (int)general::dekrip($id_lab),
-                    'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
-                    'id_rad'        => (int)general::dekrip($id_rad),
-                    'kode'          => $sql_item->kode,
-                    'item'          => $sql_item->produk,
-                    'keterangan'    => $keterangan,
-                    'hasil_lab'     => $hasil,
-                    'harga'         => $harga,
-                    'jml'           => (int)$jml,
-                    'jml_satuan'    => '1',
-                    'satuan'        => $sql_sat->satuanTerkecil,
-                    'disk1'         => (float)$diskon1,
-                    'disk2'         => (float)$diskon2,
-                    'disk3'         => (float)$diskon3,
-                    'diskon'        => (float)$diskon,
+                        'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                        'id_medcheck'   => (int)$sql_medc->id,
+                        'id_item'       => (int)$sql_item->id,
+                        'id_item_kat'   => (int)$sql_item->id_kategori,
+                        'id_item_sat'   => (int)$sql_item->id_satuan,
+                        'id_user'       => (int)$this->ion_auth->user()->row()->id,
+                        'id_dokter'     => (int)$dokter,
+                        'id_lab'        => (int)general::dekrip($id_lab),
+                        'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
+                        'id_rad'        => (int)general::dekrip($id_rad),
+                        'kode'          => $sql_item->kode,
+                        'item'          => $sql_item->produk,
+                        'keterangan'    => $keterangan,
+                        'hasil_lab'     => $hasil,
+                        'harga'         => $harga,
+                        'jml'           => (int)$jml,
+                        'jml_satuan'    => '1',
+                        'satuan'        => $sql_sat->satuanTerkecil,
+                        'disk1'         => (float)$diskon1,
+                        'disk2'         => (float)$diskon2,
+                        'disk3'         => (float)$diskon3,
+                        'diskon'        => (float)$diskon,
                         'potongan'      => (float)$jml_pot,
-                    'subtotal'      => (float)$subtotal,
-                    'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                    'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
-                    ]; 
-                
-                # Cek apakah sudah di posting atau belum ?
-                # Kalau sudah yg bisa input hny rad, lab, dokter
-                if($sql_medc->status < 5){
-                    # Start Transact SQL
+                        'subtotal'      => (float)$subtotal,
+                        'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
+                        'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
+                    ];
+
+                    # Cek apakah sudah di posting atau belum ?
+                    # Kalau sudah yg bisa input hny rad, lab, dokter
+                    if ($sql_medc->status < 5) {
+                        # Start Transact SQL
                         $this->db->trans_begin();
-                    
-                    # Simpan pada tabel medcheck det
-                    $this->db->insert('tbl_trans_medcheck_det', $data);
+
+                        # Simpan pada tabel medcheck det
+                        $this->db->insert('tbl_trans_medcheck_det', $data);
 
                         if ($this->db->trans_status() === FALSE) {
                             $this->db->trans_rollback();
@@ -11741,12 +11743,12 @@ public function set_medcheck_lab_adm_save() {
                             $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data item berhasil disimpan!");');
                         }
                     } else {
-                    if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakRad() == TRUE OR akses::hakAnalis() == TRUE){
-                        # Start Transact SQL
+                        if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakRad() == TRUE OR akses::hakAnalis() == TRUE) {
+                            # Start Transact SQL
                             $this->db->trans_begin();
-                    
-                        # Simpan pada tabel medcheck det
-                        $this->db->insert('tbl_trans_medcheck_det', $data);
+
+                            # Simpan pada tabel medcheck det
+                            $this->db->insert('tbl_trans_medcheck_det', $data);
 
                             if ($this->db->trans_status() === FALSE) {
                                 $this->db->trans_rollback();
@@ -11767,15 +11769,19 @@ public function set_medcheck_lab_adm_save() {
                         $this->cache->delete($lock_key);
                     }
                 }
-                
-                redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.(!empty($id_lab) ? '&id_lab='.$id_lab : '').(!empty($id_rad) ? '&id_rad='.$id_rad : '').(!empty($id_resep) ? '&id_resep='.$id_resep : '').'&status='.$status.(!empty($rute) ? '&route='.$rute : '')));
+
+                if (!empty($rute)) {
+                    redirect(base_url($rute));
+                } else {
+                    redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.(!empty($id_lab) ? '&id_lab='.$id_lab : '').(!empty($id_rad) ? '&id_rad='.$id_rad : '').(!empty($id_resep) ? '&id_resep='.$id_resep : '').'&status='.$status));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }      
+    }
 
     public function cart_medcheck_retur_ranap() {
         if (akses::aksesLogin() == TRUE) {
@@ -13349,91 +13355,95 @@ public function set_medcheck_lab_adm_save() {
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->post('id');
             $id_item    = $this->input->post('id_item');
-            $id_det     = $this->input->post('id_det'); // ==> Medcheck Det
-            $id_lab     = $this->input->post('id_lab'); // ==> Lab Det
+            $id_det     = $this->input->post('id_det'); 
+            $id_lab     = $this->input->post('id_lab');
             $item       = $this->input->post('item');
             $item_ket   = $this->input->post('item_ket');
-            $hasil      = $this->input->post('keterangan');
+            $status     = $this->input->post('status');
+            $act        = $this->input->post('act');
+            $route      = $this->input->post('route');
+            
             $nilai      = $_POST['nilai_normal'];
-            $satuan     = $_POST['nilai_satuan'];
+            $satuan     = $_POST['nilai_satuan']; 
             $hasil      = $_POST['nilai_hasil'];
             $status_hsl = $_POST['status_hsl'];
             $status_wrn = $_POST['status_wrn'];
-            $status     = $this->input->post('status');
-            $act        = $this->input->post('act');
-            
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
             $this->form_validation->set_rules('id', 'ID', 'required');
             $this->form_validation->set_rules('id_item', 'Kode', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                    'kode'      => form_error('id_item'),
-                );
+                $msg_error = [
+                    'id'   => form_error('id'),
+                    'kode' => form_error('id_item'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                redirect(base_url($route));
+            }else{
+                try {
+                    if (!check_form_submitted('lab_hasil_form')) {
+                        throw new Exception('Invalid form submission');
+                        // Redirect to route if form already submitted
+                        redirect(base_url($route));
+                    }
 
-                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
-            } else {
-                $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_item   = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
-                $sql_medc_ck= $this->db->where('id_medcheck', general::dekrip($id))->where('id_item', general::dekrip($id_item))->get('tbl_trans_medcheck_det');
-                $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                $harga      = general::format_angka_db($hrg);
-                $potongan   = general::format_angka_db($pot);
-                $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
-                
-                $data = array(
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'tgl_baca'      => date('Y-m-d H:i:s'),
-//                    'status_hsl_lab'=> $item_ket,
-                );
-                
-                $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_medcheck_det', $data);                
-                    
-                foreach ($nilai as $key => $hsl){
-                    $sql_nilai      = $this->db->where('id', general::dekrip($key))->get('tbl_m_produk_ref_input')->row();
-                    $input_id       = $sql_nilai->id;
-                    $input_name     = $sql_nilai->item_name;
-                    $input_sat      = $satuan[$key];
-                    $input_hsl      = $hasil[$key];
-                    $input_hsl_st   = $status_hsl[$key];
-                    $input_hsl_wrn  = $status_wrn[$key];
-                    $input_val      = $hsl;
-                    
-                    $data_lab = array(
-                        'id_medcheck'       => $sql_medc->id,
-                        'id_medcheck_det'   => $sql_medc_ck->row()->id,
-                        'id_lab'            => general::dekrip($id_lab),
-                        'id_user'           => $this->ion_auth->user()->row()->id,
-                        'id_item'           => general::dekrip($id_item),
-                        'id_item_ref_ip'    => $input_id,
-                        'tgl_simpan'        => date('Y-m-d H:i:s'),
-                        'item_name'         => $input_name,
-                        'item_value'        => $input_val,
-                        'item_satuan'       => $input_sat,
-                        'item_hasil'        => $input_hsl,
-                        'status'            => $sql_nilai->status,
-                        'status_hsl_lab'    => (!empty($input_hsl_st) ? $input_hsl_st : '0'),
-                        'status_hsl_wrn'    => (!empty($input_hsl_wrn) ? $input_hsl_wrn : '0'),
-                    );
+                    $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                    $sql_item = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
+                    $sql_medc_ck = $this->db->where('id_medcheck', general::dekrip($id))
+                                        ->where('id_item', general::dekrip($id_item))
+                                        ->get('tbl_trans_medcheck_det');
+                    // Start transaction
+                    $this->db->trans_begin();
 
-                    $this->db->insert('tbl_trans_medcheck_lab_hsl', $data_lab);
+                    $data = [
+                        'tgl_modif' => date('Y-m-d H:i:s'),
+                        'tgl_baca'  => date('Y-m-d H:i:s'),
+                    ];
                     
-//                    echo '<pre>';
-//                    print_r($data_lab);
-//                    echo '</pre>';
+                    $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_medcheck_det', $data);                
+                    
+                    // Delete existing lab results before inserting new ones
+                    $this->db->where('id_medcheck', general::dekrip($id))->where('id_lab', general::dekrip($id_lab))->delete('tbl_trans_medcheck_lab_hsl');
+                    
+                    foreach ($nilai as $key => $hsl) {
+                        $sql_nilai = $this->db->where('id', general::dekrip($key))->get('tbl_m_produk_ref_input')->row();
+                        
+                        $data_lab = [
+                            'id_medcheck'       => $sql_medc->id,
+                            'id_medcheck_det'   => $sql_medc_ck->row()->id,
+                            'id_lab'            => general::dekrip($id_lab),
+                            'id_user'           => $this->ion_auth->user()->row()->id,
+                            'id_item'           => general::dekrip($id_item),
+                            'id_item_ref_ip'    => $sql_nilai->id,
+                            'tgl_simpan'        => date('Y-m-d H:i:s'),
+                            'item_name'         => $sql_nilai->item_name,
+                            'item_value'        => $hsl,
+                            'item_satuan'       => $satuan[$key],
+                            'item_hasil'        => $hasil[$key],
+                            'status'            => $sql_nilai->status,
+                            'status_hsl_lab'    => !empty($status_hsl[$key]) ? $status_hsl[$key] : '0',
+                            'status_hsl_wrn'    => !empty($status_wrn[$key]) ? $status_wrn[$key] : '0',
+                        ];
+
+                        $this->db->insert('tbl_trans_medcheck_lab_hsl', $data_lab);
+                    }
+
+                    // Check transaction status and commit/rollback accordingly
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        throw new Exception('Gagal menyimpan data laboratorium');
+                    } else {
+                        $this->db->trans_commit();
+                    }
+                    
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data laborat berhasil !");');
+                    redirect(base_url('medcheck/tambah.php?act=lab_input&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error saving lab data: '.$e->getMessage().'");');
+                    redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
                 }
-                   
-//                echo $id_det;
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-                
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data laborat berhasil !");');
-                redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -15804,12 +15814,25 @@ public function set_medcheck_lab_adm_save() {
                 }
             } else {
                 # Untuk Mencetak dengan pilihan                
-                $sql_medc_lab_det2   = $this->db->where('status', '3')->where('status_ctk', '1')->where('status_hsl', '1')->group_by('id_lab_kat')->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->get('tbl_trans_medcheck_det')->result();
+                $sql_medc_lab_det2 = $this->db->where('status', '3')
+                                             ->where('status_ctk', '1')
+                                             ->where('status_hsl', '1')
+                                             ->group_by('id_lab_kat')
+                                             ->where('id_medcheck', general::dekrip($id_medcheck))
+                                             ->where('id_lab', general::dekrip($id_lab))
+                                             ->get('tbl_trans_medcheck_det')
+                                             ->result();
                 
                 $i = 0;
                 foreach ($sql_medc_lab_det2 as $det2) {
                     $sql_kat2 = $this->db->where('id', $det2->id_lab_kat)->get('tbl_m_kategori')->row();
-                    $sql_det2 = $this->db->where('status_ctk', '1')->where('status_hsl', '1')->where('id_medcheck', $det2->id_medcheck)->where('id_lab', $det2->id_lab)->where('id_lab_kat', $det2->id_lab_kat)->get('tbl_trans_medcheck_det')->result();                        
+                    $sql_det2 = $this->db->where('status_ctk', '1')
+                                        ->where('status_hsl', '1')
+                                        ->where('id_medcheck', $det2->id_medcheck)
+                                        ->where('id_lab', $det2->id_lab)
+                                        ->where('id_lab_kat', $det2->id_lab_kat)
+                                        ->get('tbl_trans_medcheck_det')
+                                        ->result();                        
                     
                     if (!empty($det2->id_lab_kat)) {
                         $pdf->SetFont('Arial', 'Bi', '9');
@@ -15820,71 +15843,72 @@ public function set_medcheck_lab_adm_save() {
                     foreach ($sql_det2 as $medc2) {
                         $sql_lab_rws2 = $this->db->where('id_medcheck', $medc2->id_medcheck)->get('tbl_trans_medcheck_lab');
                         if ($sql_lab_rws2->num_rows() > 1) {
-                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)->where('id_lab', $medc2->id_lab)->where('id_item', $medc2->id_item)->get('tbl_trans_medcheck_lab_hsl');
+                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)
+                                               ->where('id_lab', $medc2->id_lab)
+                                               ->where('id_item', $medc2->id_item)
+                                               ->get('tbl_trans_medcheck_lab_hsl');
                         } else {
-                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)->where('id_item', $medc2->id_item)->get('tbl_trans_medcheck_lab_hsl');
+                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)
+                                               ->where('id_item', $medc2->id_item)
+                                               ->get('tbl_trans_medcheck_lab_hsl');
                         }
 
                         $pdf->SetFont('Arial', '', '8');
 
                         if (!empty($det2->id_lab_kat)) {
-//                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_kat'] == $det->id_lab_kat) {
-                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
-//                            }
+                            $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
                         }
                         
-                        if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                            $pdf->Cell(18.75, .5, $medc2->item.'' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//                            $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+                        if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
+                            // Fix: Don't use unassigned variable $lab_det2
+                            $pdf->Cell(18.75, .5, $medc2->item, '', 0, 'L', $fill);
                             $pdf->Ln();
                         }
 
                         foreach ($sql_lab2->result() as $lab2) {
-                                $x = $pdf->GetX();
-                                $y = $pdf->GetY();
-                                
-//                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_lab_hsl'] == $lab->id) {
-                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                                    $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
-                                }
-                                
-                                # Jika warna hasil di tandai merah
-                                if($lab2->status_hsl_wrn == 1){
-                                    $pdf->SetTextColor(249,11,11);
-                                }
-                                
-                                $itm_tg     = 0.5; # tinggi cell
-                                $itm_lbr    = 4;
-                                $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
-                                $len        = strlen($lab2->item_hasil);
-                                $itm_spasi  = ($len > 35 ? 0.25 : 0);
-                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
-                                                            
-                                
-                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                }else{
-//                                    $pdf->Cell(.5, .5, '', '1', 0, 'L', $fill);
-                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                }
-                                
-                                $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-                                $pdf->SetXY($x + 11, $y);
-                                $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                $pdf->SetXY($x + 15, $y);
-                                $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                $pdf->Ln(0);
-                                
-                                # Jika warna hasil di tandai merah
-                                if($lab2->status_hsl_wrn == 1){
-                                    $pdf->SetTextColor(0,0,0);
-                                }
+                            $x = $pdf->GetX();
+                            $y = $pdf->GetY();
+                            
+                            if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
+                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+                            }
+                            
+                            # Jika warna hasil di tandai merah
+                            if($lab2->status_hsl_wrn == 1) {
+                                $pdf->SetTextColor(249, 11, 11);
+                            }
+                            
+                            $itm_tg     = 0.5; # tinggi cell
+                            $itm_lbr    = 4;
+                            $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
+                            $len        = strlen($lab2->item_hasil);
+                            $itm_spasi  = ($len > 35 ? 0.25 : 0);
+                            $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
+                                                        
+                            if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
+                                $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                            } else {
+                                $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                            }
+                            
+                            $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
+                            $pdf->SetXY($x + 11, $y);
+                            $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                            $pdf->SetXY($x + 15, $y);
+                            $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                            $pdf->Ln(0.35);
+                            
+                            # Jika warna hasil di tandai merah
+                            if($lab2->status_hsl_wrn == 1) {
+                                $pdf->SetTextColor(0, 0, 0);
+                            }
                         }
                     }
                     
                     $i++;
                 }                
             }
+            
             
             $pdf->SetFont('Arial', 'i', '8');
             $pdf->Ln();

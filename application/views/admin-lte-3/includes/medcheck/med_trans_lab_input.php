@@ -1,14 +1,16 @@
 <?php if ($sql_medc->status < 5) { ?>
     <?php if ($sql_medc_lab_rw->status != '2') { ?>
-        <?php echo form_open(base_url('medcheck/cart_medcheck_simpan.php'), 'autocomplete="off"') ?>
-        <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
-        <?php echo form_hidden('id_lab', general::enkrip($sql_medc_lab_rw->id)); ?>
-        <?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
+        <?php echo form_open(base_url('medcheck/cart_medcheck_simpan.php'), array('autocomplete' => 'off', 'id' => 'lab_form')) ?>
+        <?php echo form_hidden('id', !empty($sql_medc->id) ? general::enkrip($sql_medc->id) : ''); ?>
+        <?php echo form_hidden('id_lab', !empty($sql_medc_lab_rw->id) ? general::enkrip($sql_medc_lab_rw->id) : ''); ?>
+        <?php echo form_hidden('id_item', !empty($sql_produk->id) ? general::enkrip($sql_produk->id) : ''); ?>
         <?php // echo form_hidden('dokter', (!empty($sql_medc_lab_rw->id_dokter) ? $sql_medc_lab_rw->id_dokter : $sql_medc->id_dokter));     ?>
         <?php echo form_hidden('status', $this->input->get('status')); ?>
         <?php echo form_hidden('status_item', '3'); ?>
         <?php echo form_hidden('act', $this->input->get('act')); ?>
-
+        <?php echo form_hidden('route', uri_string() . '?' . $_SERVER['QUERY_STRING']); ?>
+        <?php echo add_form_protection(); ?>
+        
         <input type="hidden" id="id_dokter" name="id_dokter">
 
         <div class="card">
@@ -23,7 +25,7 @@
                         <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
                             <label for="inputEmail3" class="col-sm-4 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
                             <div class="col-sm-8">
-                                <?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Item Laborat ...', 'value' => $sql_produk->kode)) ?>
+                                <?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Item Laborat ...', 'value' => (!empty($sql_produk) ? $sql_produk->kode : ''))) ?>
                             </div>
                         </div>
                         <?php if (!empty($sql_produk)) { ?>
@@ -76,21 +78,13 @@
                                         <div class="input-group-append">
                                             <span class="input-group-text">Rp. </span>
                                         </div>
-                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Harga ...', 'value' => (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : ''), 'readonly' => 'true')) ?>
+                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['harga']) ? ' is-invalid' : ''), 'placeholder' => 'Harga ...', 'value' => (!empty($sql_produk->harga_jual) ? (float) $sql_produk->harga_jual : ''), 'readonly' => 'true')) ?>
                                     </div>
                                 </div>
                             </div>
                         <?php } else { ?>
-                            <?php echo form_hidden('harga', (float)$sql_produk->harga_jual); ?>
+                            <?php echo form_hidden('harga', (!empty($sql_produk->harga_jual) ? (float)$sql_produk->harga_jual : '')); ?>
                         <?php } ?>
-                        <!--
-                        <div class="form-group row">
-                            <label for="inputEmail3" class="col-sm-4 col-form-label">Ket</label>
-                            <div class="col-sm-8">
-                        <?php // echo form_input(array('id' => 'keterangan', 'name' => 'keterangan', 'class' => 'form-control pull-left', 'placeholder' => 'Keterangan ...')) ?>
-                            </div>
-                        </div>
-                        -->
                     </div>
                 </div>
             </div>
@@ -106,6 +100,8 @@
                 </div>                            
             </div>
         </div>
+        
+        <?php echo add_double_submit_protection('lab_form'); ?>
         <?php echo form_close() ?>
     <?php } ?>
 <?php } ?>
