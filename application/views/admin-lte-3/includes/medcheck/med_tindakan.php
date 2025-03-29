@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <!-- Default box -->
-                    <div class="card">
+                    <div class="card rounded-0">
                         <div class="card-header">
                             <h3 class="card-title"><?php echo $sql_pasien->nama_pgl; ?> <small><i>(<?php echo $this->tanggalan->usia($sql_pasien->tgl_lahir) ?>)</i></small></h3>
                         </div>

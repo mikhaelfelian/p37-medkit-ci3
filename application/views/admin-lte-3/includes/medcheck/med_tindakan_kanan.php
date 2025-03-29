@@ -1,5 +1,5 @@
 <?php if ($sql_medc->tipe != '6') { ?>
-    <div class="card card-success card-outline">
+    <div class="card card-success card-outline rounded-0">
         <div class="card-body box-profile">
             <div class="post">
                 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE) { ?>
@@ -143,7 +143,7 @@
         </div>
     </div>
 <?php } ?>
-<div class="card card-success card-outline">
+<div class="card card-success card-outline rounded-0">
     <div class="card-body box-profile">
         <div class="text-center">
             <?php
@@ -169,18 +169,18 @@
         </p>
 
         <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakAnalis() == TRUE) { ?>
-            <p class="text-muted text-center"><?php echo anchor(base_url('master/data_pasien_tambah.php?id=' . general::enkrip($sql_medc->id_pasien) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-edit"></i> Ubah Pasien', 'class="btn btn-warning btn-flat btn-sm"'); ?></p>
+            <p class="text-muted text-center"><?php echo anchor(base_url('master/data_pasien_tambah.php?id=' . general::enkrip($sql_medc->id_pasien) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-edit"></i> Ubah Pasien', 'class="btn btn-warning btn-flat btn-sm rounded-0"'); ?></p>
         <?php } ?>
-        <p class="text-muted text-center"><?php echo anchor(base_url('medcheck/cetak_label_json.php?id=' . general::enkrip($sql_medc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-print"></i> Cetak Label', 'class="btn btn-primary btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?></p>
-        <p class="text-muted text-center"><?php echo anchor(base_url('master/data_pasien_pdf.php?id=' . general::enkrip($sql_medc->id_pasien) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-file-pdf"></i> Kartu Pasien', 'class="btn btn-success btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?></p>
+        <p class="text-muted text-center"><?php echo anchor(base_url('medcheck/cetak_label_json.php?id=' . general::enkrip($sql_medc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-print"></i> Cetak Label', 'class="btn btn-primary btn-flat btn-sm rounded-0" style="width: 107.14px;" target="_blank"'); ?></p>
+        <p class="text-muted text-center"><?php echo anchor(base_url('master/data_pasien_pdf.php?id=' . general::enkrip($sql_medc->id_pasien) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-file-pdf"></i> Kartu Pasien', 'class="btn btn-success btn-flat btn-sm rounded-0" style="width: 107.14px;" target="_blank"'); ?></p>
 
         <ul class="list-group list-group-unbordered mb-3">
-                <li class="list-group-item">
+                <li class="list-group-item rounded-0">
                     <b>TRX ID</b><br/>
                     <span class="float-left"><small><?php echo strtoupper($sql_medc->id) ?></small></span>
                 </li>
             <?php if (!empty($sql_medc->no_rm)) { ?>
-                <li class="list-group-item">
+                <li class="list-group-item rounded-0">
                     <b>No. Register / Kunjungan</b><br/>
                     <span class="float-left"><small><?php echo strtoupper($sql_medc->no_rm) ?></small></span>
                 </li>
@@ -189,7 +189,7 @@
                 switch ($_GET['act']) {
                     default:
                         ?>                        
-                        <li class="list-group-item">
+                        <li class="list-group-item rounded-0">
                             <b>Penjamin</b><br/>
                             <span class="float-left text-danger"><small><b><u><?php echo strtoupper($sql_penjamin->penjamin) ?></u></b></small></span>
                             <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE) { ?>
@@ -203,7 +203,7 @@
 
                     case 'penjamin_edit':
                         ?>                        
-                        <li class="list-group-item">
+                        <li class="list-group-item rounded-0">
                             <?php echo form_open_multipart(base_url('medcheck/set_medcheck_upd_penj.php'), 'autocomplete="off"') ?>
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)) ?>
                             <b>Penjamin</b><br/>
@@ -217,7 +217,7 @@
                                 </select> 
                             </span>
                             <?php echo nbs(2) ?>
-                            <button type="submit" class="btn btn-primary btn-flat btn-sm"><i class="fa fa-save"></i> Simpan</button>
+                            <button type="submit" class="btn btn-primary btn-flat btn-sm rounded-0"><i class="fa fa-save"></i> Simpan</button>
                             <?php echo form_close() ?>
                         </li>
                         <?php
@@ -225,44 +225,44 @@
                 }
                 ?>
             <?php } ?>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>No. RM</b><br/>
                 <span class="float-left"><small><?php echo strtoupper($sql_pasien->kode_dpn . $sql_pasien->kode) ?></small></span>
             </li>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>Tipe</b><br/>
                 <span class="float-left"><small><?php echo general::status_rawat2($sql_medc->tipe); ?></small></span>
             </li>
             <?php if ($sql_medc->tipe == '3') { ?>
-                <li class="list-group-item">
+                <li class="list-group-item rounded-0">
                     <b>Kamar</b><br/>
                     <span class="float-left"><small><?php echo $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_kamar')->row()->kamar; ?></small></span>
                 </li>
             <?php } ?>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>Klinik</b><br/>
                 <span class="float-left"><small><?php echo $sql_poli->lokasi; ?></small></span>
             </li>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>Petugas</b><br/>
                 <span class="float-left"><small><?php echo (!empty($sql_petugas->nama_dpn) ? $sql_petugas->nama_dpn . ' ' : '') . $sql_petugas->nama . (!empty($sql_petugas->nama_blk) ? ', ' . $sql_petugas->nama_blk . ' ' : ''); ?></small></span>
             </li>
             <?php if ($sql_medc->tipe != '6') { ?>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>Dokter Utama</b><br/>
                 <span class="float-left"><small><?php echo (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn . ' ' : '') . $sql_dokter->nama . (!empty($sql_dokter->nama_blk) ? ', ' . $sql_dokter->nama_blk . ' ' : ''); ?></small></span>
             </li>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>Tgl Daftar</b><br/>
                 <span class="float-left"><small><?php echo $this->tanggalan->tgl_indo5($sql_dft->tgl_simpan); ?></small></span>
             </li>
             <?php } ?>
-            <li class="list-group-item">
+            <li class="list-group-item rounded-0">
                 <b>Tgl Masuk</b><br/>
                 <span class="float-left"><small><?php echo $this->tanggalan->tgl_indo5($sql_medc->tgl_masuk); ?></small></span>
             </li>
             <?php if ($sql_medc->status_bayar == '1') { ?>
-                <li class="list-group-item">
+                <li class="list-group-item rounded-0">
                     <b>Tgl Selesai</b><br/>
                     <span class="float-left"><small><?php echo $this->tanggalan->tgl_indo5($sql_medc->tgl_bayar); ?></small></span>
                     <?php if ($sql_medc->tipe != '3') { ?>
@@ -273,13 +273,13 @@
                 </li>
             <?php } ?>
             <?php if (!empty($sql_dft_gc->id)) { ?>
-                <li class="list-group-item">
+                <li class="list-group-item rounded-0">
                     <b>Persetujuan Umum</b><br/>
-                    <span class="float-left"><small><?php echo anchor(base_url('surat/print_pdf_gc.php?dft=' . general::enkrip($sql_dft_gc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-signature"></i> Cetak', 'class="btn btn-primary btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?></small></span>
+                    <span class="float-left"><small><?php echo anchor(base_url('surat/print_pdf_gc.php?dft=' . general::enkrip($sql_dft_gc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-signature"></i> Cetak', 'class="btn btn-primary btn-flat btn-sm rounded-0" style="width: 107.14px;" target="_blank"'); ?></small></span>
                 </li>
             <?php } ?>
-                <li class="list-group-item">
-                    <a href="https://wa.me/<?php echo $sql_pasien->no_hp ?>" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #25D366; color: white; text-decoration: none; border-radius: 5px; font-size: 16px;">Chat via WhatsApp</a>
+                <li class="list-group-item rounded-0">
+                    <a href="https://wa.me/<?php echo $sql_pasien->no_hp ?>" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #25D366; color: white; text-decoration: none; border-radius: 0; font-size: 16px;">Chat via WhatsApp</a>
                 </li>
         </ul>
     </div>

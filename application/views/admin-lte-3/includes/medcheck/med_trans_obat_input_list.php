@@ -30,9 +30,13 @@
                         <th class="text-center">
                             <?php if ($_GET['act'] != 'res_input_rc') { ?>
                                 <?php if ($sql_medc_res_rw->status == '0') { ?>
+                                    <?php // if ($cart->id_user == $this->ion_auth->user()->row()->id) { ?>
                                     <?php echo anchor(base_url('medcheck/cart_medcheck_resep_itm_hps.php?id=' . $this->input->get('id') . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status') . '&id_item=' . general::enkrip($cart->id)), '<i class="fa fa-trash"></i> Hapus', 'class="btn btn-danger btn-flat btn-xs" onclick="return confirm(\'Hapus [' . $cart->item . '] ?\')"') ?>
+                                    <?php // } ?>
                                 <?php } elseif ($sql_medc_res_rw->status == '2') { ?>
+                                    <?php // if ($cart->id_user == $this->ion_auth->user()->row()->id) { ?>
                                     <?php echo anchor(base_url('medcheck/cart_medcheck_resep_itm_hps.php?id=' . $this->input->get('id') . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status') . '&id_item=' . general::enkrip($cart->id)), '<i class="fa fa-trash"></i> Hapus', 'class="btn btn-danger btn-flat btn-xs" onclick="return confirm(\'Hapus [' . $cart->item . '] ?\')"') ?>
+                                    <?php // } ?>
                                 <?php } ?>
                             <?php } ?>
                         </th>
@@ -63,11 +67,13 @@
                         </td>
                         <td class="text-center">
                             <?php if ($_GET['act'] != 'res_input_rc') { ?>
+                                <?php // if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakFarmasi() == TRUE) { ?>
                                 <?php if ($sql_medc_res_rw->status == '0') { ?>
                                     <?php echo anchor(base_url('medcheck/tambah.php?act=res_edit' . '&id=' . general::enkrip($cart->id_medcheck) . '&id_resep=' . general::enkrip($cart->id_resep) . '&status=' . $this->input->get('status') . '&id_produk=' . general::enkrip($cart->id_item) . '&id_item_resep=' . general::enkrip($cart->id) . '&satuan=' . $cart->satuan), 'Aksi &raquo;', 'class="btn ' . ($cart->status_resep == 1 ? 'btn-success' : 'btn-primary') . ' btn-flat btn-xs"') ?>
                                 <?php } elseif ($sql_medc_res_rw->status == '2') { ?>
                                     <?php echo anchor(base_url('medcheck/tambah.php?act=res_edit' . '&id=' . general::enkrip($cart->id_medcheck) . '&id_resep=' . general::enkrip($cart->id_resep) . '&status=' . $this->input->get('status') . '&id_produk=' . general::enkrip($cart->id_item) . '&id_item_resep=' . general::enkrip($cart->id) . '&satuan=' . $cart->satuan), 'Aksi &raquo;', 'class="btn ' . ($cart->status_resep == 1 ? 'btn-success' : 'btn-primary') . ' btn-flat btn-xs"') ?>
                                 <?php } ?>
+                                <?php // } ?>
                             <?php } ?>
                         </td>
                     </tr>
@@ -87,9 +93,11 @@
                             <td class="text-left" colspan="3">
                                 <strong>BAHAN RACIKAN :</strong><br/>
                                 <?php foreach ($sql_racikan_dt as $racikan) { ?>
+                                    <?php // if ($_GET['act'] == 'res_input_rc') { ?>
                                     <?php if ($sql_medc_res_rw->status < 4) { ?>
                                         <small><i><?php echo anchor(base_url('medcheck/cart_medcheck_resep_rc_hps.php?id=' . $this->input->get('id') . '&id_resep=' . $this->input->get('id_resep') . '&item_id_det=' . general::enkrip($racikan->id_resep_det) . '&status=' . $this->input->get('status') . '&item_id=' . general::enkrip($racikan->id)), '<i class="fa fa-remove"></i>' . nbs(2), 'class="text-danger" onclick="return confirm(\'Hapus [' . $racikan->item . '] ?\')"') ?></i></small>
                                     <?php } ?>
+                                <?php // }  ?>
                                     <small><i><?php echo $racikan->item; ?></i></small>
                                     <small><i>(<?php echo (float) $racikan->jml . ' ' . $racikan->satuan; ?>) [Rp. <?php echo general::format_angka($racikan->subtotal); ?>]</i></small><br/>
                             <?php } ?>
@@ -116,15 +124,19 @@
                 <?php
                 switch ($sql_medc_res_rw->status) {
                     case '1':
+//                            if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
                         ?>
                         <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=4') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
                         <?php
+//                            }
                         break;
 
                     case '4':
+//                            if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
                         ?>
                         <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=4') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
                         <?php
+//                            }
                         break;
                 }
                 ?>
@@ -194,8 +206,11 @@
                                     <?php echo form_hidden('id_resep', $this->input->get('id_resep')); ?>
                                     <?php echo form_hidden('status', $this->input->get('status')); ?>
 
+                                    <!--<button type="button" class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?act=res_pas_ttd&id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=4') ?>'"><i class="fas fa-signature"></i> TTD Pasien</button>-->
                                     <button type="submit" class="btn btn-danger btn-flat" onclick="return confirm('Apakah ingin melakukan pembatalan resep dengan no [<?php echo $sql_medc_res_rw->no_resep; ?>] ?')"><i class="fas fa-file-pr"></i> Batalkan</button>
                                     <?php echo form_close(); ?>
+                                <?php }else{ ?>
+                                    <!--<button type="button" class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?act=res_pas_ttd&id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=4') ?>'"><i class="fas fa-signature"></i> TTD Pasien</button>-->
                                 <?php } ?>
                                 <?php
                             }

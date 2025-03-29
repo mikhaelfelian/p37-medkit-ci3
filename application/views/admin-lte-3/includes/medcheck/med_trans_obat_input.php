@@ -80,6 +80,7 @@
 
                             </div>
                         </div>
+                        <?php // if (akses::hakDokter() != TRUE) { ?>
                         <div class="form-group row <?php echo (!empty($hasError['harga']) ? 'text-danger' : '') ?>">
                             <label for="inputEmail3" class="col-sm-2 col-form-label">Harga</label>
                             <div class="col-sm-10">
@@ -91,6 +92,9 @@
                                 </div>
                             </div>
                         </div>
+                        <?php // } else { ?>
+                        <?php // echo form_hidden('harga', general::format_angka($sql_produk->harga_jual)); ?>
+                        <?php // } ?>
                         <div class="form-group row">
                             <label for="inputEmail3" class="col-sm-2 col-form-label">Dosis</label>
                             <div class="col-sm-2">
@@ -167,7 +171,7 @@
             </div>
         </div>
         <!-- /.card-body -->
-        <div class="card-footer"
+        <div class="card-footer">
             <div class="row">
                 <div class="col-lg-6">
                     <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=4') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
