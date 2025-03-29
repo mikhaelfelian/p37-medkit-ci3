@@ -78,14 +78,17 @@
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/moment/moment.min.js') ?>"></script>
 <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">
 
-<!-- Toastr -->
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
+<?php if ($_GET['act'] == 'res_pas_ttd') { ?>
+    <!--Signature CDN-->
+    <!--<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>-->
+    <script src="https://cdn.cdnhub.io/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<?php } ?>
 
-<!--Signature CDN-->
-<!--<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>-->
-<script src="https://cdn.cdnhub.io/signature_pad/1.5.3/signature_pad.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<!-- Select2 -->
+<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/js/select2.full.min.js') ?>"></script>
+<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
+<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
 <!-- Page script -->
 <script type="text/javascript">
@@ -152,42 +155,68 @@
         $('#kode').focus();
         $("input[id=harga]").autoNumeric({aSep: '.', aDec: ',', aPad: false});
 
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
+        // Initialize select2bs4
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
 
-        // Data Item Cart
-        $('#kode').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "<?php echo base_url('medcheck/json_item.php?page=obat&status=4') ?>",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
+        // Initialize select2 for kode field
+        $('#kode').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Cari Item ...',
+            minimumInputLength: 3,
+            dropdownCssClass: 'select2-dropdown-bootstrap4 rounded-0',
+            containerCssClass: 'select2-container-bootstrap4 rounded-0',
+            ajax: {
+                url: "<?php echo base_url('medcheck/json_item.php?page=obat&status=4') ?>",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                id: item.kode,
+                                text: item.name,
+                                item: item
+                            };
+                        })
+                    };
+                },
+                cache: true
             },
-            minLength: 4,
-            select: function (event, ui) {
-                var $itemrow = $(this).closest('tr');
-                //Populate the input fields from the returned values
-                $itemrow.find('#id_item').val(ui.item.id);
-                $('#id_item').val(ui.item.id);
-                $('#kode').val(ui.item.kode);
-                window.location.href = "<?php echo base_url('medcheck/tambah.php?act=' . $this->input->get('act') . '&id=' . $this->input->get('id') . (isset($_GET['id_resep']) ? '&id_resep=' . $this->input->get('id_resep') : '') . '&status=' . $this->input->get('status') . (isset($_GET['item_id']) ? '&item_id=' . $this->input->get('item_id') : '') . (isset($_GET['id_item_resep']) ? '&id_item_resep=' . $this->input->get('id_item_resep') : '')) ?>&id_produk=" + ui.item.id + "&harga=" + ui.item.harga + "&satuan=" + ui.item.satuan;
-
-                // Give focus to the next input field to recieve input from user
-                $('#jml').focus();
-                return false;
+            templateResult: formatItem,
+            templateSelection: function (data) {
+                return data.text || data.id;
             }
-
-            // Format the list menu output of the autocomplete
-        }).data("ui-autocomplete")._renderItem = function (ul, item) {
-            return $("<li></li>")
-                    .data("item.autocomplete", item)
-                    .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
-                    .appendTo(ul);
-        };
+        }).on('select2:select', function (e) {
+            var data = e.params.data.item;
+            
+            $('#id_item').val(data.id);
+            $('#kode').val(data.kode);
+            
+            window.location.href = "<?php echo base_url('medcheck/tambah.php?act=' . $this->input->get('act') . '&id=' . $this->input->get('id') . (isset($_GET['id_resep']) ? '&id_resep=' . $this->input->get('id_resep') : '') . '&status=' . $this->input->get('status') . (isset($_GET['item_id']) ? '&item_id=' . $this->input->get('item_id') : '') . (isset($_GET['id_item_resep']) ? '&id_item_resep=' . $this->input->get('id_item_resep') : '')) ?>&id_produk=" + data.id + "&harga=" + data.harga + "&satuan=" + data.satuan;
+            
+            // Give focus to the next input field
+            $('#jml').focus();
+            return false;
+        });
+        
+        // Format the dropdown items
+        function formatItem(item) {
+            if (!item.item) return item.text;
+            
+            var $result = $('<div class="select2-result-item">' +
+                '<div class="select2-result-item__title">' + item.item.name + ' (' + item.item.jml + ')</div>' +
+                '<div class="select2-result-item__description"><small><i>' + item.item.alias + '</i></small></div>' +
+                '<div class="select2-result-item__description"><small><i>' + item.item.kandungan + '</i></small></div>' +
+                '</div>');
+                
+            return $result;
+        }
     });
 </script>

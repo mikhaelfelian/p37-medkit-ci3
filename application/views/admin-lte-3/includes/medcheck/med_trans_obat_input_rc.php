@@ -1,5 +1,5 @@
 <!-- Default box -->
-<?php echo form_open_multipart(base_url('medcheck/cart_medcheck_resep_rc.php'), 'autocomplete="off"') ?>
+<?php echo form_open(base_url('medcheck/cart_medcheck_resep_rc.php'), 'id="resep_rc_form" autocomplete="off"') ?>
 <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
 <?php echo form_hidden('id_resep', $this->input->get('id_resep')); ?>
 <?php echo form_hidden('id_resep_det', $this->input->get('item_id')); ?>
@@ -7,7 +7,7 @@
 <?php echo form_hidden('id_item_rc', general::enkrip($sql_produk->id)); ?>
 <?php echo form_hidden('status', $this->input->get('status')); ?>
 <?php echo form_hidden('act', $this->input->get('act')); ?>
-
+<?php echo add_form_protection(); ?>
 <div id="card" class="card">
     <div class="card-header">
         <h3 class="card-title">FORM RACIKAN - <?php echo $sql_pasien->nama_pgl; ?> <small><i>(<?php echo $this->tanggalan->usia($sql_pasien->tgl_lahir) ?>)</i></small></h3>
@@ -24,7 +24,12 @@
                 <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
                     <label for="inputEmail3" class="col-sm-2 col-form-label"><?php echo (!empty($sql_produk) ? 'Kode' : 'Item') ?></label>
                     <div class="col-sm-10">
-                        <?php echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Kode / Item / Kandungan ...', 'value' => $sql_produk->kode)) ?>
+                        <select id="kode" name="kode" class="form-control select2bs4 rounded-0<?php echo (!empty($hasError['kode']) ? ' is-invalid' : '') ?>" style="width: 100%;">
+                            <option value="">-- Pilih Obat --</option>
+                            <?php if(!empty($sql_produk->kode)): ?>
+                                <option value="<?php echo $sql_produk->kode ?>" selected><?php echo $sql_produk->kode ?></option>
+                            <?php endif; ?>
+                        </select>
                     </div>
                 </div>
                 <?php if (!empty($sql_produk)) { ?>
@@ -111,6 +116,7 @@
         </div>                            
     </div>
 </div>
+<?php echo add_double_submit_protection('resep_rc_form'); ?>
 <?php echo form_close(); ?>
 <!-- /.card -->
 

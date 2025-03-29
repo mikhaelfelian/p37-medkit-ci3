@@ -147,15 +147,17 @@
                     switch ($sql_medc_res_rw->status) {
                         case '0':
                             ?>
-                            <?php echo form_open_multipart(base_url('medcheck/set_medcheck_resep_stat.php'), 'autocomplete="off"') ?>
+                            <?php echo form_open(base_url('medcheck/set_medcheck_resep_stat.php'), 'id="resep_kirim_form" autocomplete="off"') ?>
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                             <?php echo form_hidden('id_resep', general::enkrip($sql_medc_res_rw->id)); ?>
                             <?php echo form_hidden('id_farmasi', general::enkrip($sql_medc_res_rw->id_farmasi)); ?>
                             <?php echo form_hidden('status', $this->input->get('status')); ?>
                             <?php echo form_hidden('status_res', '1'); ?>
                             <?php echo form_hidden('msg', 'Resep sudah terkirim'); ?>
+                            <?php echo add_form_protection(); ?>
 
                             <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-paper-plane"></i> Kirim</button>
+                            <?php echo add_double_submit_protection('resep_kirim_form'); ?>
                             <?php echo form_close(); ?>
                             <?php
                             break;
@@ -163,17 +165,18 @@
                         case '1':
                             if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
                                 ?>
-                                <?php echo form_open_multipart(base_url('medcheck/set_medcheck_resep_stat.php'), 'autocomplete="off"') ?>
+                                <?php echo form_open(base_url('medcheck/set_medcheck_resep_stat.php'), 'id="resep_konfirm_form" autocomplete="off"') ?>
                                 <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                 <?php echo form_hidden('id_resep', general::enkrip($sql_medc_res_rw->id)); ?>
-                                <?php echo form_hidden('id_farmasi', general::enkrip($this->ion_auth->row()->id)); ?>
+                                <?php echo form_hidden('id_farmasi', general::enkrip($this->ion_auth->user()->row()->id)); ?>
                                 <?php echo form_hidden('status', $this->input->get('status')); ?>
                                 <?php echo form_hidden('status_res', '2'); ?>
                                 <?php echo form_hidden('act', $this->input->get('act')); ?>
                                 <?php echo form_hidden('msg', 'Resep sudah di konfirmasi'); ?>
+                                <?php echo add_form_protection(); ?>
 
                                 <button type="submit" class="btn btn-primary btn-flat"><i class="fas fa-check"></i> Konfirm</button>
-
+                                <?php echo add_double_submit_protection('resep_konfirm_form'); ?>
                                 <?php echo form_close(); ?>
                                 <?php
                             }
@@ -183,16 +186,18 @@
                             if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE OR akses::hakFarmasi() == TRUE) {
                                 ?>
                                 <?php if ($sql_medc_res_rw->status == '2') { ?>
-                                    <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses_farm.php'), 'autocomplete="off"') ?>
+                                    <?php echo form_open(base_url('medcheck/set_medcheck_proses_farm.php'), 'id="resep_proses_form" autocomplete="off"') ?>
                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                     <?php echo form_hidden('id_resep', $this->input->get('id_resep')); ?>
                                     <?php echo form_hidden('status', $this->input->get('status')); ?>
                                     <?php echo form_hidden('msg_route', 'proses'); ?>
+                                    <?php echo add_form_protection(); ?>
 
                                     <button type="button" class="btn <?php echo ($sql_medc_res_rw->status_plg == '1' ? 'btn-danger' : 'btn-warning') ?> btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/set_medcheck_resep_upd.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . $this->input->get('id_resep') . '&status=' . $this->input->get('status') . '&status_plg='.($sql_medc_res_rw->status_plg == '1' ? '0' : '1')) ?>'"><i class="fas <?php echo ($sql_medc_res_rw->status_plg == '1' ? 'fa-times-circle' : 'fa-check-circle') ?>"></i> Resep Plg</button>
                                     <button type="submit" class="btn btn-success btn-flat"><i class="fas fa-shopping-cart"></i> Proses</button>
+                                    <?php echo add_double_submit_protection('resep_proses_form'); ?>
                                     <?php echo form_close(); ?>
-                                <?php } ?>
+                                    <?php } ?>
                                 <?php
                             }
                             break;
