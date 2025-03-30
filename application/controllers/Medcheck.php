@@ -9674,7 +9674,7 @@ public function set_medcheck_lab_adm_save() {
                     unlink($berkas);
                 }
                 
-                $this->db->where('id', general::dekrip($id_item))->delete('tbl_trans_medcheck_file');                
+                crud::delete('tbl_trans_medcheck_file', 'id', general::dekrip($id_item));                
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Berkas berhasil di hapus");');
             }
             
