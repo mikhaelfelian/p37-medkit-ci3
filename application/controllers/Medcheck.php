@@ -9533,125 +9533,124 @@ public function set_medcheck_lab_adm_save() {
     }
 
     public function set_medcheck_upload() {
-        if (akses::aksesLogin() == TRUE) {
-            $this->load->helper('file');
-            
-            $id         = $this->input->post('id');
-            $judul      = $this->input->post('judul');
-            $ket        = $this->input->post('ket');
-            $status     = $this->input->post('status');
-            $status_fl  = $this->input->post('status_file');
-            $foto       = $this->input->post('file_foto');
-            $rute       = $this->input->post('route');
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('id', 'ID', 'required');
-            $this->form_validation->set_rules('judul', 'Judul', 'required');
-            $this->form_validation->set_rules('tipe_ft', 'Tipe', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                    'judul'     => form_error('judul'),
-                    'tipe'      => form_error('tipe_ft'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-
-                redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
-            } else {
-               $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-               $sql_pasien  = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
-               $no_rm       = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
-               $folder      = realpath('./file/pasien/'.$no_rm);
-               
-                if (!empty($_FILES['fupload']['name'])) {
-                    $config['upload_path']      = $folder;
-                    $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
-                    $config['remove_spaces']    = TRUE;
-                    $config['overwrite']        = TRUE;
-                    $config['file_name']        = 'medc_'.$sql_medc->no_rm.'_upl'.sprintf('%05d', rand(1,256)).'_'.strtolower(str_replace(' ', '_', $judul)); // general::dekrip($id).sprintf('%05d', rand(1,256));
-                    $this->load->library('upload', $config);
-
-                    if (!$this->upload->do_upload('fupload')) {
-                        $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error : <b>' . $this->upload->display_errors() . '</b></div>');
-                        redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8&err='.$this->upload->display_errors()));
-                    } else {
-                        $f      = $this->upload->data();
-                        $path   = $folder . '/';
-                        $file   = file_get_contents($f['full_path']);
-                        $file64 = 'data:'.$f['file_type'].';base64,'.base64_encode($file);
-
-                        $data_file = array(
-                            'id_medcheck'   => $sql_medc->id,
-                            'id_pasien'     => $sql_medc->id_pasien,
-                            'id_user'       => $this->ion_auth->user()->row()->id,
-                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                            'tgl_masuk'     => date('Y-m-d H:i'),
-                            'judul'         => $judul,
-                            'keterangan'    => $ket,
-                            'file_name_ori' => $f['client_name'],
-                            'file_name'     => '/file/pasien/'.$no_rm.'/'.$f['file_name'],
-                            'file_ext'      => $f['file_ext'],
-                            'file_type'     => $f['file_type'],
-//                            'file_base64'   => $file64,
-                            'status'        => $status_fl,
-                        );
-                        
-                        crud::simpan('tbl_trans_medcheck_file', $data_file);
-                        $last_id = crud::last_id();
-                        
-                        if(!empty($last_id)){
-                            $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Berkas berhasil diunggah !!</div>');
-                        }
-                        
-                        redirect(base_url((!empty($rute) ? $rute.'?id='.$id : 'medcheck/tambah.php?id='.$id.'&status=8')));
-                    }
-                }else{
-                    $filename   = 'medc_'.$sql_medc->no_rm.'_upl'.sprintf('%05d', rand(1,256)).'_cam.png';
-                    $path       = $folder.'/'.$filename;
-                    
-                    $data_file = array(
-                        'id_medcheck'   => $sql_medc->id,
-                        'id_pasien'     => $sql_medc->id_pasien,
-                        'id_user'       => $this->ion_auth->user()->row()->id,
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'tgl_masuk'     => date('Y-m-d H:i'),
-                        'judul'         => $judul,
-                        'keterangan'    => $ket,
-                        'file_base64'   => $foto,
-                        'file_name'     => '/file/pasien/'.$no_rm.'/'.$filename,
-                        'file_ext'      => '.png',
-                        'file_type'     => 'image/png',
-                        'status'        => '1',
-                    );
-                    
-                    # Pastikan terdapat foto tidak kosong
-                    if(!empty($foto)){                    
-                        # Buat File Dari kamera
-                        general::base64_to_jpeg($foto, $path);
-                        
-                        # Simpan ke database
-                        crud::simpan('tbl_trans_medcheck_file', $data_file);
-                        $last_id = crud::last_id(); 
-
-                        if (!empty($last_id)) {
-                            $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Berkas berhasil diunggah !!</div>');
-                        }                     
-                    }else{
-                        $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Tidak ada berkas atau foto yang disimpan !!</div>');
-                    }
-                        
-
-
-                    redirect(base_url('medcheck/tambah.php?id=' . $id . '&status=8'));
-                }
+        if (!akses::aksesLogin()) {
+            if ($this->input->is_ajax_request()) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Authentifikasi gagal, silahkan login ulang!'
+                ]);
+                return;
             }
-        } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
+            return;
+        }
+    
+        $this->load->helper('file');
+        
+        $id         = $this->input->post('id');
+        $judul      = $this->input->post('judul');
+        $ket        = $this->input->post('ket');
+        $status     = $this->input->post('status');
+        $status_fl  = $this->input->post('status_file');
+    
+        // Validation
+        $this->form_validation->set_rules('id', 'ID', 'required');
+        $this->form_validation->set_rules('judul', 'Judul', 'required');
+    
+        if ($this->form_validation->run() == FALSE) {
+            if ($this->input->is_ajax_request()) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => validation_errors()
+                ]);
+                return;
+            }
+            
+            $msg_error = array(
+                'id'        => form_error('id'),
+                'judul'     => form_error('judul'),
+            );
+            $this->session->set_flashdata('form_error', $msg_error);
+            redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
+            return;
+        }
+    
+        try {
+            $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+            $sql_pasien  = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
+            $no_rm       = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
+            $folder      = realpath('./file/pasien/'.$no_rm);
+            
+            // Create directory if it doesn't exist
+            if (!is_dir($folder)) {
+                mkdir($folder, 0777, true);
+            }
+    
+            if (!empty($_FILES['fupload']['name'])) {
+                $config['upload_path']      = $folder;
+                $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
+                $config['remove_spaces']    = TRUE;
+                $config['overwrite']        = TRUE;
+                $config['file_name']        = 'medc_'.$sql_medc->no_rm.'_upl'.sprintf('%05d', rand(1,256)).'_'.strtolower(str_replace(' ', '_', $judul));
+                
+                $this->load->library('upload', $config);
+    
+                if (!$this->upload->do_upload('fupload')) {
+                    $error_msg = $this->upload->display_errors('', '');
+                    if ($this->input->is_ajax_request()) {
+                        echo json_encode([
+                            'success' => false,
+                            'message' => $error_msg
+                        ]);
+                        return;
+                    }
+                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error : <b>' . $error_msg . '</b></div>');
+                    redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8&err='.$error_msg));
+                    return;
+                }
+    
+                $f = $this->upload->data();
+                $data_file = array(
+                    'id_medcheck'   => $sql_medc->id,
+                    'id_pasien'     => $sql_medc->id_pasien,
+                    'id_user'       => $this->ion_auth->user()->row()->id,
+                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                    'tgl_masuk'     => date('Y-m-d H:i'),
+                    'judul'         => $judul,
+                    'keterangan'    => $ket,
+                    'file_name_ori' => $f['client_name'],
+                    'file_name'     => '/file/pasien/'.$no_rm.'/'.$f['file_name'],
+                    'file_ext'      => $f['file_ext'],
+                    'file_type'     => $f['file_type'],
+                    'status'        => $status_fl,
+                );
+                
+                crud::simpan('tbl_trans_medcheck_file', $data_file);
+                $last_id = crud::last_id();
+                
+                if ($this->input->is_ajax_request()) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Berkas berhasil diunggah',
+                        'file_name' => $f['file_name']
+                    ]);
+                    return;
+                }
+    
+                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Berkas berhasil diunggah !!</div>');
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
+            }
+        } catch (Exception $e) {
+            if ($this->input->is_ajax_request()) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ]);
+                return;
+            }
+            $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error: ' . $e->getMessage() . '</div>');
+            redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
         }
     }
 
@@ -9676,7 +9675,7 @@ public function set_medcheck_lab_adm_save() {
                 }
                 
                 crud::delete('tbl_trans_medcheck_file', 'id', general::dekrip($id_item));                
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Berkas berhasil di hapus</div>');
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Berkas berhasil di hapus");');
             }
             
             redirect(base_url('medcheck/tambah.php?id='.$this->input->get('id').'&status='.$this->input->get('status')));
