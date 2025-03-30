@@ -28,7 +28,7 @@ if (!function_exists('pre')) {
                 display: block;
                 word-wrap: break-word;
                 position: relative;
-                z-index: 9999;"';
+                z-index: 9999; "';
         }
         
         echo "<pre {$style}>";
