@@ -56,9 +56,11 @@
                                                         ?>
                                                         <tr>
                                                             <td class="text-left" style="width: 250px;">
-                                                                <?php echo $sql_item->produk ?></td>
+                                                                <?php echo $sql_item->produk ?>
+                                                            </td>
                                                             <td class="text-center" style="width: 75px;">
-                                                                <?php echo $cart['qty'] ?></td>
+                                                                <?php echo $cart['qty'] ?>
+                                                            </td>
                                                             <td class="text-right" style="width: 150px;">
                                                                 <?php echo general::format_angka($cart['options']['harga']); ?>
                                                                 <?php if ($cart['options']['disk'] != '0') { ?>
@@ -72,7 +74,8 @@
                                                                 <?php echo general::format_angka($cart['options']['potongan']); ?>
                                                             </td>
                                                             <td class="text-right" style="width: 150px;">
-                                                                <?php echo general::format_angka($cart['subtotal']); ?></td>
+                                                                <?php echo general::format_angka($cart['subtotal']); ?>
+                                                            </td>
                                                             <td class="text-right">
                                                                 <?php echo anchor(base_url('pos/set_trans_jual_hapus_item.php?id=' . $this->input->get('id') . '&item_id=' . general::enkrip($cart['rowid'])), '<i class="fa fa-trash"></i> Hapus', 'class="btn btn-danger btn-flat btn-xs" style="width: 55px;" onclick="return confirm(\'Hapus [' . $cart['name'] . '] ?\')"') ?>
                                                             </td>
@@ -124,7 +127,8 @@
                         <div class="card-body">
                             <?php echo form_hidden('id', $this->input->get('id')) ?>
 
-                            <input type="hidden" id="id_pelanggan" name="id_pelanggan" value="<?php echo !empty($sql_pelanggan->id) ? $sql_pelanggan->id : '30354'; ?>">
+                            <input type="hidden" id="id_pelanggan" name="id_pelanggan"
+                                value="<?php echo !empty($sql_pelanggan->id) ? $sql_pelanggan->id : '30354'; ?>">
 
                             <div class="form-group">
                                 <label for="inputEmail3">Pelanggan</label>
@@ -171,7 +175,15 @@
 
                             <div class="form-group">
                                 <label for="inputEmail3">Item</label>
-                                <?php echo form_input(array('id' => 'produk', 'name' => 'produk', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['produk']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Item ...', 'value' => $sql_produk->produk)) ?>
+                                <select id="produk" name="produk"
+                                    class="form-control select2bs4 rounded-0<?php echo (!empty($hasError['produk']) ? ' is-invalid' : ''); ?>"
+                                    data-placeholder="Isikan Item ...">
+                                    <option value="">- Pilih Item -</option>
+                                    <?php if (!empty($sql_produk->id)): ?>
+                                        <option value="<?php echo $sql_produk->id; ?>" selected>
+                                            <?php echo $sql_produk->produk; ?></option>
+                                    <?php endif; ?>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <div class="row">
@@ -186,7 +198,8 @@
                                                 <option value="">- Pilih -</option>
                                                 <?php foreach ($sql_satuan as $satuan) { ?>
                                                     <option value="<?php echo $satuan->id ?>" <?php echo ($satuan->id == $sql_produk->id_satuan ? 'selected' : '') ?>>
-                                                        <?php echo strtoupper($satuan->satuanTerkecil) ?></option>
+                                                        <?php echo strtoupper($satuan->satuanTerkecil) ?>
+                                                    </option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -258,19 +271,12 @@
 <link rel="stylesheet"
     href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
-<!-- Toastr -->
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
-
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
         $("input[id=jml], input[id=harga], input[id=diskon], input[id=potongan]").autoNumeric({ aSep: '.', aDec: ',', aPad: false });
         $("input[id=jml_total], input[id=jml_gtotal], input[id=jml_diskon], input[id=jml_diskon], input[id=jml_bayar], input[id=jml_kurang]").autoNumeric({ aSep: '.', aDec: ',', aPad: false });
 
-        $('.select2bs4').select2({
-            theme: 'bootstrap4'
-        });
 
         var dateToday = new Date();
         $("#tgl").datepicker({
@@ -317,41 +323,70 @@
                 .appendTo(ul);
         };
 
-        // Data Item Cart
-        $('#produk').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "<?php echo base_url('pos/json_item.php') ?>",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
+
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
+
+        // Add rounded-0 class to all inputs
+        $('input').addClass('rounded-0');
+
+        // Data Item Cart using Select2
+        $('#produk').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Pilih Obat',
+            minimumInputLength: 3,
+            ajax: {
+                url: "<?php echo base_url('pos/json_item.php') ?>",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id,
+                                item: item
+                            };
+                        })
+                    };
+                },
+                cache: true
             },
-            minLength: 4,
-            select: function (event, ui) {
-                var $itemrow = $(this).closest('tr');
-                //Populate the input fields from the returned values
-                $itemrow.find('#id_item').val(ui.item.id);
-                $('#id_item').val(ui.item.id);
-                $('#produk').val(ui.item.name);
-                $('#harga').val(ui.item.harga);
-                window.location.href = "<?php echo base_url('pos/trans_jual.php?id=' . $this->input->get('id')) ?>&item_id=" + ui.item.id + "&harga=" + ui.item.harga + "&satuan=" + ui.item.satuan;
-
-                // Give focus to the next input field to recieve input from user
-                $('#jml').focus();
-                return false;
+            templateResult: formatItem,
+            templateSelection: function (data) {
+                return data.text || data.id;
             }
+        }).on('select2:select', function (e) {
+            var data = e.params.data.item;
 
-            // Format the list menu output of the autocomplete
-        }).data("ui-autocomplete")._renderItem = function (ul, item) {
-            return $("<li></li>")
-                .data("item.autocomplete", item)
-                .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
-                .appendTo(ul);
-        };
+            $('#id_item').val(data.id);
+            $('#produk').val(data.name);
+            $('#harga').val(data.harga);
+
+            window.location.href = "<?php echo base_url('pos/trans_jual.php?id=' . $this->input->get('id')) ?>&item_id=" + data.id + "&harga=" + data.harga + "&satuan=" + data.satuan;
+
+            // Give focus to the next input field
+            $('#jml').focus();
+            return false;
+        });
+
+        // Format the dropdown items
+        function formatItem(item) {
+            if (!item.item) return item.text;
+
+            var $result = $('<div class="select2-result-item">' +
+                '<div class="select2-result-item__title">' + item.item.name + ' (' + item.item.jml + ')</div>' +
+                '<div class="select2-result-item__description"><small><i>' + item.item.alias + '</i></small></div>' +
+                '<div class="select2-result-item__description"><small><i>' + item.item.kandungan + '</i></small></div>' +
+                '</div>');
+
+            return $result;
+        }
     });
 </script>

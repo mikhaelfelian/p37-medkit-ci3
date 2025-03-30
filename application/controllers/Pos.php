@@ -815,19 +815,26 @@ class Pos extends CI_Controller {
 
                 redirect(base_url('pos/trans_jual.php?id='.$id));
             } else {
+                $sg             = $this->ion_auth->user()->row()->status_gudang;
                 $sql_item       = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
+                $sql_stok       = $this->db->where('id_produk', $sql_item->id)->where('id_gudang', $sg)->get('tbl_m_produk_stok')->row();
                 $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                 $harga          = general::format_angka_db($hrg);
                 $potongan       = general::format_angka_db($pot);
                 $jml_pot        = $potongan * $jml;
                 
-                try {
+                try {                    
                     // Get form ID and check for double submission
                     $form_id = $this->input->post('form_id');
                     if (check_form_submitted($form_id)) {
                         $this->session->set_flashdata('apt_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
                         redirect(base_url('pos/trans_jual.php?id='.$id));
                         return;
+                    }
+
+                    // Check if requested quantity is available in stock
+                    if ($jml > $sql_stok->jml) {
+                        throw new Exception('Stok tidak cukup. <b>Stok tersedia: </b>' . $sql_stok->jml . ', Permintaan: ' . $jml);
                     }
 
                     
@@ -919,20 +926,19 @@ class Pos extends CI_Controller {
                 $sess_medc_det  = $this->cart->contents();
                 $sql_pas        = $this->db->where('id', $sess_medc['id_pelanggan'])->get('tbl_m_pasien')->row();
                 
+                # Generate RM number
                 $sql_rm         = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck');
                 $str_rm         = $sql_rm->num_rows() + 1;
                 $no_rm          = date('ymd').sprintf('%04d', $str_rm);
                 
-                # No Akun
+                # Generate account number - using MAX to avoid duplicates
                 $sql_no         = $this->db->select_max('id')->get('tbl_trans_medcheck')->row();
-                $sql_akun       = $this->db->select('COUNT(id) AS jml')->where('DATE(tgl_simpan)', date('Y-m-d'))->get('tbl_trans_medcheck')->row();
-                $str_akun       = $sql_akun->jml + 1;
-                $no_akun        = strtoupper(date('Mdy').sprintf('%04d', $str_akun));
                 $nomor_id       = $sql_no->id + 1;
+                $no_akun        = strtoupper(date('Mdy').sprintf('%04d', $nomor_id));
                 
-                # No Nota
-                $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->num_rows();
-                $no_nota_urut   = $nomer + 1;
+                # Generate invoice number - using MAX to avoid duplicates
+                $sql_invoice    = $this->db->select_max('no_nota_urut')->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->row();
+                $no_nota_urut   = (!empty($sql_invoice->no_nota_urut) ? $sql_invoice->no_nota_urut + 1 : 1);
                 $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota_urut);
                 
                 // Check if form is submitted to prevent duplicate submissions
@@ -1260,10 +1266,14 @@ class Pos extends CI_Controller {
                             ->get('tbl_m_produk')->result();
 
             if(!empty($sql)){
+                $produk = [];
                 foreach ($sql as $sql){
                     $sql_satuan = $this->db->where('id', $sql->id_satuan)->get('tbl_m_satuan')->row();
                     $sql_stok   = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $sql->id)->where('id_gudang', $sg)->get('tbl_m_produk_stok')->row();
-                        $produk[] = array(
+                    
+                    // Only add products with stock greater than 0
+                    if ($sql_stok->jml > 0) {
+                        $produk[] = [
                             'id'            => general::enkrip($sql->id),
                             'kode'          => $sql->kode,
                             'name'          => $sql->produk,
@@ -1274,7 +1284,8 @@ class Pos extends CI_Controller {
                             'harga'         => (float)$sql->harga_jual,
                             'harga_beli'    => (float)$sql->harga_beli,
                             'harga_grosir'  => (float)$sql->harga_grosir,
-                        );
+                        ];
+                    }
                 }
 
                 echo json_encode($produk);
