@@ -204,8 +204,8 @@ class CI_Cart {
 		// Prep the quantity. It can only be a number.  Duh... also trim any leading zeros
 		$items['qty'] = (float) $items['qty'];
 
-		// If the quantity is zero or blank there's nothing for us to do
-		if ($items['qty'] == 0)
+		// If the quantity is blank there's nothing for us to do, but allow zero quantities
+		if ($items['qty'] === '' || $items['qty'] === NULL)
 		{
 			return FALSE;
 		}
