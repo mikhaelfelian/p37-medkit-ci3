@@ -4903,23 +4903,23 @@ class medcheck extends CI_Controller {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$this->ion_auth->user($dokter)->row()->first_name.' sudah tersimpan sebelumnya, silahkan cek pada daftar dokter!");');
                     } else {
                         try {
-                            # Transact SQL
-                            $this->db->trans_start();
+                        # Transact SQL
+                        $this->db->trans_start();
 
-                            # Masukkan ke tabel medcheck_dokter
-                            $this->db->insert('tbl_trans_medcheck_dokter', $data);
+                        # Masukkan ke tabel medcheck_dokter
+                        $this->db->insert('tbl_trans_medcheck_dokter', $data);
 
-                            # Cek status transact MySQL
-                            if ($this->db->trans_status() === FALSE) {
-                                # Rollback jika gagal
-                                $this->db->trans_rollback();
+                        # Cek status transact MySQL
+                        if ($this->db->trans_status() === FALSE) {
+                            # Rollback jika gagal
+                            $this->db->trans_rollback();
 
-                                # Tampilkan pesan error
+                            # Tampilkan pesan error
                                 $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data rawat bersama gagal disimpan!");');
-                            } else {
-                                $this->db->trans_complete();
+                        } else {
+                            $this->db->trans_complete();
 
-                                # Tampilkan pesan sukses jika sudah berhasil commit
+                            # Tampilkan pesan sukses jika sudah berhasil commit
                                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data rawat bersama disimpan!");');
                             }
                         } catch (Exception $e) {
@@ -5425,84 +5425,84 @@ class medcheck extends CI_Controller {
                         return;
                     }
                     
-                    $sql_medc        = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
-                    $sql_medc_resep  = $this->db->where('id_medcheck', general::dekrip($id))->where('id_resep', general::dekrip($id_resep))->get('tbl_trans_medcheck_resep_det');
-                    
-                    // Cek Barang Form
-                    if($sql_medc_resep->num_rows() > 0){
+                $sql_medc        = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
+                $sql_medc_resep  = $this->db->where('id_medcheck', general::dekrip($id))->where('id_resep', general::dekrip($id_resep))->get('tbl_trans_medcheck_resep_det');
+                
+                // Cek Barang Form
+                if($sql_medc_resep->num_rows() > 0){
                         # Begin transaction
                         $this->db->trans_begin();
+                    
+                    # Delete Resep
+                    $this->db->where('id_resep', general::dekrip($id_resep))->delete('tbl_trans_medcheck_det');
+                    
+                    foreach ($sql_medc_resep->result() as $cart){
+                        $sql_racikan    = $this->db->select('SUM(subtotal) AS harga')->where('id_resep_det', $cart->id)->get('tbl_trans_medcheck_resep_det_rc')->row();
+                        $sql_racikan_det= $this->db->where('id_resep_det', $cart->id)->get('tbl_trans_medcheck_resep_det_rc');
+                        $harga          = $cart->harga;
+                        $subtotal       = ($cart->jml * $cart->harga);
                         
-                        # Delete Resep
-                        $this->db->where('id_resep', general::dekrip($id_resep))->delete('tbl_trans_medcheck_det');
-                        
-                        foreach ($sql_medc_resep->result() as $cart){
-                            $sql_racikan    = $this->db->select('SUM(subtotal) AS harga')->where('id_resep_det', $cart->id)->get('tbl_trans_medcheck_resep_det_rc')->row();
-                            $sql_racikan_det= $this->db->where('id_resep_det', $cart->id)->get('tbl_trans_medcheck_resep_det_rc');
-                            $harga          = $cart->harga;
-                            $subtotal       = ($cart->jml * $cart->harga);
-                            
                             $data_res_det = [
-                                'id_medcheck'   => (int)$cart->id_medcheck,
-                                'id_resep'      => (int)$cart->id_resep,
-                                'id_item'       => (int)$cart->id_item,
-                                'id_item_kat'   => (int)$cart->id_item_kat,
-                                'id_item_sat'   => (int)$cart->id_item_sat,
-                                'id_user'       => (int)$cart->id_user,
-                                'tgl_simpan'    => $cart->tgl_simpan,
-                                'tgl_modif'     => date('Y-m-d H:i:s'),
-                                'kode'          => $cart->kode,
-                                'item'          => $cart->item,
-                                'dosis'         => $cart->dosis,
-                                'dosis_ket'     => $cart->dosis_ket,
-                                'keterangan'    => $cart->keterangan,
-                                'harga'         => (float)$harga,
-                                'jml'           => (float)$cart->jml,
-                                'jml_satuan'    => (int)$cart->jml_satuan,
-                                'subtotal'      => (float)$subtotal,
-                                'satuan'        => $cart->satuan,
-                                'status_pj'     => $cart->status_pj,
-                                'status'        => '4',
+                            'id_medcheck'   => (int)$cart->id_medcheck,
+                            'id_resep'      => (int)$cart->id_resep,
+                            'id_item'       => (int)$cart->id_item,
+                            'id_item_kat'   => (int)$cart->id_item_kat,
+                            'id_item_sat'   => (int)$cart->id_item_sat,
+                            'id_user'       => (int)$cart->id_user,
+                            'tgl_simpan'    => $cart->tgl_simpan,
+                            'tgl_modif'     => date('Y-m-d H:i:s'),
+                            'kode'          => $cart->kode,
+                            'item'          => $cart->item,
+                            'dosis'         => $cart->dosis,
+                            'dosis_ket'     => $cart->dosis_ket,
+                            'keterangan'    => $cart->keterangan,
+                            'harga'         => (float)$harga,
+                            'jml'           => (float)$cart->jml,
+                            'jml_satuan'    => (int)$cart->jml_satuan,
+                            'subtotal'      => (float)$subtotal,
+                            'satuan'        => $cart->satuan,
+                            'status_pj'     => $cart->status_pj,
+                            'status'        => '4',
                             ];
-                            
-                            # Simpan Resep
-                            $this->db->insert('tbl_trans_medcheck_det', $data_res_det);
-                            
-                            # Obat racikan
-                            if($sql_racikan_det->num_rows() > 0){
-                                foreach ($sql_racikan_det->result() as $rc){
+                        
+                        # Simpan Resep
+                        $this->db->insert('tbl_trans_medcheck_det', $data_res_det);
+                        
+                        # Obat racikan
+                        if($sql_racikan_det->num_rows() > 0){
+                            foreach ($sql_racikan_det->result() as $rc){
                                     $data_rc_det = [
-                                        'id_medcheck'       => (int)$rc->id_medcheck,
-                                        'id_resep'          => (int)$rc->id_resep,
-                                        'id_resep_det'      => (int)$cart->id,
-                                        'id_resep_det_rc'   => (int)$rc->id,
-                                        'id_item'           => (int)$rc->id_item,
-                                        'id_item_kat'       => (int)$rc->id_item_kat,
-                                        'id_item_sat'       => (int)$rc->id_item_sat,
-                                        'id_user'           => (int)$rc->id_user,
-                                        'tgl_simpan'        => $rc->tgl_simpan,
-                                        'tgl_modif'         => date('Y-m-d H:i:s'),
-                                        'kode'              => $rc->kode,
-                                        'item'              => $rc->item,
-                                        'dosis'             => $rc->dosis,
-                                        'dosis_ket'         => $rc->dosis_ket,
-                                        'resep'             => $rc->resep,
-                                        'harga'             => (float)$rc->harga,
-                                        'jml'               => (float)$rc->jml,
-                                        'jml_satuan'        => (int)$rc->jml_satuan,
-                                        'subtotal'          => (float)$rc->subtotal,
-                                        'satuan'            => $rc->satuan,
-                                        'status_pj'         => $rc->status_pj,
-                                        'status'            => '4',
-                                        'status_rc'         => '1',
+                                    'id_medcheck'       => (int)$rc->id_medcheck,
+                                    'id_resep'          => (int)$rc->id_resep,
+                                    'id_resep_det'      => (int)$cart->id,
+                                    'id_resep_det_rc'   => (int)$rc->id,
+                                    'id_item'           => (int)$rc->id_item,
+                                    'id_item_kat'       => (int)$rc->id_item_kat,
+                                    'id_item_sat'       => (int)$rc->id_item_sat,
+                                    'id_user'           => (int)$rc->id_user,
+                                    'tgl_simpan'        => $rc->tgl_simpan,
+                                    'tgl_modif'         => date('Y-m-d H:i:s'),
+                                    'kode'              => $rc->kode,
+                                    'item'              => $rc->item,
+                                    'dosis'             => $rc->dosis,
+                                    'dosis_ket'         => $rc->dosis_ket,
+                                    'resep'             => $rc->resep,
+                                    'harga'             => (float)$rc->harga,
+                                    'jml'               => (float)$rc->jml,
+                                    'jml_satuan'        => (int)$rc->jml_satuan,
+                                    'subtotal'          => (float)$rc->subtotal,
+                                    'satuan'            => $rc->satuan,
+                                    'status_pj'         => $rc->status_pj,
+                                    'status'            => '4',
+                                    'status_rc'         => '1',
                                     ];
-                                    
-                                    $this->db->insert('tbl_trans_medcheck_det', $data_rc_det);
-                                }
+                                
+                                $this->db->insert('tbl_trans_medcheck_det', $data_rc_det);
                             }
                         }
+                    }
 
-                        # Update Resep
+                    # Update Resep
                         $this->db->where('id', general::dekrip($id_resep))->update('tbl_trans_medcheck_resep', ['tgl_keluar'=>date('Y-m-d H:i:s'),'status'=>'4']);
                         $this->db->where('id', $sql_medc->row()->id)->update('tbl_trans_medcheck', ['tgl_resep_klr'=>date('Y-m-d H:i:s')]);
                         
@@ -5512,7 +5512,7 @@ class medcheck extends CI_Controller {
                             throw new Exception("Terjadi kesalahan saat memproses resep");
                         } else {
                             $this->db->trans_commit();
-                            $this->session->set_flashdata('medcheck_toast', 'toastr.success("Resep berhasil di proses");');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Resep berhasil di proses");');
                         }
                     } else {
                         throw new Exception("Data resep tidak ditemukan");
@@ -6856,7 +6856,6 @@ public function set_medcheck_lab_adm_save() {
             redirect();
         }
     }
-
     public function set_medcheck_lab_ekg_file() {
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->post('id');
@@ -6888,69 +6887,68 @@ public function set_medcheck_lab_adm_save() {
                 $no_rm          = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
                 $folder         = realpath('./file/pasien/'.$no_rm);
                 
-                if (!empty($_FILES['fupload']['name'])) {
-                    $config['upload_path']      = $folder;
-                    $config['allowed_types']    = 'jpg|png|jpeg';
-                    $config['remove_spaces']    = TRUE;
-                    $config['overwrite']        = TRUE;
-                    $config['file_name']        = 'medc_'.$sql_medc->no_rm.'_ekg'.sprintf('%05d', rand(1,256));
-                    $this->load->library('upload', $config);
-                    
-                    if (!$this->upload->do_upload('fupload')) {
-                        $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error : <b>' . $this->upload->display_errors() . '</b></div>');
-                        redirect(base_url('medcheck/tambah.php?act=pen_ekg_upload&id='.$id.'&status='.$status.'&id_lab='.$id_lab));
-                    } else {
-                        $f      = $this->upload->data();
+                try {
+                    if (!empty($_FILES['fupload']['name'])) {
+                        // Check if folder exists, create if not
+                        if (!is_dir($folder)) {
+                            mkdir($folder, 0777, true);
+                        }
+                        
+                        $config = [
+                            'upload_path'      => $folder,
+                            'allowed_types'    => 'jpg|png|jpeg',
+                            'remove_spaces'    => TRUE,
+                            'overwrite'        => TRUE,
+                            'file_name'        => 'medc_'.$sql_medc->no_rm.'_ekg'.sprintf('%05d', rand(1,256))
+                        ];
+                        
+                        $this->load->library('upload', $config);
+                        
+                        if (!$this->upload->do_upload('fupload')) {
+                            throw new Exception($this->upload->display_errors());
+                        }
+                        
+                        $f = $this->upload->data();
                         
                         $this->load->library('image_lib');
-                        $configer =  array(
-                          'image_library'   => 'gd2',
-                          'source_image'    =>  $f['full_path'],
-//                          'maintain_ratio'  =>  TRUE,
-                          'width'           =>  2048,
-//                          'height'          =>  1010,
-//                          'rotation_angle'  =>  180,
-                        );
+                        $configer = [
+                            'image_library'   => 'gd2',
+                            'source_image'    => $f['full_path'],
+                            'width'           => 2048,
+                        ];
                         
                         $this->image_lib->clear();
                         $this->image_lib->initialize($configer);
                         $this->image_lib->resize();
                         $this->image_lib->rotate();
+                    } else {
+                        throw new Exception("No file uploaded");
                     }
                     
-//                    $file_tmp   = $_FILES['fupload']['tmp_name'];
-//                    $file_ext   = $_FILES['fupload']['type']; //pathinfo($_FILES['fupload']['type'], PATHINFO_EXTENSION);
-//                    $file_data  = file_get_contents($file_tmp);
-//                    $file       = 'data:' . $file_ext . ';base64,' . base64_encode($file_data);
+                    $data_ekg = [
+                        'id_medcheck'       => $sql_medc->id,
+                        'id_lab_ekg'        => general::dekrip($id_lab),
+                        'id_user'           => $this->ion_auth->user()->row()->id,
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'tgl_modif'         => date('Y-m-d H:i:s'),
+                        'judul'             => $judul,
+                        'file_name'         => $f['orig_name'],
+                        'file_name_orig'    => $f['client_name'],
+                        'file_ext'          => $f['file_ext'],
+                        'file_type'         => $f['file_type'],
+                    ];
+                    
+                    # Masukkan ke tabel lab ekg file
+                    $this->db->insert('tbl_trans_medcheck_lab_ekg_file', $data_ekg);
+                    
+                    # Tampilkan pesan sukses jika sudah berhasil commit
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("EKG berhasil diupload !");');
+                    
+                    redirect(base_url('medcheck/tambah.php?act=pen_ekg_upload&id='.$id.'&status='.$status.'&id_lab='.$id_lab));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error : <b>' . $e->getMessage() . '</b></div>');
+                    redirect(base_url('medcheck/tambah.php?act=pen_ekg_upload&id='.$id.'&status='.$status.'&id_lab='.$id_lab));
                 }
-                
-                $data_ekg = array(
-                    'id_medcheck'       => $sql_medc->id,
-                    'id_lab_ekg'        => general::dekrip($id_lab),
-                    'id_user'           => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'tgl_modif'         => date('Y-m-d H:i:s'),
-                    'judul'             => $judul,
-                    'file_name'         => $f['orig_name'],
-                    'file_name_orig'    => $f['client_name'],
-                    'file_ext'          => $f['file_ext'],
-                    'file_type'         => $f['file_type'],
-                );
-                
-                crud::simpan('tbl_trans_medcheck_lab_ekg_file', $data_ekg);
-                
-                
-                # Masukkan ke tabel lab ekg file
-                $this->db->insert('tbl_trans_medcheck_lab_ekg_file', $data);
-                
-                # Tampilkan pesan sukses jika sudah berhasil commit
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("EKG berhasil diupload !");');
-                
-                redirect(base_url('medcheck/tambah.php?act=pen_ekg_upload&id='.$id.'&status='.$status.'&id_lab='.$id_lab));
-                
-                
-//                echo '<pre>';
-//                print_r($data);
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -6998,7 +6996,7 @@ public function set_medcheck_lab_adm_save() {
             redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&status='.$status));
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
@@ -7137,8 +7135,8 @@ public function set_medcheck_lab_adm_save() {
                     $this->db->trans_commit();
                     $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data permintaan radiologi berhasil dibuat")');
                 }
-                
-                redirect(base_url('medcheck/tambah.php?act='.($grup->name == 'dokter' ? 'rad_input' : 'rad_surat').'&id='.general::enkrip($sql_medc->row()->id).'&id_rad='.general::enkrip($last_id).'&status='.$status));
+                    
+                    redirect(base_url('medcheck/tambah.php?act='.($grup->name == 'dokter' ? 'rad_input' : 'rad_surat').'&id='.general::enkrip($sql_medc->row()->id).'&id_rad='.general::enkrip($last_id).'&status='.$status));
             } catch (Exception $e) {
                 if ($this->db->trans_status() === FALSE) {
                     $this->db->trans_rollback();
@@ -7228,24 +7226,24 @@ public function set_medcheck_lab_adm_save() {
             
             if($sql_medc->num_rows() > 0){
                 try {
-                    /* Transaksi Database */
-                    $this->db->trans_begin();
+                /* Transaksi Database */
+                $this->db->trans_begin();
 
-                    # Hapus ke tabel medcheck det
-                    $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_det');
-                    $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_det');
-                    $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_file');
-                    
-                    # Hapus ke tabel medcheck lab
-                    $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad');
+                # Hapus ke tabel medcheck det
+                $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_det');
+                $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_det');
+                $this->db->where('id_rad', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad_file');
+                
+                # Hapus ke tabel medcheck lab
+                $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_rad');
 
                     # Commit jika semua query berhasil
-                    if ($this->db->trans_status() === FALSE) {
-                        # Rollback jika gagal
-                        $this->db->trans_rollback();
+                if ($this->db->trans_status() === FALSE) {
+                    # Rollback jika gagal
+                    $this->db->trans_rollback();
                         throw new Exception("Gagal menghapus data radiologi");
-                    } else {
-                        $this->db->trans_commit();
+                } else {
+                    $this->db->trans_commit();
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data radiologi berhasil dihapus");');
                     }
                 } catch (Exception $e) {
@@ -7757,12 +7755,12 @@ public function set_medcheck_lab_adm_save() {
                     // Start transaction
                     $this->db->trans_begin();
                     
-                    // Set status diproses oleh farmasi atau tidak
+                // Set status diproses oleh farmasi atau tidak
                     $data = [
-                        'tgl_modif'   => date('Y-m-d H:i:s'),
-                        'tgl_masuk'   => ($status_res == '2' ? date('Y-m-d H:i:s') : '0000-00-00 00:00:00'),
-                        'id_farmasi'  => general::dekrip($id_farmasi),
-                        'status'      => $status_res,
+                    'tgl_modif'   => date('Y-m-d H:i:s'),
+                    'tgl_masuk'   => ($status_res == '2' ? date('Y-m-d H:i:s') : '0000-00-00 00:00:00'),
+                    'id_farmasi'  => general::dekrip($id_farmasi),
+                    'status'      => $status_res,
                     ];
                     
                     $this->db->where('id', general::dekrip($id_resep))->update('tbl_trans_medcheck_resep', $data);
@@ -7772,14 +7770,14 @@ public function set_medcheck_lab_adm_save() {
                         throw new Exception("Database transaction failed");
                     } else {
                         $this->db->trans_commit();
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("'.$msg.'")');
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("'.$msg.'")');
                     }
                     
                     redirect(base_url('medcheck/tambah.php?act=res_input&id='.$id.'&id_resep='.$id_resep.'&status='.$status));
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan: ' . $e->getMessage() . '")');
-                    redirect(base_url('medcheck/tambah.php?act=res_input&id='.$id.'&id_resep='.$id_resep.'&status='.$status));
+                redirect(base_url('medcheck/tambah.php?act=res_input&id='.$id.'&id_resep='.$id_resep.'&status='.$status));
                 }
             }
         } else {
@@ -9546,19 +9544,19 @@ public function set_medcheck_lab_adm_save() {
             return;
         }
     
-        $this->load->helper('file');
-        
-        $id         = $this->input->post('id');
-        $judul      = $this->input->post('judul');
-        $ket        = $this->input->post('ket');
-        $status     = $this->input->post('status');
-        $status_fl  = $this->input->post('status_file');
-    
+            $this->load->helper('file');
+            
+            $id         = $this->input->post('id');
+            $judul      = $this->input->post('judul');
+            $ket        = $this->input->post('ket');
+            $status     = $this->input->post('status');
+            $status_fl  = $this->input->post('status_file');
+
         // Validation
-        $this->form_validation->set_rules('id', 'ID', 'required');
-        $this->form_validation->set_rules('judul', 'Judul', 'required');
-    
-        if ($this->form_validation->run() == FALSE) {
+            $this->form_validation->set_rules('id', 'ID', 'required');
+            $this->form_validation->set_rules('judul', 'Judul', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
             if ($this->input->is_ajax_request()) {
                 echo json_encode([
                     'success' => false,
@@ -9567,36 +9565,36 @@ public function set_medcheck_lab_adm_save() {
                 return;
             }
             
-            $msg_error = array(
-                'id'        => form_error('id'),
-                'judul'     => form_error('judul'),
-            );
-            $this->session->set_flashdata('form_error', $msg_error);
-            redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
+                $msg_error = array(
+                    'id'        => form_error('id'),
+                    'judul'     => form_error('judul'),
+                );
+                $this->session->set_flashdata('form_error', $msg_error);
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
             return;
         }
     
         try {
-            $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-            $sql_pasien  = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
-            $no_rm       = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
-            $folder      = realpath('./file/pasien/'.$no_rm);
+               $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+               $sql_pasien  = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
+               $no_rm       = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
+               $folder      = realpath('./file/pasien/'.$no_rm);
             
             // Create directory if it doesn't exist
             if (!is_dir($folder)) {
                 mkdir($folder, 0777, true);
             }
-    
-            if (!empty($_FILES['fupload']['name'])) {
-                $config['upload_path']      = $folder;
-                $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
-                $config['remove_spaces']    = TRUE;
-                $config['overwrite']        = TRUE;
+               
+                if (!empty($_FILES['fupload']['name'])) {
+                    $config['upload_path']      = $folder;
+                    $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
+                    $config['remove_spaces']    = TRUE;
+                    $config['overwrite']        = TRUE;
                 $config['file_name']        = 'medc_'.$sql_medc->no_rm.'_upl'.sprintf('%05d', rand(1,256)).'_'.strtolower(str_replace(' ', '_', $judul));
                 
-                $this->load->library('upload', $config);
-    
-                if (!$this->upload->do_upload('fupload')) {
+                    $this->load->library('upload', $config);
+
+                    if (!$this->upload->do_upload('fupload')) {
                     $error_msg = $this->upload->display_errors('', '');
                     if ($this->input->is_ajax_request()) {
                         echo json_encode([
@@ -9611,24 +9609,24 @@ public function set_medcheck_lab_adm_save() {
                 }
     
                 $f = $this->upload->data();
-                $data_file = array(
-                    'id_medcheck'   => $sql_medc->id,
-                    'id_pasien'     => $sql_medc->id_pasien,
-                    'id_user'       => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'tgl_masuk'     => date('Y-m-d H:i'),
-                    'judul'         => $judul,
-                    'keterangan'    => $ket,
-                    'file_name_ori' => $f['client_name'],
-                    'file_name'     => '/file/pasien/'.$no_rm.'/'.$f['file_name'],
-                    'file_ext'      => $f['file_ext'],
-                    'file_type'     => $f['file_type'],
-                    'status'        => $status_fl,
-                );
-                
-                crud::simpan('tbl_trans_medcheck_file', $data_file);
-                $last_id = crud::last_id();
-                
+                        $data_file = array(
+                            'id_medcheck'   => $sql_medc->id,
+                            'id_pasien'     => $sql_medc->id_pasien,
+                            'id_user'       => $this->ion_auth->user()->row()->id,
+                            'tgl_simpan'    => date('Y-m-d H:i:s'),
+                            'tgl_masuk'     => date('Y-m-d H:i'),
+                            'judul'         => $judul,
+                            'keterangan'    => $ket,
+                            'file_name_ori' => $f['client_name'],
+                            'file_name'     => '/file/pasien/'.$no_rm.'/'.$f['file_name'],
+                            'file_ext'      => $f['file_ext'],
+                            'file_type'     => $f['file_type'],
+                            'status'        => $status_fl,
+                        );
+                        
+                        crud::simpan('tbl_trans_medcheck_file', $data_file);
+                        $last_id = crud::last_id();
+                        
                 if ($this->input->is_ajax_request()) {
                     echo json_encode([
                         'success' => true,
@@ -9638,7 +9636,7 @@ public function set_medcheck_lab_adm_save() {
                     return;
                 }
     
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Berkas berhasil diunggah !!</div>');
+                            $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Berkas berhasil diunggah !!</div>');
                 redirect(base_url('medcheck/tambah.php?id='.$id.'&status=8'));
             }
         } catch (Exception $e) {
@@ -11740,7 +11738,7 @@ public function set_medcheck_lab_adm_save() {
                 if (!empty($rute)) {
                     redirect(base_url($rute));
                 } else {
-                    redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
                 }
             } else {
                 try {
@@ -11775,44 +11773,44 @@ public function set_medcheck_lab_adm_save() {
                     $subtotal    = ($disk3 - $potongan) * (int)$jml;
 
                     $data = [
-                        'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                        'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                        'id_medcheck'   => (int)$sql_medc->id,
-                        'id_item'       => (int)$sql_item->id,
-                        'id_item_kat'   => (int)$sql_item->id_kategori,
-                        'id_item_sat'   => (int)$sql_item->id_satuan,
-                        'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                        'id_dokter'     => (int)$dokter,
-                        'id_lab'        => (int)general::dekrip($id_lab),
-                        'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
-                        'id_rad'        => (int)general::dekrip($id_rad),
-                        'kode'          => $sql_item->kode,
-                        'item'          => $sql_item->produk,
-                        'keterangan'    => $keterangan,
-                        'hasil_lab'     => $hasil,
-                        'harga'         => $harga,
-                        'jml'           => (int)$jml,
-                        'jml_satuan'    => '1',
-                        'satuan'        => $sql_sat->satuanTerkecil,
-                        'disk1'         => (float)$diskon1,
-                        'disk2'         => (float)$diskon2,
-                        'disk3'         => (float)$diskon3,
-                        'diskon'        => (float)$diskon,
+                    'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                    'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                    'id_medcheck'   => (int)$sql_medc->id,
+                    'id_item'       => (int)$sql_item->id,
+                    'id_item_kat'   => (int)$sql_item->id_kategori,
+                    'id_item_sat'   => (int)$sql_item->id_satuan,
+                    'id_user'       => (int)$this->ion_auth->user()->row()->id,
+                    'id_dokter'     => (int)$dokter,
+                    'id_lab'        => (int)general::dekrip($id_lab),
+                    'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
+                    'id_rad'        => (int)general::dekrip($id_rad),
+                    'kode'          => $sql_item->kode,
+                    'item'          => $sql_item->produk,
+                    'keterangan'    => $keterangan,
+                    'hasil_lab'     => $hasil,
+                    'harga'         => $harga,
+                    'jml'           => (int)$jml,
+                    'jml_satuan'    => '1',
+                    'satuan'        => $sql_sat->satuanTerkecil,
+                    'disk1'         => (float)$diskon1,
+                    'disk2'         => (float)$diskon2,
+                    'disk3'         => (float)$diskon3,
+                    'diskon'        => (float)$diskon,
                         'potongan'      => (float)$jml_pot,
-                        'subtotal'      => (float)$subtotal,
-                        'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                        'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
+                    'subtotal'      => (float)$subtotal,
+                    'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
+                    'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
                     ];
-
-                    # Cek apakah sudah di posting atau belum ?
-                    # Kalau sudah yg bisa input hny rad, lab, dokter
+                
+                # Cek apakah sudah di posting atau belum ?
+                # Kalau sudah yg bisa input hny rad, lab, dokter
                     if ($sql_medc->status < 5) {
-                        # Start Transact SQL
+                    # Start Transact SQL
                         $this->db->trans_begin();
-
-                        # Simpan pada tabel medcheck det
-                        $this->db->insert('tbl_trans_medcheck_det', $data);
+                    
+                    # Simpan pada tabel medcheck det
+                    $this->db->insert('tbl_trans_medcheck_det', $data);
 
                         if ($this->db->trans_status() === FALSE) {
                             $this->db->trans_rollback();
@@ -11823,11 +11821,11 @@ public function set_medcheck_lab_adm_save() {
                         }
                     } else {
                         if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakRad() == TRUE OR akses::hakAnalis() == TRUE) {
-                            # Start Transact SQL
+                        # Start Transact SQL
                             $this->db->trans_begin();
-
-                            # Simpan pada tabel medcheck det
-                            $this->db->insert('tbl_trans_medcheck_det', $data);
+                    
+                        # Simpan pada tabel medcheck det
+                        $this->db->insert('tbl_trans_medcheck_det', $data);
 
                             if ($this->db->trans_status() === FALSE) {
                                 $this->db->trans_rollback();
@@ -11860,7 +11858,7 @@ public function set_medcheck_lab_adm_save() {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }
+    }      
 
     public function cart_medcheck_retur_ranap() {
         if (akses::aksesLogin() == TRUE) {
@@ -12295,13 +12293,13 @@ public function set_medcheck_lab_adm_save() {
                         throw new Exception('Stok tidak cukup. <b>Stok tersedia: </b>' . $sql_stok->jml . ', Permintaan: ' . $jml);
                     }
 
-                    $harga      = general::format_angka_db($hrg);
-                    $percent    = $sql_pnjm->persen / 100;
+                $harga      = general::format_angka_db($hrg);
+                $percent    = $sql_pnjm->persen / 100;
                     $ass        = ($harga * $sql_pnjm->persen);
                     # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                     $harga_tot  = ($sql_item->status_racikan == '1' ? $harga : ($sql_pnjm->persen != 0 ? $ass : $harga));
-                    $potongan   = general::format_angka_db($pot);
-                    $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
+                $potongan   = general::format_angka_db($pot);
+                $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
                     
                     // Convert all values to float to avoid type errors
                     $harga_tot  = (float) $harga_tot;
@@ -12310,45 +12308,45 @@ public function set_medcheck_lab_adm_save() {
                     $diskon3    = (float) $diskon3;
                     $potongan   = (float) $potongan;
                     $jml        = (int) $jml;
-                    
-                    $disk1      = $harga_tot - (($diskon1 / 100) * $harga_tot);
-                    $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
-                    $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
-                    $diskon     = $harga_tot - $disk3;
+                
+                $disk1      = $harga_tot - (($diskon1 / 100) * $harga_tot);
+                $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
+                $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
+                $diskon     = $harga_tot - $disk3;
                     $subtotal   = ($disk3 - $potongan) * $jml;
 
                     $data_resep = [
-                        'id_medcheck'   => (int)$sql_medc->id,
-                        'id_resep'      => (int)general::dekrip($id_resep),
-                        'id_item'       => (int)$sql_item->id,
-                        'id_item_kat'   => (int)$sql_item->id_kategori,
-                        'id_item_sat'   => (int)$sql_item->id_satuan,
-                        'id_user'       => $this->ion_auth->user()->row()->id,
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                        'kode'          => $sql_item->kode,
-                        'item'          => $sql_item->produk,
-                        'dosis'         => (!empty($dos_jml1) ? $dos_jml1.' '.$sql_sat_pk->satuan.' Tiap '.$dos_jml2.' '.general::tipe_obat_pakai($dos_wkt) : ''),
-                        'dosis_ket'     => $dos_ket,
-                        'keterangan'    => $ket,
-                        'harga'         => (!empty($disk3) ? round($disk3) : 0),
+                    'id_medcheck'   => (int)$sql_medc->id,
+                    'id_resep'      => (int)general::dekrip($id_resep),
+                    'id_item'       => (int)$sql_item->id,
+                    'id_item_kat'   => (int)$sql_item->id_kategori,
+                    'id_item_sat'   => (int)$sql_item->id_satuan,
+                    'id_user'       => $this->ion_auth->user()->row()->id,
+                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                    'kode'          => $sql_item->kode,
+                    'item'          => $sql_item->produk,
+                    'dosis'         => (!empty($dos_jml1) ? $dos_jml1.' '.$sql_sat_pk->satuan.' Tiap '.$dos_jml2.' '.general::tipe_obat_pakai($dos_wkt) : ''),
+                    'dosis_ket'     => $dos_ket,
+                    'keterangan'    => $ket,
+                    'harga'         => (!empty($disk3) ? round($disk3) : 0),
                         'jml'           => $jml,
-                        'jml_satuan'    => '1',
-                        'satuan'        => $sql_sat->satuanTerkecil,
-                        'status'        => (int)$status,
-                        'status_resep'  => '0',
-                        'status_pj'     => ($ass > 0 ? '1' : '0'),
-                        'status_mkn'    => (!empty($status_mkn) ? $status_mkn : '0'),
-                        'status_etiket' => (!empty($status_et) ? $status_et : '0'),
+                    'jml_satuan'    => '1',
+                    'satuan'        => $sql_sat->satuanTerkecil,
+                    'status'        => (int)$status,
+                    'status_resep'  => '0',
+                    'status_pj'     => ($ass > 0 ? '1' : '0'),
+                    'status_mkn'    => (!empty($status_mkn) ? $status_mkn : '0'),
+                    'status_etiket' => (!empty($status_et) ? $status_et : '0'),
                     ];
-                    
-                    if($sql_medc->status < 5){
+                
+                if($sql_medc->status < 5){
                         # Start transaction
                         $this->db->trans_begin();
-                    
-                        # Simpan ke tabel resep
-                        $this->db->insert('tbl_trans_medcheck_resep_det', $data_resep);
-                    
+                
+                    # Simpan ke tabel resep
+                    $this->db->insert('tbl_trans_medcheck_resep_det', $data_resep);
+                
                         # Check if transaction successful
                         if ($this->db->trans_status() === FALSE) {
                             $this->db->trans_rollback();
@@ -12359,9 +12357,9 @@ public function set_medcheck_lab_adm_save() {
                         }
                     }else{
                         $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data resep gagal disimpan karena sudah ada di posting !!")');
-                    }
-                    
-                    redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
+                }
+                                
+                redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
                 } catch (Exception $e) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan: ' . $e->getMessage() . '")');
                     redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
@@ -12589,32 +12587,32 @@ public function set_medcheck_lab_adm_save() {
                     $this->db->trans_begin();
                     
                     $data_resep = [
-                        'id_medcheck'   => (int)$sql_medc->id,
-                        'id_resep'      => (int)general::dekrip($id_resep),
-                        'id_resep_det'  => (int)general::dekrip($id_resep_det),
-                        'id_item'       => (int)$sql_item_rc->id,
-                        'id_item_kat'   => (int)$sql_item_rc->id_kategori,
-                        'id_item_sat'   => (int)$sql_item_rc->id_satuan,
-                        'id_user'       => $this->ion_auth->user()->row()->id,
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'kode'          => $sql_item_rc->kode,
-                        'item'          => $sql_item_rc->produk,
-                        'satuan_farmasi'=> $dos_jml1.' '.$sql_sat_pk->satuan,
-                        'catatan'       => $dos_ket,
-                        'harga'         => (!empty($harga_tot) ? $harga_tot : '0'),
-                        'jml'           => (float)$jml,
-                        'jml_satuan'    => '1',
-                        'subtotal'      => $subtotal,
-                        'satuan'        => $sql_sat->satuanTerkecil,
-                        'status'        => $sql_item_rc->status,
+                    'id_medcheck'   => (int)$sql_medc->id,
+                    'id_resep'      => (int)general::dekrip($id_resep),
+                    'id_resep_det'  => (int)general::dekrip($id_resep_det),
+                    'id_item'       => (int)$sql_item_rc->id,
+                    'id_item_kat'   => (int)$sql_item_rc->id_kategori,
+                    'id_item_sat'   => (int)$sql_item_rc->id_satuan,
+                    'id_user'       => $this->ion_auth->user()->row()->id,
+                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                    'kode'          => $sql_item_rc->kode,
+                    'item'          => $sql_item_rc->produk,
+                    'satuan_farmasi'=> $dos_jml1.' '.$sql_sat_pk->satuan,
+                    'catatan'       => $dos_ket,
+                    'harga'         => (!empty($harga_tot) ? $harga_tot : '0'),
+                    'jml'           => (float)$jml,
+                    'jml_satuan'    => '1',
+                    'subtotal'      => $subtotal,
+                    'satuan'        => $sql_sat->satuanTerkecil,
+                    'status'        => $sql_item_rc->status,
                     ];
-                    
-                    # Simpan ke tabel resep
-                    $this->db->insert('tbl_trans_medcheck_resep_det_rc', $data_resep);
-                    
-                    //Update racikan
-                    $sql_sum_rc = $this->db->select('*')->where('id_resep_det', general::dekrip($id_resep_det))->get('tbl_trans_medcheck_resep_det_rc')->result();
-                    $item_rc    = json_encode($sql_sum_rc);
+                
+                # Simpan ke tabel resep
+                $this->db->insert('tbl_trans_medcheck_resep_det_rc', $data_resep);
+                
+                //Update racikan
+                $sql_sum_rc = $this->db->select('*')->where('id_resep_det', general::dekrip($id_resep_det))->get('tbl_trans_medcheck_resep_det_rc')->result();
+                $item_rc    = json_encode($sql_sum_rc);
                     $this->db->where('id', general::dekrip($id_resep_det))->update('tbl_trans_medcheck_resep_det', ['resep'=>$item_rc]);
                     
                     // Check if transaction successful
@@ -12626,8 +12624,8 @@ public function set_medcheck_lab_adm_save() {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Item '.$sql_item_rc->produk.' berhasil disimpan")');
                     }
                     
-                    redirect(base_url('medcheck/tambah.php?act=res_input_rc&id='.$id.'&id_resep='.$id_resep.'&status='.$status.'&item_id='.$id_item));
-                    
+                redirect(base_url('medcheck/tambah.php?act=res_input_rc&id='.$id.'&id_resep='.$id_resep.'&status='.$status.'&item_id='.$id_item));
+                
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$e->getMessage().'")');
@@ -13477,11 +13475,11 @@ public function set_medcheck_lab_adm_save() {
             $route      = $this->input->post('route');
             
             $nilai      = $_POST['nilai_normal'];
-            $satuan     = $_POST['nilai_satuan']; 
+            $satuan     = $_POST['nilai_satuan'];
             $hasil      = $_POST['nilai_hasil'];
             $status_hsl = $_POST['status_hsl'];
             $status_wrn = $_POST['status_wrn'];
-
+            
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
             $this->form_validation->set_rules('id', 'ID', 'required');
             $this->form_validation->set_rules('id_item', 'Kode', 'required');
@@ -13514,8 +13512,8 @@ public function set_medcheck_lab_adm_save() {
                         'tgl_modif' => date('Y-m-d H:i:s'),
                         'tgl_baca'  => date('Y-m-d H:i:s'),
                     ];
-                    
-                    $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_medcheck_det', $data);                
+                
+                $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_medcheck_det', $data);                
                     
                     // Delete existing lab results before inserting new ones
                     $this->db->where('id_medcheck', general::dekrip($id))->where('id_lab', general::dekrip($id_lab))->delete('tbl_trans_medcheck_lab_hsl');
@@ -13524,23 +13522,23 @@ public function set_medcheck_lab_adm_save() {
                         $sql_nilai = $this->db->where('id', general::dekrip($key))->get('tbl_m_produk_ref_input')->row();
                         
                         $data_lab = [
-                            'id_medcheck'       => $sql_medc->id,
-                            'id_medcheck_det'   => $sql_medc_ck->row()->id,
-                            'id_lab'            => general::dekrip($id_lab),
-                            'id_user'           => $this->ion_auth->user()->row()->id,
-                            'id_item'           => general::dekrip($id_item),
+                        'id_medcheck'       => $sql_medc->id,
+                        'id_medcheck_det'   => $sql_medc_ck->row()->id,
+                        'id_lab'            => general::dekrip($id_lab),
+                        'id_user'           => $this->ion_auth->user()->row()->id,
+                        'id_item'           => general::dekrip($id_item),
                             'id_item_ref_ip'    => $sql_nilai->id,
-                            'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
                             'item_name'         => $sql_nilai->item_name,
                             'item_value'        => $hsl,
                             'item_satuan'       => $satuan[$key],
                             'item_hasil'        => $hasil[$key],
-                            'status'            => $sql_nilai->status,
+                        'status'            => $sql_nilai->status,
                             'status_hsl_lab'    => !empty($status_hsl[$key]) ? $status_hsl[$key] : '0',
                             'status_hsl_wrn'    => !empty($status_wrn[$key]) ? $status_wrn[$key] : '0',
                         ];
 
-                        $this->db->insert('tbl_trans_medcheck_lab_hsl', $data_lab);
+                    $this->db->insert('tbl_trans_medcheck_lab_hsl', $data_lab);
                     }
 
                     // Check transaction status and commit/rollback accordingly
@@ -13550,12 +13548,12 @@ public function set_medcheck_lab_adm_save() {
                     } else {
                         $this->db->trans_commit();
                     }
-                    
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data laborat berhasil !");');
+                
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data laborat berhasil !");');
                     redirect(base_url('medcheck/tambah.php?act=lab_input&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
                 } catch (Exception $e) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error saving lab data: '.$e->getMessage().'");');
-                    redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
+                redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
                 }
             }
         } else {
@@ -13586,8 +13584,8 @@ public function set_medcheck_lab_adm_save() {
                     unlink($berkas);
                 }
                 
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Input hasil ekg berhasil di hapus</div>');
-                crud::delete('tbl_trans_medcheck_lab_ekg_file', 'id', general::dekrip($id_item));
+                $this->db->where('id', general::dekrip($id_item))->delete('tbl_trans_medcheck_lab_ekg_file');
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("File EKG berhasil dihapus!");');
             }
             
             redirect(base_url('medcheck/tambah.php?act='.$this->input->get('act').'&id='.$this->input->get('id').'&id_lab='.$this->input->get('id_lab').'&status='.$this->input->get('status')));
@@ -13596,7 +13594,7 @@ public function set_medcheck_lab_adm_save() {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    } 
+    }
     
     public function cart_beli_simpan() {
         if (akses::aksesLogin() == TRUE) {
@@ -13942,7 +13940,7 @@ public function set_medcheck_lab_adm_save() {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }    
+    }
     
     public function pdf_medcheck_surat() {
         if (akses::aksesLogin() == TRUE) {
@@ -13969,7 +13967,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);
             }
                         
             // Blok Isi Surat
@@ -15245,15 +15243,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $pdf->Image($gambar4,2,$pdf->GetY() + 1,2,2);
             $pdf->Image($gambar5,12.5,$pdf->GetY()+1,2,2);
@@ -15784,7 +15782,7 @@ public function set_medcheck_lab_adm_save() {
             
             # Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);  
             }
             
             # Blok Judul
@@ -15969,7 +15967,7 @@ public function set_medcheck_lab_adm_save() {
                         $pdf->SetFont('Arial', '', '8');
 
                         if (!empty($det2->id_lab_kat)) {
-                            $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
                         }
                         
                         if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
@@ -15979,42 +15977,42 @@ public function set_medcheck_lab_adm_save() {
                         }
 
                         foreach ($sql_lab2->result() as $lab2) {
-                            $x = $pdf->GetX();
-                            $y = $pdf->GetY();
-                            
+                                $x = $pdf->GetX();
+                                $y = $pdf->GetY();
+                                
                             if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
-                            }
-                            
-                            # Jika warna hasil di tandai merah
+                                    $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+                                }
+                                
+                                # Jika warna hasil di tandai merah
                             if($lab2->status_hsl_wrn == 1) {
                                 $pdf->SetTextColor(249, 11, 11);
-                            }
-                            
-                            $itm_tg     = 0.5; # tinggi cell
-                            $itm_lbr    = 4;
-                            $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
-                            $len        = strlen($lab2->item_hasil);
-                            $itm_spasi  = ($len > 35 ? 0.25 : 0);
-                            $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
-                                                        
+                                }
+                                
+                                $itm_tg     = 0.5; # tinggi cell
+                                $itm_lbr    = 4;
+                                $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
+                                $len        = strlen($lab2->item_hasil);
+                                $itm_spasi  = ($len > 35 ? 0.25 : 0);
+                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
+                                                            
                             if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                                $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
                             } else {
-                                $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                            }
-                            
-                            $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-                            $pdf->SetXY($x + 11, $y);
-                            $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                            $pdf->SetXY($x + 15, $y);
-                            $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                }
+                                
+                                $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
+                                $pdf->SetXY($x + 11, $y);
+                                $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                $pdf->SetXY($x + 15, $y);
+                                $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
                             $pdf->Ln(0.35);
-                            
-                            # Jika warna hasil di tandai merah
+                                
+                                # Jika warna hasil di tandai merah
                             if($lab2->status_hsl_wrn == 1) {
                                 $pdf->SetTextColor(0, 0, 0);
-                            }
+                                }
                         }
                     }
                     
@@ -16119,15 +16117,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             # Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -16292,7 +16290,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);     
             }
             
             # Blok Judul
@@ -16419,15 +16417,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -16501,7 +16499,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);     
             }
             
             # Blok Judul
@@ -16652,7 +16650,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
+                        
             // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
@@ -16661,7 +16659,7 @@ public function set_medcheck_lab_adm_save() {
 
             $gambar5 = $qr_dokter;
             
-            // Gambar VALIDASI  
+            // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
             $pdf->Image($gambar5,12,$getY,2,2);
@@ -16758,7 +16756,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);     
             }
             
             # Blok Judul
@@ -16866,7 +16864,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-
+                        
             // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
@@ -16874,8 +16872,8 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
-            // Gambar VALIDASI  
+            
+            // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4, 2, $getY, 2, 2);
             $pdf->Image($gambar5, 12, $getY, 2, 2);
@@ -16911,7 +16909,7 @@ public function set_medcheck_lab_adm_save() {
             redirect();
         }
     }
-    
+
     public function pdf_medcheck_pen_hrv() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
@@ -16952,7 +16950,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);     
             }
             
             # Blok Judul
@@ -17059,7 +17057,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             $pdf->Ln();
             
-                      
+           
             // QR GENERATOR VALIDASI
             $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
             if (!file_exists($folder_path)) {
@@ -17074,7 +17072,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
+                        
             // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
@@ -17119,7 +17117,7 @@ public function set_medcheck_lab_adm_save() {
             redirect();
         }
     }
-        
+    
     public function pdf_medcheck_rad() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
@@ -17161,7 +17159,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2,5,4,17,19);
             }
             
             // Blok Judul
@@ -17247,15 +17245,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter_rad->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter_rad->nama_dpn) ? $sql_dokter_rad->nama_dpn.' ' : '').$sql_dokter_rad->nama.(!empty($sql_dokter_rad->nama_blk) ? ', '.$sql_dokter_rad->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -17330,7 +17328,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
@@ -17558,15 +17556,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -17643,7 +17641,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
@@ -17760,15 +17758,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -17846,7 +17844,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
@@ -17959,15 +17957,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -18090,7 +18088,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
@@ -18235,7 +18233,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
             $pdf->MultiCell(9.5, .5, $sql_medc_ass->askep_tujuan, '', 'J');
             $x += 5;
-                                
+                    
             $pdf->SetFillColor(235, 232, 228);
             $pdf->SetTextColor(0);
             $pdf->SetFont('Arial', '', '8');
@@ -18318,7 +18316,7 @@ public function set_medcheck_lab_adm_save() {
             
             # Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2,5,4,15,19);  
             }
             
             # Blok Judul
@@ -18864,15 +18862,15 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
-            // QR GENERATOR DOKTER 
+                        
+            // QR GENERATOR DOKTER
             $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
             
             \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_dokter;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
@@ -18940,7 +18938,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2,5,4,17,19);
             }
             
             // Blok Judul
@@ -19079,7 +19077,7 @@ public function set_medcheck_lab_adm_save() {
             if (!file_exists($folder_path)) {
                 mkdir($folder_path, 0777, true);
             }
-
+            
             // QR GENERATOR VALIDASI
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
@@ -19090,7 +19088,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
+                        
             // QR GENERATOR PETUGAS KASIR
             $qr_kasir = $folder_path.'/qr-kasir-'.strtolower(md5($kasir)).'.png';
             $params['data'] = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
@@ -19098,7 +19096,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_kasir, QR_ECLEVEL_H, 2, 2);
 
             $gambar5 = $qr_kasir;
-
+            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,1,$getY,2,2);
@@ -19155,7 +19153,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2,5,4,17,19);
             }
             
             // Blok Judul
@@ -19285,7 +19283,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
+                        
             // QR GENERATOR PETUGAS KASIR
             $qr_kasir = $folder_path.'/qr-kasir-'.strtolower(md5($kasir)).'.png';
             $params['data'] = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
@@ -19297,10 +19295,10 @@ public function set_medcheck_lab_adm_save() {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             if (file_exists($gambar4)) {
-                $pdf->Image($gambar4,1,$getY,2,2);
+            $pdf->Image($gambar4,1,$getY,2,2);
             }
             if (file_exists($gambar5)) {
-                $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar5,12.5,$getY,2,2);
             }
 
             $pdf->SetFont('Arial', '', '10');
@@ -19357,7 +19355,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2,5,4,17,19);
             }
             
             // Blok Judul
@@ -19527,7 +19525,7 @@ public function set_medcheck_lab_adm_save() {
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
 
             $gambar4 = $qr_validasi;
-            
+                        
             // QR GENERATOR PETUGAS KASIR
             $qr_kasir = $folder_path.'/qr-kasir-'.strtolower(md5($kasir)).'.png';
             $params['data'] = 'Telah diverifikasi oleh petugas kasir '.$kasir.'. Pada tanggal '.$this->tanggalan->tgl_indo5($sql_medc->tgl_bayar);
@@ -19539,10 +19537,10 @@ public function set_medcheck_lab_adm_save() {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             if (file_exists($gambar4)) {
-                $pdf->Image($gambar4,1,$getY,2,2);
+            $pdf->Image($gambar4,1,$getY,2,2);
             }
             if (file_exists($gambar5)) {
-                $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar5,12.5,$getY,2,2);
             }
 
             $pdf->SetFont('Arial', '', '10');
@@ -20042,19 +20040,19 @@ public function set_medcheck_lab_adm_save() {
                         
             // Gambar Logo Atas 1
             if (file_exists($gambar1)) {
-                $pdf->Image($gambar1, 1.3, 1.15, 1.94, 1.21);
+            $pdf->Image($gambar1, 1.3, 1.15, 1.94, 1.21);
             }
             // Gambar Logo Atas 2
             if (file_exists($gambar2)) {
-                $pdf->Image($gambar2, 8.7, 1.15, 1.02, 1.15);
+            $pdf->Image($gambar2, 8.7, 1.15, 1.02, 1.15);
             }
             // Gambar Logo Atas 3
             if (file_exists($gambar3)) {
-                $pdf->Image($gambar3, 9.85, 1.15, 0.71, 1.59);
+            $pdf->Image($gambar3, 9.85, 1.15, 0.71, 1.59);
             }
             // Gambar Logo Atas 4
             if (file_exists($gambar4)) {
-                $pdf->Image($gambar4, 10.75, 1.15, 1.17, 1.23);
+            $pdf->Image($gambar4, 10.75, 1.15, 1.17, 1.23);
             }
 
             $pdf->SetFont('Arial', '', '9');
@@ -20249,7 +20247,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(6, .3, $this->ion_auth->user($sql_medc->id_farmasi)->row()->first_name, '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(2, .3, $this->tanggalan->tgl_indo5($sql_medc->tgl_ttd), '', 0, 'L', $fill);
-                        
+            
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();
@@ -20771,16 +20769,16 @@ public function set_medcheck_lab_adm_save() {
                     $sql_stok   = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $sql->id)->where('id_gudang', $sg)->get('tbl_m_produk_stok')->row();
                         
                     $produk[] = [
-                        'id'            => general::enkrip($sql->id),
-                        'kode'          => $sql->kode,
-                        'name'          => $sql->produk,
-                        'alias'         => (!empty($sql->produk_alias) ? $sql->produk_alias : ''),
-                        'kandungan'     => (!empty($sql->produk_kand) ? '('.strtolower($sql->produk_kand).')' : ''),
-                        'jml'           => ($sql_stok->jml < 0 ? 0 : $sql_stok->jml.' '.$sql_satuan->satuanTerkecil),
-                        'satuan'        => $sql_satuan->satuanTerkecil,
-                        'harga'         => (float)$sql->harga_jual,
-                        'harga_beli'    => (float)$sql->harga_beli,
-                        'harga_grosir'  => (float)$sql->harga_grosir,
+                            'id'            => general::enkrip($sql->id),
+                            'kode'          => $sql->kode,
+                            'name'          => $sql->produk,
+                            'alias'         => (!empty($sql->produk_alias) ? $sql->produk_alias : ''),
+                            'kandungan'     => (!empty($sql->produk_kand) ? '('.strtolower($sql->produk_kand).')' : ''),
+                            'jml'           => ($sql_stok->jml < 0 ? 0 : $sql_stok->jml.' '.$sql_satuan->satuanTerkecil),
+                            'satuan'        => $sql_satuan->satuanTerkecil,
+                            'harga'         => (float)$sql->harga_jual,
+                            'harga_beli'    => (float)$sql->harga_beli,
+                            'harga_grosir'  => (float)$sql->harga_grosir,
                     ];
                 }
 

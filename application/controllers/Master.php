@@ -1122,7 +1122,7 @@ class master extends CI_Controller {
                     }
                     
                     $this->session->set_flashdata('master_toast', 'toastr.success("Data ICD berhasil disimpan");');
-                    redirect(base_url('master/data_icd_list.php'));
+                redirect(base_url('master/data_icd_list.php'));
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
                     $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
