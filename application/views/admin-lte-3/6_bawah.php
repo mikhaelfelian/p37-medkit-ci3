@@ -22,8 +22,8 @@
                 });
             }
 
-            // Setiap 15 menit (900000 ms), refresh token CSRF otomatis
-            setInterval(refreshCsrfToken, 900000);
+            // Setiap 2 menit (120000 ms), refresh token CSRF otomatis
+            setInterval(refreshCsrfToken, 120000);
         </script>
     </body>
 </html>

@@ -22,8 +22,8 @@
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
-            <div class="row">                
-                <div class="col-md-12">                  
+            <div class="row">
+                <div class="col-md-12">
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Form Stok Opname</h3>
@@ -39,7 +39,8 @@
                                     <tr>
                                         <th>Nama Petugas</th>
                                         <th>:</th>
-                                        <td><?php echo strtoupper($this->ion_auth->user($sess_jual['id_user'])->row()->first_name) ?></td>
+                                        <td><?php echo strtoupper($this->ion_auth->user($sess_jual['id_user'])->row()->first_name) ?>
+                                        </td>
 
                                         <th>Tgl Transaksi</th>
                                         <th>:</th>
@@ -49,15 +50,16 @@
                                         <th>Keterangan</th>
                                         <th>:</th>
                                         <td><?php echo strtoupper($trans_opn['keterangan']) ?></td>
-                                    
+
                                         <th>Gudang</th>
                                         <th>:</th>
-                                        <td><?php echo $this->db->where('id', $trans_opn['id_gudang'])->get('tbl_m_gudang')->row()->gudang ?></td>
+                                        <td><?php echo $this->db->where('id', $trans_opn['id_gudang'])->get('tbl_m_gudang')->row()->gudang ?>
+                                        </td>
                                     </tr>
                                 </table>
-                                <hr/>
+                                <hr />
                                 <table class="table table-striped">
-                                    <thead>                                        
+                                    <thead>
                                         <tr>
                                             <th class="text-right" style="width: 20px;"></th>
                                             <th class="text-center" style="width: 20px;">No</th>
@@ -69,12 +71,12 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($trans_opn_det)) { ?>
-                                            <?php 
-                                                $no         = 1;
-                                                $tot_penj   = 0;
+                                            <?php
+                                            $no = 1;
+                                            $tot_penj = 0;
                                             ?>
                                             <?php foreach ($trans_opn_det as $penj_det) { ?>
-                                            <?php $produk = $this->db->where('id', $penj_det['options']['id_produk'])->get('tbl_m_produk')->row(); ?>
+                                                <?php $produk = $this->db->where('id', $penj_det['options']['id_produk'])->get('tbl_m_produk')->row(); ?>
                                                 <tr>
                                                     <td class="text-center">
                                                         <?php echo anchor(base_url('gudang/cart_opn_hapus.php?id=' . general::enkrip($penj_det['rowid']) . '&route=gudang/data_opname_item_list.php?nota=' . $trans_opn['sess_id']), '<i class="fa fa-remove"></i>', 'class="text-danger" onclick="return confirm(\'Hapus [' . $produk->produk . '] ?\')"') ?>
@@ -82,22 +84,24 @@
                                                     <td class="text-center"><?php echo $no; ?>.</td>
                                                     <td class="text-left"><?php echo $produk->produk ?></td>
                                                     <td class="text-right"><?php echo (float) $produk->jml ?></td>
-                                                    <td class="text-right"><?php echo (float) $penj_det['qty'] . ' ' . $penj_det->satuan ?></td>
-                                                    <td class="text-right"><?php echo (float) $penj_det['qty'] - $produk->jml ?></td>
+                                                    <td class="text-right">
+                                                        <?php echo (float) $penj_det['qty'] . ' ' . $penj_det->satuan ?></td>
+                                                    <td class="text-right"><?php echo (float) $penj_det['qty'] - $produk->jml ?>
+                                                    </td>
                                                 </tr>
                                                 <?php $no++; ?>
                                             <?php } ?>
-                                                <tr>
-                                                    <th class="text-right" colspan="5">
-                                                        Total Item
-                                                    </th>
-                                                    <th class="text-right"><?php echo $no - 1 ?> Item</th>
-                                                </tr>
-                                            <?php } else { ?>
-                                                <tr>
-                                                    <td colspan="6" class="text-center text-bold">Data Item Kosong</td>
-                                                </tr>
-                                            <?php } ?>
+                                            <tr>
+                                                <th class="text-right" colspan="5">
+                                                    Total Item
+                                                </th>
+                                                <th class="text-right"><?php echo $no - 1 ?> Item</th>
+                                            </tr>
+                                        <?php } else { ?>
+                                            <tr>
+                                                <td colspan="6" class="text-center text-bold">Data Item Kosong</td>
+                                            </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                                 <!--
@@ -110,13 +114,18 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-danger btn-flat pull-left" onclick="window.location.href = '<?php echo base_url('gudang/set_opname_batal.php?route=gudang/data_opname_tambah.php') ?>'"><i class="fa fa-remove"></i> Batal</button>
+                                    <button type="button" class="btn btn-danger btn-flat pull-left"
+                                        onclick="window.location.href = '<?php echo base_url('gudang/set_opname_batal.php?route=gudang/data_opname_tambah.php') ?>'"><i
+                                            class="fa fa-remove"></i> Batal</button>
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <?php if (!empty($trans_opn_det)) { ?>
-                                        <?php echo form_open('page=gudang&act=set_nota_opname_proses') ?>
-                                        <?php echo form_hidden('sess_id', $trans_opn['sess_id']) ?>                                    
-                                            <button type="submit" class="btn btn-primary btn-flat pull-right">Simpan &raquo;</button>
+                                        <?php echo form_open(base_url('gudang/set_opname_proses.php'),'id="gd_opn_proses_form"') ?>
+                                        <?php echo form_hidden('sess_id', $trans_opn['uuid']) ?>
+                                        <?php echo add_form_protection() ?>
+                                        <button type="submit" class="btn btn-primary btn-flat pull-right">Simpan
+                                            &raquo;</button>
+                                        <?php echo add_double_submit_protection('gd_opn_proses_form') ?>
                                         <?php echo form_close() ?>
                                     <?php } ?>
                                 </div>
@@ -149,11 +158,11 @@
                                     <tr>
                                         <th class="text-center">No.</th>
                                         <th>Item</th>
-<?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
+                                        <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
                                             <th class="text-center">
                                                 Stok
                                             </th>
-<?php } ?>
+                                        <?php } ?>
                                         <th class="text-center">Harga</th>
                                         <th class="text-center">SO</th>
                                         <th></th>
@@ -161,18 +170,20 @@
                                     <tr>
                                         <?php echo form_open(base_url('gudang/set_opname_cari_item.php')) ?>
                                         <?php echo form_hidden('nota', $this->input->get('nota')) ?>
-<?php echo form_hidden('route', $this->input->get('route')) ?>                                        
+                                        <?php echo form_hidden('route', $this->input->get('route')) ?>
                                         <th class="text-center"></th>
-                                        <th><?php echo form_input(array('name' => 'produk', 'class' => 'form-control', 'value' => $filter_produk, 'placeholder' => 'Item ...')) ?></th>
+                                        <th><?php echo form_input(array('name' => 'produk', 'class' => 'form-control', 'value' => $filter_produk, 'placeholder' => 'Item ...')) ?>
+                                        </th>
                                         <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
                                             <th></th>
-<?php } ?>
+                                        <?php } ?>
                                         <th class="text-right"></th>
                                         <th class="text-right"></th>
                                         <th style="width: 115px;">
-                                            <button class="btn btn-primary btn-flat" type="submit"><i class="fa fa-search"></i> Filter</button>
+                                            <button class="btn btn-primary btn-flat" type="submit"><i
+                                                    class="fa fa-search"></i> Filter</button>
                                         </th>
-<?php echo form_close() ?>
+                                        <?php echo form_close() ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -208,14 +219,17 @@
                                                 </td>
                                                 <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
                                                     <?php $satuan = ($sql_satuan->jml > 0) ? floor($barang->jml / $sql_satuan->jml) : 0; ?>
-                                                    <td class="text-right" style="width: 80px;"><?php echo $barang->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
-        <?php } ?>
-                                                <td class="text-right" style="width: 150px;"><?php echo general::format_angka($barang->harga_jual) ?></td>
+                                                    <td class="text-right" style="width: 80px;">
+                                                        <?php echo $barang->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
+                                                <?php } ?>
+                                                <td class="text-right" style="width: 150px;">
+                                                    <?php echo general::format_angka($barang->harga_jual) ?></td>
                                                 <td class="text-right" style="width: 75px;">
                                                     <input type="text" name="jml" value="" class="form-control">
                                                 </td>
                                                 <td>
-                                                    <button type="submit" class="btn btn-success btn-flat"><i class="fa fa-check"></i> Input</button>
+                                                    <button type="submit" class="btn btn-success btn-flat"><i
+                                                            class="fa fa-check"></i> Input</button>
                                                 </td>
                                             </tr>
                                             <?php echo form_close() ?>

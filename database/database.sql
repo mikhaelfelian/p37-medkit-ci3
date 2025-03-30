@@ -14,6 +14,12 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+-- Dumping database structure for db_medkit_ci3
+DROP DATABASE IF EXISTS `db_medkit_ci3`;
+CREATE DATABASE IF NOT EXISTS `db_medkit_ci3` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci */;
+USE `db_medkit_ci3`;
+
 -- Dumping structure for table db_medkit_ci3.admins
 DROP TABLE IF EXISTS `admins`;
 CREATE TABLE IF NOT EXISTS `admins` (
@@ -339,7 +345,7 @@ CREATE TABLE IF NOT EXISTS `tbl_ion_login_attempts` (
   `login` varchar(100) NOT NULL,
   `time` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -418,7 +424,7 @@ CREATE TABLE IF NOT EXISTS `tbl_ion_users_groups` (
   KEY `fk_users_groups_groups1_idx` (`group_id`),
   CONSTRAINT `fk_users_groups_groups1` FOREIGN KEY (`group_id`) REFERENCES `tbl_ion_groups` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_users_groups_users1` FOREIGN KEY (`user_id`) REFERENCES `tbl_ion_users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=84099 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=84100 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -485,39 +491,17 @@ CREATE TABLE IF NOT EXISTS `tbl_m_gudang` (
 DROP TABLE IF EXISTS `tbl_m_icd`;
 CREATE TABLE IF NOT EXISTS `tbl_m_icd` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_user` int(11) NOT NULL DEFAULT 0,
   `tgl_simpan` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_modif` datetime DEFAULT '0000-00-00 00:00:00',
+  `tgl_modif` datetime DEFAULT NULL,
   `kode` varchar(100) DEFAULT NULL,
   `icd` text DEFAULT NULL,
   `diagnosa_en` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18550 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Untuk menyimpan data tentang ICD 10 (Daftar Penyakit).\r\nsesuai satu sehat';
-
--- Data exporting was unselected.
-
--- Dumping structure for table db_medkit_ci3.tbl_m_icd_old
-DROP TABLE IF EXISTS `tbl_m_icd_old`;
-CREATE TABLE IF NOT EXISTS `tbl_m_icd_old` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_parent` int(11) DEFAULT 0,
-  `id_user` int(11) DEFAULT 0,
-  `tgl_simpan` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `tgl_modif` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `gol` varchar(60) DEFAULT NULL,
-  `kode` varchar(60) DEFAULT NULL,
-  `kode_sub` varchar(60) DEFAULT NULL,
-  `icd` text DEFAULT NULL,
   `diagnosa` text DEFAULT NULL,
-  `diagnosa_en` text DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `harga1` decimal(10,2) DEFAULT 0.00 COMMENT 'Kelas 1',
-  `harga2` decimal(10,2) DEFAULT 0.00 COMMENT 'Kelas 2',
-  `harga3` decimal(10,2) DEFAULT 0.00 COMMENT 'Kelas 3',
-  `harga` decimal(10,2) DEFAULT 0.00 COMMENT 'Rawat Jalan',
-  `status` int(11) DEFAULT 0,
-  `status_icd` int(11) DEFAULT 2 COMMENT '0=none;\\\\r\\\\n1=inacbg;\\\\r\\\\n2=icd;',
+  `status_icd` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41009 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Untuk menyimpan data tentang ICD 10 (Daftar Penyakit).\r\nINA-CBG sesuai permenkes';
+) ENGINE=InnoDB AUTO_INCREMENT=18552 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Untuk menyimpan data tentang ICD 10 (Daftar Penyakit).\r\nsesuai satu sehat';
 
 -- Data exporting was unselected.
 
@@ -791,7 +775,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_kategori` (
   `status_stok` enum('0','1') DEFAULT '1',
   `status` enum('0','1') DEFAULT '1' COMMENT '0=disabled;\r\n1=aktif;',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -1237,7 +1221,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_produk_hist` (
   `sp` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id_produk` (`id_produk`)
-) ENGINE=InnoDB AUTO_INCREMENT=704249 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=704273 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -1535,7 +1519,7 @@ CREATE TABLE IF NOT EXISTS `tbl_pendaftaran` (
   `status_dft` enum('0','1','2') DEFAULT '1',
   `status_hps` enum('0','1','2') DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -1559,7 +1543,7 @@ CREATE TABLE IF NOT EXISTS `tbl_pendaftaran_gc` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_pendaftaran_gc_tbl_pendaftaran` (`id_pendaftaran`),
   CONSTRAINT `FK_tbl_pendaftaran_gc_tbl_pendaftaran` FOREIGN KEY (`id_pendaftaran`) REFERENCES `tbl_pendaftaran` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -2330,7 +2314,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck` (
   `sp` enum('0','1','2') DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=99271 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=99272 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -2354,7 +2338,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_apres` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_apres_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_apres_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=54234 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=54240 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -2536,7 +2520,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_det` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_det_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_det_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=969448 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=969489 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -2554,7 +2538,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_dokter` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_dokter_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_dokter_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=94729 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Untuk mengakomodasi fitur rawat bersama.\r\nTabel ini akan menyimpan id_dokter, id_medcheck.';
+) ENGINE=InnoDB AUTO_INCREMENT=94731 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Untuk mengakomodasi fitur rawat bersama.\r\nTabel ini akan menyimpan id_dokter, id_medcheck.';
 
 -- Data exporting was unselected.
 
@@ -2584,7 +2568,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_file` (
   PRIMARY KEY (`id`),
   KEY `id_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_file_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=27545 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27555 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -2711,7 +2695,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_lab` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK_tbl_trans_medcheck_lab_tbl_trans_medcheck` (`id_medcheck`) USING BTREE,
   CONSTRAINT `FK_tbl_trans_medcheck_lab_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=29706 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29707 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -2766,7 +2750,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_lab_ekg` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK_tbl_trans_medcheck_lab_ekg_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_lab_ekg_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1441 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Untuk menyimpan data ekg';
+) ENGINE=InnoDB AUTO_INCREMENT=1442 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Untuk menyimpan data ekg';
 
 -- Data exporting was unselected.
 
@@ -2789,7 +2773,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_lab_ekg_file` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_lab_ekg_file_tbl_trans_medcheck_lab_ekg` (`id_lab_ekg`),
   CONSTRAINT `FK_tbl_trans_medcheck_lab_ekg_file_tbl_trans_medcheck_lab_ekg` FOREIGN KEY (`id_lab_ekg`) REFERENCES `tbl_trans_medcheck_lab_ekg` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=672 DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=685 DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- Data exporting was unselected.
 
@@ -2817,7 +2801,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_lab_hsl` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_lab_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_lab_hsl_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=332194 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Untuk menyimpan nilai normal lab';
+) ENGINE=InnoDB AUTO_INCREMENT=332229 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Untuk menyimpan nilai normal lab';
 
 -- Data exporting was unselected.
 
@@ -2849,7 +2833,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_lab_spiro` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK_tbl_trans_medcheck_lab_spiro_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_lab_spiro_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=629 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Untuk menyimpan data spirometri';
+) ENGINE=InnoDB AUTO_INCREMENT=631 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Untuk menyimpan data spirometri';
 
 -- Data exporting was unselected.
 
@@ -2949,7 +2933,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_pen_hrv` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK_tbl_trans_medcheck_lab_hrv_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_lab_hrv_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Untuk menyimpan pemeriksaan penunjang hrv';
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Untuk menyimpan pemeriksaan penunjang hrv';
 
 -- Data exporting was unselected.
 
@@ -2995,7 +2979,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_rad` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_rad_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_rad_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11768 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11771 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -3092,7 +3076,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_resep` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_resep_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_resep_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=121837 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Tabel ini menyimpan no resep dan siapa yg membuat resepnya beserta siapa yang menerima resep tersebut';
+) ENGINE=InnoDB AUTO_INCREMENT=121840 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci COMMENT='Tabel ini menyimpan no resep dan siapa yg membuat resepnya beserta siapa yang menerima resep tersebut';
 
 -- Data exporting was unselected.
 
@@ -3135,7 +3119,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_resep_det` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_resep_det_tbl_trans_medcheck` (`id_resep`),
   CONSTRAINT `FK_tbl_trans_medcheck_resep_det_tbl_trans_medcheck_resep` FOREIGN KEY (`id_resep`) REFERENCES `tbl_trans_medcheck_resep` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=468771 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=468779 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -3165,7 +3149,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_resep_det_rc` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_resep_det_rc_tbl_trans_medcheck_resep_det` (`id_resep_det`),
   CONSTRAINT `FK_tbl_trans_medcheck_resep_det_rc_tbl_trans_medcheck_resep_det` FOREIGN KEY (`id_resep_det`) REFERENCES `tbl_trans_medcheck_resep_det` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=70336 DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin COMMENT='Tabel ini untuk menyimpan detail resep';
+) ENGINE=InnoDB AUTO_INCREMENT=70341 DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin COMMENT='Tabel ini untuk menyimpan detail resep';
 
 -- Data exporting was unselected.
 
@@ -3296,7 +3280,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_medcheck_stok` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_trans_medcheck_stok_tbl_trans_medcheck` (`id_medcheck`),
   CONSTRAINT `FK_tbl_trans_medcheck_stok_tbl_trans_medcheck` FOREIGN KEY (`id_medcheck`) REFERENCES `tbl_trans_medcheck` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=457480 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=457503 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -3695,19 +3679,20 @@ CREATE TABLE IF NOT EXISTS `tbl_util_log_satusehat` (
 DROP TABLE IF EXISTS `tbl_util_so`;
 CREATE TABLE IF NOT EXISTS `tbl_util_so` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uuid` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `id_gudang` int(11) DEFAULT 0,
-  `sess_id` varchar(64) DEFAULT NULL,
   `tgl_simpan` datetime DEFAULT NULL,
   `tgl_modif` datetime DEFAULT NULL,
   `id_user` int(11) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `satuan` varchar(64) DEFAULT NULL,
-  `nm_file` text DEFAULT NULL,
-  `dl_file` text DEFAULT NULL,
-  `reset` enum('0','1') DEFAULT '0',
-  `status` enum('0','1','2','3') DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=863 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `keterangan` text CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `satuan` varchar(64) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `nm_file` text CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `dl_file` text CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `reset` enum('0','1') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT '0',
+  `status` enum('0','1','2','3') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uuid` (`uuid`) USING HASH
+) ENGINE=InnoDB AUTO_INCREMENT=864 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -3734,9 +3719,9 @@ CREATE TABLE IF NOT EXISTS `tbl_util_so_det` (
   `merk` varchar(100) DEFAULT NULL,
   `sp` varchar(100) DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `id_so` (`id_so`),
+  KEY `FK_tbl_util_so_det_tbl_util_so` (`id_so`),
   CONSTRAINT `FK_tbl_util_so_det_tbl_util_so` FOREIGN KEY (`id_so`) REFERENCES `tbl_util_so` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12109 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12110 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -4634,7 +4619,30 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_master_absen` AS select 
 
 -- Removing temporary table and create final VIEW structure
 DROP TABLE IF EXISTS `v_master_dokter`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_master_dokter` AS select `tbl_m_karyawan`.`id` AS `id`,`tbl_m_karyawan`.`id_user` AS `id_user`,`tbl_m_karyawan_jadwal`.`id_poli` AS `id_poli`,`tbl_m_poli`.`lokasi` AS `poli`,`tbl_m_karyawan`.`nama_dpn` AS `nama_dpn`,`tbl_m_karyawan`.`nama` AS `nama`,`tbl_m_karyawan`.`nama_blk` AS `nama_blk`,`tbl_m_karyawan_jadwal`.`hari_1` AS `hari_1`,`tbl_m_karyawan_jadwal`.`hari_2` AS `hari_2`,`tbl_m_karyawan_jadwal`.`hari_3` AS `hari_3`,`tbl_m_karyawan_jadwal`.`hari_4` AS `hari_4`,`tbl_m_karyawan_jadwal`.`hari_5` AS `hari_5`,`tbl_m_karyawan_jadwal`.`hari_6` AS `hari_6`,`tbl_m_karyawan_jadwal`.`hari_7` AS `hari_7`,`tbl_m_karyawan_jadwal`.`status_prtk` AS `status_prtk` from ((`tbl_m_karyawan_jadwal` join `tbl_m_karyawan` on(`tbl_m_karyawan_jadwal`.`id_karyawan` = `tbl_m_karyawan`.`id`)) join `tbl_m_poli` on(`tbl_m_karyawan_jadwal`.`id_poli` = `tbl_m_poli`.`id`)) order by `tbl_m_poli`.`id` ;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_master_dokter` AS SELECT 
+    k.id AS id,
+    k.id_user AS id_user,
+    j.id_poli AS id_poli,
+    p.lokasi AS poli,
+    k.nama_dpn AS nama_dpn,
+    k.nama AS nama,
+    k.nama_blk AS nama_blk,
+    j.hari_1 AS hari_1,
+    j.hari_2 AS hari_2,
+    j.hari_3 AS hari_3,
+    j.hari_4 AS hari_4,
+    j.hari_5 AS hari_5,
+    j.hari_6 AS hari_6,
+    j.hari_7 AS hari_7,
+    j.status_prtk AS status_prtk
+FROM 
+    tbl_m_karyawan_jadwal j
+JOIN 
+    tbl_m_karyawan k ON j.id_karyawan = k.id
+JOIN 
+    tbl_m_poli p ON j.id_poli = p.id
+ORDER BY 
+    p.id ;
 
 -- Removing temporary table and create final VIEW structure
 DROP TABLE IF EXISTS `v_medcheck`;
