@@ -1,4 +1,4 @@
-<?php echo form_open_multipart(base_url('medcheck/set_medcheck_lab_ekg_upload.php'), [
+<?php echo form_open_multipart(base_url('medcheck/set_medcheck_lab_ekg_upload'), [
     'id' => 'uploadForm',
     'autocomplete' => 'off',
     'enctype' => 'multipart/form-data'
@@ -155,8 +155,6 @@
 
 <!-- Dropzone CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css">
-<!-- Toastr CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
 <!-- Dropzone JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>

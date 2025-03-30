@@ -32,7 +32,6 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <?php echo $this->session->flashdata('medcheck'); ?>
                             <table class="table table-striped project">
                                 <thead>
                                     <?php echo form_open_multipart(base_url('medcheck/set_cari_medcheck.php'), 'autocomplete="off"') ?> 
@@ -241,7 +240,5 @@
             yearRange: '2022:<?php echo date('Y') ?>',
             autoclose: true
         });
-
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>

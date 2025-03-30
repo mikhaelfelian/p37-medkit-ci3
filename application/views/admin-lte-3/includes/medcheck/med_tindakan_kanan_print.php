@@ -3,34 +3,32 @@
         <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakKasir() == TRUE) { ?>
             <?php // if ($gtotal > 0 AND $sql_medc->status < 5) { ?>
             <?php if ($sql_medc->status < 5 AND $sql_medc->status_bayar == 0) { ?>
-                <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses.php'), 'autocomplete="off"') ?>
+                <?php echo form_open(base_url('medcheck/set_medcheck_proses.php'), 'id="medc_posting" autocomplete="off"') ?>
                 <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                 <?php echo form_hidden('status', $sql_medc->status); ?>
                 <?php echo form_hidden('jml_total', $gtotal); ?>
+                <?php echo add_form_protection() ?>
                 <button type="submit" class="btn btn-app bg-info" onclick="return confirm('Posting ?')">
                     <i class="fa-solid fa-arrows-rotate"></i><br/>
                     Posting
                 </button>
                 <br/>
+                <?php echo add_double_submit_protection('medc_posting');?>
                 <?php echo form_close(); ?>
             <?php } else { ?>
                 <?php if ($sql_medc->status >= 5 AND $sql_medc->status_bayar != 1) { ?>
-                    <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses_batal.php'), 'autocomplete="off"') ?>
+                    <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses_batal.php'), 'id="medc_batal_posting" autocomplete="off"') ?>
                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                     <?php echo form_hidden('status', $sql_medc->status); ?>
                     <?php echo form_hidden('jml_total', $gtotal); ?>
+                    <?php echo add_form_protection() ?>
                     <button type="submit" class="btn btn-app bg-danger" onclick="return confirm('Yakin Batal Posting ?')">
                         <i class="fa-solid fa-arrows-rotate"></i><br/>
                         Batal Posting
                     </button>
                     <br/>
-                    <?php echo form_close(); ?>
-                    <!--
-                    <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php // echo base_url('medcheck/set_medcheck_upd_inv.php?id=' . general::enkrip($sql_medc->id))    ?>'">
-                        <i class="fa-solid fa-recycle"></i><br/>
-                        Update Nota
-                    </button>
-                    -->
+                    <?php echo add_double_submit_protection('medc_batal_posting');?>
+                <?php echo form_close(); ?>
                     <br/>
                 <?php } else { ?>
                     <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE) { ?>
