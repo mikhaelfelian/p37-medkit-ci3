@@ -18,11 +18,11 @@ class Csrf extends CI_Controller {
      * @return void
      */
     public function refresh() {
-        // Verify this is an AJAX request
-        if (!$this->input->is_ajax_request()) {
-            show_error('Direct access not allowed', 403);
-            return;
-        }
+        // // Verify this is an AJAX request
+        // if (!$this->input->is_ajax_request()) {
+        //     show_error('Direct access not allowed', 403);
+        //     return;
+        // }
 
         // Send JSON response with new CSRF data
         $csrf = array(
