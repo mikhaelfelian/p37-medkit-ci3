@@ -133,3 +133,18 @@ $autoload['language'] = array();
 |	$autoload['model'] = array('first_model' => 'first');
 */
 $autoload['model'] = array('crud','akses','general');
+
+/*
+| -------------------------------------------------------------------
+|  Auto-load Composer packages
+| -------------------------------------------------------------------
+| Prototype:
+|
+|	$autoload['composer'] = TRUE;
+|
+| This setting enables the auto-loading of Composer packages that have been
+| installed into the vendor/ directory. If set to FALSE, you will have to
+| manually require the packages you need in your controller or other files.
+*/
+$autoload['composer'] = TRUE;
+

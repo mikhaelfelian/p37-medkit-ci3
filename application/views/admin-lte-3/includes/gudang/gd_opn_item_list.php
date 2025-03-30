@@ -207,7 +207,7 @@
                                                     <small><i><?php echo $barang->produk_alias ?></i></small>
                                                 </td>
                                                 <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
-                                                    <?php $satuan = floor($barang->jml / $sql_satuan->jml); ?>
+                                                    <?php $satuan = ($sql_satuan->jml > 0) ? floor($barang->jml / $sql_satuan->jml) : 0; ?>
                                                     <td class="text-right" style="width: 80px;"><?php echo $barang->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
         <?php } ?>
                                                 <td class="text-right" style="width: 150px;"><?php echo general::format_angka($barang->harga_jual) ?></td>

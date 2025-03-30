@@ -29,7 +29,7 @@
                             <h3 class="card-title">Data Stok Opname</h3>
                             <div class="card-tools">
                                 <ul class="pagination pagination-sm float-right">
-                                    <?php echo $pagination ?>
+                                    <?php echo isset($pagination) ? $pagination : ''; ?>
                                 </ul>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                                 <tbody>
                                     <?php
                                     if (!empty($opname)) {
-                                        $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
+                                        $no = (isset($_GET['halaman']) && is_numeric($_GET['halaman'])) ? (int)$_GET['halaman'] + 1 : 1;
                                         foreach ($opname as $opname) {
                                             ?>
                                             <tr>

@@ -1916,9 +1916,9 @@ class gudang extends CI_Controller {
             $this->form_validation->set_rules('customer', 'customer', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'customer' => form_error('customer'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 
@@ -1929,14 +1929,15 @@ class gudang extends CI_Controller {
                 
                 $noUrut = rand(1,256).rand(512, 256);
             
-                $data = array(
+                $data = [
+                    'uuid'         => uuid(),
                     'sess_id'      => general::enkrip($noUrut),
                     'id_gudang'    => $sql_gudang->id,
                     'tgl_simpan'   => $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s'),
                     'id_user'      => $this->ion_auth->user()->row()->id,
                     'keterangan'   => $ket,
                     'status'       => '0',
-                );
+                ];
                 
                 if(empty($sess_opn)){
                     $this->session->set_userdata('trans_opname', $data);
@@ -1947,6 +1948,7 @@ class gudang extends CI_Controller {
                     $last_id = $noUrut;
                 }
                 
+                $this->session->set_flashdata('gd_toast', 'toastr.success("Data opname berhasil dibuat");');
                 redirect(base_url('gudang/data_opname_item_list.php?nota='.general::enkrip($last_id).'&route=gudang/data_opname_tambah.php'));
             }
         } else {
@@ -2278,29 +2280,26 @@ class gudang extends CI_Controller {
             /* -- Blok Filter -- */
             $hal     = $this->input->get('halaman');
             $gd      = $this->input->get('filter_gd');
-            $jml     = $this->input->get('jml');
-//            $jml_sql = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? $this->db->get('tbl_trans_jual')->num_rows() : $this->db->where('id_user', $id_user)->where('tgl_masuk', date('Y-m-d'))->get('tbl_trans_jual')->num_rows());
 
-            if(!empty($jml)){
-                $jml_hal = $jml;
-            }else{
-                $jml_hal = $this->db
-                                ->where('id_produk', $data['barang']->id)
-                                ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
-                                ->get('v_produk_hist')->num_rows();
-            }
+            $total_rows = $this->db
+                            ->where('id_produk', $data['barang']->id)
+                            ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                            ->get('tbl_m_produk_hist')->num_rows();
             /* -- End Blok Filter -- */
             /* -- Form Error -- */
             $data['hasError']                = $this->session->flashdata('form_error');
 
             /* -- Blok Pagination -- */
-            $config['base_url']              = base_url('gudang/data_stok_tambah.php?id='.$id.(!empty($gd) ? '&filter_gd='.$gd : '').'&jml='.$jml_hal);
-            $config['total_rows']            = $jml_hal;
+            $config['base_url']              = base_url('gudang/data_stok_tambah.php?id='.$id.(!empty($gd) ? '&filter_gd='.$gd : ''));
+            $config['total_rows']            = $total_rows;
             
             $config['query_string_segment']  = 'halaman';
             $config['page_query_string']     = TRUE;
             $config['per_page']              = $pengaturan->jml_item;
             $config['num_links']             = 3;
+            
+            $config['full_tag_open']         = '<ul class="pagination pagination-sm">';
+            $config['full_tag_close']        = '</ul>';
             
             $config['first_tag_open']        = '<li class="page-item">';
             $config['first_tag_close']       = '</li>';
@@ -2317,35 +2316,24 @@ class gudang extends CI_Controller {
             $config['last_tag_open']         = '<li class="page-item">';
             $config['last_tag_close']        = '</li>';
             
-            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
+            $config['cur_tag_open']          = '<li class="page-item active"><a href="#" class="page-link">';
+            $config['cur_tag_close']         = '</a></li>';
             
             $config['first_link']            = '&laquo;';
             $config['prev_link']             = '&lsaquo;';
             $config['next_link']             = '&rsaquo;';
             $config['last_link']             = '&raquo;';
-            $config['anchor_class']          = 'class="page-link"';
+            $config['attributes']            = array('class' => 'page-link');
             /* -- End Blok Pagination -- */
             
-            if(!empty($hal)){
-                $data['barang_hist'] = $this->db
-                                            ->select('tgl_simpan, tgl_masuk, id, id_user, id_gudang, id_pembelian, id_pembelian_det, id_penjualan, id_produk, no_nota, kode, jml, jml_satuan, nominal, satuan, keterangan, status')
-                                            ->where('id_produk', $data['barang']->id)
-                                            ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
-                                            ->limit($config['per_page'], $hal)
-                                            ->group_by('tgl_simpan, tgl_masuk, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                            ->order_by('tgl_simpan, status', 'asc')
-                                            ->get('v_produk_hist')->result();
-            }else{
-                $data['barang_hist'] = $this->db
-                                            ->select('tgl_simpan, tgl_masuk, id, id_user, id_gudang, id_pembelian, id_pembelian_det, id_penjualan, id_produk, no_nota, kode, jml, jml_satuan, nominal, satuan, keterangan, status')
-                                            ->where('id_produk', $data['barang']->id)
-                                            ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
-                                            ->limit($config['per_page'])
-                                            ->group_by('tgl_simpan, tgl_masuk, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                            ->order_by('tgl_simpan, status', 'asc')
-                                            ->get('v_produk_hist')->result();
-            }
+            $data['barang_hist'] = $this->db
+                                        ->select('tgl_simpan, tgl_masuk, id, id_user, id_gudang, id_pembelian, id_pembelian_det, id_penjualan, id_produk, no_nota, kode, jml, jml_satuan, nominal, satuan, keterangan, status')
+                                        ->where('id_produk', $data['barang']->id)
+                                        ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                                        ->limit($config['per_page'], $hal)
+                                        ->group_by('tgl_simpan, tgl_masuk, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                        ->order_by('tgl_simpan, status', 'asc')
+                                        ->get('tbl_m_produk_hist')->result();
             
             $this->pagination->initialize($config);
             
