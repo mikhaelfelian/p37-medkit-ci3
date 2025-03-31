@@ -8,7 +8,7 @@
  * @date 2023-03-31
  */
 
-class master extends CI_Controller {
+class Master extends CI_Controller {
     //put your code here
     public function __construct() {
         parent::__construct();

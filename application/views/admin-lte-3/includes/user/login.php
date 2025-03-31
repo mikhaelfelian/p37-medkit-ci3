@@ -52,7 +52,7 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <!-- /.login-logo -->
-        <div class="card card-outline card-success">
+        <div class="card card-outline card-success rounded-0">
             <div class="card-header text-center">
                 <a href="#" class="h1"><img
                         src="<?php echo base_url('assets/theme/admin-lte-3/dist/img/' . (!empty($pengaturan->logo) ? $pengaturan->logo : 'AdminLTELogo.png')); ?>"
@@ -65,9 +65,14 @@
 
                 <?php echo form_open(base_url('cek_login.php'), 'autocomplete="off"') ?>
                 <div class="input-group mb-3">
-                    <?php echo form_input(array('name' => 'user', 'class' => 'form-control' . (!empty($hasError['user']) ? ' is-invalid' : ''), 'placeholder' => 'Username ...', 'value' => $this->session->flashdata('user'))) ?>
+                    <?php echo form_input([
+                        'name' => 'user',
+                        'class' => 'form-control rounded-0' . (!empty($hasError['user']) ? ' is-invalid' : ''),
+                        'placeholder' => 'Username ...',
+                        'value' => $this->session->flashdata('user')
+                    ]) ?>
                     <div class="input-group-append">
-                        <div class="input-group-text">
+                        <div class="input-group-text rounded-0">
                             <span class="fas fa-envelope"></span>
                         </div>
                     </div>
@@ -77,9 +82,13 @@
                     <?php } ?>
                 </div>
                 <div class="input-group mb-3">
-                    <?php echo form_password(array('name' => 'pass', 'class' => 'form-control' . (!empty($hasError['pass']) ? ' is-invalid' : ''), 'placeholder' => 'Kata Sandi ...')) ?>
+                    <?php echo form_password([
+                        'name' => 'pass',
+                        'class' => 'form-control rounded-0' . (!empty($hasError['pass']) ? ' is-invalid' : ''),
+                        'placeholder' => 'Kata Sandi ...'
+                    ]) ?>
                     <div class="input-group-append">
-                        <div class="input-group-text">
+                        <div class="input-group-text rounded-0">
                             <span class="fas fa-lock"></span>
                         </div>
                     </div>
@@ -95,7 +104,7 @@
                     <!-- /.col -->
                     <div class="col-4">
                         <button type="submit" name="login" value="login_aksi"
-                            class="btn btn-primary btn-block">Masuk</button>
+                            class="btn btn-primary btn-block rounded-0">Masuk</button>
                     </div>
                     <!-- /.col -->
                 </div>

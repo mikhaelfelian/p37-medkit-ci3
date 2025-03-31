@@ -1,12 +1,14 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
 /**
- * Description of gudang
+ * Description of Gudang controller
  *
- * @author mike
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2025-03-24
  */
 
-class gudang extends CI_Controller {
+class Gudang extends CI_Controller {
     //put your code here    
     function __construct() {
         parent::__construct();

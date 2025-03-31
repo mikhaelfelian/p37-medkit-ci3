@@ -7,7 +7,7 @@
  * @date 2025-03-24
  */
 
-class medcheck extends CI_Controller {
+class Medcheck extends CI_Controller {
     public $ciqrcode;
     public $benchmark;
     public $hooks;
@@ -3018,17 +3018,26 @@ class medcheck extends CI_Controller {
     
     public function trans_medcheck_restore() {
         if (akses::aksesLogin() == TRUE) {
-            $id                   = $this->input->get('id');
-            $userid               = $this->ion_auth->user()->row()->id;
+            $id     = $this->input->get('id');
+            $userid = $this->ion_auth->user()->row()->id;
             
-            $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
+            $decrypted_id = general::dekrip($id);
+            // Get the record type before updating to use in redirect
+            $tipe = $this->db->select('tipe')
+                            ->where('id', $decrypted_id)
+                            ->get('tbl_trans_medcheck')
+                            ->row()
+                            ->tipe;
             
-            if($sql_medc->num_rows() > 0){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil dihapus</div>');
-                crud::update('tbl_trans_medcheck', 'id', general::dekrip($id), array('status_hps'=>'0'));
+            // Direct update without fetching the entire record first
+            $affected_rows = $this->db->where('id', $decrypted_id)
+                                     ->update('tbl_trans_medcheck', array('status_hps' => '0'));
+            
+            if($affected_rows > 0){
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dipulihkan");');
             }
             
-            redirect(base_url('medcheck/index.php?tipe='.$sql_medc->row()->tipe));
+            redirect(base_url('medcheck/index.php?tipe='.$tipe));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
