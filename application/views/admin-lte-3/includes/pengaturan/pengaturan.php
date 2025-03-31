@@ -36,28 +36,28 @@
                                 <div class="col-md-4">
                                     <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Nama Perusahaan</label>
-                                        <?php echo form_input(array('name' => 'judul', 'class' => 'form-control', 'value' => $pengaturan->judul)) ?>
+                                        <?php echo form_input(array('name' => 'judul', 'class' => 'form-control rounded-0', 'value' => $pengaturan->judul)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['user']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Alamat</label>
-                                        <?php echo form_input(array('name' => 'alamat', 'class' => 'form-control', 'value' => $pengaturan->alamat)) ?>
+                                        <?php echo form_input(array('name' => 'alamat', 'class' => 'form-control rounded-0', 'value' => $pengaturan->alamat)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['pass1']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Kota</label>
-                                        <?php echo form_input(array('name' => 'kota', 'class' => 'form-control', 'value' => $pengaturan->kota)) ?>
+                                        <?php echo form_input(array('name' => 'kota', 'class' => 'form-control rounded-0', 'value' => $pengaturan->kota)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['pass2']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Jml Item per Halaman</label>
-                                        <?php echo form_input(array('id' => 'jml_item', 'name' => 'jml_item', 'class' => 'form-control', 'value' => $pengaturan->jml_item)) ?>
+                                        <?php echo form_input(array('id' => 'jml_item', 'name' => 'jml_item', 'class' => 'form-control rounded-0', 'value' => $pengaturan->jml_item)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['pass2']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Jml Minimal Stok <small><i>* Notif untuk PO dgn satuan terkecil</i></small></label>
-                                        <?php echo form_input(array('id' => 'jml_item_limit', 'name' => 'jml_item_limit', 'class' => 'form-control', 'value' => $pengaturan->jml_limit_stok)) ?>
+                                        <?php echo form_input(array('id' => 'jml_item_limit', 'name' => 'jml_item_limit', 'class' => 'form-control rounded-0', 'value' => $pengaturan->jml_limit_stok)) ?>
                                     </div>
                                     <?php if (akses::hakSA() == TRUE) { ?>
                                         <div class="form-group <?php echo (!empty($hasError['cabang']) ? 'has-error' : '') ?>">
                                             <label class="control-label">Cabang / Lokasi</label>
-                                            <select name="cabang" class="form-control">
+                                            <select name="cabang" class="form-control rounded-0">
                                                 <option value="">- Pilih -</option>
                                                 <?php
                                                 $cbg = $this->db->order_by('id', 'asc')->get('tbl_pengaturan_cabang')->result();
@@ -68,37 +68,53 @@
                                             </select>
                                         </div>
                                     <?php } ?>
+                                    <div class="form-group <?php echo (!empty($hasError['apt_apa']) ? 'has-error' : '') ?>">
+                                        <label class="control-label">APA (Apoteker Pengelola Apotek)</label>
+                                        <?php echo form_input([
+                                            'name' => 'apt_apa',
+                                            'class' => 'form-control rounded-0',
+                                            'value' => $pengaturan->apt_apa ?? ''
+                                        ]) ?>
+                                    </div>
+                                    <div class="form-group <?php echo (!empty($hasError['apt_sipa']) ? 'has-error' : '') ?>">
+                                        <label class="control-label">SIPA (Surat Izin Praktik Apoteker)</label>
+                                        <?php echo form_input([
+                                            'name' => 'apt_sipa',
+                                            'class' => 'form-control rounded-0',
+                                            'value' => $pengaturan->apt_sipa ?? ''
+                                        ]) ?>
+                                    </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group <?php echo (!empty($hasError['pass2']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Jml PPN</label>
-                                        <?php echo form_input(array('id' => 'jml_ppn', 'name' => 'jml_ppn', 'class' => 'form-control', 'value' => $pengaturan->jml_ppn)) ?>
+                                        <?php echo form_input(array('id' => 'jml_ppn', 'name' => 'jml_ppn', 'class' => 'form-control rounded-0', 'value' => $pengaturan->jml_ppn)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['pass2']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Nilai 1 Poin <i>*</i></label>
-                                        <?php echo form_input(array('id' => 'jml_poin', 'name' => 'jml_poin', 'class' => 'form-control', 'value' => $pengaturan->jml_poin)) ?>
+                                        <?php echo form_input(array('id' => 'jml_poin', 'name' => 'jml_poin', 'class' => 'form-control rounded-0', 'value' => $pengaturan->jml_poin)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['pass2']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Nominal Kelipatan <i>*</i></label>
-                                        <?php echo form_input(array('id' => 'jml_klp', 'name' => 'jml_klp', 'class' => 'form-control', 'value' => $pengaturan->jml_poin_nom)) ?>
+                                        <?php echo form_input(array('id' => 'jml_klp', 'name' => 'jml_klp', 'class' => 'form-control rounded-0', 'value' => $pengaturan->jml_poin_nom)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['pass2']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Tahun Cut Off <i>*</i></label>
-                                        <?php echo form_input(array('id' => 'tahun', 'name' => 'tahun', 'class' => 'form-control', 'value' => $pengaturan->tahun_poin)) ?>
+                                        <?php echo form_input(array('id' => 'tahun', 'name' => 'tahun', 'class' => 'form-control rounded-0', 'value' => $pengaturan->tahun_poin)) ?>
                                     </div>                                    
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group <?php echo (!empty($hasError['ss_org_id']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Satu Sehat Org. ID <i>*</i></label>
-                                        <?php echo form_input(array('id' => 'ss_org_id', 'name' => 'ss_org_id', 'class' => 'form-control', 'value' => $pengaturan->ss_org_id)) ?>
+                                        <?php echo form_input(array('id' => 'ss_org_id', 'name' => 'ss_org_id', 'class' => 'form-control rounded-0', 'value' => $pengaturan->ss_org_id)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['ss_client_id']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Satu Sehat Klien ID <i>*</i></label>
-                                        <?php echo form_input(array('id' => 'ss_client_id', 'name' => 'ss_client_id', 'class' => 'form-control', 'value' => $pengaturan->ss_client_id)) ?>
+                                        <?php echo form_input(array('id' => 'ss_client_id', 'name' => 'ss_client_id', 'class' => 'form-control rounded-0', 'value' => $pengaturan->ss_client_id)) ?>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['ss_client_secret']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Satu Sehat Klien Secret Key <i>*</i></label>
-                                        <?php echo form_input(array('id' => 'ss_client_secret', 'name' => 'ss_client_secret', 'class' => 'form-control', 'value' => $pengaturan->ss_client_secret)) ?>
+                                        <?php echo form_input(array('id' => 'ss_client_secret', 'name' => 'ss_client_secret', 'class' => 'form-control rounded-0', 'value' => $pengaturan->ss_client_secret)) ?>
                                     </div>
 
                                 </div>

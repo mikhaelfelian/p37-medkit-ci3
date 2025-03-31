@@ -250,35 +250,35 @@ class pengaturan extends CI_Controller {
     
     public function set_pengaturan() {
         if (akses::aksesLogin() == TRUE) {
-            $judul  = $this->input->post('judul');
-            $alamat = $this->input->post('alamat');
-            $kota   = $this->input->post('kota');
-            $ppn    = $this->input->post('jml_ppn');
-            $poin   = $this->input->post('jml_poin');
-            $itm    = $this->input->post('jml_item');
-            $itm_lmt= $this->input->post('jml_item_limit');
-            $tahun  = $this->input->post('tahun');
-            $cabang = $this->input->post('cabang');
-            $ss_org = $this->input->post('ss_org_id');
-            $ss_id  = $this->input->post('ss_client_id');
-            $ss_scr = $this->input->post('ss_client_secret');
+            $judul    = $this->input->post('judul');
+            $alamat   = $this->input->post('alamat');
+            $kota     = $this->input->post('kota');
+            $ppn      = $this->input->post('jml_ppn');
+            $poin     = $this->input->post('jml_poin');
+            $itm      = $this->input->post('jml_item');
+            $itm_lmt  = $this->input->post('jml_item_limit');
+            $tahun    = $this->input->post('tahun');
+            $cabang   = $this->input->post('cabang');
+            $ss_org   = $this->input->post('ss_org_id');
+            $ss_id    = $this->input->post('ss_client_id');
+            $ss_scr   = $this->input->post('ss_client_secret');
+            $apt_apa  = $this->input->post('apt_apa');
+            $apt_sipa = $this->input->post('apt_sipa');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
-            $this->form_validation->set_rules('judul', 'Email', '');
+            $this->form_validation->set_rules('judul', 'Nama Aplikasi', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'judul'   => form_error('judul'),
-                );
+                $msg_error = [
+                    'judul' => form_error('judul'),
+                ];
                 
                 $this->session->set_flashdata('form_error', $msg_error);
-                $this->session->set_flashdata('has_error', $has_error);
-
-                $this->session->set_flashdata('email', $user);
+                $this->session->set_flashdata('sett_toast', 'toastr.error("Pengaturan gagal disimpan !");');
                 redirect(base_url('pengaturan/index.php'));
-            }else{
-                $peng = array(
+            } else {
+                $peng = [
                     'judul'             => $judul,
                     'alamat'            => $alamat,
                     'kota'              => $kota,
@@ -290,11 +290,13 @@ class pengaturan extends CI_Controller {
                     'ss_org_id'         => $ss_org,
                     'ss_client_id'      => $ss_id,
                     'ss_client_secret'  => $ss_scr,
-                );
+                    'apt_apa'           => $apt_apa,
+                    'apt_sipa'          => $apt_sipa,
+                ];
                 
-                crud::update('tbl_pengaturan','id_pengaturan','1',$peng);
+                $this->db->where('id_pengaturan', '1')->update('tbl_pengaturan', $peng);
                 
-                $this->session->set_flashdata('pengaturan_toast', 'toastr.success("Pengaturan berhasil disimpan !");');
+                $this->session->set_flashdata('sett_toast', 'toastr.success("Pengaturan berhasil disimpan !");');
                 redirect(base_url('pengaturan/index.php'));
             }
         } else {
