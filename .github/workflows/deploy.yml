@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy to cPanel
 
 on:
   push:
@@ -30,5 +30,4 @@ jobs:
     - name: Import SQL Update
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-          mysql -u ${{ secrets.DB_USER }} -p'${{ secrets.DB_PASSWORD }}' ${{ secrets.DB_NAME }} < ${{ secrets.DEPLOY_PATH }}/database/database_update.sql &&
-          exit"
+          mysql -h ${{ secrets.SSH_HOST }} -P ${{ secrets.DB_PORT }} -u ${{ secrets.DB_USER }} -p'${{_
