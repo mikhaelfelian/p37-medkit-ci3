@@ -18,21 +18,6 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Upload SQL Update to Server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "database/database_update.sql"
-        target: "${{ secrets.DEPLOY_PATH }}/database/"
-
-    - name: Import SQL Update
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-        mysql --protocol=tcp -h ${{ secrets.DB_HOST }} -P ${{ secrets.DB_PORT }} -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" ${{ secrets.DB_NAME }} < ${{ secrets.DEPLOY_PATH }}/database/database_update.sql
-        EOF
-
     - name: Deploy Code to cPanel
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
