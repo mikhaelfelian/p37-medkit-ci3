@@ -1566,7 +1566,7 @@ class transaksi extends CI_Controller {
                     $sql_beli_det= $this->db->where('id_pembelian', $sql_beli->id)->get('tbl_trans_beli_det')->result();
                     $pengaturan  = $this->db->get('tbl_pengaturan')->row();
                     $sql_supp    = $this->db->where('id', $trans_beli['id_supplier'])->get('tbl_m_supplier')->row();
-                    $jml_ongkir  = general::format_angka_db($ongkir);
+                    $jml_ongkir  = (float)general::format_angka_db($ongkir);
                     
                     $jml_total    = 0;
                     $jml_diskon   = 0;
@@ -1613,7 +1613,7 @@ class transaksi extends CI_Controller {
                         $jml_dpp        = $jml_subtotal;
                     }
                     
-                    $jml_gtotal = $jml_gtotal + $jml_ongkir;
+                    $jml_gtotal = (float)$jml_gtotal + (float)$jml_ongkir;
                     
                     $data_pemb_update = [
                         'jml_total'     => (float)$jml_total,
