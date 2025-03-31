@@ -36,8 +36,8 @@
                         <div class="card-body table-responsive">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <?php $hasError = $this->session->flashdata('form_error'); ?>
-                                    <?php echo form_open(base_url('transaksi/beli/set_trans_beli.php'), 'autocomplete="off"') ?>
+                                    <?php echo form_open(base_url('transaksi/beli/set_trans_beli.php'), 'id="trans_beli_form" autocomplete="off"') ?>
+                                    <?php echo add_form_protection() ?>
                                     <input type="hidden" id="id_supplier" name="id_supplier" value="<?php echo (!empty($sql_po->id_supplier) ? $sql_po->id_supplier : '') ?>">                                  
                                     <input type="hidden" id="id_po" name="id_po" value="<?php echo (!empty($sql_po->id) ? $sql_po->id : '') ?>">                                  
 
@@ -97,11 +97,13 @@
                                             <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-shopping-cart"></i> Set Beli</button>
                                         </div>
                                     </div>
+                                    <?php echo add_double_submit_protection('trans_beli_form') ?>
                                     <?php echo form_close() ?>
                                 </div>
                                 <div class="col-md-6">
                                     <?php if (!empty($sess_beli)) { ?>
-                                        <?php echo form_open(base_url('transaksi/beli/cart_beli'.(isset($_GET['rowid']) ? '_upd' : '_simpan').'.php'), 'autocomplete="off"') ?>
+                                        <?php echo form_open(base_url('transaksi/beli/cart_beli'.(isset($_GET['rowid']) ? '_upd' : '_simpan').'.php'), 'id="cart_beli_form" autocomplete="off"') ?>
+                                        <?php echo add_form_protection() ?>
                                         <input type="hidden" id="id" name="id" value="<?php echo general::enkrip($sql_beli->id) ?>">                                  
                                         <input type="hidden" id="id_item" name="id_item" value="<?php echo general::enkrip($sql_item->id) ?>">                                  
                                         <input type="hidden" id="rowid" name="rowid" value="<?php echo $this->input->get('rowid') ?>">                                  
@@ -221,6 +223,7 @@
                                                 <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-shopping-cart"></i> Simpan</button>
                                             </div>
                                         </div>
+                                        <?php echo add_double_submit_protection('cart_beli_form') ?>
                                         <?php echo form_close() ?>
                                     <?php } ?>
                                 </div>
@@ -230,9 +233,10 @@
                 </div>
                 <?php if (!empty($sess_beli)) { ?>
                         <div class="col-md-12">
-                            <?php echo form_open(base_url('transaksi/beli/set_trans_beli_proses.php'), 'autocomplete="off"') ?>
+                            <?php echo form_open(base_url('transaksi/beli/set_trans_beli_proses.php'), 'id="trans_beli_proses_form" autocomplete="off"') ?>
                             <?php echo form_hidden('no_nota', general::enkrip($sql_beli->id)) ?>               
-                                <div class="card card-default">
+                            <?php echo add_form_protection() ?>
+                            <div class="card card-default">
                                 <div class="card-header">
                                     <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Data Item Pembelian</h3>
                                     <div class="card-tools">
@@ -350,6 +354,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php echo add_double_submit_protection('trans_beli_proses_form') ?>
                             <?php echo form_close() ?>  
                         </div>                                      
                 <?php } ?>

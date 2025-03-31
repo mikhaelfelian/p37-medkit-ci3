@@ -1170,15 +1170,16 @@ class transaksi extends CI_Controller {
             $this->form_validation->set_rules('tgl_masuk', 'Tgl Faktur', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id_supplier'   => form_error('id_supplier'),
                     'tgl_masuk'     => form_error('tgl_masuk'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
+                $this->session->set_flashdata('trans_toast', 'toastr.error("Validasi form gagal!");');
                 redirect(base_url('transaksi/beli/trans_beli.php'));
             } else {
+
                 $tgl_msk        = $this->tanggalan->tgl_indo_sys($tgl_masuk);
                 $tgl_klr        = $this->tanggalan->tgl_indo_sys($tgl_tempo);
                 $sql_supplier   = $this->db->where('id', $plgn)->get('tbl_m_supplier')->row();
@@ -1190,96 +1191,108 @@ class transaksi extends CI_Controller {
                 
                 $sql_po_det = $this->db->where('id_pembelian', $id_po)->get('tbl_trans_beli_po_det')->result();
 
-                $data = array(
+                $data = [
                     'no_nota'      => $nota,
                     'id_po'        => $id_po,
                     'no_po'        => $no_po,
                     'tgl_simpan'   => date('Y-m-d H:i:s'),
                     'tgl_masuk'    => (!empty($tgl_msk) ? $tgl_msk : '0000-00-00'),
                     'tgl_keluar'   => (!empty($tgl_klr) ? $tgl_klr : '0000-00-00'),
-                    'id_po'        => $id_po,
                     'id_supplier'  => $plgn,
                     'id_user'      => $this->ion_auth->user()->row()->id,
                     'supplier'     => $sql_supplier->nama,
                     'status_ppn'   => (!empty($status_ppn) ? $status_ppn : '0'),
                     'status_nota'  => '0',
-                );
-                
+                ];
+                                
                 if($sql_beli_ck->num_rows() == 0){
-                    # Transaksi Start
-                    $this->db->trans_start();
+                    # Begin transaction
+                    $this->db->trans_begin();
 
-                    # Masukkan ke tabel trans beli
-                    $this->db->insert('tbl_trans_beli', $data);
-                    $last_id = $this->db->insert_id();
-
-                    if($last_id > 0){
-                        foreach ($sql_po_det as $po_det){
-                            $sql_brg     = $this->db->where('id', $po_det->id_produk)
-                                                    ->get('tbl_m_produk')->row();
-                            $sql_satuan  = $this->db->where('id', $po_det->id_satuan)->get('tbl_m_satuan')->row();
-                            $pengaturan  = $this->db->get('tbl_pengaturan')->row();
-
-                            $harga       = ($sql_brg->harga_beli > 0 ? $sql_brg->harga_beli : '1');
-                            $jml_pcs     = $sql_satuan->jml * $po_det->jml;
-                            $harga_pcs   = ($harga * $po_det->jml) / $jml_pcs;
-                            $harga_sat   = $harga_pcs * $sql_satuan->jml;
-
-                            $harga_ppn   = ($status_ppn == '1' ? ($pengaturan->jml_ppn / 100) * $harga : 0);
-                            $harga_tot   = $harga + $harga_ppn;
-                            $subtotal    = ($harga * $jml_pcs) - $potongan;
-                            $jml_qty     = $po_det->jml;
-
-                            $data_pemb_det = array(
-                                'id_pembelian' => $last_id,
-                                'id_produk'    => $sql_brg->id,
-                                'id_satuan'    => $sql_brg->id_satuan,
-                                'no_nota'      => $nota,
-                                'tgl_simpan'   => $tgl_msk.' '.date('H:i:s'),
-                                'kode'         => $sql_brg->kode,
-                                'produk'       => $sql_brg->produk,
-                                'jml'          => $jml_qty,
-                                'jml_satuan'   => (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1'),
-                                'satuan'       => $po_det->satuan,
-                                'keterangan'   => '',
-                                'harga'        => (float)$harga,
-                                'disk1'        => 0,
-                                'disk2'        => 0,
-                                'disk3'        => 0,
-                                'diskon'       => 0,
-                                'potongan'     => 0,
-                                'subtotal'     => $subtotal,
-                            );
-
-    //                        echo '<pre>';
-    //                        print_r($data_pemb_det);
-    //                        echo '</pre>';
-
-                            # Masukkan ke tabel trans beli detail
-                            $this->db->insert('tbl_trans_beli_det', $data_pemb_det);
+                    try {
+                        // Get form ID and check for double submission
+                        $form_id = $this->input->post('form_id');
+                        if (check_form_submitted($form_id)) {
+                            $this->session->set_flashdata('trans_toast', 'toastr.error("Form sudah disubmit sebelumnya!");');
+                            redirect(base_url('transaksi/beli/trans_beli.php'));
                         }
+
+                        # Insert into trans_beli table
+                        $this->db->insert('tbl_trans_beli', $data);
+                        $last_id = $this->db->insert_id();
+
+                        if($last_id > 0){
+                            foreach ($sql_po_det as $po_det){
+                                $sql_brg     = $this->db->where('id', $po_det->id_produk)
+                                                        ->get('tbl_m_produk')->row();
+                                $sql_satuan  = $this->db->where('id', $po_det->id_satuan)->get('tbl_m_satuan')->row();
+                                $pengaturan  = $this->db->get('tbl_pengaturan')->row();
+
+                                $harga       = ($sql_brg->harga_beli > 0 ? $sql_brg->harga_beli : '1');
+                                $jml_pcs     = $sql_satuan->jml * $po_det->jml;
+                                $harga_pcs   = ($harga * $po_det->jml) / $jml_pcs;
+                                $harga_sat   = $harga_pcs * $sql_satuan->jml;
+
+                                $harga_ppn   = ($status_ppn == '1' ? ($pengaturan->jml_ppn / 100) * $harga : 0);
+                                $harga_tot   = $harga + $harga_ppn;
+                                $potongan    = 0; // Initialize potongan to avoid undefined variable
+                                $subtotal    = ($harga * $jml_pcs) - $potongan;
+                                $jml_qty     = $po_det->jml;
+
+                                $data_pemb_det = [
+                                    'id_pembelian' => $last_id,
+                                    'id_produk'    => $sql_brg->id,
+                                    'id_satuan'    => $sql_brg->id_satuan,
+                                    'no_nota'      => $nota,
+                                    'tgl_simpan'   => $tgl_msk.' '.date('H:i:s'),
+                                    'kode'         => $sql_brg->kode,
+                                    'produk'       => $sql_brg->produk,
+                                    'jml'          => $jml_qty,
+                                    'jml_satuan'   => (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1'),
+                                    'satuan'       => $po_det->satuan,
+                                    'keterangan'   => '',
+                                    'harga'        => (float)$harga,
+                                    'disk1'        => 0,
+                                    'disk2'        => 0,
+                                    'disk3'        => 0,
+                                    'diskon'       => 0,
+                                    'potongan'     => 0,
+                                    'subtotal'     => $subtotal,
+                                ];
+
+                                # Insert into trans_beli_det table
+                                $this->db->insert('tbl_trans_beli_det', $data_pemb_det);
+                            }
+                        }
+
+                        # Set session data
+                        $this->session->set_userdata('trans_beli', $data);
+
+                        # Check transaction status
+                        if ($this->db->trans_status() === FALSE) {
+                            throw new Exception('Database transaction failed');
+                        }
+                        
+                        # Commit transaction
+                        $this->db->trans_commit();
+                        
+                        $this->session->set_flashdata('trans_toast', 'toastr.success("Transaksi berhasil disimpan!");');
+                        redirect(base_url('transaksi/beli/trans_beli.php?id='.general::enkrip($last_id)));
+                        
+                    } catch (Exception $e) {
+                        # Rollback transaction on error
+                        $this->db->trans_rollback();
+                        $this->session->set_flashdata('trans_toast', 'toastr.error("Transaksi gagal: ' . $e->getMessage() . '");');
+                        redirect(base_url('transaksi/beli/trans_beli.php'));
                     }
-
-                    # Buat session data
-                    $this->session->set_userdata('trans_beli', $data);
-
-                    # Trans Complete
-                    $this->db->trans_complete();
-                
-                    redirect(base_url('transaksi/beli/trans_beli.php?id='.general::enkrip($last_id)));
-                }else{
-                    $this->session->set_flashdata('transaksi_toast', 'toastr.error("Nomor faktur sudah ada !");');
-                
+                } else {
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Nomor faktur sudah ada!");');
                     redirect(base_url('transaksi/beli/trans_beli.php?id_po='.general::enkrip($id_po).'&id_supplier='.general::enkrip($plgn)));
                 }
-                
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
@@ -1326,8 +1339,7 @@ class transaksi extends CI_Controller {
                     'status_ppn'   => (!empty($status_ppn) ? $status_ppn : '0'),
                 );
                 
-                crud::update('tbl_trans_beli', 'id', general::dekrip($id), $data);
-                
+                $this->db->where('id', general::dekrip($id))->update('tbl_trans_beli', $data);
                 $this->session->set_userdata('trans_beli_edit', $data);
                 redirect(base_url('transaksi/beli/trans_beli_edit.php?id='.$id));
             }
@@ -1528,148 +1540,123 @@ class transaksi extends CI_Controller {
             $ongkir     = $this->input->post('jml_ongkir');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('no_nota', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'no_nota'   => form_error('no_nota'),
-                );
+                $msg_error = [
+                    'no_nota' => form_error('no_nota'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
+                $this->session->set_flashdata('trans_toast', 'toastr.error("Validasi form gagal!");');
                 redirect(base_url('transaksi/beli/trans_beli.php'));
             } else {
-                $trans_beli  = $this->session->userdata('trans_beli');
-                $sql_beli    = $this->db->where('id', general::dekrip($no_nota))->get('tbl_trans_beli')->row();
-                $sql_beli_det= $this->db->where('id_pembelian', $sql_beli->id)->get('tbl_trans_beli_det')->result();
-                $pengaturan  = $this->db->get('tbl_pengaturan')->row();
-                $tgl_msk     = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                $tgl_klr     = $this->tanggalan->tgl_indo_sys($tgl_tempo);
-                                
-                $sql_supp    = $this->db->where('id', $trans_beli['id_supplier'])->get('tbl_m_supplier')->row();
-                $jml_ongkir  = general::format_angka_db($ongkir);
-                
-                # Transactional Database
-                $this->db->query('SET autocommit = 0;');
-                $this->db->trans_start();
-                
-                $jml_total    = 0;
-                $jml_diskon   = 0;
-                $jml_potongan = 0;
-                $jml_subtotal = 0;
-                foreach ($sql_beli_det as $cart){
-                    $sql_item       = $this->db->where('id', $cart->id_produk)->get('tbl_m_produk')->row();
-                    $sql_satuan     = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                    $stok_akhir     = $sql_item->jml + ($cart->jml * $cart->jml_satuan);
-                    
-                    $hrg_pcs        = $cart->subtotal / ($cart->jml * $cart->jml_satuan);
-                    $hrg_ppn        = ($trans_beli['status_ppn'] == 1 ? ($pengaturan->jml_ppn / 100) * $hrg_pcs : 0);
-                    $hrg_pcs_akhir  = $hrg_pcs + $hrg_ppn;
-                    $jml_total      = $jml_total + $cart->subtotal;
-                    $jml_potongan   = $jml_potongan + $cart->potongan;
-                    $jml_subtotal   = $jml_subtotal + $cart->subtotal;
-                    $jml_diskon     = $jml_diskon + $diskon;
-                    
-                    // Simpan stok barang
-                    $data_brg = array(
-                        'tgl_modif'         => date('Y-m-d H:i:s'),
-//                        'jml'               => (float)$stok_akhir,
-//                        'harga_beli'        => (float)$hrg_pcs_akhir,
-                        'harga_jual_het'        => (float)$cart->harga_het,
-//                        'harga_beli_ppn'    => (float)$hrg_ppn,
-                    );
+                # Begin transaction
+                $this->db->trans_begin();
 
-                    # Update ke tabel stok barang, stok terakhir
-                    $this->db->where('id', $sql_item->id)->update('tbl_m_produk', $data_brg);
+                try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
                     
-                                         
-                     /* Catat log barang keluar ke tabel ini */                     
-                     $data_pemb_hist = array(
-                         'tgl_simpan'    => $cart->tgl_simpan,
-                         'tgl_masuk'     => $sql_beli->tgl_masuk,
-                         'id_gudang'     => '1',
-                         'id_supplier'   => $trans_beli['id_supplier'],
-                         'id_produk'     => $sql_item->id,
-                         'id_user'       => $this->ion_auth->user()->row()->id,
-                         'id_pembelian'  => $sql_beli->id,
-                         'no_nota'       => (!empty($sql_beli->no_nota) ? $sql_beli->no_nota : ''),
-                         'kode'          => $sql_item->kode,
-                         'produk'        => $sql_item->produk,
-                         'keterangan'    => (!empty($sql_beli->no_po) ? '['.$sql_beli->no_po.'] ' : '').$sql_supp->nama,
-                         'jml'           => (float)$cart->jml,
-                         'jml_satuan'    => (int)$sql_satuan->jml,
-                         'satuan'        => $sql_satuan->satuanTerkecil,
-                         'nominal'       => (float)$cart->subtotal,
-                         'status'        => '1'
-                     );                     
-                     
-                     # Simpan ke tabel riwayat item
-//                     $this->db->insert('tbl_m_produk_hist', $data_pemb_hist);
-                     /* -- END -- */
-                }
-                
-                if($trans_beli['status_ppn'] == '1'){
-                    $jml_ppn        = ($trans_beli['status_ppn'] == 1 ? ($pengaturan->jml_ppn / 100) * $jml_subtotal : 0);
-                    $jml_gtotal     = $jml_subtotal + $jml_ppn;
-                    $jml_dpp        = $jml_subtotal - $jml_ppn;
-                    $ppn            = $pengaturan->jml_ppn;
-                }elseif($trans_beli['status_ppn'] == '2'){
-                    $jml_ppn        = $jml_subtotal - ($jml_subtotal / $pengaturan->ppn);
-                    $jml_gtotal     = $jml_subtotal;
-                    $jml_dpp        = $jml_subtotal - $jml_ppn;
-                    $ppn            = $pengaturan->jml_ppn;
-                }else{
-                    $ppn            = 0;
-                    $jml_ppn        = 0;
-                    $jml_gtotal     = $jml_subtotal + $jml_ppn;
-                    $jml_dpp        = $jml_subtotal - $jml_ppn;
-                }
-                
-                $jml_gtotal = $jml_gtotal + $jml_ongkir;
-                
-                $data_pemb_update = array(
-                    'jml_total'     => (float)$jml_total,
-                    'jml_diskon'    => (float)$jml_diskon,
-                    'jml_potongan'  => (float)$jml_potongan,
-                    'jml_subtotal'  => (float)$jml_subtotal,
-                    'jml_dpp'       => (float)$jml_dpp,
-                    'ppn'           => (float)$ppn,
-                    'jml_ppn'       => (float)$jml_ppn,
-                    'jml_ongkir'    => (float)$jml_ongkir,
-                    'jml_gtotal'    => (float)$jml_gtotal,
-                    'status_retur'  => '0',
-                );
-                
-                # Update ke tabel trans beli
-                $this->db->where('id', $sql_beli->id)->update('tbl_trans_beli', $data_pemb_update);
+                    $trans_beli  = $this->session->userdata('trans_beli');
+                    $sql_beli    = $this->db->where('id', general::dekrip($no_nota))->get('tbl_trans_beli')->row();
+                    $sql_beli_det= $this->db->where('id_pembelian', $sql_beli->id)->get('tbl_trans_beli_det')->result();
+                    $pengaturan  = $this->db->get('tbl_pengaturan')->row();
+                    $sql_supp    = $this->db->where('id', $trans_beli['id_supplier'])->get('tbl_m_supplier')->row();
+                    $jml_ongkir  = general::format_angka_db($ongkir);
+                    
+                    $jml_total    = 0;
+                    $jml_diskon   = 0;
+                    $jml_potongan = 0;
+                    $jml_subtotal = 0;
+                    
+                    foreach ($sql_beli_det as $cart) {
+                        $sql_item       = $this->db->where('id', $cart->id_produk)->get('tbl_m_produk')->row();
+                        $sql_satuan     = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
+                        $stok_akhir     = $sql_item->jml + ($cart->jml * $cart->jml_satuan);
+                        
+                        $hrg_pcs        = $cart->subtotal / ($cart->jml * $cart->jml_satuan);
+                        $hrg_ppn        = ($trans_beli['status_ppn'] == 1 ? ($pengaturan->jml_ppn / 100) * $hrg_pcs : 0);
+                        $hrg_pcs_akhir  = $hrg_pcs + $hrg_ppn;
+                        $jml_total      = $jml_total + $cart->subtotal;
+                        $jml_potongan   = $jml_potongan + $cart->potongan;
+                        $jml_subtotal   = $jml_subtotal + $cart->subtotal;
+                        
+                        // Update product data
+                        $data_brg = [
+                            'tgl_modif'      => date('Y-m-d H:i:s'),
+                            'harga_jual_het' => (float)$cart->harga_het,
+                        ];
 
-                # Update ke tabel trans beli po
-                $this->db->where('id', $sql_beli->id_po)->update('tbl_trans_beli_po', array('status_nota'=>'1'));
-                
-                # Commit Transaksi
-                $this->db->trans_complete();
-                
-                # Kirim pesan gagal atau sukses
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback
-                    $this->db->trans_rollback();
+                        # Update product table
+                        $this->db->where('id', $sql_item->id)->update('tbl_m_produk', $data_brg);
+                    }
                     
-                    $this->session->set_flashdata('transaksi', '<div class="alert alert-danger">Transaksi gagal disimpan</div>');
-                }else{
-                    # Complete
+                    // Calculate totals based on tax status
+                    if ($trans_beli['status_ppn'] == '1') {
+                        $jml_ppn        = ($pengaturan->jml_ppn / 100) * $jml_subtotal;
+                        $jml_gtotal     = $jml_subtotal + $jml_ppn;
+                        $jml_dpp        = $jml_subtotal - $jml_ppn;
+                        $ppn            = $pengaturan->jml_ppn;
+                    } elseif ($trans_beli['status_ppn'] == '2') {
+                        $jml_ppn        = $jml_subtotal - ($jml_subtotal / $pengaturan->ppn);
+                        $jml_gtotal     = $jml_subtotal;
+                        $jml_dpp        = $jml_subtotal - $jml_ppn;
+                        $ppn            = $pengaturan->jml_ppn;
+                    } else {
+                        $ppn            = 0;
+                        $jml_ppn        = 0;
+                        $jml_gtotal     = $jml_subtotal;
+                        $jml_dpp        = $jml_subtotal;
+                    }
+                    
+                    $jml_gtotal = $jml_gtotal + $jml_ongkir;
+                    
+                    $data_pemb_update = [
+                        'jml_total'     => (float)$jml_total,
+                        'jml_diskon'    => (float)$jml_diskon,
+                        'jml_potongan'  => (float)$jml_potongan,
+                        'jml_subtotal'  => (float)$jml_subtotal,
+                        'jml_dpp'       => (float)$jml_dpp,
+                        'ppn'           => (float)$ppn,
+                        'jml_ppn'       => (float)$jml_ppn,
+                        'jml_ongkir'    => (float)$jml_ongkir,
+                        'jml_gtotal'    => (float)$jml_gtotal,
+                        'status_retur'  => '0',
+                    ];
+                    
+                    # Update purchase transaction table
+                    $this->db->where('id', $sql_beli->id)->update('tbl_trans_beli', $data_pemb_update);
+                    
+                    # Update purchase order status
+                    if (!empty($sql_beli->id_po)) {
+                        $this->db->where('id', $sql_beli->id_po)->update('tbl_trans_beli_po', ['status_nota' => '1']);
+                    }
+                    
+                    # If everything is successful, commit the transaction
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception('Database transaction failed');
+                    }
+                    
                     $this->db->trans_commit();
-
+                    
                     /* -- Hapus semua session -- */
                     $this->session->unset_userdata('trans_beli');
                     $this->cart->destroy();
                     /* -- Hapus semua session -- */
-                     
-                    $this->session->set_flashdata('transaksi', '<div class="alert alert-success">Transaksi berhasil disimpan</div>');
+                    
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Transaksi berhasil disimpan");');
+                    redirect(base_url('transaksi/trans_beli_det.php?id='.general::enkrip($sql_beli->id)));
+                    
+                } catch (Exception $e) {
+                    # If something went wrong, rollback the transaction
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Transaksi gagal disimpan: ' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli.php'));
                 }
-
-                $this->db->query('SET autocommit = 1;');
-                redirect(base_url('transaksi/trans_beli_det.php?id='.general::enkrip($sql_beli->id)));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2000,82 +1987,92 @@ class transaksi extends CI_Controller {
             $potongan = general::format_angka_db($this->input->post('potongan'));
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('kode', 'Kode', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'kode' => form_error('kode'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
+                $this->session->set_flashdata('trans_toast', 'toastr.error("Validasi form gagal!");');
                 redirect(base_url('transaksi/trans_beli.php?id='.$no_nota));
-            } else {
-                $sql_brg     = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
-                $sql_satuan  = $this->db->where('id', (!empty($satuan) ? $satuan : $sql_brg->id_satuan))->get('tbl_m_satuan')->row();
-                $sql_beli    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
-                $trans_beli  = $this->session->userdata('trans_beli_edit');
-                $pengaturan  = $this->db->get('tbl_pengaturan')->row();
+            } else {                
+                try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
 
-                $jml_pcs     = (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1') * $qty;
-                $harga_pcs   = ($harga * $qty) / $jml_pcs;
-                $harga_sat   = $harga_pcs * $sql_satuan->jml;
+                    $sql_brg     = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
+                    $sql_satuan  = $this->db->where('id', (!empty($satuan) ? $satuan : $sql_brg->id_satuan))->get('tbl_m_satuan')->row();
+                    $sql_beli    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
+                    $trans_beli  = $this->session->userdata('trans_beli_edit');
+                    $pengaturan  = $this->db->get('tbl_pengaturan')->row();
 
-                $disk1       = $harga_pcs - (($diskon1 / 100) * $harga_pcs);
-                $disk2       = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3       = $disk2 - (($diskon3 / 100) * $disk2);
-                $diskon      = $harga - $disk3;
+                    $jml_pcs     = (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1') * $qty;
+                    $harga_pcs   = ($harga * $qty) / $jml_pcs;
+                    $harga_sat   = $harga_pcs * $sql_satuan->jml;
 
-                $harga_ppn   = ($trans_beli['status_ppn'] == '1' ? ($pengaturan->jml_ppn / 100) * $disk3 : 0);
-                $harga_tot   = $disk3 + $harga_ppn;
-                $subtotal    = ($disk3 * $jml_pcs) - $potongan;
-                $jml_qty     = $qty;
-                $jml_satuan  = $sql_satuan2->jml * $qty;
+                    $disk1       = $harga_pcs - (($diskon1 / 100) * $harga_pcs);
+                    $disk2       = $disk1 - (($diskon2 / 100) * $disk1);
+                    $disk3       = $disk2 - (($diskon3 / 100) * $disk2);
+                    $diskon      = $harga - $disk3;
 
-                $data_pemb_det = array(
-                    'id_pembelian' => (int)general::dekrip($id),
-                    'id_produk'    => (int)$sql_brg->id,
-                    'id_satuan'    => (int)$sql_satuan->id,
-                    'no_nota'      => $sql_beli->no_nota,
-                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-                    'tgl_ed'       => $this->tanggalan->tgl_indo_sys($tgl_ed),
-                    'kode'         => $sql_brg->kode,
-                    'kode_batch'   => $kode2,
-                    'produk'       => $sql_brg->produk,
-                    'jml'          => (float)$qty,
-                    'jml_satuan'   => (int)$sql_satuan->jml,
-                    'satuan'       => $sql_satuan->satuanTerkecil,
-                    'keterangan'   => '',
-                    'harga'        => (float)$harga,
-                    'harga_het'    => (float)$harga_het,
-                    'disk1'        => (float)$diskon1,
-                    'disk2'        => (float)$diskon2,
-                    'disk3'        => (float)$diskon3,
-                    'diskon'       => (float)$diskon,
-                    'potongan'     => (float)$potongan,
-                    'subtotal'     => (float)$subtotal,
-                );
-                
-                # Start Transaksi
-                $this->db->trans_start();
-                
-                # Update ke tabel trans beli detail
-                $this->db->insert('tbl_trans_beli_det', $data_pemb_det);               
-                
-                # Transaksi Selesai
-                $this->db->trans_complete();
-                
-                redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
-                                
-//                echo $sql_item->jml;
-//                echo '<pre>';
-//                print_r($data_pemb_det);
-//                echo '</pre>';
+                    $harga_ppn   = ($trans_beli['status_ppn'] == '1' ? ($pengaturan->jml_ppn / 100) * $disk3 : 0);
+                    $harga_tot   = $disk3 + $harga_ppn;
+                    $subtotal    = ($disk3 * $jml_pcs) - $potongan;
+                    $jml_qty     = $qty;
+
+                    $data_pemb_det = [
+                        'id_pembelian' => (int)general::dekrip($id),
+                        'id_produk'    => (int)$sql_brg->id,
+                        'id_satuan'    => (int)$sql_satuan->id,
+                        'no_nota'      => $sql_beli->no_nota,
+                        'tgl_simpan'   => date('Y-m-d H:i:s'),
+                        'tgl_ed'       => $this->tanggalan->tgl_indo_sys($tgl_ed),
+                        'kode'         => $sql_brg->kode,
+                        'kode_batch'   => $kode2,
+                        'produk'       => $sql_brg->produk,
+                        'jml'          => (float)$qty,
+                        'jml_satuan'   => (int)$sql_satuan->jml,
+                        'satuan'       => $sql_satuan->satuanTerkecil,
+                        'keterangan'   => '',
+                        'harga'        => (float)$harga,
+                        'harga_het'    => (float)$harga_het,
+                        'disk1'        => (float)$diskon1,
+                        'disk2'        => (float)$diskon2,
+                        'disk3'        => (float)$diskon3,
+                        'diskon'       => (float)$diskon,
+                        'potongan'     => (float)$potongan,
+                        'subtotal'     => (float)$subtotal,
+                    ];
+                    
+                    # Start Transaksi
+                    $this->db->trans_start();
+                    
+                    # Insert into trans_beli_det table
+                    $this->db->insert('tbl_trans_beli_det', $data_pemb_det);               
+                    
+                    # Complete Transaction
+                    $this->db->trans_complete();
+                    
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception("Gagal menyimpan data pembelian!");
+                    }
+                    
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Data pembelian berhasil disimpan!");');
+                    redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
+                    
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
