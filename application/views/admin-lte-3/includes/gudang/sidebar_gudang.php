@@ -68,10 +68,26 @@
 <?php } elseif (akses::hakFarmasi() == TRUE) { ?>
     <li class="nav-header">INVENTORI</li>
     <li class="nav-item">
-        <a href="<?php echo base_url('gudang/data_mutasi_terima.php') ?>" class="nav-link">
-            <i class="nav-icon fas fa-download"></i>
+        <a href="<?php echo base_url('gudang/data_stok_list.php') ?>" class="nav-link">
+            <i class="nav-icon fas fa-box-open"></i>
             <p>
-                Penerimaan Mutasi Stok
+                Data Stok
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('gudang/trans_mutasi.php') ?>" class="nav-link">
+            <i class="nav-icon fas fa-truck"></i>
+            <p>
+                Permintaan Stok
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('gudang/data_mutasi.php?filter_status=0') ?>" class="nav-link">
+            <i class="nav-icon fas fa-inbox"></i>
+            <p>
+                Data Permintaan (draft)
             </p>
         </a>
     </li>
@@ -79,7 +95,7 @@
         <a href="<?php echo base_url('gudang/data_mutasi.php?filter_status=2') ?>" class="nav-link">
             <i class="nav-icon fas fa-history"></i>
             <p>
-                Riwayat Mutasi Stok
+                Riwayat Permintaan
             </p>
         </a>
     </li>

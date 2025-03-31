@@ -757,8 +757,8 @@ class Gudang extends CI_Controller {
                 $data['sql_penj']       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi')->row();
                 $data['sql_penj_det']   = $this->db->where('id_mutasi', $data['sql_penj']->id)->get('tbl_trans_mutasi_det')->result();
                 $data['sql_satuan']     = $this->db->where('id', $data['sql_produk']->id_satuan)->get('tbl_m_satuan')->row();
+                $data['sql_produk_sat']     = $this->db->where('id_produk', $data['sql_produk']->id)->get('tbl_m_produk_satuan')->result();
                 $data['sql_produk_stk'] = $this->db->select('tbl_m_produk_stok.id, tbl_m_produk_stok.jml, tbl_m_produk_stok.jml_satuan, tbl_m_produk_stok.satuan, tbl_m_gudang.gudang')->join('tbl_m_gudang', 'tbl_m_gudang.id=tbl_m_produk_stok.id_gudang')->where('id_produk', general::dekrip($id_produk))->get('tbl_m_produk_stok')->result();
-                $data['sql_produk_sat']	= $this->db->where('id_produk', general::dekrip($id_produk))->where('jml !=', '0')->order_by('jml', 'desc')->get('tbl_m_produk_satuan')->result();
             }
             
             /* Sidebar Menu */
@@ -795,7 +795,6 @@ class Gudang extends CI_Controller {
                 $data['sql_penj_det']   = $this->db->where('id_mutasi', $data['sql_penj']->id)->get('tbl_trans_mutasi_det')->result();
                 $data['sql_satuan']     = $this->db->where('id', $data['sql_produk']->id_satuan)->get('tbl_m_satuan')->row();
                 $data['sql_produk_stk'] = $this->db->select('tbl_m_produk_stok.id, tbl_m_produk_stok.jml, tbl_m_produk_stok.jml_satuan, tbl_m_produk_stok.satuan, tbl_m_gudang.gudang')->join('tbl_m_gudang', 'tbl_m_gudang.id=tbl_m_produk_stok.id_gudang')->where('id_produk', general::dekrip($id_produk))->get('tbl_m_produk_stok')->result();
-                $data['sql_produk_sat']	= $this->db->where('id_produk', general::dekrip($id_produk))->where('jml !=', '0')->order_by('jml', 'desc')->get('tbl_m_produk_satuan')->result();
             }
             
             /* Sidebar Menu */
@@ -872,7 +871,7 @@ class Gudang extends CI_Controller {
                                 ->where('status_nota', $sn)
                                 ->like('no_nota', $fn[0])
                                 ->like('DATE(tgl_keluar)', $tp)
-                                ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : $id_user), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : 'none'))
+                                ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : $id_user), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
                                 ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
                                 ->order_by('tgl_simpan','desc')
                                 ->get('tbl_trans_mutasi')->num_rows();
@@ -916,17 +915,19 @@ class Gudang extends CI_Controller {
             /* -- End Blok Pagination -- */
 
             if(!empty($hal)){
-                   $data['sql_mut'] = $this->db->select('id, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
+                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'],$hal)
+                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
                            ->like('no_nota', $fn[0])
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
             }else{
-                   $data['sql_mut'] = $this->db->select('id, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
+                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'])
+                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
@@ -1032,7 +1033,7 @@ class Gudang extends CI_Controller {
             /* -- End Blok Pagination -- */
 
             if(!empty($hal)){
-                   $data['sql_mut'] = $this->db->select('id, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
+                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', '1')
                            ->where('status_terima', '0')
                            ->limit($config['per_page'],$hal)
@@ -1043,7 +1044,7 @@ class Gudang extends CI_Controller {
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
             }else{
-                   $data['sql_mut'] = $this->db->select('id, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
+                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', '1')
                            ->where('status_terima', '0')
                            ->limit($config['per_page'])
@@ -1321,49 +1322,75 @@ class Gudang extends CI_Controller {
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
-            $this->form_validation->set_rules('id_item', 'Tgl Masuk', 'required');
+            $this->form_validation->set_rules('kode', 'Kode', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id_item'   => form_error('id_item'),
-                );
+                $msg_error = [
+                    'kode'   => form_error('kode'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 
-                redirect(base_url('gudang/trans_mutasi.php'));
+                redirect(base_url('gudang/trans_mutasi.php?id='.$id.'&item_id='.$id_item));
             } else {
-                $sess_mut           = $this->session->userdata('trans_mutasi');
-                $sql_brg            = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
-                $sql_brg_stk_asl    = $this->db->where('id_produk', $sql_brg->id)->where('id_gudang', $sess_mut['id_gd_asal'])->get('tbl_m_produk_stok')->row();
-                $sql_brg_stk_7an    = $this->db->where('id_produk', $sql_brg->id)->where('id_gudang', $sess_mut['id_gd_tujuan'])->get('tbl_m_produk_stok')->row();
-                $sql_satuan         = $this->db->where('satuanBesar', $satuan)->get('tbl_m_satuan')->row();
-                                
-                $data_mut_det = array(
-                    'id_mutasi'    => general::dekrip($id),
-                    'id_item'      => $sql_brg->id,
-                    'id_satuan'    => $sql_satuan->id,
-                    'no_nota'      => $sess_mut['no_nota'],
-                    'tgl_simpan'   => $sess_mut['tgl_simpan'],
-                    'tgl_terima'   => '0000-00-00 00:00:00',
-                    'tgl_ed'       => (!empty($tgl_ed) ? $tgl_ed : '0000-00-00'),
-                    'satuan'       => $satuan,
-                    'keterangan'   => $ket,
-                    'kode'         => $sql_brg->kode,
-                    'kode_batch'   => $kodeb,
-                    'produk'       => strtoupper($sql_brg->produk),
-                    'jml'          => (int)$jml,
-                    'jml_satuan'   => (int)$sql_satuan->jml,
-                    'status_terima'=> '0',
-                );
+                $this->db->trans_begin();
+
+                try {
+                    // Cek Form Submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception("Form sudah disubmit sebelumnya");
+                    }
                 
-                # Cek Stok dahulu sebelum eksekusi
-                if($sql_brg_stk_asl->jml < $qty AND $sess_mut['tipe'] != '2'){
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Stok tidak tersedia !");');
-                }else{
-                    $this->db->insert('tbl_trans_mutasi_det', $data_mut_det);
+                    // Ambil data dari sesi dan database
+                    $sess_mut = $this->session->userdata('trans_mutasi');
+                    $sql_brg  = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
+                    $sql_brg_stk_asl = $this->db->where('id_produk', $sql_brg->id)
+                                               ->where('id_gudang', $sess_mut['id_gd_asal'])
+                                               ->get('tbl_m_produk_stok')->row();
+                    $sql_brg_stk_7an = $this->db->where('id_produk', $sql_brg->id)
+                                               ->where('id_gudang', $sess_mut['id_gd_tujuan'])
+                                               ->get('tbl_m_produk_stok')->row();
+                    $sql_satuan = $this->db->where('satuanBesar', $satuan)->get('tbl_m_satuan')->row();
+                
+                    // Data yang akan dimasukkan ke tabel mutasi detail
+                    $data_mut_det = [
+                        'id_mutasi'    => general::dekrip($id),
+                        'id_item'      => $sql_brg->id,
+                        'id_satuan'    => $sql_satuan->id,
+                        'no_nota'      => $sess_mut['no_nota'],
+                        'tgl_simpan'   => $sess_mut['tgl_simpan'],
+                        'tgl_terima'   => '0000-00-00 00:00:00',
+                        'tgl_ed'       => (!empty($tgl_ed) ? $tgl_ed : '0000-00-00'),
+                        'satuan'       => $satuan,
+                        'keterangan'   => $ket,
+                        'kode'         => $sql_brg->kode,
+                        'kode_batch'   => $kodeb,
+                        'produk'       => strtoupper($sql_brg->produk),
+                        'jml'          => (int)$jml,
+                        'jml_satuan'   => (int)$sql_satuan->jml,
+                        'status_terima'=> '0',
+                    ];
+                
+                    // Cek stok sebelum eksekusi
+                    if ($sql_brg_stk_asl->jml < $jml AND $sess_mut['tipe'] != '2') {
+                        throw new Exception("Stok tidak tersedia !");
+                    } else {
+                        if (!$this->db->insert('tbl_trans_mutasi_det', $data_mut_det)) {
+                            throw new Exception("Gagal menyimpan data mutasi");
+                        }
+                    }
+                
+                    // Commit transaksi jika tidak ada masalah
+                    $this->db->trans_commit();
+                    redirect(base_url((!empty($rute) ? $rute : 'gudang/trans_mutasi.php') . '?id=' . $id));
+                
+                } catch (Exception $e) {
+                    $this->db->trans_rollback(); // Rollback jika terjadi kesalahan
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('gudang/trans_mutasi.php?id=' . $id . '&item_id=' . $id_item));
                 }
                 
-                redirect(base_url((!empty($rute) ? $rute : 'gudang/trans_mutasi.php').'?id='.$id));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -1411,48 +1438,60 @@ class Gudang extends CI_Controller {
             $this->form_validation->set_rules('gd_tujuan', 'Gd. Tujuan', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'tgl_masuk'   => form_error('tgl_masuk'),
                     'tipe'        => form_error('gd_asal'),
                     'gd_asal'     => form_error('gd_asal'),
                     'gd_tujuan'   => form_error('gd_tujuan'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('gudang_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 
                 redirect(base_url('gudang/trans_mutasi.php'));
             } else {
-                $sql_nota   = $this->db->get('tbl_trans_mutasi');
-                $noUrut     = $sql_nota->num_rows() + 1;
-                $nota       = sprintf("%05s", $noUrut);
-                
-                $data = array(
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_masuk),
-                    'id_user'       => $this->ion_auth->user()->row()->id,
-                    'id_gd_asal'    => $gd_asal,
-                    'id_gd_tujuan'  => $gd_tujuan,
-                    'no_nota'       => $nota,
-                    'keterangan'    => $ket,
-                    'tipe'          => $tipe,
-                    'status_nota'   => '0'
-                );
-				
-		if ($gd_asal == $gd_tujuan AND $tipe == '1') {
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Gudang Asal dan Tujuan tidak boleh sama !");');
+                # Transaksi Start
+                $this->db->trans_begin();
+
+                try {
+                    $sql_nota   = $this->db->get('tbl_trans_mutasi');
+                    $noUrut     = $sql_nota->num_rows() + 1;
+                    $nota       = sprintf("%05s", $noUrut);
+                    
+                    $data = [
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_masuk),
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'id_gd_asal'    => $gd_asal,
+                        'id_gd_tujuan'  => $gd_tujuan,
+                        'no_nota'       => $nota,
+                        'keterangan'    => $ket,
+                        'tipe'          => $tipe,
+                        'status_nota'   => '0'
+                    ];
+                    
+                    if ($gd_asal == $gd_tujuan && $tipe == '1') {
+                        throw new Exception("Gudang Asal dan Tujuan tidak boleh sama !");
+                    } else {                        
+                        # Set transaksi mutasi di gudang
+                        $this->db->insert('tbl_trans_mutasi', $data);
+                        $last_id = crud::last_id();
+                        
+                        if ($this->db->trans_status() === FALSE) {
+                            $this->db->trans_rollback();
+                            $this->session->set_flashdata('gudang_toast', 'toastr.error("Gagal menyimpan data mutasi!");');
+                            redirect(base_url('gudang/trans_mutasi.php'));
+                        } else {
+                            $this->db->trans_commit();
+                            $this->session->set_userdata('trans_mutasi', $data);
+                            $this->session->set_flashdata('gudang_toast', 'toastr.success("Data mutasi berhasil disimpan");');
+                            redirect(base_url('gudang/trans_mutasi.php?id=' . general::enkrip($last_id)));
+                        }
+                    }
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('gudang_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('gudang/trans_mutasi.php'));
-                } else {
-                    # Transaksi Start
-                    $this->db->trans_start();
-                    
-                    # Set transaksi mutasi di gudang
-                    $this->db->insert('tbl_trans_mutasi', $data);
-                    $last_id = crud::last_id();
-                    
-                    $this->db->trans_complete();
-                    
-                    $this->session->set_userdata('trans_mutasi', $data);
-                    redirect(base_url('gudang/trans_mutasi.php?id=' . general::enkrip($last_id)));
                 }
             }
         } else {
@@ -1495,36 +1534,45 @@ class Gudang extends CI_Controller {
                 
                 redirect(base_url('gudang/trans_mutasi.php'));
             } else {
-                $sql_nota   = $this->db->get('tbl_trans_mutasi');
-                $noUrut     = $sql_nota->num_rows() + 1;
-                $nota       = sprintf("%05s", $noUrut);
-                
-                $data = array(
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_masuk),
-                    'id_user'       => $this->ion_auth->user()->row()->id,
-                    'id_gd_asal'    => $gd_asal,
-                    'id_gd_tujuan'  => $gd_tujuan,
-                    'no_nota'       => $nota,
-                    'keterangan'    => $ket,
-                    'tipe'          => $tipe,
-                    'status_nota'   => '0'
-                );
-				
-		if ($gd_asal == $gd_tujuan AND $tipe == '1') {
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Gudang Asal dan Tujuan tidak boleh sama !");');
+                try {
+                    $sql_nota   = $this->db->get('tbl_trans_mutasi');
+                    $noUrut     = $sql_nota->num_rows() + 1;
+                    $nota       = sprintf("%05s", $noUrut);
+                    
+                    $data = array(
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_masuk),
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'id_gd_asal'    => $gd_asal,
+                        'id_gd_tujuan'  => $gd_tujuan,
+                        'no_nota'       => $nota,
+                        'keterangan'    => $ket,
+                        'tipe'          => $tipe,
+                        'status_nota'   => '0'
+                    );
+                    
+                    if ($gd_asal == $gd_tujuan AND $tipe == '1') {
+                        throw new Exception("Gudang Asal dan Tujuan tidak boleh sama !");
+                    } else {
+                        # Transaksi Start
+                        $this->db->trans_start();
+                        
+                        # Set transaksi mutasi di gudang
+                        $this->db->where('id', general::dekrip($id))->update('tbl_trans_mutasi', $data);
+                        
+                        $this->db->trans_complete();
+                        
+                        if ($this->db->trans_status() === FALSE) {
+                            throw new Exception("Gagal mengupdate data transaksi mutasi");
+                        }
+                        
+                        $this->session->set_userdata('trans_mutasi', $data);
+                        redirect(base_url('gudang/trans_mutasi_edit.php?id=' . $id));
+                    }
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('gudang_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('gudang/trans_mutasi.php'));
-                } else {
-                    # Transaksi Start
-                    $this->db->trans_start();
-                    
-                    # Set transaksi mutasi di gudang
-                    $this->db->where('id', general::dekrip($id))->update('tbl_trans_mutasi', $data);
-                    
-                    $this->db->trans_complete();
-                    
-                    $this->session->set_userdata('trans_mutasi', $data);
-                    redirect(base_url('gudang/trans_mutasi_edit.php?id=' . $id));
                 }
             }
         } else {
@@ -1543,10 +1591,7 @@ class Gudang extends CI_Controller {
             $trans_mut      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi');
             $trans_mut_det  = $this->db->where('id_mutasi', $trans_mut->row()->id)->get('tbl_trans_mutasi_det')->result();
             
-            if ($trans_mut->num_rows() > 0) {                            
-                // Kode Nomor Nota
-                $sql_nota       = $this->db->where('')->get('tbl_trans_mutasi');
-                
+            if ($trans_mut->num_rows() > 0) {
                 // Simpan penjualan ke tabel
                 $data_mut = array(
                     'tgl_modif'     => date('Y-m-d H:i:s'),
@@ -2265,7 +2310,6 @@ class Gudang extends CI_Controller {
             
             $data['barang']      = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();           
             $data['barang_stok'] = $this->db->select('SUM(jml * jml_satuan) as jml')->where('id_produk', general::dekrip($id))->get('tbl_m_produk_stok')->row();           
-            $data['barang_sat']  = $this->db->select('*')->where('id_produk', general::dekrip($id))->where('jml !=', '0')->get('tbl_m_produk_satuan')->result();           
             $data['sql_satuan']  = $this->db->get('tbl_m_satuan')->result();
             $data['gudang_ls']   = $this->db->get('tbl_m_gudang')->result();
             $data['gudang']      = $this->db->select('tbl_m_produk_stok.id, tbl_m_produk_stok.id_produk, tbl_m_produk_stok.jml, tbl_m_produk_stok.satuanKecil as satuan, tbl_m_gudang.gudang, tbl_m_gudang.status')->join('tbl_m_gudang', 'tbl_m_gudang.id=tbl_m_produk_stok.id_gudang')->where('tbl_m_produk_stok.id_produk', general::dekrip($id))->get('tbl_m_produk_stok')->result();
