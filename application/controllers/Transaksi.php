@@ -3,7 +3,12 @@
 /**
  * Description of transaksi
  *
- * @author mike
+ * @author Mikhael Felian Waskito
+ * 
+ * modified by :
+ *     Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ *     2025-03-30
+ *     Transaksi controller
  */
 class transaksi extends CI_Controller {
     //put your code here
@@ -1016,24 +1021,23 @@ class transaksi extends CI_Controller {
     
     public function pdf_trans_beli_po() {
         if (akses::aksesLogin() == TRUE) {
-            $setting            = $this->db->get('tbl_pengaturan')->row();
-            $id                 = $this->input->get('id');
+            $setting      = $this->db->get('tbl_pengaturan')->row();
+            $id           = $this->input->get('id');
             
-            $sql_beli           = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli_po')->row();
-            $sql_beli_det       = $this->db->where('id_pembelian', general::dekrip($id))->get('tbl_trans_beli_po_det')->result();
-            $sql_supplier       = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
-            $oleh               = $this->ion_auth->user($sql_beli->id_user)->row()->first_name;
+            $sql_beli     = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli_po')->row();
+            $sql_beli_det = $this->db->where('id_pembelian', general::dekrip($id))->get('tbl_trans_beli_po_det')->result();
+            $sql_supplier = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
+            $oleh         = $this->ion_auth->user($sql_beli->id_user)->row()->first_name;
             
-            $gambar1            = base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
-            $gambar2            = base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
-            $gambar3            = base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $gambar1      = base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
+            $gambar2      = base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
+            $gambar3      = base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
 
-            $judul  = "LAPORAN HARIAN ABSENSI";
-            $judul2 = "";
+            $judul        = "PURCHASE ORDER";
+            $fill         = FALSE;
             
             $this->load->library('MedBeliPDF');
             $pdf = new MedBeliPDF('P', 'cm', array(21.5,33));
-            $pdf->judul = 'PURCHASE ORDER';
             $pdf->SetAutoPageBreak('auto', 8.5);            
             $pdf->addPage('','',false);
             
@@ -1050,13 +1054,13 @@ class transaksi extends CI_Controller {
             $pdf->Cell(1, .5, 'APA', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(17.5, .5, 'APT. UNGSARI RIZKI EKA PURWANTO, M.SC', 0, 1, 'L');
+            $pdf->Cell(17.5, .5, $setting->apt_apa, 0, 1, 'L');
             $pdf->Ln(0);
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(1, .5, 'SIPA', '', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(17.5, .5, '449.1/61/DPM-PTSP/SIPA/II/2022', '', 1, 'L', $fill);
+            $pdf->Cell(17.5, .5, $setting->apt_sipa, '', 1, 'L', $fill);
             $pdf->Ln();
             
             // Blok ID PASIEN
@@ -1367,13 +1371,12 @@ class transaksi extends CI_Controller {
             $this->form_validation->set_rules('tgl_masuk', 'Tgl Faktur', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id_supplier'   => form_error('id_supplier'),
-                    'tgl_masuk'     => form_error('tgl_masuk'),
-                );
+                $msg_error = [
+                    'id_supplier' => form_error('id_supplier'),
+                    'tgl_masuk'   => form_error('tgl_masuk'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
                 redirect(base_url('transaksi/beli/trans_beli.php'));
             } else {
                 $tgl_msk = $this->tanggalan->tgl_indo_sys($tgl_masuk);
@@ -1384,7 +1387,7 @@ class transaksi extends CI_Controller {
                 $nota       = (!empty($no_nota) ? $no_nota : 'FP'.date('m').date('y').sprintf('%03d', $nota_str));
                 $supplier   = $this->db->where('id', $plgn)->get('tbl_m_supplier')->row();
                 
-                $data = array(
+                $data = [
                     'no_nota'      => $nota,
                     'tgl_simpan'   => date('Y-m-d H:i:s'),
                     'tgl_masuk'    => $tgl_msk,
@@ -1394,25 +1397,40 @@ class transaksi extends CI_Controller {
                     'keterangan'   => $ket,
                     'pengiriman'   => $alamat,
                     'status_nota'  => '0'
-                );
+                ];
                 
-                # Transaksi Start
-                $this->db->trans_start();
+                # Begin Transaction
+                $this->db->trans_begin();
                 
-                # Masukkan ke tabel trans beli po
-                $this->db->insert('tbl_trans_beli_po', $data);
-                $last_id = $this->db->insert_id();
-                
-                $this->session->set_userdata('trans_beli_po', $data);
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data Medical Checkup Sudah disimpan !!</div>');
-                
-                # Trans Commit
-                $this->db->trans_complete();                
-                
-                redirect(base_url('transaksi/beli/trans_beli_po.php?id='.general::enkrip($last_id)));
+                try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
 
-//                $this->session->set_userdata('trans_beli_po', $data);
-//                redirect(base_url('transaksi/beli/trans_beli_po.php?id='.general::enkrip($nota)));
+                    # Insert into purchase order table
+                    $this->db->insert('tbl_trans_beli_po', $data);
+                    $last_id = $this->db->insert_id();
+                    
+                    # If everything is successful, commit the transaction
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception('Database transaction failed');
+                    }
+                    
+                    $this->db->trans_commit();
+                    
+                    # Set session data and flash message
+                    $this->session->set_userdata('trans_beli_po', $data);
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Purchase Order berhasil dibuat!");');
+                    
+                    redirect(base_url('transaksi/beli/trans_beli_po.php?id='.general::enkrip($last_id)));
+                } catch (Exception $e) {
+                    # If something went wrong, rollback the transaction
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Gagal membuat Purchase Order: ' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli.php'));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -1439,37 +1457,63 @@ class transaksi extends CI_Controller {
             $this->form_validation->set_rules('tgl_masuk', 'Tgl Faktur', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id_supplier'   => form_error('id_supplier'),
                     'tgl_masuk'     => form_error('tgl_masuk'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
 
                 redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
-            } else {
-                $tgl_msk = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                $tgl_klr = $this->tanggalan->tgl_indo_sys($tgl_tempo);
+            } else {                      
+                $tgl_msk    = $this->tanggalan->tgl_indo_sys($tgl_masuk);
+                $tgl_klr    = $this->tanggalan->tgl_indo_sys($tgl_tempo);
                 
                 $sql_beli   = $this->db->where('YEAR(tgl_simpan)', date('Y'))->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_beli_po');
                 $nota_str   = $sql_beli->num_rows() + 1;
                 $nota       = (!empty($no_nota) ? $no_nota : 'FP'.date('m').date('y').sprintf('%03d', $nota_str));
+              
+                # Begin Transaction
+                $this->db->trans_begin();
 
-                $data = array(
-                    'no_nota'      => $nota,
-                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-                    'tgl_masuk'    => $tgl_msk,
-                    'id_supplier'  => $plgn,
-                    'id_user'      => $this->ion_auth->user()->row()->id,
-                    'supplier'     => $supp,
-                    'keterangan'   => $ket,
-                    'pengiriman'   => $alamat
-                );                
-                crud::update('tbl_trans_beli_po', 'id', general::dekrip($id), $data);
-                
-                
-                $this->session->set_userdata('trans_beli_po_edit', $data);
-                redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
+                try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
+
+                    $data = [
+                        'no_nota'      => $nota,
+                        'tgl_simpan'   => date('Y-m-d H:i:s'),
+                        'tgl_masuk'    => $tgl_msk,
+                        'id_supplier'  => $plgn,
+                        'id_user'      => $this->ion_auth->user()->row()->id,
+                        'supplier'     => $supp,
+                        'keterangan'   => $ket,
+                        'pengiriman'   => $alamat
+                    ];
+                    
+                    # Update purchase order
+                    $this->db->where('id', general::dekrip($id))->update('tbl_trans_beli_po', $data);
+                    
+                    # If everything is successful, commit the transaction
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception('Database transaction failed');
+                    }
+                    
+                    $this->db->trans_commit();
+                    
+                    $this->session->set_userdata('trans_beli_po_edit', $data);
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Purchase Order berhasil diperbarui!");');
+                    redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
+                    
+                } catch (Exception $e) {
+                    # If something went wrong, rollback the transaction
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Gagal memperbarui Purchase Order: ' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -1716,79 +1760,62 @@ class transaksi extends CI_Controller {
 
     public function set_trans_beli_po_proses() {
         if (akses::aksesLogin() == TRUE) {
-            $no_nota    = $this->input->post('no_nota');
+            $no_nota = $this->input->post('no_nota');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('no_nota', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'no_nota'   => form_error('no_nota'),
-                );
+                $msg_error = [
+                    'no_nota' => form_error('no_nota'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
                 redirect(base_url('transaksi/beli/trans_beli.php'));
-            } else {
-                $tgl_msk    = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                $tgl_klr    = $this->tanggalan->tgl_indo_sys($tgl_tempo);
+            } else {                       
+                // Generate new PO number
+                $sql_beli = $this->db->where('YEAR(tgl_simpan)', date('Y'))
+                                     ->where('MONTH(tgl_simpan)', date('m'))
+                                     ->get('tbl_trans_beli_po');
+                $nota_str = $sql_beli->num_rows() + 1;
+                $nota     = 'PO'.date('m').date('y').sprintf('%03d', $nota_str);
+          
                 
-                $sql_beli   = $this->db->where('YEAR(tgl_simpan)', date('Y'))->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_beli_po');
-                $nota_str   = $sql_beli->num_rows() + 1;
-                $nota       = 'PO'.date('m').date('y').sprintf('%03d', $nota_str);
-                                
-                $trans_beli  = $this->session->userdata('trans_beli_po');
-                                
-//                $this->db->where('id', general::dekrip($no_nota))->update('tbl_trans_beli_po', array('status_nota'=>'1'));
+                // Begin transaction
+                $this->db->trans_begin();
 
-//                $data = array(
-//                    'no_nota'      => $nota,
-//                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-//                    'tgl_masuk'    => (!empty($trans_beli['tgl_masuk']) ? $trans_beli['tgl_masuk'] : '0000-00-00'),
-//                    'tgl_keluar'   => (!empty($trans_beli['tgl_keluar']) ? $trans_beli['tgl_keluar'] : '0000-00-00'),
-//                    'id_supplier'  => (!empty($trans_beli['id_supplier']) ? $trans_beli['id_supplier'] : '0'),
-//                    'id_user'      => $this->ion_auth->user()->row()->id,
-//                    'keterangan'   => $trans_beli['keterangan'],
-//                    'pengiriman'   => $trans_beli['pengiriman']
-//                );
-////                
-////                echo '<pre>';
-////                print_r($data);
-////                echo '</pre>';
-//                
-//                crud::simpan('tbl_trans_beli_po', $data);
-//                $last_id = crud::last_id();
-//                
-//                foreach ($this->cart->contents() as $cart){
-//                    $sql_brg      = $this->db->where('id', $cart['options']['id_barang'])->get('tbl_m_produk')->row();
-//                    $total        = $cart['price'] * $cart['qty'] * $cart['options']['jml_satuan'];
-//                    
-//                    $data_pemb_det = array(
-//                        'id_pembelian' => $last_id,
-//                        'id_produk'    => $sql_brg->id,
-//                        'id_satuan'    => $sql_brg->id_satuan,
-//                        'no_nota'      => $trans_beli['no_nota'],
-//                        'tgl_simpan'   => $trans_beli['tgl_simpan'],
-//                        'kode'         => $cart['options']['kode'],
-//                        'produk'       => $cart['name'],
-//                        'jml'          => $cart['options']['jml'],
-//                        'jml_satuan'   => (int)$cart['options']['jml_satuan'],
-//                        'satuan'       => $cart['options']['satuan'],
-//                        'keterangan'   => $cart['options']['satuan_ket']
-//                    );
-////                
-////                    echo '<pre>';
-////                    print_r($data_pemb_det);
-////                    echo '</pre>';
-//                     
-//                    crud::simpan('tbl_trans_beli_po_det', $data_pemb_det);
-//                }
-                
-                $this->cart->destroy();
-                $this->session->unset_userdata('trans_beli_po');
-                
-                redirect(base_url('transaksi/beli/trans_beli_po_det.php?id='.$no_nota));
+                try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
+                    
+                    // Get transaction data from session
+                    $trans_beli = $this->session->userdata('trans_beli_po');
+
+                    $this->db->where('id', $trans_beli->id)->update('tbl_trans_beli_po', ['tgl_modif' => date('Y-m-d H:i:s')]);
+
+                    // If everything is successful, commit the transaction
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception('Database transaction failed');
+                    }
+                    
+                    $this->db->trans_commit();
+                    
+                    // Clean up session and cart
+                    $this->cart->destroy();
+                    $this->session->unset_userdata('trans_beli_po');
+                    
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Transaksi PO berhasil diproses!");');
+                    redirect(base_url('transaksi/beli/trans_beli_po_det.php?id='.$no_nota));
+                    
+                } catch (Exception $e) {
+                    // If something went wrong, rollback the transaction
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Gagal memproses PO: ' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli_po.php'));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2315,99 +2342,65 @@ class transaksi extends CI_Controller {
             $this->form_validation->set_rules('item', 'Item', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'kode'      => form_error('kode'),
                     'id_item'   => form_error('id_item'),
                     'item'      => form_error('item'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
 
                 redirect(base_url('transaksi/beli/trans_beli_po.php?id='.$no_nota));
-            } else {
+            } else {                    
                 $sql_barang  = $this->db->where('id', general::dekrip($id_brg))
                                         ->get('tbl_m_produk')->row();
                 $sql_satuan  = $this->db->where('id', (!empty($satuan) ? $satuan : $sql_barang->id_satuan))->get('tbl_m_satuan')->row();
                 $trans_beli  = $this->session->userdata('trans_beli_po');
-                $pengaturan  = $this->db->get('tbl_pengaturan')->row();
-
-                $jml_pcs     = (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1') * $qty;
-                $harga_pcs   = ($harga * $qty) / $jml_pcs;
-                $harga_sat   = $harga_pcs * $sql_satuan->jml;
-
-                $disk1       = $harga_pcs - (($diskon1 / 100) * $harga_pcs);
-                $disk2       = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3       = $disk2 - (($diskon3 / 100) * $disk2);
-
-                $harga_ppn   = ($trans_beli['status_ppn'] == '1' ? ($pengaturan->jml_ppn / 100) * $disk3 : 0);
-                $harga_tot   = $disk3 + $harga_ppn;
-                $subtotal    = ($disk3 * $jml_pcs) - $potongan;
+                
                 $jml_qty     = general::format_angka_db($qty);
+                    
+                # Begin transaction
+                $this->db->trans_begin();
 
-                $jml_satuan  = $sql_satuan2->jml * $qty;
-
-//                 Cek di keranjang
-//                foreach ($this->cart->contents() as $cart){
-//                    // Cek ada datanya kagak?
-//                    if($sql_brg->kode == $cart['options']['kode']){
-//                        $jml_subtotal      = ($cart['qty'] + $qty) * $sql_satuan->jml;
-//                        $jml_qty           = ($cart['qty'] + $qty);
-//
-//                        $this->cart->update(array('rowid'=>$cart['rowid'], 'qty'=>0));
-//                    }
-//                }
-//
-//                $cart = array(
-//                    'id'      => rand(1,1024).$sql_barang->id,
-//                    'qty'     => (float)$jml_qty,
-//                    'price'   => 1, // number_format($harga, 2, '.',','),
-//                    'name'    => rtrim($sql_barang->produk),
-//                    'options' => array(
-//                            'no_nota'       => general::dekrip($no_nota),
-//                            'id_barang'     => $sql_barang->id,
-//                            'id_satuan'     => $sql_barang->id_satuan,
-//                            'satuan'        => $sql_satuan->satuanTerkecil,
-//                            'jml'           => $qty,
-//                            'jml_satuan'    => (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1'),
-//                            'kode'          => $sql_barang->kode,
-//                            'harga'         => $harga_tot,
-//                            'keterangan'    => $ket,
-//                    )
-//                );
-                
-                $data = array(
-                    'id_pembelian'      => general::dekrip($no_nota),
-                    'id_produk'         => $sql_barang->id,
-                    'id_satuan'         => $sql_satuan->id,
-                    'no_nota'           => $trans_beli['no_nota'],
-                    'tgl_simpan'        => $trans_beli['tgl_simpan'],
-                    'kode'              => $sql_barang->kode,
-                    'produk'            => $sql_barang->produk,
-                    'jml'               => (float)$jml_qty,
-                    'jml_satuan'        => $sql_satuan->jml,
-                    'satuan'            => $sql_satuan->satuanTerkecil,
-                    'keterangan_itm'    => $ket
-                );
-                
-                # Masukkan ke tabel po detail                
-                $this->db->trans_start();
-                
-                # Masukkan ke tabel po detail                
-                $this->db->insert('tbl_trans_beli_po_det', $data);
-                
-                # trans complete
-                $this->db->trans_complete();
-                
-                redirect(base_url('transaksi/beli/trans_beli_po.php?id='.$no_nota));
-                
-//                echo '<pre>';
-//                print_r($cart);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//
-//                redirect(base_url('transaksi/beli/trans_beli_po.php?id='.$no_nota));
+                try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
+                    
+                    $data = [
+                        'id_pembelian'      => general::dekrip($no_nota),
+                        'id_produk'         => $sql_barang->id,
+                        'id_satuan'         => $sql_satuan->id,
+                        'no_nota'           => $trans_beli['no_nota'],
+                        'tgl_simpan'        => $trans_beli['tgl_simpan'],
+                        'kode'              => $sql_barang->kode,
+                        'produk'            => $sql_barang->produk,
+                        'jml'               => (float)$jml_qty,
+                        'jml_satuan'        => $sql_satuan->jml,
+                        'satuan'            => $sql_satuan->satuanTerkecil,
+                        'keterangan_itm'    => $ket
+                    ];
+                    
+                    # Insert into PO detail table
+                    $this->db->insert('tbl_trans_beli_po_det', $data);
+                    
+                    # If everything is successful, commit the transaction
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception('Database transaction failed');
+                    }
+                    
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item berhasil ditambahkan ke PO!");');
+                    
+                    redirect(base_url('transaksi/beli/trans_beli_po.php?id='.$no_nota));
+                } catch (Exception $e) {
+                    # If something went wrong, rollback the transaction
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Gagal menambahkan item: ' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli_po.php?id='.$no_nota));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();

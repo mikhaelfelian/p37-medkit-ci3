@@ -5689,9 +5689,7 @@ class medcheck extends CI_Controller {
                     // Get form ID and check for double submission
                     $form_id = $this->input->post('form_id');
                     if (check_form_submitted($form_id)) {
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
-                        redirect(base_url('medcheck/tambah.php?act=res_input&id='.$id.'&id_resep='.$id_resep.'&status='.$status));
-                        return;
+                        throw new Exception('Form sudah disubmit sebelumnya!');
                     }
                     
                 $sql_medc        = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
