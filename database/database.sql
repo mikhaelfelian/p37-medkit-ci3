@@ -14,12 +14,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
--- Dumping database structure for db_medkit_ci3
-DROP DATABASE IF EXISTS `db_medkit_ci3`;
-CREATE DATABASE IF NOT EXISTS `db_medkit_ci3` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci */;
-USE `db_medkit_ci3`;
-
 -- Dumping structure for table db_medkit_ci3.admins
 DROP TABLE IF EXISTS `admins`;
 CREATE TABLE IF NOT EXISTS `admins` (
@@ -1221,7 +1215,7 @@ CREATE TABLE IF NOT EXISTS `tbl_m_produk_hist` (
   `sp` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id_produk` (`id_produk`)
-) ENGINE=InnoDB AUTO_INCREMENT=704273 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=704274 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -1586,6 +1580,8 @@ CREATE TABLE IF NOT EXISTS `tbl_pengaturan` (
   `kode_rad` varchar(50) NOT NULL,
   `kode_periksa` varchar(50) NOT NULL,
   `kode_pasien` varchar(50) NOT NULL,
+  `apt_apa` varchar(160) NOT NULL,
+  `apt_sipa` varchar(160) NOT NULL,
   `ppn` decimal(10,2) NOT NULL DEFAULT 0.00,
   `ppn_tot` int(11) NOT NULL,
   `jml_ppn` int(11) NOT NULL,
@@ -1925,7 +1921,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_beli_po` (
   `status_jurnal` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `idSupplier` (`id_supplier`)
-) ENGINE=InnoDB AUTO_INCREMENT=3845 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3849 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -1951,7 +1947,7 @@ CREATE TABLE IF NOT EXISTS `tbl_trans_beli_po_det` (
   KEY `idBarang` (`id_produk`),
   KEY `FK_tbl_trans_beli_po_det_tbl_trans_beli_po` (`id_pembelian`),
   CONSTRAINT `FK_tbl_trans_beli_po_det_tbl_trans_beli_po` FOREIGN KEY (`id_pembelian`) REFERENCES `tbl_trans_beli_po` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13837 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13844 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Data exporting was unselected.
 
@@ -3692,7 +3688,7 @@ CREATE TABLE IF NOT EXISTS `tbl_util_so` (
   `status` enum('0','1','2','3') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=864 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=865 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
@@ -3721,7 +3717,7 @@ CREATE TABLE IF NOT EXISTS `tbl_util_so_det` (
   PRIMARY KEY (`id`),
   KEY `FK_tbl_util_so_det_tbl_util_so` (`id_so`),
   CONSTRAINT `FK_tbl_util_so_det_tbl_util_so` FOREIGN KEY (`id_so`) REFERENCES `tbl_util_so` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12110 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12111 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Data exporting was unselected.
 
