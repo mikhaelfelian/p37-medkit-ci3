@@ -1,9 +1,11 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
 /**
- * Description of master
+ * Description of Master controller
  *
- * @author USER
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2023-03-31
  */
 
 class master extends CI_Controller {
