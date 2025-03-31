@@ -34,9 +34,9 @@
                         <div class="card-body table-responsive">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <?php echo $this->session->flashdata('transaksi'); ?>
                                     <?php $hasError = $this->session->flashdata('form_error'); ?>
-                                    <?php echo form_open(base_url('transaksi/beli/set_trans_beli_upd.php'), 'autocomplete="off"') ?>
+                                    <?php echo form_open(base_url('transaksi/beli/set_trans_beli_upd.php'), 'id="trans_beli_form" autocomplete="off"') ?>
+                                    <?php echo add_form_protection() ?>
                                     <input type="hidden" id="id" name="id" value="<?php echo general::enkrip($sql_beli->id) ?>">                                  
                                     <input type="hidden" id="id_supplier" name="id_supplier" value="<?php echo $sql_beli->id_supplier ?>">                                  
                                     <input type="hidden" id="id_po" name="id_po" value="<?php echo $sql_beli->id_po ?>">                                  
@@ -97,14 +97,17 @@
                                             <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-shopping-cart"></i> Set Beli</button>
                                         </div>
                                     </div>
+                                    <?php echo add_double_submit_protection('trans_beli_form') ?>
                                     <?php echo form_close() ?>
                                 </div>
                                 <div class="col-md-6">
                                     <?php if (!empty($sess_beli)) { ?>
-                                        <?php echo form_open(base_url('transaksi/beli/'.($this->uri->segment(3) == 'trans_beli_edit.php' ? 'cart_beli_upd2' : 'cart_beli_upd').'.php'), 'autocomplete="off"') ?>
+                                        <?php echo form_open(base_url('transaksi/beli/'.($this->uri->segment(3) == 'trans_beli_edit.php' ? 'cart_beli_upd2' : 'cart_beli_upd').'.php'), 'id="cart_beli_form" autocomplete="off"') ?>
+                                        <?php echo add_form_protection() ?>
                                         <input type="hidden" id="id" name="id" value="<?php echo general::enkrip($sql_beli->id) ?>">                                  
                                         <input type="hidden" id="no_nota" name="no_nota" value="<?php echo general::enkrip($sess_beli['no_nota']) ?>">                                  
-                                        <input type="hidden" id="id_item" name="id_item" value="<?php echo general::enkrip($sql_item->id) ?>">                                  
+                                        <input type="hidden" id="id_item" name="id_item" value="<?php echo general::enkrip($sql_item->id) ?>"> 
+                                        <input type="hidden" id="id_beli_det" name="rowid" value="<?php echo isset($_GET['rowid']) ? $_GET['rowid'] : '' ?>"> 
 
                                         <div class="row">
                                             <div class="col-md-3">
@@ -116,7 +119,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group <?php echo (!empty($hasError['kode_batch']) ? 'text-danger' : '') ?>">
                                                     <label class="control-label">Nomor Batch</label>
-                                                    <?php echo form_input(array('id' => 'kode_batch', 'name' => 'kode_batch', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode Batch...')) ?>
+                                                    <?php echo form_input(array('id' => 'kode_batch', 'name' => 'kode_batch', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode Batch...', 'value' => $sql_beli_det_rw->kode_batch)) ?>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -126,17 +129,11 @@
                                                         <div class="input-group-append">
                                                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                                                         </div>
-                                                        <?php echo form_input(array('id' => 'tgl_ed', 'name' => 'tgl_ed', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan '.date('m/d/Y').' ...')) ?>
+                                                        <?php echo form_input(array('id' => 'tgl_ed', 'name' => 'tgl_ed', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan '.date('m/d/Y').' ...', 'value' => $sql_beli_det_rw->tgl_ed)) ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--
-                                        <div class="form-group <?php // echo (!empty($hasError['id_produk']) ? 'text-danger' : '') ?>">
-                                            <label class="control-label">Kode</label>
-                                            <?php // echo form_input(array('id' => 'kode', 'name' => 'kode', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['id_produk']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode ...', 'value' => $sql_item->kode)) ?>
-                                        </div>
-                                        -->
                                         <?php if (!empty($sql_item->produk)) { ?>
                                             <div class="form-group <?php echo (!empty($hasError['id_produk']) ? 'text-danger' : '') ?>">
                                                 <label class="control-label">Item</label>
@@ -147,7 +144,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group <?php echo (!empty($hasError['jml']) ? 'text-danger' : '') ?>">
                                                     <label class="control-label">Jml</label>
-                                                    <?php echo form_input(array('id' => 'jml', 'name' => 'jml', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_masuk']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Jml ...', 'value'=>'1')) ?>
+                                                    <?php echo form_input(array('id' => 'jml', 'name' => 'jml', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_masuk']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Jml ...', 'value' => (!empty($sql_beli_det_rw->jml) ? $sql_beli_det_rw->jml : '1'))) ?>
                                                 </div>                                            
                                             </div>
                                             <div class="col-md-3">
@@ -156,7 +153,7 @@
                                                     <select name="satuan" class="form-control rounded-0">
                                                         <option value="">- Pilih -</option>
                                                         <?php foreach ($sql_satuan as $satuan) { ?>
-                                                            <option value="<?php echo $satuan->id ?>"><?php echo strtoupper($satuan->satuanTerkecil) ?></option>
+                                                            <option value="<?php echo $satuan->id ?>" <?php echo ($sql_beli_det_rw->id_satuan == $satuan->id ? 'selected' : '') ?>><?php echo strtoupper($satuan->satuanTerkecil) ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>                                           
@@ -168,7 +165,7 @@
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">Rp.</span>
                                                         </div>
-                                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga_het', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Harga ...', 'value' => (float) $sql_item->harga_het_beli)) ?>
+                                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga_het', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Harga ...', 'value' => (!empty($sql_beli_det_rw->harga_het) ? (float) $sql_beli_det_rw->harga_het : (float) $sql_item->harga_het_beli))) ?>
                                                     </div>
                                                 </div>                                       
                                             </div>
@@ -181,7 +178,7 @@
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">Rp.</span>
                                                         </div>
-                                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Harga ...', 'value' => (float) $sql_item->harga_beli)) ?>
+                                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Harga ...', 'value' => (!empty($sql_beli_det_rw->harga) ? (float) $sql_beli_det_rw->harga : (float) $sql_item->harga_beli))) ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -192,7 +189,7 @@
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">Rp.</span>
                                                         </div>
-                                                        <?php echo form_input(array('id' => 'potongan', 'name' => 'potongan', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Potongan ...', 'value'=>'0')) ?>
+                                                        <?php echo form_input(array('id' => 'potongan', 'name' => 'potongan', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Potongan ...', 'value' => (!empty($sql_beli_det_rw->potongan) ? (float) $sql_beli_det_rw->potongan : '0'))) ?>
                                                     </div>
                                                 </div>                                                
                                             </div>
@@ -201,19 +198,19 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="control-label">Diskon 1</label>
-                                                    <?php echo form_input(array('id' => 'diskon', 'name' => 'disk1', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Disk 1 ...', 'value'=>'0')) ?>
+                                                    <?php echo form_input(array('id' => 'diskon', 'name' => 'disk1', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Disk 1 ...', 'value' => (!empty($sql_beli_det_rw->disk1) ? (float) $sql_beli_det_rw->disk1 : '0'))) ?>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="control-label">Diskon 2</label>
-                                                    <?php echo form_input(array('id' => 'diskon', 'name' => 'disk2', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Disk 1 ...', 'value'=>'0')) ?>
+                                                    <?php echo form_input(array('id' => 'diskon', 'name' => 'disk2', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Disk 1 ...', 'value' => (!empty($sql_beli_det_rw->disk2) ? (float) $sql_beli_det_rw->disk2 : '0'))) ?>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="control-label">Diskon 3</label>
-                                                    <?php echo form_input(array('id' => 'diskon', 'name' => 'disk3', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Disk 1 ...', 'value'=>'0')) ?>
+                                                    <?php echo form_input(array('id' => 'diskon', 'name' => 'disk3', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Disk 1 ...', 'value' => (!empty($sql_beli_det_rw->disk3) ? (float) $sql_beli_det_rw->disk3 : '0'))) ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -225,6 +222,7 @@
                                                 <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-shopping-cart"></i> Simpan</button>
                                             </div>
                                         </div>
+                                        <?php echo add_double_submit_protection('cart_beli_form') ?>
                                         <?php echo form_close() ?>
                                     <?php } ?>
                                 </div>
@@ -234,7 +232,8 @@
                 </div>
                 <?php if (!empty($sess_beli)) { ?>
                     <div class="col-md-12">
-                        <?php echo form_open(base_url('transaksi/beli/set_trans_beli_proses_upd.php'), 'autocomplete="off"') ?>
+                        <?php echo form_open(base_url('transaksi/beli/set_trans_beli_proses_upd.php'), 'id="trans_beli_proses_form" autocomplete="off"') ?>
+                        <?php echo add_form_protection() ?>
                         <div class="card card-default">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Data Item Pembelian</h3>
@@ -291,6 +290,7 @@
                                                     <th class="text-right">Diskon</th>
                                                     <th class="text-right">Potongan</th>
                                                     <th class="text-right">Subtotal</th>
+                                                    <th class="text-right"></th>
                                                 </tr>                                    
                                             </thead>
                                             <tbody>
@@ -314,20 +314,23 @@
                                                             <td class="text-center"><?php echo (!empty($cart->disk1) ? (float)$cart->disk1 : '') . (!empty($cart->disk2) ? ' + ' . (float)$cart->disk2 : '') . (!empty($cart->disk3) ? ' + ' . (float)$cart->disk3 : ''); ?></td>
                                                             <td class="text-right"><?php echo general::format_angka($cart->potongan); ?></td>
                                                             <td class="text-right"><?php echo general::format_angka($cart->subtotal); ?></td>
+                                                            <td class="text-left"><?php echo anchor(base_url('transaksi/beli/trans_beli_edit.php?id='.$this->input->get('id').'&rowid='.general::enkrip($cart->id).'&id_item='.general::enkrip($cart->id_produk).'&id_satuan='.$cart->id_satuan.'&harga='.(float)$cart->harga.'&qty='.(float)$cart->jml), '<i class="fa fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?></td>
                                                         </tr>
                                                         <?php $no++; ?>
                                                     <?php } ?>
                                                     <tr>
                                                         <th class="text-right" colspan="7">Total</th>
                                                         <th class="text-right"><?php echo general::format_angka($subtot); ?></th>
+                                                        <th class="text-right"></th>
                                                     </tr>
                                                     <tr>
                                                         <th class="text-right" colspan="7">Ongkir</th>
                                                         <th class="text-right" style="width: 200px;"><?php echo form_input(array('id' => 'ongkir', 'name' => 'jml_ongkir', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['ongkir']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Ongkir ...')) ?></th>
+                                                        <th class="text-right"></th>
                                                     </tr>
                                                 <?php } else { ?>
                                                     <tr>
-                                                        <th class="text-center" colspan="8">Tidak Ada Data</th>
+                                                        <th class="text-center" colspan="9">Tidak Ada Data</th>
                                                     </tr>
                                                 <?php } ?>
                                             </tbody>
@@ -350,6 +353,7 @@
                                 </div>
                             </div>
                         </div>
+                        <?php echo add_double_submit_protection('trans_beli_proses_form') ?>
                         <?php echo form_close(); ?>
                     </div>
                 <?php } ?>
