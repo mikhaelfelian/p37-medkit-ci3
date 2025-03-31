@@ -89,11 +89,13 @@
                                     if (!empty($barang)) {
                                         $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
                                         foreach ($barang as $barang) {
-                                            $sql_tipe = $this->db->where('id', $barang->id_grup)->get('tbl_m_pelanggan_grup')->row();
                                             $sql_satuan = $this->db->where('id', $barang->id_satuan)->get('tbl_m_satuan')->row();
-                                            $sql_kat = $this->db->where('id', $barang->id_kategori)->get('tbl_m_kategori')->row();
-                                            $sql_mrk = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
-//                                            $sql_stok = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $barang->id)->get('tbl_m_produk_stok')->row();
+                                            $sql_kat    = $this->db->where('id', $barang->id_kategori)->get('tbl_m_kategori')->row();
+                                            $sql_mrk    = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
+                                            $sql_stok   = $this->db->select('SUM(jml * jml_satuan) AS jml')
+                                                                   ->where('id_produk', $barang->id)
+                                                                   ->get('tbl_m_produk_stok')
+                                                                   ->row();
                                             ?>
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?></td>
@@ -114,7 +116,7 @@
                                                 </td>
                                                 <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
                                                     <?php $satuan = floor($barang->jml / $sql_satuan->jml); ?>
-                                                    <td class="text-right"><?php echo $barang->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
+                                                    <td class="text-right"><?php echo $sql_stok->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
                                                 <?php } ?>
                                                 <td>
                                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakFarmasi() == TRUE) { ?>
