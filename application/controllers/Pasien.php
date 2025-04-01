@@ -249,8 +249,8 @@ class Pasien extends CI_Controller {
         $data['gelar']          = $this->db->get('tbl_m_gelar')->result();
         $data['sql_doc']        = $this->db->where('id_user_group', '10')->get('tbl_m_karyawan')->result();
         $data['kerja']          = $this->db->get('tbl_m_jenis_kerja')->result();
-        $data['sql_poli']       = $this->db->where('id', $data['sql_dft_id']->id_poli)->get('tbl_m_poli')->row();
-        $data['sql_dft_id']     = $this->db->where('id', general::dekrip($dft_id))->get('tbl_pendaftaran')->row();            
+        $data['sql_poli']       = $this->db->where('id', $data['sql_dft_id']->id_poli ?? null)->get('tbl_m_poli')->row();
+        $data['sql_dft_id']     = $this->db->where('id', general::dekrip($dft_id ?? ''))->get('tbl_pendaftaran')->row();            
         $data['sql_itm_pas']    = $this->db->select('id, nama, nama_pgl')->get('tbl_m_pasien')->result();
         $data['sql_pas']        = $this->db->where('id_user', $userid)->get('tbl_m_pasien')->row();
         $data['sql_penjamin']   = $this->db->where('status', '1')->get('tbl_m_penjamin')->result();
@@ -354,6 +354,8 @@ class Pasien extends CI_Controller {
             $tg      = $this->input->get('filter_tgl');
             $jml     = $this->input->get('jml');
             
+            $data['sql_pasien'] = $this->db->where('id_user', $id_user)->get('tbl_m_pasien')->row();
+            
             if(!empty($jml)){
                 $jml_hal = $jml;
             }else{
@@ -400,8 +402,6 @@ class Pasien extends CI_Controller {
             $config['next_link']             = '&rsaquo;';
             $config['last_link']             = '&raquo;';
             /* -- End Blok Pagination -- */
-            
-            $data['sql_pasien']              = $this->db->where('id_user', $id_user)->get('tbl_m_pasien')->row();
             
             if(!empty($hal)){
                    $data['sql'] = $this->db->select('*')
@@ -860,209 +860,6 @@ class Pasien extends CI_Controller {
                     $i++;
                 }                
             }
-
-//            if($status_ctk == '1'){
-//                $i = 0;
-//                $fill = FALSE;
-//                foreach ($sql_medc_lab_det as $key => $lab) {
-//                        $sql_kat = $this->db->where('id', $lab->id_kat)->get('tbl_m_kategori');
-//                        $sql_lab = $this->db->where('id', $lab->id)->where('status_hsl', '1')->get('tbl_trans_medcheck_det');
-//                        $sql_lab_hsl = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_item', $sql_lab->row()->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
-//
-//                        $item = ($sql_kat->num_rows() == '0' ? $sql_lab->row()->item : $sql_kat->row()->keterangan);
-//
-//                        $pdf->Cell(18.5, .5, $sql_lab->row()->item . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//                        $pdf->Ln();
-//
-//                        foreach ($sql_lab_hsl as $lab_item) {
-//                            $sql_lab_nilai_rw = $this->db->where('id', $lab_item->id_item_ref_ip)->get('tbl_m_produk_ref_input')->row();
-//
-//                            // Detail Pemeriksaan dan hasilnya
-//                            $pdf->SetFont('Arial', '', '8');
-//                            $pdf->Cell(7, .5, ' - ' . html_entity_decode($lab_item->item_name) . ($lab_item->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//                            $pdf->Cell(4.5, .5, html_entity_decode($lab_item->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                            $pdf->Cell(5.5, .5, html_entity_decode($lab_item->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                            $pdf->MultiCell(5, .5, 'p'.$lab_item->item_value, '1', 'L');
-////                            $pdf->Cell(2, .5, html_entity_decode($lab_item->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                            $pdf->Ln();
-//                        }
-//                    $i++;
-//                }                
-//            }else{
-//                $i = 0;
-//                $fill = FALSE;
-//                foreach ($sql_medc_lab_det as $key => $lab) {
-////                    if ($sess_print[$i]['value'] == '1') {
-//                        $sql_kat        = $this->db->where('id', $sess_print[$i]['id_kat'])->get('tbl_m_kategori');
-//                        $sql_lab        = $this->db->where('id', $sess_print[$i]['id'])->where('status_hsl', '1')->get('tbl_trans_medcheck_det');
-//                        $sql_lab_hsl    = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_item', $sql_lab->row()->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
-//
-//                        $item = ($sql_kat->num_rows() == '0' ? $sql_lab->row()->item : $sql_kat->row()->keterangan);
-//
-//                        if(!empty($lab->id_lab_kat)){
-//                            $pdf->SetFont('Arial', 'Bi', '10');
-//                            $pdf->Cell(19, .5, $lab->id_lab_kat, '', 0, 'L', $fill);
-//                            $pdf->Ln();
-//                        }
-////                        
-////                        $pdf->SetFont('Arial', '', '8');
-////                        $pdf->Cell(18.5, .5, $sql_lab->row()->item . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                        $pdf->Ln();
-////
-////                        foreach ($sql_lab_hsl as $lab_item) {
-////                            $sql_lab_nilai_rw = $this->db->where('id', $lab_item->id_item_ref_ip)->get('tbl_m_produk_ref_input')->row();
-////
-////                            // Detail Pemeriksaan dan hasilnya
-////                            $pdf->SetFont('Arial', '', '8');
-////                            $pdf->Cell(7, .5, ' - ' . html_entity_decode($lab_item->item_name) . ($lab_item->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                            $pdf->Cell(4.5, .5, html_entity_decode($lab_item->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                            $pdf->Cell(5.5, .5, html_entity_decode($lab_item->item_value, ENT_NOQUOTES, 'utf-8'), '1', 0, 'L', $fill);
-//////                            $pdf->MultiCell(5.5, .5, $lab_item->item_value, '1', 'L');
-////                            $pdf->Cell(2, .5, html_entity_decode($lab_item->item_satuan, ENT_NOQUOTES, 'utf-8'), '1', 0, 'L', $fill);
-////                            $pdf->Ln();
-////                        }
-////                    }
-//
-//
-//
-//
-//
-//
-////                echo '<pre>';
-////                print_r($lab);
-////                echo '</pre>';
-////                
-////                if($sess_print[$i]['value'] == 1){
-////                    $sql_kat        = $this->db->where('id', $sess_print[$i]['id_kat'])->get('tbl_m_kategori');
-////                    $sql_lab        = $this->db->where('id', $sess_print[$i]['id'])->where('status_hsl', '1')->get('tbl_trans_medcheck_det');
-////                    
-////                    if ($sql_kat->num_rows() > 0) {
-////                        echo $sql_kat->row()->keterangan;
-////                        echo br();
-////                    }
-////                }
-////                if($sess_print[$i]['value'] == 1){
-////                    $sql_kat        = $this->db->where('id', $sess_print[$i]['id_kat'])->get('tbl_m_kategori');
-////                    $sql_lab        = $this->db->where('id', $sess_print[$i]['id'])->where('status_hsl', '1')->get('tbl_trans_medcheck_det');
-////                    
-////                    $item = ($sql_kat->num_rows() == '0' ? $sql_lab->row()->item : $sql_kat->row()->keterangan);
-////                    
-////                    $pdf->SetFont('Arial', '', '10');
-////                    
-//////                    if ($sql_kat->num_rows() > 0) {
-//////                        // Kategori Bidang Muncul disini
-//////                        $pdf->SetFont('Arial', 'Bi', '10');
-//////                        $pdf->Cell(19, .5, $sql_kat->row()->keterangan, '', 0, 'L', $fill);
-//////                        $pdf->Ln();
-//////                    }else{
-//////                        $sql_lab_hsl = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_item', $sql_lab->row()->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
-//////                        
-//////                        $pdf->Cell(18.5, .5, $item . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//////                        $pdf->Ln();
-//////                            
-//////                        foreach ($sql_lab_hsl as $lab_item) {
-//////                            $sql_lab_nilai_rw = $this->db->where('id', $lab_item->id_item_ref_ip)->get('tbl_m_produk_ref_input')->row();
-//////
-//////                            // Detail Pemeriksaan dan hasilnya
-//////                            $pdf->SetFont('Arial', '', '8');
-//////                            $pdf->Cell(7, .5, ' - ' . html_entity_decode($lab_item->item_name) . ($lab_item->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//////                            $pdf->Cell(4.5, .5, html_entity_decode($lab_item->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//////                            $pdf->Cell(5.5, .5, html_entity_decode($lab_item->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//////                            $pdf->Cell(2, .5, html_entity_decode($lab_item->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//////                            $pdf->Ln();
-//////                        }
-//////                    }
-////                    
-////                    
-////                    if($sql_kat->num_rows() > 0){
-////                        $sql_lab_det     = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_lab_kat', $sess_print[$i]['id_kat'])->where('status_hsl', '1')->get('tbl_trans_medcheck_det');
-////
-////                        foreach ($sql_lab_det->result() as $lab_det) {
-////                            $sql_lab_hsl = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_item', $lab_det->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
-////                            
-////                            $pdf->SetFont('Arial', '', '10');
-////                            $pdf->Cell(0.5, .5, '', '', 0, 'L', $fill);
-////                            $pdf->Cell(18.5, .5, $lab_det->item . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                            $pdf->Ln();
-////                            
-////                            foreach ($sql_lab_hsl as $lab_item){
-////                                $sql_lab_nilai_rw = $this->db->where('id', $lab_item->id_item_ref_ip)->get('tbl_m_produk_ref_input')->row();
-////
-////                                // Detail Pemeriksaan dan hasilnya
-////                                $pdf->SetFont('Arial', '', '8');
-////                                $pdf->Cell(0.5, .5, '', '', 0, 'L', $fill);
-////                                $pdf->Cell(6.5, .5, ' - ' . html_entity_decode($lab_item->item_name) . ($lab_item->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                                $pdf->Cell(4.5, .5, html_entity_decode($lab_item->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                                $pdf->Cell(5.5, .5, html_entity_decode($lab_item->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                                $pdf->Cell(2, .5, html_entity_decode($lab_item->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                                $pdf->Ln();
-////                            }
-////                        }
-////                    }
-////                    
-//////                    $ck = $i;
-//////                    foreach ($sql_lab as $lab_det) {
-//////                        echo nbs(5).'No : '.$sess_print[$i]['value'].br();
-////////                        echo 'val : '.$sess_print[$ck]['value'].br();
-////////                        echo 'Item : '.$lab_det->item.br();
-////////                        
-//////                        $ck++;
-//////                    }
-////                }
-////                if ($sess_print[$i]['value'][$lab->id_lab_kat] == '1') {
-////                    $sql_kat        = $this->db->where('id', $lab->id_lab_kat)->get('tbl_m_kategori')->row();
-////                    $sql_lab        = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_lab_kat', $lab->id_lab_kat)->where('status_hsl', '1')->get('tbl_trans_medcheck_det')->result();
-////                    
-////                    if (!empty($lab->id_lab_kat)) {
-////                        // Kategori Bidang Muncul disini
-////                        $pdf->SetFont('Arial', 'Bi', '10');
-////                        $pdf->Cell(19, .5, $sess_print[$i]['value'][$lab->id_lab_kat].$sql_kat->keterangan, '', 0, 'L', $fill);
-////                        $pdf->Ln();
-////                    }
-////
-////                    $ctk = 0;
-////                    foreach ($sql_lab as $lab_det) {
-//////                        if ($sess_print[$ctk]['id'] == $lab_det->id) {
-////                            $sql_lab_det = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_item', $lab_det->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
-////                            
-////                            // Item pemeriksaan
-////                            $pdf->SetFont('Arial', '', '10');
-////                            if (!empty($lab->id_lab_kat)) {
-////                                $pdf->Cell(0.5, .5, '', '', 0, 'L', $fill);
-////                            }
-////
-////                            $pdf->Cell(18.5, .5, $sess_print[$ctk]['id'].$lab_det->item . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                            $pdf->Ln();
-////
-////                            foreach ($sql_lab_det as $lab_item) {
-////                                $sql_lab_nilai_rw = $this->db->where('id', $lab_item->id_item_ref_ip)->get('tbl_m_produk_ref_input')->row();
-////
-////                                // Detail Pemeriksaan dan hasilnya
-////                                $pdf->SetFont('Arial', '', '8');
-////                                if (!empty($lab->id_lab_kat)) {
-////                                    $pdf->Cell(0.5, .5, '', '', 0, 'L', $fill);
-////                                }
-////                                $pdf->Cell(6.5, .5, ' - ' . html_entity_decode($lab_item->item_name) . ($lab_item->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                                $pdf->Cell(4.5, .5, html_entity_decode($lab_item->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                                $pdf->Cell(5.5, .5, html_entity_decode($lab_item->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                                $pdf->Cell(2, .5, html_entity_decode($lab_item->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-////                                $pdf->Ln();
-////                            }
-////                            $ctk++;
-//////                        }
-////                    }
-////                    $i++;
-////                }else{
-////                    $sql_lab        = $this->db->where('id_medcheck', $sql_medc->id)->where('id_lab', general::dekrip($id_lab))->where('id_lab_kat', $lab->id_lab_kat)->where('status_hsl', '1')->get('tbl_trans_medcheck_det')->result();
-////                    
-////                    foreach ($sql_lab as $lab_det) {
-////                            $pdf->Cell(18.5, .5, $sess_print[$ctk]['id'].$lab_det->item . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-////                            $pdf->Ln();
-////                    }
-////                }
-//                    $i++;
-//                }
-//            }
             
             $pdf->SetFont('Arial', 'i', '8');
             $pdf->Ln();
@@ -1498,14 +1295,6 @@ class Pasien extends CI_Controller {
                     $this->session->set_flashdata('pasien', '<div class="alert alert-success">Pendaftaran pelayanan berhasil</div>');
                 }
                 
-//                echo '<pre>';
-//                print_r($data);
-//
-//                $this->session->set_flashdata('master', '<div class="alert alert-success">Data member berhasil diubah</div>');
-//
-//                crud::simpan('tbl_pendaftaran', $data_pas);
-//                $last_id = crud::last_id();                
-////
                 redirect(base_url('pasien/pendaftaran.php?id='.general::enkrip($last_id)));
             }
         } else {

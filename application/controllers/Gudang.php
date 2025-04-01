@@ -850,75 +850,63 @@ class Gudang extends CI_Controller {
             $pengaturan  = $this->db->get('tbl_pengaturan')->row();
 
             /* -- Blok Filter -- */
-            $query   = $this->input->get('q');
             $hal     = $this->input->get('halaman'); 
-            $nt      = $this->input->get('filter_nota');
-            $fn      = explode('/', $nt);
             $tg      = $this->input->get('filter_tgl');
-            $tb      = $this->input->get('filter_tgl_bayar');
-            $tp      = $this->input->get('filter_tgl_tempo');
-            $lk      = $this->input->get('filter_lokasi');
-            $cs      = $this->input->get('filter_cust');
             $sn      = $this->input->get('filter_status');
-            $sl      = $this->input->get('filter_sales');
-            $jml     = $this->input->get('jml');
-//            $jml_sql = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? $this->db->get('tbl_trans_jual')->num_rows() : $this->db->where('id_user', $id_user)->where('tgl_masuk', date('Y-m-d'))->get('tbl_trans_jual')->num_rows());
             
-            if(!empty($jml)){
-                $jml_hal = $jml;
-            }else{
-                $jml_hal = $this->db->select('id, no_nota')
-                                ->where('status_nota', $sn)
-                                ->like('no_nota', $fn[0])
-                                ->like('DATE(tgl_keluar)', $tp)
-                                ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))->like('no_nota', $fn[0])
-                                ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
-                                ->order_by('tgl_simpan','desc')
-                                ->get('tbl_trans_mutasi')->num_rows();
-            }
             /* -- End Blok Filter -- */
 
             /* -- Form Error -- */
-            $data['hasError']                = $this->session->flashdata('form_error');
+            $data['hasError'] = $this->session->flashdata('form_error');
 
             /* -- Blok Pagination -- */
-            $config['base_url']              = base_url('gudang/data_mutasi.php?filter_nota='.$nt.'&filter_tgl='.$tg.'&jml='.$jml);
+            $jml_hal = $this->db->select('id, no_nota')
+                            ->where('status_nota', $sn)
+                            ->like('DATE(tgl_simpan)', $tg)
+                            ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
+                            ->get('tbl_trans_mutasi')->num_rows();
+            
+            $config['base_url']              = base_url('gudang/data_mutasi.php?filter_tgl='.$tg.'&filter_status='.$sn);
             $config['total_rows']            = $jml_hal;
-
+            
             $config['query_string_segment']  = 'halaman';
             $config['page_query_string']     = TRUE;
             $config['per_page']              = $pengaturan->jml_item;
             $config['num_links']             = 2;
-
-            $config['first_tag_open']        = '<li>';
+            
+            $config['full_tag_open']         = '<ul class="pagination pagination-sm">';
+            $config['full_tag_close']        = '</ul>';
+            
+            $config['first_tag_open']        = '<li class="page-item">';
             $config['first_tag_close']       = '</li>';
-
-            $config['prev_tag_open']         = '<li>';
+            
+            $config['prev_tag_open']         = '<li class="page-item">';
             $config['prev_tag_close']        = '</li>';
-
-            $config['num_tag_open']          = '<li>';
+            
+            $config['num_tag_open']          = '<li class="page-item">';
             $config['num_tag_close']         = '</li>';
-
-            $config['next_tag_open']         = '<li>';
+            
+            $config['next_tag_open']         = '<li class="page-item">';
             $config['next_tag_close']        = '</li>';
             
-            $config['last_tag_open']         = '<li>';
+            $config['last_tag_open']         = '<li class="page-item">';
             $config['last_tag_close']        = '</li>';
             
-            $config['cur_tag_open']          = '<li><a href="#"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
+            $config['cur_tag_open']          = '<li class="page-item active"><a href="#" class="page-link">';
+            $config['cur_tag_close']         = '</a></li>';
             
             $config['first_link']            = '&laquo;';
             $config['prev_link']             = '&lsaquo;';
             $config['next_link']             = '&rsaquo;';
             $config['last_link']             = '&raquo;';
+            $config['attributes']            = array('class' => 'page-link');
             /* -- End Blok Pagination -- */
 
             if(!empty($hal)){
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'],$hal)
-                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))->like('no_nota', $fn[0])
+                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
@@ -926,7 +914,7 @@ class Gudang extends CI_Controller {
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'])
-                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))->like('no_nota', $fn[0])
+                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();

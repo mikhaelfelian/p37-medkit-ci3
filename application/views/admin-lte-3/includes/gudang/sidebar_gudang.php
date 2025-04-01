@@ -33,27 +33,27 @@
             </p>
         </a>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a href="<?php echo base_url('gudang/trans_mutasi.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-truck"></i>
             <p>
                 Mutasi Stok
             </p>
         </a>
-    </li>
-    <li class="nav-item">
+    </li> -->
+    <!-- <li class="nav-item">
         <a href="<?php echo base_url('gudang/data_mutasi.php?filter_status=0') ?>" class="nav-link">
             <i class="nav-icon fas fa-inbox"></i>
             <p>
                 Data Mutasi draft
             </p>
         </a>
-    </li>
+    </li> -->
     <li class="nav-item">
         <a href="<?php echo base_url('gudang/data_mutasi_terima.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-download"></i>
             <p>
-                Penerimaan Mutasi Stok
+                Penerimaan Stok
             </p>
         </a>
     </li>
