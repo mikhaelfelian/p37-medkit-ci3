@@ -1,7 +1,7 @@
-<?php 
+<?php
 $txt_pasien = explode(' ', $pasien->nama);
-$nm         = strtolower(str_replace(array(' ','\'','-'),'', $pasien->nama));
-$nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
+$nm = strtolower(str_replace(array(' ', '\'', '-'), '', $pasien->nama));
+$nm_file = strtolower($pasien->nik) . (!empty($pasien->nama) ? '_' . $nm : '');
 ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -15,7 +15,8 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo base_url('medcheck/index.php') ?>">Medical Checkup</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo base_url('medcheck/index.php') ?>">Medical
+                                Checkup</a></li>
                         <li class="breadcrumb-item active">Pendaftaran</li>
                     </ol>
                 </div><!-- /.col -->
@@ -43,9 +44,11 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                         </div>
                         <div class="card-footer p-0">
                             <?php if (isset($_GET['tipe_pas'])) { ?>
-                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2' OR $_GET['tipe_pas'] == '3') { ?>
-                                    <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>                                
-                                    <button id="flip-btn" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
+                                <?php if (isset($_GET['id_pasien']) or $_GET['tipe_pas'] == '2' or $_GET['tipe_pas'] == '3') { ?>
+                                    <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i
+                                            class="fa fa-camera"></i> Ambil Gambar</button>
+                                    <button id="flip-btn" type="button" class="btn btn-primary btn-flat btn-block"><i
+                                            class="fa fa-camera-rotate"></i> Pindah Kamera</button>
                                 <?php } ?>
                             <?php } ?>
                         </div>
@@ -64,9 +67,12 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                         </div>
                         <div class="card-footer p-0">
                             <?php if (isset($_GET['tipe_pas'])) { ?>
-                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2' OR $_GET['tipe_pas'] == '3') { ?>
-                                    <button type="button" onclick="takeSnapshot_id()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
-                                    <button id="flip-btn2" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
+                                <?php if (isset($_GET['id_pasien']) or $_GET['tipe_pas'] == '2' or $_GET['tipe_pas'] == '3') { ?>
+                                    <button type="button" onclick="takeSnapshot_id()"
+                                        class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil
+                                        Gambar</button>
+                                    <button id="flip-btn2" type="button" class="btn btn-primary btn-flat btn-block"><i
+                                            class="fa fa-camera-rotate"></i> Pindah Kamera</button>
                                 <?php } ?>
                             <?php } ?>
                         </div>
@@ -81,8 +87,10 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                     <?php
                                     $file = (!empty($pasien->file_name) ? realpath($pasien->file_name) : '');
                                     $foto = (file_exists($file) ? base_url($pasien->file_name) : $pasien->file_base64);
-                                    ?>                                
-                                    <img class="img-thumbnail img-fluid img-lg" src="<?php echo (!empty($foto) ? $foto : base_url('assets/theme/admin-lte-3/icon_putra.png')) ?>" alt="User profile picture" style="width: 215px; height: 215px;">
+                                    ?>
+                                    <img class="img-thumbnail img-fluid img-lg"
+                                        src="<?php echo (!empty($foto) ? $foto : base_url('assets/theme/admin-lte-3/icon_putra.png')) ?>"
+                                        alt="User profile picture" style="width: 215px; height: 215px;">
                                 </div>
                             </div>
                         </div>
@@ -95,8 +103,10 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                     <?php
                                     $file = (!empty($pasien->file_name_id) ? realpath($pasien->file_name_id) : '');
                                     $foto = (file_exists($file) ? base_url($pasien->file_name_id) : '');
-                                    ?>                               
-                                    <img class="img-thumbnail img-fluid img-lg" src="<?php echo (!empty($foto) ? $foto : base_url('assets/theme/admin-lte-3/icon_putra.png')) ?>" alt="User profile picture" style="width: 256px; height: 192px;">
+                                    ?>
+                                    <img class="img-thumbnail img-fluid img-lg"
+                                        src="<?php echo (!empty($foto) ? $foto : base_url('assets/theme/admin-lte-3/icon_putra.png')) ?>"
+                                        alt="User profile picture" style="width: 256px; height: 192px;">
                                 </div>
                             </div>
                         </div>
@@ -123,24 +133,33 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                             <?php echo form_hidden('antrian', $this->input->get('antrian')) ?>
 
                             <input type="hidden" id="file" name="file" value="<?php echo $pasien->file_base64 ?>">
-                            <input type="hidden" id="file_id" name="file_id" value="<?php echo $pasien->file_base64_id ?>">
-                            <input type="hidden" id="file" name="id_pasien" value="<?php echo $this->input->get('id_pasien') ?>">
+                            <input type="hidden" id="file_id" name="file_id"
+                                value="<?php echo $pasien->file_base64_id ?>">
+                            <input type="hidden" id="file" name="id_pasien"
+                                value="<?php echo $this->input->get('id_pasien') ?>">
 
                             <div class="row">
-                                <div class="col-md-12">                                        
-                                    <div class="form-group <?php echo (!empty($hasError['tipe_pas']) ? 'text-danger' : '') ?>">
+                                <div class="col-md-12">
+                                    <div
+                                        class="form-group <?php echo (!empty($hasError['tipe_pas']) ? 'text-danger' : '') ?>">
                                         <?php echo form_hidden('tipe_pas', $this->input->get('tipe_pas')) ?>
                                         <?php
                                         switch ($_GET['tipe_pas']) {
                                             default:
                                                 ?>
                                                 <label class="control-label">Apakah Anda*</label>
-                                                <br/>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id')) ? '&id_ant=' . $this->input->get('id') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
-                                                    <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_lama">Pasien Lama</button>
+                                                <br />
+                                                <a
+                                                    href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id')) ? '&id_ant=' . $this->input->get('id') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
+                                                    <button type="button"
+                                                        class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat"
+                                                        id="pas_lama">Pasien Lama</button>
                                                 </a>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id')) ? '&id_ant=' . $this->input->get('id') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
-                                                    <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_baru">Pasien Baru</button>
+                                                <a
+                                                    href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id')) ? '&id_ant=' . $this->input->get('id') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
+                                                    <button type="button"
+                                                        class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat"
+                                                        id="pas_baru">Pasien Baru</button>
                                                 </a>
                                                 <?php
                                                 break;
@@ -148,12 +167,18 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                             case '1':
                                                 ?>
                                                 <label class="control-label">Apakah Anda*</label>
-                                                <br/>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
-                                                    <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_lama">Pasien Lama</button>
+                                                <br />
+                                                <a
+                                                    href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
+                                                    <button type="button"
+                                                        class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat"
+                                                        id="pas_lama">Pasien Lama</button>
                                                 </a>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
-                                                    <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_baru">Pasien Baru</button>
+                                                <a
+                                                    href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
+                                                    <button type="button"
+                                                        class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat"
+                                                        id="pas_baru">Pasien Baru</button>
                                                 </a>
                                                 <?php
                                                 break;
@@ -161,18 +186,24 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                                             case '2':
                                                 ?>
                                                 <label class="control-label">Apakah Anda*</label>
-                                                <br/>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
-                                                    <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_lama">Pasien Lama</button>
+                                                <br />
+                                                <a
+                                                    href="<?php echo base_url('medcheck/daftar.php?tipe_pas=1' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
+                                                    <button type="button"
+                                                        class="btn <?php echo ($_GET['tipe_pas'] == '1' ? 'btn-default' : 'btn-primary') ?> btn-flat"
+                                                        id="pas_lama">Pasien Lama</button>
                                                 </a>
-                                                <a href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
-                                                    <button type="button" class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat" id="pas_baru">Pasien Baru</button>
+                                                <a
+                                                    href="<?php echo base_url('medcheck/daftar.php?tipe_pas=2' . (!empty($this->input->get('id_ant')) ? '&id_ant=' . $this->input->get('id_ant') : '') . (!empty($this->input->get('antrian')) ? '&antrian=' . $this->input->get('antrian') : '')) ?>">
+                                                    <button type="button"
+                                                        class="btn <?php echo ($_GET['tipe_pas'] == '2' ? 'btn-default' : 'btn-primary') ?> btn-flat"
+                                                        id="pas_baru">Pasien Baru</button>
                                                 </a>
                                                 <?php
                                                 break;
 
                                             case '3':
-                                                
+
                                                 break;
                                         }
                                         ?>
@@ -220,22 +251,26 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                             }
                             ?>
                         </div>
-                        <div class="card-footer">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <?php if (isset($_GET['tipe_pas']) && $_GET['tipe_pas'] == '3'): ?>
-                                        <a href="<?php echo base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')); ?>" class="btn btn-primary btn-flat rounded-0">
-                                            <i class="fas fa-arrow-left"></i> Kembali
-                                        </a>
-                                    <?php endif; ?>
+                        <?php if (isset($_GET['tipe_pas'])): ?>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <?php if (isset($_GET['tipe_pas']) && $_GET['tipe_pas'] == '3'): ?>
+                                            <a href="<?php echo base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')); ?>"
+                                                class="btn btn-primary btn-flat rounded-0">
+                                                <i class="fas fa-arrow-left"></i> Kembali
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-lg-6 text-right">
+                                        <button type="submit" class="btn btn-primary btn-flat"><i
+                                                class="fa fa-user-plus"></i> Daftar</button>
+                                    </div>
                                 </div>
-                                <div class="col-lg-6 text-right">
-                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-user-plus"></i> Daftar</button>
-                                </div>
-                            </div>                            
-                        </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                    
+
                     <?php echo add_double_submit_protection('daftar_form'); ?>
                     <?php echo form_close() ?>
                 </div>
@@ -290,7 +325,8 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
 <!-- Select2 -->
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/js/select2.full.min.js') ?>"></script>
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
+<link rel="stylesheet"
+    href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
 <!--Phone Masking-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
@@ -303,169 +339,169 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
 </style>
 <!-- Page script -->
 <script type="text/javascript">
-<?php if (isset($_GET['tipe_pas'])) { ?>
-    <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2' OR $_GET['tipe_pas'] == '3') { ?>
-        /* Ambil gambar dari webcam */
-        // minta izin user
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+    <?php if (isset($_GET['tipe_pas'])) { ?>
+        <?php if (isset($_GET['id_pasien']) or $_GET['tipe_pas'] == '2' or $_GET['tipe_pas'] == '3') { ?>
+            /* Ambil gambar dari webcam */
+            // minta izin user
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
 
-        var video               = document.querySelector("#kamera");
-        var video2              = document.querySelector("#kamera_id");
-        var gambar              = document.querySelector("#gambar");
-        var gambar2             = document.querySelector("#gambar_id");
-        gambar.style.display    = 'none';
-        gambar2.style.display   = 'none';
+            var video = document.querySelector("#kamera");
+            var video2 = document.querySelector("#kamera_id");
+            var gambar = document.querySelector("#gambar");
+            var gambar2 = document.querySelector("#gambar_id");
+            gambar.style.display = 'none';
+            gambar2.style.display = 'none';
 
 
-        let on_stream_video     = document.querySelector('#kamera');
-        let on_stream_video2    = document.querySelector('#kamera_id');
-        // default user media options
-        let constraints         = { audio: false, video: true }
-        let shouldFaceUser      = true;
-        let flipBtn             = document.querySelector('#flip-btn');
-        let flipBtn2            = document.querySelector('#flip-btn2');
+            let on_stream_video = document.querySelector('#kamera');
+            let on_stream_video2 = document.querySelector('#kamera_id');
+            // default user media options
+            let constraints = { audio: false, video: true }
+            let shouldFaceUser = true;
+            let flipBtn = document.querySelector('#flip-btn');
+            let flipBtn2 = document.querySelector('#flip-btn2');
 
-        // check whether we can use facingMode
-        let supports = navigator.mediaDevices.getSupportedConstraints();
-        if( supports['facingMode'] === true ) {
-            flipBtn.disabled = false;
-        }
-
-        let stream  = null;
-        let stream2 = null;
-
-        function capture() {
-            constraints.video = {
-              facingMode: shouldFaceUser ? 'user' : 'environment'
+            // check whether we can use facingMode
+            let supports = navigator.mediaDevices.getSupportedConstraints();
+            if (supports['facingMode'] === true) {
+                flipBtn.disabled = false;
             }
-            navigator.mediaDevices.getUserMedia(constraints)
-              .then(function(mediaStream) {
-                stream  = mediaStream;
-                on_stream_video.srcObject = stream;
-                on_stream_video.play();
-              })
-              .catch(function(err) {
-                console.log(err)
-              });
-        }
 
-        function capture_id() {
-            constraints.video = {
-              facingMode: shouldFaceUser ? 'user' : 'environment'
+            let stream = null;
+            let stream2 = null;
+
+            function capture() {
+                constraints.video = {
+                    facingMode: shouldFaceUser ? 'user' : 'environment'
+                }
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(function (mediaStream) {
+                        stream = mediaStream;
+                        on_stream_video.srcObject = stream;
+                        on_stream_video.play();
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                    });
             }
-            navigator.mediaDevices.getUserMedia(constraints)
-              .then(function(mediaStream) {
-                stream2  = mediaStream;
-                on_stream_video2.srcObject = stream2;
-                on_stream_video2.play();
-              })
-              .catch(function(err) {
-                console.log(err)
-              });
-        }
 
-        flipBtn.addEventListener('click', function(){
-          if( stream == null ) return
-            // we need to flip, stop everything
-            stream.getTracks().forEach(t => {
-            t.stop();
-          });
-            // toggle / flip
-            shouldFaceUser = !shouldFaceUser;
+            function capture_id() {
+                constraints.video = {
+                    facingMode: shouldFaceUser ? 'user' : 'environment'
+                }
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(function (mediaStream) {
+                        stream2 = mediaStream;
+                        on_stream_video2.srcObject = stream2;
+                        on_stream_video2.play();
+                    })
+                    .catch(function (err) {
+                        console.log(err)
+                    });
+            }
+
+            flipBtn.addEventListener('click', function () {
+                if (stream == null) return
+                // we need to flip, stop everything
+                stream.getTracks().forEach(t => {
+                    t.stop();
+                });
+                // toggle / flip
+                shouldFaceUser = !shouldFaceUser;
+                capture();
+            });
+
+            flipBtn2.addEventListener('click', function () {
+                if (stream2 == null) return
+                // we need to flip, stop everything
+                stream2.getTracks().forEach(t => {
+                    t.stop();
+                });
+                // toggle / flip
+                shouldFaceUser = !shouldFaceUser;
+                capture_id();
+            });
+
             capture();
-        });
-
-        flipBtn2.addEventListener('click', function(){
-          if( stream2 == null ) return
-            // we need to flip, stop everything
-            stream2.getTracks().forEach(t => {
-            t.stop();
-          });
-            // toggle / flip
-            shouldFaceUser = !shouldFaceUser;
             capture_id();
-        });
 
-        capture();
-        capture_id();
+            function takeSnapshot() {
+                var img = document.getElementById('gambar');
+                var nama = document.getElementById('file');
+                var context;
 
-        function takeSnapshot() {
-            var img     = document.getElementById('gambar');
-            var nama    = document.getElementById('file');
-            var context;
+                // video
+                var width = video.offsetWidth, height = video.offsetHeight;
 
-            // video
-            var width = video.offsetWidth, height = video.offsetHeight;
+                // buat elemen canvas
+                canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
 
-            // buat elemen canvas
-            canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
+                // ambil gambar dari video dan masukan 
+                // ke dalam canvas
+                context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, width, height);
 
-            // ambil gambar dari video dan masukan 
-            // ke dalam canvas
-            context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, width, height);
+                // render hasil dari canvas ke elemen img
+                img.src = canvas.toDataURL('image/png');
 
-            // render hasil dari canvas ke elemen img
-            img.src = canvas.toDataURL('image/png');
+                video.style.display = 'none';
+                gambar.style.display = 'block'
+                nama.value = canvas.toDataURL('image/png');
 
-            video.style.display = 'none';
-            gambar.style.display = 'block'
-            nama.value = canvas.toDataURL('image/png');
+                // Download data gambar dari kamera otomatis
+                const link = document.createElement('a');
+                canvas.toBlob(function (blob) {
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'pasien_<?php echo (!empty($nm_file) ? $nm_file . '_' . date('ymd') : date('YmdHis')) ?>.png'; // naming the downloaded file with email
+                    link.click();
+                }, 'image/png');
+            }
 
-            // Download data gambar dari kamera otomatis
-            const link = document.createElement('a');
-            canvas.toBlob(function(blob) {
-                link.href = URL.createObjectURL(blob);
-                link.download = 'pasien_<?php echo (!empty($nm_file) ? $nm_file.'_'.date('ymd') : date('YmdHis')) ?>.png'; // naming the downloaded file with email
-                link.click();
-            }, 'image/png');
-        }
+            function takeSnapshot_id() {
+                var img2 = document.getElementById('gambar_id');
+                var nama2 = document.getElementById('file_id');
+                var context;
 
-        function takeSnapshot_id() {
-            var img2 = document.getElementById('gambar_id');
-            var nama2 = document.getElementById('file_id');
-            var context;
+                // video
+                var width = video2.offsetWidth, height = video2.offsetHeight;
 
-            // video
-            var width = video2.offsetWidth, height = video2.offsetHeight;
+                // buat elemen canvas
+                canvas2 = document.createElement('canvas');
+                canvas2.width = width;
+                canvas2.height = height;
 
-            // buat elemen canvas
-            canvas2 = document.createElement('canvas');
-            canvas2.width = width;
-            canvas2.height = height;
+                // ambil gambar dari video dan masukan 
+                // ke dalam canvas
+                context = canvas2.getContext('2d');
+                context.drawImage(video2, 0, 0, width, height);
 
-            // ambil gambar dari video dan masukan 
-            // ke dalam canvas
-            context = canvas2.getContext('2d');
-            context.drawImage(video2, 0, 0, width, height);
+                // render hasil dari canvas ke elemen img
+                img2.src = canvas2.toDataURL('image/png');
 
-            // render hasil dari canvas ke elemen img
-            img2.src = canvas2.toDataURL('image/png');
-
-            video2.style.display = 'none';
-            gambar2.style.display = 'block'
-            nama2.value = canvas2.toDataURL('image/png');
-        }
+                video2.style.display = 'none';
+                gambar2.style.display = 'block'
+                nama2.value = canvas2.toDataURL('image/png');
+            }
+        <?php } ?>
     <?php } ?>
-<?php } ?>
 
-    $(function () {       
-<?php if ($_GET['tipe_pas'] == '1') { ?>
+    $(function () {
+        <?php if ($_GET['tipe_pas'] == '1') { ?>
             $("#pasien_baru").hide();
             $("#foto_pasien").show();
             $("#nik_baru").hide();
             $("#nik_lama").show();
-<?php } elseif ($_GET['tipe_pas'] == '2') { ?>
+        <?php } elseif ($_GET['tipe_pas'] == '2') { ?>
             $("#pasien_baru").show();
             $("#foto_pasien").show();
             $("#nik_lama").hide();
             $("#nik_baru").show();
-<?php } else { ?>
+        <?php } else { ?>
             $("#nik_lama").hide();
             $("#nik_baru").show();
-<?php } ?>
+        <?php } ?>
 
         $('.select2bs4').select2({
             theme: 'bootstrap4'
@@ -515,40 +551,40 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                 // Give focus to the next input field to recieve input from user
                 $('#nik').focus();
 
-                window.location.href = "<?php echo base_url('medcheck/daftar.php?tipe_pas=' . $this->input->get('tipe_pas') . '&id_ant='.$this->input->get('id_ant').'&id_pasien=') ?>" + ui.item.id_pas + "&tipe=" + input_id;
+                window.location.href = "<?php echo base_url('medcheck/daftar.php?tipe_pas=' . $this->input->get('tipe_pas') . '&id_ant=' . $this->input->get('id_ant') . '&id_pasien=') ?>" + ui.item.id_pas + "&tipe=" + input_id;
                 return false;
             }
 
             // Format the list menu output of the autocomplete
         }).data("ui-autocomplete")._renderItem = function (ul, item) {
             return $("<li></li>")
-                    .data("item.autocomplete", item)
-                    .append("<a>" + item.nik + "</a> <a>(" + item.jns_klm + ")</a></br><a>" + item.nama + "</a></br><a>" + item.alamat + "<br/>--------------------------------------------------------------</a>")
-                    .appendTo(ul);
+                .data("item.autocomplete", item)
+                .append("<a>" + item.nik + "</a> <a>(" + item.jns_klm + ")</a></br><a>" + item.nama + "</a></br><a>" + item.alamat + "<br/>--------------------------------------------------------------</a>")
+                .appendTo(ul);
         };
 
         $("#no_hp").keydown(function (e) {
             // kibot: backspace, delete, tab, escape, enter .
             if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
-                    // kibot: Ctrl+A, Command+A
-                            (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-                            // kibot: home, end, left, right, down, up
-                                    (e.keyCode >= 35 && e.keyCode <= 40)) {
-                        // Biarin wae, ga ngapa2in return false
-                        return;
-                    }
+                // kibot: Ctrl+A, Command+A
+                (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // kibot: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // Biarin wae, ga ngapa2in return false
+                return;
+            }
 
-                    // Cuman nomor
-                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                        e.preventDefault();
-                    }
-                });
+            // Cuman nomor
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
 
         $('#no_rmh').mask('(000) 0000000');
 
         // Add CSS for the autocomplete scrollbar
         $("#nik_lama").autocomplete("widget").addClass("autocomplete-scroll");
-        
+
         // Pilih poli
         $("#poli").change(function () {
             var id_poli = $(this).val();
@@ -583,7 +619,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
             type: 'POST',
             data: formData,
             dataType: 'json',
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     toastr.success('Data klinik berhasil disimpan');
                     $('#modalTambahKlinik').modal('hide');
@@ -592,7 +628,7 @@ $nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
                     toastr.error(response.message || 'Gagal menyimpan data');
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.log(xhr.responseText);
                 toastr.error('Terjadi kesalahan sistem');
             }
