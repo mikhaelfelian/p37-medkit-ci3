@@ -47,7 +47,7 @@ Updated from GitHub Repository: https://github.com/mikhaelfelian/p37-medkit-dev
 
 ## Installation
 1. Clone the repository
-2. Configure your database settings in `application/config/database.php`
+2. Configure your database settings in `database/database.php`
 3. Import the database schema from `database/database.sql`
 4. Access the application through your web browser
 
