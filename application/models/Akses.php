@@ -25,12 +25,13 @@ class akses extends CI_Model {
     }
     
     // Cek Sudah login belun ebagai pasien
-    function aksesLoginP() {
-        if (!$this->ion_auth->logged_in()):
+    public static function aksesLoginP() {
+        $CI =& get_instance();
+        if (!$CI->ion_auth->logged_in()):
             return FALSE;
         else:
-            $user   = $this->ion_auth->user()->row();
-            $grup   = $this->ion_auth->get_users_groups()->row();
+            $user   = $CI->ion_auth->user()->row();
+            $grup   = $CI->ion_auth->get_users_groups()->row();
             
             if ($grup->name == 'pasien'):
                 return TRUE;
@@ -41,8 +42,9 @@ class akses extends CI_Model {
     }
     
     // Cek Root
-    function aksesRoot() {
-        if (!$this->ion_auth->is_admin()):
+    public static function aksesRoot() {
+        $CI =& get_instance();
+        if (!$CI->ion_auth->is_admin()):
             return TRUE;
         else:
             return FALSE;
@@ -218,9 +220,10 @@ class akses extends CI_Model {
         endif;
     }
 
-    function hakGizi() {
-        $user = $this->ion_auth->user()->row();
-        $grup = $this->ion_auth->get_users_groups()->row();
+    public static function hakGizi() {
+        $CI =& get_instance();
+        $user = $CI->ion_auth->user()->row();
+        $grup = $CI->ion_auth->get_users_groups()->row();
         
         if ($grup->name == 'gizi'):
             return TRUE;
@@ -229,9 +232,10 @@ class akses extends CI_Model {
         endif;
     }
 
-    function hakFisioterapi() {
-        $user = $this->ion_auth->user()->row();
-        $grup = $this->ion_auth->get_users_groups()->row();
+    public static function hakFisioterapi() {
+        $CI =& get_instance();
+        $user = $CI->ion_auth->user()->row();
+        $grup = $CI->ion_auth->get_users_groups()->row();
         
         if ($grup->name == 'fisioterapi'):
             return TRUE;
@@ -240,9 +244,10 @@ class akses extends CI_Model {
         endif;
     }
 
-    function hakPasien() {
-        $user = $this->ion_auth->user()->row();
-        $grup = $this->ion_auth->get_users_groups()->row();
+    public static function hakPasien() {
+        $CI =& get_instance();
+        $user = $CI->ion_auth->user()->row();
+        $grup = $CI->ion_auth->get_users_groups()->row();
         
         if ($grup->name == 'pasien'):
             return TRUE;
