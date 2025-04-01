@@ -92,6 +92,14 @@
         </a>
     </li>
     <li class="nav-item">
+        <a href="<?php echo base_url('gudang/data_mutasi_terima.php') ?>" class="nav-link">
+            <i class="nav-icon fas fa-paper-plane"></i>
+            <p>
+                Data Permintaan (pend)
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
         <a href="<?php echo base_url('gudang/data_mutasi.php?filter_status=2') ?>" class="nav-link">
             <i class="nav-icon fas fa-history"></i>
             <p>
