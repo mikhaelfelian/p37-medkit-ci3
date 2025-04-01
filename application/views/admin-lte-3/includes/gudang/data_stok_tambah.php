@@ -407,18 +407,18 @@
                                     <?php } ?>
                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdmin() == TRUE){ ?>
                                         <tr>
-                                            <th colspan="4" class="text-right">Total Stock In</th>
+                                            <th colspan="4" class="text-right">Total Stok Masuk</th>
                                             <td class="text-right"><?php echo number_format($tot_sm, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
                                         <tr>
-                                            <th colspan="4" class="text-right">Total Stock Out</th>
+                                            <th colspan="4" class="text-right">Total Stok Keluar</th>
                                             <td class="text-right"><?php echo number_format($tot_sk, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
                                         <?php $sisa_st = $tot_sm - $tot_sk ?>
                                         <tr>
-                                            <th colspan="4" class="text-right">Current Stock</th>
+                                            <th colspan="4" class="text-right">Sisa Stok</th>
                                             <td class="text-right"><?php echo number_format($sisa_st, 0); ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
