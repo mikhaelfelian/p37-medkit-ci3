@@ -1,5 +1,4 @@
 <?php
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Satusehat extends CI_Controller {
@@ -19,22 +18,22 @@ class Satusehat extends CI_Controller {
      * map to /index.php/welcome/<method_name>
      * @see https://codeigniter.com/userguide3/general/urls.html
      */
-    var $url = 'https://api-satusehat.kemkes.go.id';
-    var $org_id = '100018572';
-    var $client_id = 'CeClLF3u1MJ06OpjirNOkPUWiPGBZmzIIyfP6IILYKVBDw7z';
-    var $client_secret = 'uvjqFLAEDm7XiijA1Zko8i9pfyMw7xVp8rpybeDTCQyvIoepfYFWiW0jFnbXpPso';
+    private string $url = 'https://api-satusehat.kemkes.go.id';
+    private string $org_id = '100018572';
+    private string $client_id = 'CeClLF3u1MJ06OpjirNOkPUWiPGBZmzIIyfP6IILYKVBDw7z';
+    private string $client_secret = 'uvjqFLAEDm7XiijA1Zko8i9pfyMw7xVp8rpybeDTCQyvIoepfYFWiW0jFnbXpPso';
     
     // put your code here
-    function __construct() {
+    public function __construct() {
         parent::__construct();
         $this->load->model('Satusehat_model');
     }
     
-    public function index() {
+    public function index(): void {
         $this->load->view('index');
     }
 
-    public function generate_token() {
+    public function generate_token(): string {
         $pengaturan     = $this->db->get('tbl_pengaturan')->row();
         $ss_org_id      = $pengaturan->ss_org_id;
         $ss_client_id   = $pengaturan->ss_client_id;
@@ -74,7 +73,7 @@ class Satusehat extends CI_Controller {
         $this->load->view('index', $data);
     }
 
-    public function get_ihsnumber_patient($nik) {
+    public function get_ihsnumber_patient(string $nik): string {
         $pengaturan     = $this->db->get('tbl_pengaturan')->row();
         $ss_org_id      = $pengaturan->ss_org_id;
         $ss_client_id   = $pengaturan->ss_client_id;
@@ -123,7 +122,7 @@ class Satusehat extends CI_Controller {
         //$this->load->view('index', $data);
     }
 
-    public function get_idpractitioner($nik) {
+    public function get_idpractitioner(string $nik): string {
         $pengaturan     = $this->db->get('tbl_pengaturan')->row();
         $ss_org_id      = $pengaturan->ss_org_id;
         $ss_client_id   = $pengaturan->ss_client_id;
@@ -174,7 +173,7 @@ class Satusehat extends CI_Controller {
         //$this->load->view('index', $data);
     }
 
-    function guidv4_1($data = null) {
+    private function guidv4_1(?string $data = null): string {
         // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
         $data = openssl_random_pseudo_bytes(16);
         assert(strlen($data) == 16);
@@ -188,7 +187,7 @@ class Satusehat extends CI_Controller {
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
-    function guidv4_2($data = null) {
+    private function guidv4_2(?string $data = null): string {
         // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
         $data = openssl_random_pseudo_bytes(16);
         assert(strlen($data) == 16);
@@ -202,7 +201,7 @@ class Satusehat extends CI_Controller {
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
-    public function post_bundle_encounter_condition() {
+    public function post_bundle_encounter_condition(): void {
         $pengaturan     = $this->db->get('tbl_pengaturan')->row();
         $ss_org_id      = $pengaturan->ss_org_id;
         $ss_client_id   = $pengaturan->ss_client_id;
