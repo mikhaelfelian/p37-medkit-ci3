@@ -4001,7 +4001,7 @@ class Medcheck extends CI_Controller {
                     'tipe_bayar'   => (!empty($sql_dft->tipe_bayar) ? $sql_dft->tipe_bayar : '0'),
                     'status'       => '1',
                     'status_nota'  => '1',
-                ];
+                ]; 
                 
                 /* Transaksi Database */
                 try {
