@@ -797,64 +797,65 @@ class transaksi extends CI_Controller {
             $gambar3            = base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
 
             $this->load->library('MedBeliPDF');
-            $pdf = new MedBeliPDF('P', 'cm', array(21.5,33));
-            $pdf->judul = 'FAKTUR BELI';
-            $pdf->SetAutoPageBreak('auto', 8.5);            
-            $pdf->addPage('','',false);
+            $pdf = new MedBeliPDF('P', 'cm', [21.5, 33]);
+            // Use public property or setter method instead of direct property access
+            $pdf->setJudul('FAKTUR BELI');
+            $pdf->SetAutoPageBreak(true, 8.5);            
+            $pdf->addPage('', '', false);
             
             # Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,15,19);
+            $pdf->Image($gambar2, 5, 4, 15, 19);
             
             # Line Cell
-            $fill = FALSE;
-            $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
+            $fill = false;
+            $pdf->Cell(19, 0.5, '', 'T', 0, 'L', $fill);
             $pdf->Ln();
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(1, .5, 'APA', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(1, 0.5, 'APA', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(17.5, .5, $setting->apt_apa, 0, 1, 'L');
+            $pdf->Cell(17.5, 0.5, $setting->apt_apa, 0, 1, 'L');
             $pdf->Ln(0);
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(1, .5, 'SIPA', '', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+            $pdf->Cell(1, 0.5, 'SIPA', '', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(17.5, .5, $setting->apt_sipa, '', 1, 'L', $fill);
+            $pdf->Cell(17.5, 0.5, $setting->apt_sipa, '', 1, 'L', $fill);
             $pdf->Ln();
             
             # DATA PEMBELIAN
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(2.5, .5, 'Supplier', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8.5, .5, strtoupper($sql_supplier->nama), '0', 0, 'L', $fill);
-            $pdf->Cell(1.5, .5, 'No. Faktur', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(5, .5, $sql_beli->no_nota, '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, 0.5, 'Supplier', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8.5, 0.5, strtoupper($sql_supplier->nama), '0', 0, 'L', $fill);
+            $pdf->Cell(1.5, 0.5, 'No. Faktur', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(5, 0.5, $sql_beli->no_nota, '0', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->Cell(2.5, .5, 'NPWP', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8.5, .5, (!empty($sql_supplier->npwp) ? $sql_supplier->npwp : '-'), '0', 0, 'L', $fill);
-            $pdf->Cell(1.5, .5, 'No. PO', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(5, .5, $sql_beli->no_po, '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, 0.5, 'NPWP', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8.5, 0.5, (!empty($sql_supplier->npwp) ? $sql_supplier->npwp : '-'), '0', 0, 'L', $fill);
+            $pdf->Cell(1.5, 0.5, 'No. PO', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(5, 0.5, $sql_beli->no_po, '0', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->Cell(2.5, .5, 'Kode Supplier', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8.5, .5, $sql_supplier->kode, '0', 0, 'L', $fill);
-            $pdf->Cell(1.5, .5, 'Tgl', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(5, .5, $this->tanggalan->tgl_indo2($sql_beli->tgl_masuk).' / '.$this->tanggalan->tgl_indo2($sql_beli->tgl_keluar), '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, 0.5, 'Kode Supplier', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8.5, 0.5, $sql_supplier->kode, '0', 0, 'L', $fill);
+            $pdf->Cell(1.5, 0.5, 'Tgl', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(5, 0.5, $this->tanggalan->tgl_indo2($sql_beli->tgl_masuk).' / '.$this->tanggalan->tgl_indo2($sql_beli->tgl_keluar), '0', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->Cell(2.5, .5, 'Alamat', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->MultiCell(15.5, .5, $sql_supplier->alamat, '0', 'L');
+            $pdf->Cell(2.5, 0.5, 'Alamat', '0', 0, 'L', $fill);
+            $pdf->Cell(0.5, 0.5, ':', '0', 0, 'C', $fill);
+            $pdf->MultiCell(15.5, 0.5, $sql_supplier->alamat, '0', 'L');
             $pdf->Ln();            
             
                         
-            $fill = FALSE;
-            $pdf->SetTextColor(5,148,19);
+            $fill = false;
+            $pdf->SetTextColor(5, 148, 19);
             $pdf->SetFont('Arial', 'B', '11');
             $pdf->Cell(7, 1, 'DESKRIPSI', 'TB', 0, 'L', $fill);
             $pdf->Cell(1, 1, 'JML', 'TB', 0, 'C', $fill);
@@ -862,20 +863,21 @@ class transaksi extends CI_Controller {
             $pdf->Cell(2, 1, 'DISK (%)', 'TB', 0, 'R', $fill);
             $pdf->Cell(3, 1, 'POTONGAN', 'TB', 0, 'R', $fill);
             $pdf->Cell(3, 1, 'SUBTOTAL', 'TB', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
+            $pdf->SetTextColor(0, 0, 0);
             $pdf->Ln();
             
-            $fill = FALSE;
-            $no = 1; $gtotal = 0;
-            foreach ($sql_beli_det as $det){
+            $fill = false;
+            $no = 1; 
+            $gtotal = 0;
+            foreach ($sql_beli_det as $det) {
                 
                 $pdf->SetFont('Arial', '', '10');
-                $pdf->Cell(7, .5, $det->produk, '', 0, '', $fill);
-                $pdf->Cell(1, .5, (float) $det->jml, '', 0, 'C', $fill);
-                $pdf->Cell(3, .5, general::format_angka($det->harga), '', 0, 'R', $fill);
-                $pdf->Cell(2, .5, ($det->disk1 != 0 ? (float) $det->disk1 : '') . ($det->disk2 != 0 ? ' + ' . (float) $det->disk2 : '') . ($det->disk3 != 0 ? ' + ' . (float) $det->disk3 : ''), '', 0, 'C', $fill);
-                $pdf->Cell(3, .5, general::format_angka($det->potongan), '', 0, 'R', $fill);
-                $pdf->Cell(3, .5, general::format_angka($det->subtotal), '', 0, 'R', $fill);
+                $pdf->Cell(7, 0.5, $det->produk, '', 0, '', $fill);
+                $pdf->Cell(1, 0.5, (float) $det->jml, '', 0, 'C', $fill);
+                $pdf->Cell(3, 0.5, general::format_angka($det->harga), '', 0, 'R', $fill);
+                $pdf->Cell(2, 0.5, ($det->disk1 != 0 ? (float) $det->disk1 : '') . ($det->disk2 != 0 ? ' + ' . (float) $det->disk2 : '') . ($det->disk3 != 0 ? ' + ' . (float) $det->disk3 : ''), '', 0, 'C', $fill);
+                $pdf->Cell(3, 0.5, general::format_angka($det->potongan), '', 0, 'R', $fill);
+                $pdf->Cell(3, 0.5, general::format_angka($det->subtotal), '', 0, 'R', $fill);
                 $pdf->Ln();
                 
                 $gtotal = $gtotal + $det->subtotal;
@@ -887,67 +889,67 @@ class transaksi extends CI_Controller {
             $diskon         = ($jml_diskon / $jml_total) * 100; 
             
             // Kolom Total
-            $pdf->SetTextColor(5,148,19);
+            $pdf->SetTextColor(5, 148, 19);
             $pdf->SetFont('Arial', 'B', '10');
-            $pdf->Cell(16, .5, 'TOTAL', 'T', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, general::format_angka($jml_total), 'T', 0, 'R', $fill);
+            $pdf->Cell(16, 0.5, 'TOTAL', 'T', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, general::format_angka($jml_total), 'T', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(16, .5, 'DISKON '.(!empty($diskon) ? $diskon.'%' : ''), '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, '('.general::format_angka($jml_diskon).')', '', 0, 'R', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(16, 0.5, 'DISKON '.(!empty($diskon) ? $diskon.'%' : ''), '', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, '('.general::format_angka($jml_diskon).')', '', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(3, .5, 'SUBTOTAL', 'T', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, general::format_angka($sql_beli->jml_subtotal), 'T', 0, 'R', $fill);
+            $pdf->Cell(13, 0.5, '', '', 0, 'R', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(3, 0.5, 'SUBTOTAL', 'T', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, general::format_angka($sql_beli->jml_subtotal), 'T', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(3, .5, 'DPP', '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, general::format_angka($sql_beli->jml_dpp), '', 0, 'R', $fill);
+            $pdf->Cell(13, 0.5, '', '', 0, 'R', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(3, 0.5, 'DPP', '', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, general::format_angka($sql_beli->jml_dpp), '', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(3, .5, 'PPN ('.(float) $sql_beli->ppn.'%)', '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, general::format_angka($sql_beli->jml_ppn), '', 0, 'R', $fill);
+            $pdf->Cell(13, 0.5, '', '', 0, 'R', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(3, 0.5, 'PPN ('.(float) $sql_beli->ppn.'%)', '', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, general::format_angka($sql_beli->jml_ppn), '', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(3, .5, 'ONGKIR', 'T', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, general::format_angka($sql_beli->jml_ongkir), 'T', 0, 'R', $fill);
+            $pdf->Cell(13, 0.5, '', '', 0, 'R', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(3, 0.5, 'ONGKIR', 'T', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, general::format_angka($sql_beli->jml_ongkir), 'T', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(3, .5, 'GRAND TOTAL', '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
-            $pdf->Cell(3, .5, general::format_angka($sql_beli->jml_gtotal), '', 0, 'R', $fill);
+            $pdf->Cell(13, 0.5, '', '', 0, 'R', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(3, 0.5, 'GRAND TOTAL', '', 0, 'R', $fill);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->Cell(3, 0.5, general::format_angka($sql_beli->jml_gtotal), '', 0, 'R', $fill);
             $pdf->Ln(1);
 
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $gambar4 = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
-            $pdf->Image($gambar4,1.25,$getY,6,3.5);
+            $pdf->Image($gambar4, 1.25, $getY, 6, 3.5);
             
             $pdf->SetFont('Arial', '', '10');
-            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(8.5, .5, '', '', 0, 'L', $fill);
+            $pdf->Cell(10.5, 0.5, '', '', 0, 'L', $fill);
+            $pdf->Cell(8.5, 0.5, '', '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Arial', 'B', '10');
-            $pdf->Cell(4, .5, 'Pemesan', '0', 0, 'C', $fill);
-            $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
+            $pdf->Cell(4, 0.5, 'Pemesan', '0', 0, 'C', $fill);
+            $pdf->Cell(6.5, 0.5, '', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '10');
-            $pdf->Cell(8.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_beli->tgl_masuk), '0', 0, 'C', $fill);
+            $pdf->Cell(8.5, 0.5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_beli->tgl_masuk), '0', 0, 'C', $fill);
             $pdf->Ln(4);
             
             $pdf->SetFont('Arial', '', '10');
-            $pdf->Cell(10.5, .5, 'APT. UNGSARI RIZKI EKA PURWANTO, M.SC', '0', 0, 'L', $fill);
-            $pdf->Cell(8.5, .5, $oleh, '0', 0, 'C', $fill);
+            $pdf->Cell(10.5, 0.5, 'APT. UNGSARI RIZKI EKA PURWANTO, M.SC', '0', 0, 'L', $fill);
+            $pdf->Cell(8.5, 0.5, $oleh, '0', 0, 'C', $fill);
             $pdf->Ln();
                     
             $pdf->SetFillColor(235, 232, 228);
@@ -1020,8 +1022,6 @@ class transaksi extends CI_Controller {
             $pdf->Cell(5, .5, $sql_beli->no_nota, '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(11.5, .5, strtoupper($sql_supplier->nama).(!empty($sql_supplier->kode) ? ' ['.$sql_supplier->kode.']' : ''), '0', 0, 'L', $fill);
-//            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-//            $pdf->Cell(8.5, .5, (!empty($sql_supplier->npwp) ? $sql_supplier->npwp : '-'), '0', 0, 'L', $fill);
             $pdf->Cell(1.5, .5, 'Tanggal', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(5, .5, $this->tanggalan->tgl_indo3($sql_beli->tgl_masuk), '0', 0, 'L', $fill);
@@ -1046,7 +1046,7 @@ class transaksi extends CI_Controller {
             $pdf->Ln();
             
             $fill = FALSE;
-            $no = 1; $gtotal = 0;
+            $no = 1;
             foreach ($sql_beli_det as $det){
                 
                 $pdf->SetFont('Arial', '', '10');
@@ -1064,7 +1064,6 @@ class transaksi extends CI_Controller {
             $getY = $pdf->GetY() + 1;
             $gambar4 = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
             $pdf->Image($gambar4,1.25,$getY,6,3.5);
-//            $pdf->Image($gambar5,14,$getY,3.5,3.5);
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -1072,7 +1071,6 @@ class transaksi extends CI_Controller {
             $pdf->Ln();
             $pdf->SetFont('Arial', 'B', '10');
             $pdf->Cell(4, .5, 'Pemesan', '0', 0, 'C', $fill);
-//            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
             $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(8.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_beli->tgl_masuk), '0', 0, 'C', $fill);
@@ -1090,10 +1088,9 @@ class transaksi extends CI_Controller {
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();
-            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
+            $pdf->Output('PO_'.date('YmdHi').'.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -1924,31 +1921,27 @@ class transaksi extends CI_Controller {
 
     public function set_trans_beli_po_proses_upd() {
         if (akses::aksesLogin() == TRUE) {
-            $id    = $this->input->post('id');
+            $id = $this->input->post('id');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'   => form_error('id'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
 
                 redirect(base_url('transaksi/beli/trans_beli_po_list.php'));
             } else {
-                $tgl_msk    = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                $tgl_klr    = $this->tanggalan->tgl_indo_sys($tgl_tempo);
-                
                 $this->cart->destroy();
                 $this->session->unset_userdata('trans_beli_po_edit');
                 
                 redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -2311,6 +2304,7 @@ class transaksi extends CI_Controller {
             $kode     = $this->input->post('kode');
             $kode2    = $this->input->post('kode_batch');
             $tgl_ed   = $this->input->post('tgl_ed');
+            $tgl_trm  = $this->input->post('tgl_trm'); // Added missing variable
             $qty      = general::format_angka_db($this->input->post('jml'));
             $diskon1  = general::format_angka_db($this->input->post('disk1'));
             $diskon2  = general::format_angka_db($this->input->post('disk2'));
@@ -2457,7 +2451,7 @@ class transaksi extends CI_Controller {
                     # Transaksi Selesai
                     $this->db->trans_commit();
                     
-                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_brg->produk.'</b> berhasil disimpan!");');
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_item->produk.'</b> berhasil disimpan!");');
                     redirect(base_url('transaksi/beli/trans_beli_edit.php?id='.$id));
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
@@ -2566,43 +2560,60 @@ class transaksi extends CI_Controller {
             $ket      = $this->input->post('ket');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('kode', 'Kode', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'kode' => form_error('kode'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
+                $this->session->set_flashdata('trans_toast', 'toastr.error("Validasi form gagal!");');
                 redirect(base_url('transaksi/trans_beli_po_edit.php?id='.$id));
             } else {
-                $sql          = $this->db->where('id', general::dekrip($id_brg))->get('tbl_trans_beli_po')->row();
-                $sql_brg      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
-                $sql_satuan   = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
-                $total        = $cart['price'] * $cart['qty'] * $cart['options']['jml_satuan'];
+                # Begin transaction
+                $this->db->trans_begin();
                 
-                $data_pemb_det = array(
-                    'id_pembelian' => general::dekrip($id),
-                    'id_produk'    => $sql_brg->id,
-                    'id_satuan'    => $sql_brg->id_satuan,
-                    'no_nota'      => $sql->no_nota,
-                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-                    'kode'         => $sql_brg->kode,
-                    'produk'       => $sql_brg->produk,
-                    'jml'          => general::format_angka_db($qty),
-                    'jml_satuan'   => (int)$cart['options']['jml_satuan'],
-                    'satuan'       => $sql_satuan->satuanTerkecil,
-                    'keterangan'   => $ket
-                );
-            
-//                echo '<pre>';
-//                print_r($data_pemb_det);
-//                echo '</pre>';
-                 
-                crud::simpan('tbl_trans_beli_po_det', $data_pemb_det);
-                redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
+                try {
+                    $sql_brg      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
+                    $sql_satuan   = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
+                    $sql_po       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli_po')->row();
+                    
+                    if (!$sql_brg || !$sql_satuan || !$sql_po) {
+                        throw new Exception("Data tidak ditemukan!");
+                    }
+                    
+                    $data_pemb_det = [
+                        'id_pembelian' => general::dekrip($id),
+                        'id_produk'    => $sql_brg->id,
+                        'id_satuan'    => $sql_brg->id_satuan,
+                        'no_nota'      => $sql_po->no_nota,
+                        'tgl_simpan'   => date('Y-m-d H:i:s'),
+                        'kode'         => $sql_brg->kode,
+                        'produk'       => $sql_brg->produk,
+                        'jml'          => general::format_angka_db($qty),
+                        'jml_satuan'   => (int)$sql_satuan->jml,
+                        'satuan'       => $sql_satuan->satuanTerkecil,
+                        'keterangan'   => $ket
+                    ];
+                    
+                    # Insert into PO detail table
+                    $this->db->insert('tbl_trans_beli_po_det', $data_pemb_det);
+                    
+                    # If everything is successful, commit the transaction
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception('Database transaction failed');
+                    }
+                    
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item berhasil ditambahkan ke PO!");');
+                    redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
+                } catch (Exception $e) {
+                    # If something went wrong, rollback the transaction
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('trans_toast', 'toastr.error("Gagal menambahkan item: ' . $e->getMessage() . '");');
+                    redirect(base_url('transaksi/beli/trans_beli_po_edit.php?id='.$id));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
