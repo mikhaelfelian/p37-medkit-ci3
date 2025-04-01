@@ -39,7 +39,6 @@ class Master extends CI_Controller {
             $sl      = $this->input->get('filter_sales');
             $stts    = $this->input->get('status');
             $jml     = $this->input->get('jml');
-//            $jml_sql = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? $this->db->get('tbl_trans_jual')->num_rows() : $this->db->where('id_user', $id_user)->where('tgl_masuk', date('Y-m-d'))->get('tbl_trans_jual')->num_rows());
 
             if(!empty($jml)){
                 $jml_hal = $jml;
