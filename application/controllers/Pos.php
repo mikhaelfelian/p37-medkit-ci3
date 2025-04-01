@@ -339,12 +339,12 @@ class Pos extends CI_Controller {
             $this->form_validation->set_rules('alamat', 'Alamat', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'gelar'     => form_error('gelar'),
                     'nama'      => form_error('nama'),
                     'jns_klm'   => form_error('jns_klm'),
                     'alamat'    => form_error('alamat'),
-                );
+                ];
 
                 // value data pasien
                 $this->session->set_flashdata('nik_baru', $nik_baru);
@@ -357,74 +357,77 @@ class Pos extends CI_Controller {
                 $this->session->set_flashdata('alamat', $alamat);
                 $this->session->set_flashdata('alamat_dom', $alamat_dom);
                 $this->session->set_flashdata('pekerjaan', $pekerjaan);
-                $this->session->set_flashdata('poli', $poli);
-                $this->session->set_flashdata('dokter', $dokter);
-                $this->session->set_flashdata('alergi', $alergi);
 
                 $this->session->set_flashdata('form_error', $msg_error);
-//                redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                $this->session->set_flashdata('apt_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali!");');
+                redirect(base_url('pos/set_trans_jual.php'));
             } else {
-                $pengaturan = $this->db->get('tbl_pengaturan')->row();
-                $tmsk       = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                $sql_cek    = $this->db->select_max('id')->get('tbl_m_pasien')->row();
-                $sql_glr    = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
-                $kode       = sprintf('%05d', $sql_num);
-                $sql_kat    = $this->db->get('tbl_m_kategori');
-                
-                $nomor      = $sql_cek->id + 1;
-                
-                # Config File Foto Pasien
-                $kode               = sprintf('%05d', $nomor);
-                $no_rm              = strtolower($pengaturan->kode_pasien).$kode;
-                $path               = 'file/pasien/'.$no_rm.'/';
-                
-                # Buat Folder Untuk Foto Pasien
-                if(!file_exists($path)){
-                    mkdir($path, 0777, true);
+                try {
+                    $pengaturan = $this->db->get('tbl_pengaturan')->row();
+                    $sql_cek    = $this->db->select_max('id')->get('tbl_m_pasien')->row();
+                    $sql_glr    = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
+                    
+                    $nomor      = $sql_cek->id + 1;
+                    
+                    # Config File Foto Pasien
+                    $kode       = sprintf('%05d', $nomor);
+                    $no_rm      = strtolower($pengaturan->kode_pasien).$kode;
+                    $path       = 'file/pasien/'.$no_rm.'/';
+                    
+                    # Buat Folder Untuk Foto Pasien
+                    if(!file_exists($path)){
+                        mkdir($path, 0777, true);
+                    }
+
+                    $data_pas = [
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'id_gelar'      => (!empty($gelar) ? $gelar : 0),
+                        'id_pekerjaan'  => (!empty($pekerjaan) ? $pekerjaan : 0),
+                        'kode_dpn'      => $pengaturan->kode_pasien,
+                        'kode'          => $kode,
+                        'nik'           => $nik_baru,
+                        'nama'          => $nama,
+                        'nama_pgl'      => strtoupper($sql_glr->gelar . ' ' . $nama),
+                        'tmp_lahir'     => $tmp_lahir,
+                        'tgl_lahir'     => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
+                        'jns_klm'       => $jns_klm,
+                        'no_hp'         => $no_hp,
+                        'no_rmh'        => $no_rmh,
+                        'alamat'        => (!empty($alamat) ? $alamat : ''),
+                        'alamat_dom'    => (!empty($alamat_dom) ? $alamat_dom : ''),
+                        'status'        => '1',
+                        'status_pas'    => '2',
+                        'sp'            => '0',
+                    ];
+
+                    # Transact SQL
+                    $this->db->trans_begin();
+
+                    # Simpan ke tabel pendaftaran
+                    $this->db->insert('tbl_m_pasien', $data_pas);
+                    $last_id = $this->db->insert_id();
+
+                    # Transact SQL End
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        $this->session->set_flashdata('apt_toast', 'toastr.error("Gagal menyimpan data pasien!");');
+                    } else {
+                        $this->db->trans_commit();
+                        $this->session->set_flashdata('apt_toast', 'toastr.success("Data pasien berhasil disimpan!");');
+                    }
+                } catch (Exception $e) {
+                    if ($this->db->trans_status() === TRUE) {
+                        $this->db->trans_rollback();
+                    }
+                    $this->session->set_flashdata('apt_toast', 'toastr.error("Terjadi kesalahan: ' . $e->getMessage() . '");');
                 }
 
-                $data_pas = array(
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'id_gelar'      => (!empty($gelar) ? $gelar : 0),
-                    'id_pekerjaan'  => (!empty($pekerjaan) ? $pekerjaan : 0),
-                    'kode_dpn'      => $pengaturan->kode_pasien,
-                    'kode'          => $kode,
-                    'nik'           => $nik_baru,
-                    'nama'          => $nama,
-                    'nama_pgl'      => strtoupper($sql_glr->gelar . ' ' . $nama),
-                    'tmp_lahir'     => $tmp_lahir,
-                    'tgl_lahir'     => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                    'jns_klm'       => $jns_klm,
-                    'no_hp'         => $no_hp,
-                    'no_rmh'        => $no_rmh,
-                    'alamat'        => (!empty($alamat) ? $alamat : ''),
-                    'alamat_dom'    => (!empty($alamat_dom) ? $alamat_dom : ''),
-                    'status'        => '1',
-                    'status_pas'    => '2',
-                    'sp'            => '0',
-                );
-
-                # Transact SQL
-                $this->db->trans_off();
-                $this->db->trans_start();
-
-                # Simpan ke tabel pendaftaran
-                $this->db->insert('tbl_m_pasien', $data_pas);
-                $last_id = $this->db->insert_id();
-
-                # Transact SQL End
-                $this->db->trans_complete();
-
                 redirect(base_url('pos/set_trans_jual.php'));
-                        
-//                echo '<pre>';
-//                print_r($data_pas);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('apt_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
