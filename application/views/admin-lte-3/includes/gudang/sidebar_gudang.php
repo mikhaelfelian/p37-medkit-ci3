@@ -1,13 +1,13 @@
 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE) { ?>
-    <li class="nav-header">DATA PENERIMAAN</li>
+    <!-- <li class="nav-header">DATA PENERIMAAN</li>
     <li class="nav-item">
-        <a href="<?php echo base_url('gudang/trans_beli_list.php') ?>" class="nav-link">
+        <a href="<?php // echo base_url('gudang/trans_beli_list.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-solid fa-file-invoice"></i>
             <p>
                 Stok Masuk
             </p>
         </a>
-    </li>
+    </li> -->
 
     <li class="nav-header">STOCK OPNAME</li>
     <li class="nav-item">
