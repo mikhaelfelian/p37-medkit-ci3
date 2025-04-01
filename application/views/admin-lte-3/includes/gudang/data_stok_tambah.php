@@ -85,6 +85,18 @@
                             <?php echo form_open(base_url('gudang/set_stok_update_gd.php'), 'autocomplete="off"') ?>
                             <?php echo form_hidden('id', $this->input->get('id')) ?>
                             
+                            <div class="form-group">
+                                <label>Date Range:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control float-right" id="date_range" name="date_range">
+                                </div>
+                            </div>
+                            
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -124,7 +136,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card card-default">
+                    <div class="card card-default rounded-0">
                         <div class="card-header">
                             <h3 class="card-title">Data Mutasi Stok</h3>
                             <div class="card-tools">
@@ -138,8 +150,6 @@
                                 <thead>
                                     <tr>
                                         <th>Gudang</th>
-                                        <!--<th>Tgl</th>-->
-                                        <!--<th>Kode</th>-->
                                         <th class="text-right">Jml</th>
                                         <th>Satuan</th>
                                         <?php if (akses::hakSA() == TRUE) { ?>
@@ -177,21 +187,61 @@
                                     <?php echo form_close() ?>
                                 <?php } ?>
                                 <tbody>
-                                    <?php $tot_sm = 0;
-                                    $tot_sk = 0; ?>
+                                    <?php 
+                                    $tot_sm = 0;
+                                    $tot_sk = 0;
+                                    foreach ($barang_hist as $hist) {
+                                        $qty = $hist->jml * $hist->jml_satuan;
+                                        
+                                        switch($hist->status) {
+                                            case '1': // Purchase
+                                            case '3': // Sales Return
+                                                $tot_sm += $qty;
+                                                break;
+                                                
+                                            case '4': // Sales
+                                            case '5': // Purchase Return
+                                            case '7': // Stock Out
+                                                $tot_sk += $qty;
+                                                break;
+                                                
+                                            case '6': // Stock Opname
+                                                // Stock Opname should be counted as stock in as it sets the initial/adjustment stock
+                                                $tot_sm += $qty;
+                                                break;
+                                                
+                                            case '2': // Stock Adjustment
+                                                // Check if it's stock addition or reduction
+                                                if (stripos($hist->keterangan, 'masuk') !== false || 
+                                                    stripos($hist->keterangan, 'tambah') !== false) {
+                                                    $tot_sm += $qty;
+                                                } else if (stripos($hist->keterangan, 'keluar') !== false || 
+                                                          stripos($hist->keterangan, 'kurang') !== false) {
+                                                    $tot_sk += $qty;
+                                                }
+                                                break;
+                                                
+                                            case '8': // Stock Transfer
+                                                if ($hist->id_gudang == $gd) { // If this is destination warehouse
+                                                    $tot_sm += $qty;
+                                                } else { // If this is source warehouse
+                                                    $tot_sk += $qty;
+                                                }
+                                                break;
+                                        }
+                                    }
+
+                                    // Calculate current stock
+                                    $sisa_st = $tot_sm - $tot_sk;
+                                    ?>
                                     <?php foreach ($barang_hist as $hist) { ?>
                                         <?php $sql_gudang = $this->db->where('id', $hist->id_gudang)->get('tbl_m_gudang')->row() ?>
-                                        <?php $tot_sm = $tot_sm + ($hist->status == '1' || $hist->status == '2' || $hist->status == '3' ? ($hist->jml * $hist->jml_satuan) : 0); ?>
-                                            <?php $tot_sk = $tot_sk + ($hist->status == '4' || $hist->status == '5' || $hist->status == '7' ? ($hist->jml * $hist->jml_satuan) : 0); ?>
                                         <tr>
                                             <td style="width: 350px;">
                                                 <?php echo $sql_gudang->gudang ?><br/>
                                                 <small><i><?php echo $this->ion_auth->user($hist->id_user)->row()->first_name ?></i></small><br/>
                                                 <small><i><?php echo (!empty($hist->tgl_simpan) ? $this->tanggalan->tgl_indo5($hist->tgl_simpan) : $this->tanggalan->tgl_indo($hist->tgl_simpan)) ?></i></small>
                                             </td>
-                                            <!--<td style="width: 100px;"><?php echo (!empty($hist->tgl_masuk) ? $this->tanggalan->tgl_indo5($hist->tgl_masuk) : $this->tanggalan->tgl_indo($hist->tgl_simpan)) ?></td>-->
-                                            <!--<td style="width: 100px;"><?php echo $this->tanggalan->tgl_indo($hist->tgl_masuk) ?></td>-->
-                                            <!--<td style="width: 180px;"><?php echo $hist->kode ?></td>-->
                                             <td style="width: 100px;" class="text-right"><?php echo $hist->jml * $hist->jml_satuan; //($hist->status == '3' ? $hist->jml * $hist->jml_satuan : $hist->jml)  ?></td>
                                             <td style="width: 150px;">
                                             <?php echo $sql_satuan->satuanTerkecil; // $hist->satuan.' ('.$hist->jml * $hist->jml_satuan.' '.$sql_satuan->satuanTerkecil.')'  ?>
@@ -357,26 +407,20 @@
                                     <?php } ?>
                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdmin() == TRUE){ ?>
                                         <tr>
-                                            <th colspan="4" class="text-right">Total Stok Masuk</th>
-                                            <td class="text-right"><?php echo $tot_sm ?></td>
+                                            <th colspan="4" class="text-right">Total Stock In</th>
+                                            <td class="text-right"><?php echo number_format($tot_sm, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
                                         <tr>
-                                            <th colspan="4" class="text-right">Total Stok Keluar</th>
-                                            <td class="text-right"><?php echo $tot_sk ?></td>
+                                            <th colspan="4" class="text-right">Total Stock Out</th>
+                                            <td class="text-right"><?php echo number_format($tot_sk, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
                                         <?php $sisa_st = $tot_sm - $tot_sk ?>
                                         <tr>
-                                            <th colspan="4" class="text-right">Sisa</th>
-                                            <td class="text-right"><?php echo (int) $sisa_st; ?></td>
+                                            <th colspan="4" class="text-right">Current Stock</th>
+                                            <td class="text-right"><?php echo number_format($sisa_st, 0); ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="5" class="text-right">
-                                                <button type="button" class="btn btn-primary btn-flat"><i class="fa fa-history"></i> Sinkron</button>
-                                            </td>
-                                            <td colspan="4" class="text-left"></td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>
@@ -432,4 +476,22 @@
         
         <?php echo $this->session->flashdata('gudang_toast'); ?>
     });
+</script>
+
+<script>
+$(function() {
+    $('#date_range').daterangepicker({
+        locale: {
+            format: 'MM/DD/YYYY'
+        },
+        startDate: moment().startOf('month'),
+        endDate: moment().endOf('month')
+    });
+
+    $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+        // Reload the page with the new date range
+        window.location.href = '<?php echo base_url("gudang/data_stok_tambah.php?id=" . $this->input->get("id")); ?>&start_date=' + 
+            picker.startDate.format('YYYY-MM-DD') + '&end_date=' + picker.endDate.format('YYYY-MM-DD');
+    });
+});
 </script>
