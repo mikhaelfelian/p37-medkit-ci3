@@ -87,9 +87,10 @@
                                     $jml_gtotal = $jml_gtotal + $items->subtotal;
                                     $produk = $this->db->where('kode', $items->kode)->get('tbl_m_produk')->row();
                                     ?>
-                                    <?php echo form_open(base_url('gudang/trans_mutasi_terima_simpan.php'), 'autocomplete="off"') ?>
+                                    <?php echo form_open(base_url('gudang/trans_mutasi_terima_simpan.php'), 'id="cart_terima_form" autocomplete="off"') ?>
                                     <?php echo form_hidden('id', general::enkrip($items->id)) ?>
                                     <?php echo form_hidden('no_nota', $this->input->get('id')) ?>
+                                    <?php echo add_form_protection() ?>
                                     <?php $jml_kurang = $items->jml - $items->jml_diterima; ?>
                                     <?php $jml_item = $jml_item + ($items->jml * $items->jml_satuan); ?>
                                     <?php $jml_item_krg = $jml_item_krg + $jml_kurang; ?>
@@ -106,22 +107,44 @@
                                         </td>
                                         <td class="text-right" style="width: 50px;"><?php echo (!empty($items->keterangan) ? $items->jml : $items->jml) . ' ' . (!empty($items->satuan) ? $items->satuan : '') . (!empty($items->keterangan) ? $items->keterangan : ''); ?></td>
                                         <td class="text-center" style="width: 50px;">
-                                            <?php if ($jml_kurang > 0) { ?>
-                                                <div class="form-group">
-                                                    <?php echo form_input(array('id' => 'jml', 'name' => 'jml_terima', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['pasien']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Inputkan jml ...', 'value' => (isset($_GET['tgl']) ? $this->tanggalan->tgl_indo($_GET['tgl']) : ''))) ?>
-                                                </div>
-                                            <?php }else{ ?>
-                                                <div class="form-group">
-                                                    <?php echo form_input(array('id' => 'jml', 'name' => 'jml_terima', 'class' => 'form-control text-center rounded-0' . (!empty($hasError['pasien']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Inputkan jml ...', 'value' => $items->jml_diterima, 'disabled' => 'true')) ?>
-                                                </div>
-                                            <?php } ?>
+                                            <div class="form-group">
+                                                <?php if ($jml_kurang > 0): ?>
+                                                    <?php 
+                                                    // Calculate remaining stock correctly
+                                                    $remaining_stock = $items->jml - $items->jml_diterima;
+                                                    echo form_input([
+                                                        'name' => 'jml_terima',
+                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'type' => 'number',
+                                                        'min' => '0',
+                                                        'max' => $remaining_stock,
+                                                        'step' => '1',
+                                                        'required' => 'required',
+                                                        'placeholder' => 'Max: ' . $remaining_stock,
+                                                        'onchange' => 'updateRemainingStock(this, ' . $remaining_stock . ')'
+                                                    ]); 
+                                                    ?>
+                                                    <small class="text-muted">Sisa: <span id="remaining-<?php echo $items->id; ?>"><?php echo $remaining_stock; ?></span></small>
+                                                <?php else: ?>
+                                                    <?php echo form_input([
+                                                        'value' => $items->jml_diterima,
+                                                        'class' => 'form-control text-center rounded-0',
+                                                        'disabled' => 'true'
+                                                    ]); ?>
+                                                <?php endif; ?>
+                                            </div>
                                         </td>
                                         <td class="text-center" style="width: 75px;">
-                                            <?php if ($jml_kurang > 0) { ?>
+                                            <?php if ($jml_kurang > 0): ?>
                                             <div class="form-group">
-                                                <?php echo form_input(array('id' => 'jml', 'name' => 'jml_terima', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['pasien']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Inputkan jml ...', 'value' => $jml_kurang, 'disabled' => 'true')) ?>
+                                                    <?php echo form_input([
+                                                        'id' => 'remaining-display-' . $items->id,
+                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'value' => $remaining_stock,
+                                                        'disabled' => 'true'
+                                                    ]); ?>
                                             </div>
-                                            <?php } ?>
+                                            <?php endif; ?>
                                         </td>
                                         <td class="text-center" style="width: 50px;">
                                             <?php if ($jml_kurang > 0) { ?>
@@ -131,6 +154,7 @@
                                             <?php } ?>
                                         </td>
                                     </tr>
+                                    <?php echo add_double_submit_protection('cart_terima_form') ?>
                                     <?php echo form_close() ?>
                                 <?php } ?>
                             </table>
@@ -179,4 +203,27 @@
 
         <?php echo $this->session->flashdata('gudang_toast'); ?>
     });
+
+    function updateRemainingStock(input, maxStock) {
+        const receivedQty = parseFloat(input.value) || 0;
+        const itemId = input.closest('form').querySelector('input[name="id"]').value;
+        const remainingDisplay = document.getElementById('remaining-display-' + itemId.replace('general::enkrip(', '').replace(')', ''));
+        const remainingSpan = document.getElementById('remaining-' + itemId.replace('general::enkrip(', '').replace(')', ''));
+        
+        // Validate input
+        if (receivedQty < 0) {
+            input.value = 0;
+        } else if (receivedQty > maxStock) {
+            input.value = maxStock;
+        }
+        
+        // Calculate and display remaining stock
+        const remaining = maxStock - parseFloat(input.value);
+        if (remainingDisplay) {
+            remainingDisplay.value = remaining.toFixed(0);
+        }
+        if (remainingSpan) {
+            remainingSpan.textContent = remaining.toFixed(0);
+        }
+    }
 </script>

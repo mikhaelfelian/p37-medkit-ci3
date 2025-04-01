@@ -82,10 +82,10 @@
                                     $produk      = $this->db->where('kode', $items->kode)->get('tbl_m_produk')->row();
                                     ?>
                                     <tr>
-                                        <td class="text-right" style="width: 25px;"><?php // echo ($items->id_kategori2 == 0 && $sql_penj->status_bayar == 0 ? anchor(base_url('cart/cart_hapus_brg.php?id=' . general::enkrip($items->id) . '&no_nota=' . general::enkrip($items->no_nota)), '<i class="fa fa-remove"></i>', 'onclick="return confirm(\'Hapus ?\')" class="text-danger"') : '<i class="fa fa-remove"></i>')    ?></td>
+                                        <td class="text-right" style="width: 25px;"></td>
                                         <td class="text-right" style="width: 50px;"><?php echo $no++ ?></td>
                                         <td class="text-left" style="width: 250px;">
-                                            <?php echo anchor(base_url('gudang/data_stok_tambah.php?id='.general::enkrip($produk->id)), $items->kode, 'target="_blank"').br() ?>
+                                            <?php echo anchor(base_url('gudang/data_stok_tambah.php?id='.general::enkrip($produk->id).'&route='.base_url($_GET['route'])), $items->kode, 'target="_blank"').br() ?>
                                             <small><b>ID:</b><?php echo $items->id; ?></small>
                                         </td>
                                         <td class="text-left" style="width: 550px;">                                            
@@ -100,7 +100,7 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('gudang/data_mutasi.php') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
+                                    <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo (!empty($_GET['route']) ? base_url($_GET['route']) : base_url('gudang/data_mutasi.php')) ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
                                 </div>
                                 <div class="col-md-6 text-right">
                                     

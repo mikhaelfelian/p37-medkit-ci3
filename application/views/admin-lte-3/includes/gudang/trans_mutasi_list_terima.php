@@ -26,7 +26,7 @@
                 <div class="col-md-12">
                     <div class="card card-default">
                         <div class="card-header">
-                            <h3 class="card-title">Data Penerimaan Mutasi Stok</h3>
+                            <h3 class="card-title">Data Permintaan (pend)</h3>
                             <div class="card-tools">
                                 <ul class="pagination pagination-sm float-right">
                                     <?php echo $pagination ?>
@@ -38,23 +38,21 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">No.</th>
-                                        <th class="text-center">Tgl Mutasi</th>
+                                        <th class="text-center">Tanggal</th>
                                         <th>User</th>
                                         <th>Keterangan</th>
-                                        <th>Tipe</th>
+                                        <th>Status</th>
                                         <th></th>
                                     </tr>
                                     
-                                    <?php echo form_open_multipart(base_url('gudang/set_cari_mutasi.php'), 'autocomplete="off"') ?>
+                                    <?php echo form_open(base_url('gudang/set_cari_mutasi.php'), 'autocomplete="off"') ?>
                                     <?php echo form_hidden('route', 'data_mutasi_terima.php') ?>
                                     <tr>
                                         <td></td>
                                         <td>
                                             <?php echo form_input(array('id' => 'tgl', 'name' => 'tgl', 'class' => 'form-control rounded-0', 'placeholder' => 'Isikan Tanggal ...', 'value' => (!empty($_GET['filter_nota']) ? $_GET['filter_nota'] : ''))) ?>
                                         </td>
-                                        <td>
-                                            <?php // echo form_input(array('id' => 'supplier', 'name' => 'supplier', 'class' => 'form-control rounded-0', 'placeholder' => 'Isikan Supplier ...', 'value' => (!empty($_GET['filter_supplier']) ? $_GET['filter_supplier'] : ''))) ?>
-                                        </td>
+                                        <td></td>
                                         <td colspan="2"></td>
                                         <td class="text-left">
                                             <button class="btn btn-primary btn-flat">
@@ -76,13 +74,19 @@
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?>.</td>
                                                 <td style="width: 150px;"><?php echo $this->tanggalan->tgl_indo($mutasi->tgl_simpan) ?></td>
-                                                <td><?php echo anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($mutasi->id)), $this->ion_auth->user($mutasi->id_user)->row()->first_name, '') ?></td>
-                                                <td><?php echo $mutasi->keterangan; // echo (!empty($mutasi->dl_file) ? anchor(base_url('gudang/data_opname_dl.php?id='.general::enkrip($mutasi->id).'&file='.$mutasi->nm_file), $mutasi->nm_file) : $mutasi->nm_file)  ?></td>
-                                                <td><?php echo general::tipe_mutasi($mutasi->tipe); ?></td>
+                                                <td><?php echo anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($mutasi->id).'&route=gudang/data_mutasi_terima.php'), $this->ion_auth->user($mutasi->id_user)->row()->first_name, '') ?></td>
+                                                <td><?php echo $mutasi->keterangan;  ?></td>
                                                 <td>
-                                                    <?php // if ($jml_kurang > 0) { ?>
+                                                    <?php if (akses::hakFarmasi() == TRUE) { ?>
+                                                        <span class="badge badge-success">Terkirim</span>
+                                                    <?php } else { ?>
+                                                        <?php echo general::tipe_mutasi($mutasi->tipe); ?>
+                                                    <?php } ?>
+                                                 </td>
+                                                <td>
+                                                    <?php if (akses::hakFarmasi() == FALSE) { ?>
                                                         <?php echo anchor(base_url('gudang/trans_mutasi_terima.php?id=' . general::enkrip($mutasi->id)), ($jml_kurang > 0 ? '<i class="fas fa-box-open"></i> Terima' : '<i class="fas fa-check-circle"></i> Cek &raquo;'), 'class="btn btn-'.($jml_kurang > 0 ? 'info' : 'primary').' btn-flat btn-xs" style="width: 65px;"') ?>
-                                                    <?php // } ?>
+                                                    <?php  } ?>
                                                 </td>
                                             </tr>
                                             <?php

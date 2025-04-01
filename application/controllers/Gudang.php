@@ -492,7 +492,7 @@ class Gudang extends CI_Controller {
             $id      = $this->input->post('id');
             $nota    = $this->input->post('no_nota');
             $tgl_trm = $this->input->post('tgl_terima');
-            $jml_trm = $this->input->post('jml_terima');
+            $jml_trm = (float)$this->input->post('jml_terima');
             $gudang  = $this->input->post('gudang');
             $setting = $this->db->get('tbl_pengaturan')->row();
 
@@ -871,7 +871,7 @@ class Gudang extends CI_Controller {
                                 ->where('status_nota', $sn)
                                 ->like('no_nota', $fn[0])
                                 ->like('DATE(tgl_keluar)', $tp)
-                                ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : $id_user), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
+                                ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))->like('no_nota', $fn[0])
                                 ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
                                 ->order_by('tgl_simpan','desc')
                                 ->get('tbl_trans_mutasi')->num_rows();
@@ -918,8 +918,7 @@ class Gudang extends CI_Controller {
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'],$hal)
-                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
-                           ->like('no_nota', $fn[0])
+                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))->like('no_nota', $fn[0])
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
@@ -927,7 +926,7 @@ class Gudang extends CI_Controller {
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'])
-                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
+                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))->like('no_nota', $fn[0])
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
@@ -989,7 +988,7 @@ class Gudang extends CI_Controller {
                                 ->where('status_terima', '0')
                                 ->like('no_nota', $fn[0])
                                 ->like('DATE(tgl_keluar)', $tp)
-                                ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : $id_user), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : 'none'))
+                                ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : $id_user), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' || $id_grup->name == 'farmasi' ? '' : 'none'))
                                 ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
                                 ->order_by('id','desc')
                                 ->get('tbl_trans_mutasi')->num_rows();
@@ -1039,8 +1038,7 @@ class Gudang extends CI_Controller {
                            ->limit($config['per_page'],$hal)
                            ->like('no_nota', $fn[0])
                            ->like('DATE(tgl_simpan)', $tg)
-//                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : $id_user))
-//                           ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
+                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
             }else{
@@ -1048,10 +1046,8 @@ class Gudang extends CI_Controller {
                            ->where('status_nota', '1')
                            ->where('status_terima', '0')
                            ->limit($config['per_page'])
-//                           ->like('no_nota', $fn[0])
+                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)
-//                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : $id_user))
-//                           ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
             }
@@ -1109,115 +1105,156 @@ class Gudang extends CI_Controller {
     }
     
     public function trans_mutasi_terima_simpan() {
-        if (akses::aksesLogin() == TRUE) {
-            $id      = $this->input->post('id');
-            $nota    = $this->input->post('no_nota');
-            $tgl_trm = $this->input->post('tgl_terima');
-            $jml_trm = $this->input->post('jml_terima');
-            $gudang  = $this->input->post('gudang');
-            $setting = $this->db->get('tbl_pengaturan')->row();
-
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('id', 'Kode Barang', 'required');
-//            $this->form_validation->set_rules('gudang', 'Gudang', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'     => form_error('id'),
-//                    'gd'     => form_error('gudang'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('gudang/trans_mutasi_terima.php?id='.$nota));
-            } else {
-                $sql_mut        = $this->db->where('id', general::dekrip($nota))->get('tbl_trans_mutasi')->row();
-                $sql_mut_det    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi_det')->row();
-                $sql_bli        = $this->db->where('id', $sql_cek->id_pembelian)->get('tbl_trans_beli')->row();
-                $sql_gdg        = $this->db->where('id', $gudang)->get('tbl_m_gudang')->row();
-                $sql_cek_brg    = $this->db->where('id', $sql_cek->id_produk)->get('tbl_m_produk')->row();
-                $sql_cek_sat    = $this->db->where('id', $sql_cek->id_satuan)->get('tbl_m_satuan')->row();
-                $jml_kurang     = $sql_mut_det->jml - $sql_mut_det->jml_diterima;
-
-                
-                /* Transaksi Database */
-//                $this->db->query('SET autocommit = 0;');
-//                $this->db->trans_start();
-                
-                if($jml_kurang >= 0){
-                    # Switcher sesuai pilihan gudangnya
-                    switch ($sql_mut->tipe){                        
-                        # Pindah Gudang
-                        case '1':
-                            $sql_gudang     = $this->db->where('id', $sql_mut_det->id_gd_asal)->get('tbl_m_gudang')->row();
-                            $sql_gudang_asl = $this->db->where('id_gudang', $sql_mut->id_gd_asal)->where('id_produk', $sql_mut_det->id_item)->get('tbl_m_produk_stok')->row();  // Cek gudang aktif dari gudang utama
-                            $sql_gudang_7an = $this->db->where('id_gudang', $sql_mut->id_gd_tujuan)->where('id_produk', $sql_mut_det->id_item)->get('tbl_m_produk_stok')->row();  // Cek gudang aktif dari gudang utama
-                            
-                            $jml_akhir_stk  = $sql_gudang_asl->jml - $sql_mut_det->jml;
-                            $jml_akhir_7an  = $sql_gudang_7an->jml + $sql_mut_det->jml;
-                            $sql_gudang_ck  = $this->db->where('id_produk', $sql_mut_det->id_item)->where('id_gudang', $sql_mut_det->id_gd_tujuan)->get('tbl_m_produk_stok');
-    
-                            # Kurangi stok daripada gudang asal, kemudian simpan
-                            $this->db->where('id', $sql_gudang_asl->id)->update('tbl_m_produk_stok', array('jml'=>$jml_akhir_stk));
-    
-                            # Tambahkan stok daripada gudang tujuan
-                            $this->db->where('id', $sql_gudang_7an->id)->update('tbl_m_produk_stok', array('jml'=>$jml_akhir_7an));
-    
-                            # Sinkronkan stok terkait
-                            $jml_akhir_glob = $this->db->select_sum('jml')->where('id_produk', $sql_mut_det->id_item)->get('tbl_m_produk_stok')->row()->jml;
-                            $this->db->where('id', $sql_mut_det->id_item)->update('tbl_m_produk', array('tgl_modif' => date('Y-m-d H:i:s'), 'jml'=>$jml_akhir_glob));
-    
-    
-                            $status = '8';
-                            $ket    = 'Mutasi stok antar gudang';
-                            
-                            # Catat log barang keluar ke tabel
-                            $data_mut_hist = array(
-                                'tgl_simpan'   => $sql_mut_det->tgl_simpan,
-                                'tgl_masuk'    => $this->tanggalan->tgl_indo_sys($sql_mut_det->tgl_simpan),
-                                'id_gudang'    => $sql_mut->id_gd_asal,
-                                'id_produk'    => $sql_mut_det->id_item,
-                                'id_user'      => $this->ion_auth->user()->row()->id,
-                                'id_penjualan' => $sql_mut->id,
-                                'no_nota'      => $sql_mut->no_nota,
-                                'kode'         => $sql_mut_det->kode,
-                                'produk'       => $sql_cek_brg->produk,
-                                'keterangan'   => $ket,
-                                'jml'          => (int)$sql_mut_det->jml,
-                                'jml_satuan'   => (int)$sql_mut_det->jml_satuan,
-                                'satuan'       => $sql_mut_det->satuan,
-                                'nominal'      => 0,
-                                'status'       => $status
-                            );
-                            
-                            # Simpan riwayat stok
-                            $this->db->insert('tbl_m_produk_hist', $data_mut_hist);
-                            break;
-                    }
-                    
-                    # Mutasi Detail
-                    $data_mut_det = array(
-                        'id_user'        => $this->ion_auth->user()->row()->id,
-                        'tgl_terima'     => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                        'jml_diterima'   => (int)$jml_trm,
-                    );
-                    
-                    # Simpan data mutasi detail
-                    $this->db->where('id', $sql_mut_det->id)->update('tbl_trans_mutasi_det', $data_mut_det);
-                    
-                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Data mutasi berhasil di terima !")');
-                }else{
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Data mutasi tidak sesuai")');
-                }
-                
-//                $this->db->trans_complete();
-                redirect(base_url('gudang/trans_mutasi_terima.php?id='.$nota));
-            }
-        } else {
-            $errors = $this->ion_auth->messages();
+        if (!akses::aksesLogin()) {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
+            return;
         }
+
+        try {
+            // 1. Input Validation
+            $id = $this->input->post('id');
+            $nota = $this->input->post('no_nota');
+            $tgl_trm = $this->input->post('tgl_terima');
+            $jml_trm = (float)$this->input->post('jml_terima');
+
+            if (empty($id) || empty($nota) || $jml_trm <= 0) {
+                throw new Exception("Data input tidak valid");
+            }
+
+            // 2. Get Required Data
+            $sql_mut = $this->db->where('id', general::dekrip($nota))
+                               ->get('tbl_trans_mutasi')
+                               ->row();
+            
+            $sql_mut_det = $this->db->where('id', general::dekrip($id))
+                                    ->get('tbl_trans_mutasi_det')
+                                    ->row();
+
+            if (!$sql_mut || !$sql_mut_det) {
+                throw new Exception("Data mutasi tidak ditemukan");
+            }
+
+            // 3. Stock Validation with more precise calculation
+            $jml_kurang = (float)$sql_mut_det->jml - (float)$sql_mut_det->jml_diterima;
+            $jml_trm = (float)$this->input->post('jml_terima');
+
+            // Validate received quantity
+            if ($jml_trm <= 0) {
+                throw new Exception("Jumlah terima harus lebih dari 0");
+            }
+
+            // Validate against remaining quantity
+            if ($jml_trm > $jml_kurang) {
+                throw new Exception("Jumlah terima ({$jml_trm}) melebihi sisa yang tersedia ({$jml_kurang})");
+            }
+
+            // Update the mutation detail with proper calculation
+            $new_received_total = (float)$sql_mut_det->jml_diterima + $jml_trm;
+            if ($new_received_total > $sql_mut_det->jml) {
+                throw new Exception("Total penerimaan melebihi jumlah mutasi");
+            }
+
+            // 4. Begin Transaction
+                $this->db->trans_begin();
+
+            // 5. Process Based on Mutation Type
+            if ($sql_mut->tipe == '1') { // Pindah Gudang
+                // Get Source and Destination Warehouse Stock
+                $sql_gudang_asl = $this->db->where('id_gudang', $sql_mut->id_gd_asal)
+                                           ->where('id_produk', $sql_mut_det->id_item)
+                                           ->get('tbl_m_produk_stok')
+                                           ->row();
+                
+                $sql_gudang_tujuan = $this->db->where('id_gudang', $sql_mut->id_gd_tujuan)
+                                             ->where('id_produk', $sql_mut_det->id_item)
+                                             ->get('tbl_m_produk_stok')
+                                             ->row();
+
+                if (!$sql_gudang_asl || !$sql_gudang_tujuan) {
+                    throw new Exception("Data stok gudang tidak ditemukan");
+                }
+
+                // Calculate New Stock Quantities
+                $jml_akhir_asal = (float)$sql_gudang_asl->jml - $jml_trm;
+                $jml_akhir_tujuan = (float)$sql_gudang_tujuan->jml + $jml_trm;
+
+                // Validate Stock Quantities
+                if ($jml_akhir_asal < 0) {
+                    throw new Exception("Stok di gudang asal tidak mencukupi");
+                }
+
+                // Update Source Warehouse Stock
+                $this->db->where('id', $sql_gudang_asl->id)
+                         ->update('tbl_m_produk_stok', [
+                             'jml'       => $jml_akhir_asal,
+                             'tgl_modif' => date('Y-m-d H:i:s')
+                         ]);
+
+                // Update Destination Warehouse Stock
+                $this->db->where('id', $sql_gudang_tujuan->id)
+                         ->update('tbl_m_produk_stok', [
+                             'jml'       => $jml_akhir_tujuan,
+                             'tgl_modif' => date('Y-m-d H:i:s')
+                         ]);
+
+                // Update Global Stock
+                $total_stock = $this->db->select_sum('jml')
+                                       ->where('id_produk', $sql_mut_det->id_item)
+                                       ->get('tbl_m_produk_stok')
+                                       ->row()
+                                       ->jml;
+
+                $this->db->where('id', $sql_mut_det->id_item)
+                         ->update('tbl_m_produk', [
+                             'jml'       => (float)$total_stock,
+                             'tgl_modif' => date('Y-m-d H:i:s')
+                         ]);
+
+                // Record Stock Movement History
+                $this->db->insert('tbl_m_produk_hist', [
+                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                    'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_trm ?: date('Y-m-d')),
+                    'id_gudang'     => $sql_mut->id_gd_asal,
+                    'id_produk'     => $sql_mut_det->id_item,
+                    'id_user'       => $this->ion_auth->user()->row()->id,
+                    'id_penjualan'  => $sql_mut->id,
+                    'no_nota'       => $sql_mut->no_nota,
+                    'kode'          => $sql_mut_det->kode,
+                    'produk'        => $sql_mut_det->produk,
+                    'keterangan'    => 'Mutasi stok antar gudang',
+                    'jml'           => (float)$jml_trm,
+                    'jml_satuan'    => (float)$sql_mut_det->jml_satuan,
+                    'satuan'        => $sql_mut_det->satuan,
+                    'nominal'       => 0,
+                    'status'        => '8'
+                ]);
+
+                // Update Mutation Detail
+                $this->db->where('id', $sql_mut_det->id)
+                         ->update('tbl_trans_mutasi_det', [
+                             'id_user'      => $this->ion_auth->user()->row()->id,
+                             'tgl_terima'   => $tgl_trm ? 
+                                               $this->tanggalan->tgl_indo_sys($tgl_trm).' '.date('H:i:s') : 
+                                               date('Y-m-d H:i:s'),
+                             'jml_diterima' => $new_received_total // Use accumulated total
+                         ]);
+            }
+
+            // 6. Commit Transaction
+                    if ($this->db->trans_status() === FALSE) {
+                throw new Exception("Terjadi kesalahan saat memproses data");
+                    }
+                    
+                    $this->db->trans_commit();
+            $this->session->set_flashdata('gudang_toast', 'toastr.success("Data mutasi berhasil diterima");');
+
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('gudang_toast', 'toastr.error("' . $e->getMessage() . '");');
+        }
+
+        redirect(base_url('gudang/trans_mutasi_terima.php?id='.$nota));
     }
     
     public function trans_mutasi_terima_hapus_hist() {
@@ -1383,8 +1420,10 @@ class Gudang extends CI_Controller {
                 
                     // Commit transaksi jika tidak ada masalah
                     $this->db->trans_commit();
+
+                    // Set success message
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("<b>'.$sql_brg->produk.'</b> berhasil ditambahkan");');
                     redirect(base_url((!empty($rute) ? $rute : 'gudang/trans_mutasi.php') . '?id=' . $id));
-                
                 } catch (Exception $e) {
                     $this->db->trans_rollback(); // Rollback jika terjadi kesalahan
                     $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
@@ -1584,51 +1623,86 @@ class Gudang extends CI_Controller {
     
     public function set_trans_mutasi_proses() {
         if (akses::aksesLogin() == TRUE) {
-            $id             = $this->input->get('id');
-            $status_gd      = $this->ion_auth->user()->row()->status_gudang;
-            $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-            
-            $trans_mut      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi');
-            $trans_mut_det  = $this->db->where('id_mutasi', $trans_mut->row()->id)->get('tbl_trans_mutasi_det')->result();
-            
-            if ($trans_mut->num_rows() > 0) {
-                // Simpan penjualan ke tabel
-                $data_mut = array(
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'status_nota'   => '1',
-                );
+            $id         = $this->input->post('id');
+            $status_gd  = $this->ion_auth->user()->row()->status_gudang;
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
+            $this->form_validation->set_rules('id', 'ID', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = [
+                    'kode'   => form_error('kode'),
+                ];
+
+                $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('gudang_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
+                redirect(base_url('gudang/trans_mutasi.php?id='.$id));
+            } else {
+                $trans_mut      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi');
+                $trans_mut_det  = $this->db->where('id_mutasi', $trans_mut->row()->id)->get('tbl_trans_mutasi_det')->result();
                 
-                foreach ($trans_mut_det as $cart){
-                    $sql_brg         = $this->db->where('id', $cart->id_item)->get('tbl_m_produk')->row();
-                    $sql_gudang      = $this->db->where('id', $trans_mut->row()->id_gd_asal)->get('tbl_m_gudang')->row();
-                    $sql_gudang_asl  = $this->db->where('id_gudang', $trans_mut->row()->id_gd_asal)->where('id_produk', $sql_brg->id)->get('tbl_m_produk_stok')->row(); // Cek gudang aktif dari gudang utama
-                    $sql_gudang_7an  = $this->db->where('id_gudang', $trans_mut->id_gd_tujuan)->where('id_produk', $sql_brg->id)->get('tbl_m_produk_stok')->row(); // Cek gudang aktif dari gudang utama
-                    
-                    if($sql_gudang_asl->jml < 0 AND $trans_mut->row()->tipe != '1'){
-                        /* Hapus dulu dari database */
-                        crud::delete('tbl_trans_mutasi', 'id', $last_id);
-                        
-                        $this->session->set_flashdata('gudang_toast', 'toastr.error("Stok <b>'.$sql_brg->produk.'</b> dari gudang '.$sql_gudang->gudang.' tidak mencukupi !. Stok tersedia di sistem <b>'.$sql_gudang_stok->jml.' '.$sql_brg_sat->satuanTerkecil.'</b>");');
-                        redirect(base_url('gudang/'.(!empty($rute) ? $rute : 'trans_mutasi').'.php?id='.$id));
+                $this->db->trans_begin();
+
+                try {
+                    // Cek Form Submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception("Form sudah disubmit sebelumnya");
                     }
+
+                    
+                    // Check if there are details in the transaction
+                    if (empty($trans_mut_det)) {
+                        throw new Exception("Tidak ada item yang akan dimutasi!");
+                    }
+                    
+                    // Update status in the main transaction table
+                    $data_mutasi = [
+                        'status_nota'   => '1',
+                        'tgl_keluar'    => date('Y-m-d H:i:s')
+                    ];
+                    
+                    $this->db->where('id', $trans_mut->row()->id)->update('tbl_trans_mutasi', $data_mutasi);
+                    
+                    // Process each item in the mutation
+                    foreach ($trans_mut_det as $item) {
+                        // If not a receipt type transaction (tipe != 2), reduce stock from source warehouse
+                        if ($trans_mut->row()->tipe != '2') {
+                            // Get current stock from source warehouse
+                            $sql_stok_asal = $this->db->where('id_produk', $item->id_item)
+                                                     ->where('id_gudang', $trans_mut->row()->id_gd_asal)
+                                                     ->get('tbl_m_produk_stok');
+                            
+                            if ($sql_stok_asal->num_rows() > 0) {
+                                $stok_asal = $sql_stok_asal->row()->jml;
+                                $stok_baru = $stok_asal - $item->jml;
+                                
+                                // Update stock in source warehouse
+                                $this->db->where('id_produk', $item->id_item)
+                                         ->where('id_gudang', $trans_mut->row()->id_gd_asal)
+                                         ->update('tbl_m_produk_stok', ['jml' => $stok_baru]);
+                            }
+                        }
+                        
+                        // Update status in detail table
+                        $this->db->where('id', $item->id)->update('tbl_trans_mutasi_det', ['status_terima' => '1']);
+                    }
+                    
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception("Gagal memproses transaksi mutasi");
+                    }
+                    
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Transaksi mutasi berhasil diproses");');
+                    redirect(base_url('gudang/trans_mutasi_det.php?id='.$id));                    
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('gudang_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('gudang/trans_mutasi.php?id='.$id));
                 }
-                
-                $this->db->where('id', $trans_mut->row()->id)->update('tbl_trans_mutasi', $data_mut);
-                
-                /* -- Hapus semua session -- */
-                $this->session->unset_userdata('trans_mutasi');
-                $this->cart->destroy();
-                /* -- Hapus semua session -- */
-
-                $this->session->set_flashdata('gudang_toast', 'toastr.success("Mutasi gudang berhasil disimpan");');
-
-                redirect(base_url('gudang/trans_mutasi_det.php?id='.$id));
-            }else{              
-                $this->session->unset_userdata('trans_mutasi');
-                $this->cart->destroy();
-                
-                redirect(base_url('gudang/trans_mutasi.php'));
-            }               
+            }
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');

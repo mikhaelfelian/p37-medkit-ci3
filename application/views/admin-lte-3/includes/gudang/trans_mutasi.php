@@ -287,10 +287,15 @@
                                     <div class="col-md-6">
                                     </div>
                                     <div class="col-md-6 text-right">
-                                        <?php if (!empty($sql_penj_det)) { ?>
-                                            <button type="button" class="btn btn-success btn-flat"
-                                                onclick="window.location.href = '<?php echo base_url('gudang/set_trans_mutasi_proses.php?id=' . $this->input->get('id')) ?>'"><i
-                                                    class="fa fa-check-circle"></i> Proses</button>
+                                        <?php if (!empty($sql_penj_det)) { ?>                                            
+                                            <?php echo form_open(base_url('gudang/set_trans_mutasi_proses.php?id=' . $this->input->get('id')), 'id="mutasi_proses_form"'); ?>
+                                            <?php echo add_form_protection(); ?>
+                                            <?php echo form_hidden('id', $this->input->get('id')); ?>
+                                            <button type="submit" class="btn btn-success btn-flat">
+                                                    <i class="fa fa-check-circle"></i> Proses
+                                                </button>
+                                            <?php echo add_double_submit_protection('mutasi_proses_form'); ?>
+                                            <?php echo form_close(); ?>
                                         <?php } ?>
                                     </div>
                                 </div>
