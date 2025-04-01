@@ -10272,7 +10272,7 @@ public function set_medcheck_lab_adm_save() {
                     $this->db->trans_commit();
 
                     # Tampilkan pesan sukses jika sudah berhasil commit
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("ICD Berhasil dihapus !");');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.info("ICD Berhasil dihapus !");');
                 }
             }
 

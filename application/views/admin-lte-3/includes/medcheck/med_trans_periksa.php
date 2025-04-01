@@ -38,11 +38,18 @@
                             <h3 class="card-title">DIAGNOSA ICD 10 - <?php echo $sql_pasien->nama_pgl; ?> <small><i>(<?php echo $this->tanggalan->usia($sql_pasien->tgl_lahir) ?>)</i></small></h3>
                         </div>
                         <div class="card-body">
-                            <div class="input-group input-group">
-                                <?php echo form_input(array('id' => 'icd', 'name' => '', 'class' => 'form-control rounded-0' . (!empty($hasError['icd']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan ICD 10 menggunakan bahasa inggris ...')) ?>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-<?php echo (!empty($hasError['icd']) ? 'danger' : 'info') ?> btn-flat"><i class="fa fa-plus"></i></button>
-                                </span>
+                            <div class="form-group">
+                                <div class="input-group mt-2">
+                                    <select id="icd" class="form-control select2bs4">
+                                        <option value="">Isikan ICD 10 ...</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-<?php echo (!empty($hasError['icd']) ? 'danger' : 'primary') ?> btn-flat">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selected_icd_display" name="selected_icd_display" value="">
                             </div>
                             <hr/>
                             <?php $sql_medc_icd = $this->db->where('id_medcheck', $sql_medc->id)->where('status_icd', '1')->get('tbl_trans_medcheck_icd'); ?>
@@ -298,43 +305,49 @@
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/moment/moment.min.js') ?>"></script>
 <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">
 
+<!-- Select2 -->
+<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/js/select2.full.min.js') ?>"></script>
+<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
+<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
+
 <script type="text/javascript">
     $(function () {
         $("input[id=ttv]").autoNumeric({aSep: '.', aDec: ',', aPad: false}); 
         
-        // Autocomplete INA-CBG
-        $('#icd').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "<?php echo base_url('medcheck/json_icd.php?status=2') ?>",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
-            },
-            minLength: 1,
-            select: function (event, ui) {
-                var $itemrow = $(this).closest('tr');
-                //Populate the input fields from the returned values
-                $itemrow.find('#id_icd').val(ui.item.id);
-                $('#id_icd').val(ui.item.id);
-                $('#icd').val(ui.item.diagnosa_en);
-
-                // Give focus to the next input field to recieve input from user
-                $('#icd').focus();
-                return false;
+        // Initialize Select2 for ICD
+        $('#icd').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Isikan ICD 10 ...',
+            minimumInputLength: 1,
+            ajax: {
+                url: "<?php echo base_url('medcheck/json_icd.php?status=2') ?>",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: '[' + item.kode + '] ' + item.diagnosa_en,
+                                id: item.id,
+                                kode: item.kode,
+                                diagnosa_en: item.diagnosa_en
+                            };
+                        })
+                    };
+                },
+                cache: true
             }
-
-            // Format the list menu output of the autocomplete
-        }).data("ui-autocomplete")._renderItem = function (ul, item) {
-            return $("<li></li>")
-                    .data("item.autocomplete", item)
-                    .append("<a>[" + item.kode + "] " + item.diagnosa_en + "</a>")
-                    .appendTo(ul);
-        };
+        }).on('select2:select', function (e) {
+            var data = e.params.data;
+            $('#id_icd').val(data.id);
+            $('#selected_icd_display').val('[' + data.kode + '] ' + data.diagnosa_en);
+        });
+        
+        $('.select2-container--bootstrap4 .select2-selection').addClass('rounded-0');
     });
 </script>
