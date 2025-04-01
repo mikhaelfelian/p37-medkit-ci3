@@ -904,20 +904,20 @@ class Gudang extends CI_Controller {
 
             if(!empty($hal)){
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
-                           ->where('status_nota', $sn)
-                           ->limit($config['per_page'],$hal)
-                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
-                           ->like('DATE(tgl_simpan)', $tg)
-                           ->order_by('id','desc')
-                           ->get('tbl_trans_mutasi')->result();
+                                            ->where('status_nota', $sn)
+                                            ->limit($config['per_page'],$hal)
+                                            ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
+                                            ->like('DATE(tgl_simpan)', $tg)
+                                            ->order_by('id','desc')
+                                            ->get('tbl_trans_mutasi')->result();
             }else{
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
-                           ->where('status_nota', $sn)
-                           ->limit($config['per_page'])
-                           ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
-                           ->like('DATE(tgl_simpan)', $tg)
-                           ->order_by('id','desc')
-                           ->get('tbl_trans_mutasi')->result();
+                                            ->where('status_nota', $sn)
+                                            ->limit($config['per_page'])
+                                            ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
+                                            ->like('DATE(tgl_simpan)', $tg)
+                                            ->order_by('id','desc')
+                                            ->get('tbl_trans_mutasi')->result();
             }
             
             $this->pagination->initialize($config);
