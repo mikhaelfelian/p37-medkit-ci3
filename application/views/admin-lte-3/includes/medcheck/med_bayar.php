@@ -266,8 +266,9 @@
                         <?php echo form_close(); ?>
                     <?php } ?>
                     <?php if (empty($sql_produk)) { ?>
-                        <?php echo form_open_multipart(base_url('medcheck/set_medcheck_bayar.php'), 'autocomplete="off"') ?>
-                            <?php echo form_hidden('no_nota', general::enkrip($sql_medc->id)) ?>
+                        <?php echo form_open(base_url('medcheck/set_medcheck_bayar.php'), 'id="medc_bayar_form" autocomplete="off"') ?>
+                            <?php echo add_form_protection(); ?>
+                        <?php echo form_hidden('no_nota', general::enkrip($sql_medc->id)) ?>
                             <div class="card">
                                 <div class="card-body">                            
                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
@@ -415,6 +416,7 @@
                                     <button type="submit" class="btn btn-info float-right rounded-0"><i class="fa fa-shopping-cart"></i> Bayar</button>
                                 </div>
                             </div>
+                        <?php echo add_double_submit_protection('medc_bayar_form') ?>
                         <?php echo form_close(); ?>
 
                         <div class="card">
