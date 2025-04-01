@@ -2797,7 +2797,6 @@ class Master extends CI_Controller {
             
             $data['kode']               = (!empty($id) ? general::dekrip($id) : $kodebar);
             $data['barang']             = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
-            $data['barang_nom']         = $this->db->where('id_produk', general::dekrip($id))->get('tbl_m_produk_nominal')->result();
             $data['barang_stk']         = $this->db->select('SUM(jml * jml_satuan) AS jml')
                                                    ->where('id_produk', $data['barang']->id)
                                                    ->get('tbl_m_produk_stok')->row();
