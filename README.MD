@@ -19,7 +19,7 @@ This repository contains the upgraded version of **Medkit 2**, migrated from **C
 ### **Getting Started**  
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/your-repo/medkit2-migration.git
+   git clone https://github.com/mikhaelfelian/p37-medkit-ci3.git
    ```
 2. Install dependencies via Composer (if applicable).  
 3. Configure `config.php`, `database.php`, and other necessary settings.  
