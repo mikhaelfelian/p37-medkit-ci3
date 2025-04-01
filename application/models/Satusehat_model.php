@@ -36,5 +36,4 @@ class Satusehat_model extends CI_Model{
     }
 
 }
-
 ?>
