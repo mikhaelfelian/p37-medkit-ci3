@@ -1115,10 +1115,10 @@ class Gudang extends CI_Controller {
 
         try {
             // 1. Input Validation
-            $id = $this->input->post('id');
-            $nota = $this->input->post('no_nota');
-            $tgl_trm = $this->input->post('tgl_terima');
-            $jml_trm = (float)$this->input->post('jml_terima');
+            $id         = $this->input->post('id');
+            $nota       = $this->input->post('no_nota');
+            $tgl_trm    = $this->input->post('tgl_terima');
+            $jml_trm    = (float)$this->input->post('jml_terima');
 
             if (empty($id) || empty($nota) || $jml_trm <= 0) {
                 throw new Exception("Data input tidak valid");
@@ -1184,31 +1184,31 @@ class Gudang extends CI_Controller {
 
                     // 5. Record Stock Movement History
                     $this->db->insert('tbl_m_produk_hist', [
-                        'tgl_simpan' => date('Y-m-d H:i:s'),
-                        'tgl_masuk' => $this->tanggalan->tgl_indo_sys($tgl_trm ?: date('Y-m-d')),
-                        'id_gudang' => $sql_mut->id_gd_asal,
-                        'id_produk' => $sql_mut_det->id_item,
-                        'id_user' => $this->ion_auth->user()->row()->id,
-                        'id_penjualan' => $sql_mut->id,
-                        'no_nota' => $sql_mut->no_nota,
-                        'kode' => $sql_mut_det->kode,
-                        'produk' => $sql_mut_det->produk,
-                        'keterangan' => 'Mutasi stok antar gudang',
-                        'jml' => (float)$jml_trm,
-                        'jml_satuan' => (float)$sql_mut_det->jml_satuan,
-                        'satuan' => $sql_mut_det->satuan,
-                        'nominal' => 0,
-                        'status' => '8'
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_trm ?: date('Y-m-d')),
+                        'id_gudang'     => $sql_mut->id_gd_asal,
+                        'id_produk'     => $sql_mut_det->id_item,
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'id_penjualan'  => $sql_mut->id,
+                        'no_nota'       => $sql_mut->no_nota,
+                        'kode'          => $sql_mut_det->kode,
+                        'produk'        => $sql_mut_det->produk,
+                        'keterangan'    => 'Mutasi stok antar gudang',
+                        'jml'           => (float)$jml_trm,
+                        'jml_satuan'    => (float)$sql_mut_det->jml_satuan,
+                        'satuan'        => $sql_mut_det->satuan,
+                        'nominal'       => 0,
+                        'status'        => '8'
                     ]);
 
                     // 6. Update Mutation Detail with new received quantity
                     $new_received_total = (float)$sql_mut_det->jml_diterima + $jml_trm;
                     $this->db->where('id', $sql_mut_det->id)
                             ->update('tbl_trans_mutasi_det', [
-                                'id_user' => $this->ion_auth->user()->row()->id,
-                                'tgl_terima' => $tgl_trm ? 
-                                    $this->tanggalan->tgl_indo_sys($tgl_trm).' '.date('H:i:s') : 
-                                    date('Y-m-d H:i:s'),
+                                'id_user'      => $this->ion_auth->user()->row()->id,
+                                'tgl_terima'   => $tgl_trm ? 
+                                                  $this->tanggalan->tgl_indo_sys($tgl_trm).' '.date('H:i:s') : 
+                                                  date('Y-m-d H:i:s'),
                                 'jml_diterima' => $new_received_total
                             ]);
 
@@ -1221,7 +1221,7 @@ class Gudang extends CI_Controller {
 
                     $this->db->where('id', $sql_mut_det->id_item)
                             ->update('tbl_m_produk', [
-                                'jml' => (float)$total_stock,
+                                'jml'       => (float)$total_stock,
                                 'tgl_modif' => date('Y-m-d H:i:s')
                             ]);
                 }
@@ -1234,12 +1234,12 @@ class Gudang extends CI_Controller {
                 $this->db->trans_commit();
                 
                 echo json_encode([
-                    'success' => true,
-                    'message' => 'Data mutasi berhasil diterima',
-                    'data' => [
-                        'id' => $id,
+                    'success'  => true,
+                    'message'  => 'Data mutasi berhasil diterima',
+                    'data'     => [
+                        'id'           => $id,
                         'jml_diterima' => $jml_trm,
-                        'remaining' => $sql_mut_det->jml - ($sql_mut_det->jml_diterima + $jml_trm)
+                        'remaining'    => $sql_mut_det->jml - ($sql_mut_det->jml_diterima + $jml_trm)
                     ]
                 ]);
 
