@@ -148,16 +148,16 @@
                                                         <small class="text-muted">Max: <?php echo $remaining_stock; ?></small>
                                                         <div class="input-group">
                                                             <?php echo form_input([
-                                                                'name' => 'jml_terima',
-                                                                'class' => 'form-control text-center receive-qty rounded-0',
-                                                                'type' => 'number',
-                                                                'min' => '0',
-                                                                'max' => $remaining_stock,
-                                                                'step' => '1',
-                                                                'required' => 'required',
+                                                                'name'        => 'jml_terima',
+                                                                'class'       => 'form-control text-center receive-qty rounded-0',
+                                                                'type'        => 'number',
+                                                                'min'         => '0',
+                                                                'max'         => $remaining_stock,
+                                                                'step'        => '1',
+                                                                'required'    => 'required',
                                                                 'placeholder' => $remaining_stock,
-                                                                'data-id' => $items->id,
-                                                                'data-max' => $remaining_stock
+                                                                'data-id'     => $items->id,
+                                                                'data-max'    => $remaining_stock
                                                             ]); ?>
                                                             <div class="input-group-append rounded-0">
                                                                 <span class="input-group-text rounded-0"><?php echo $items->satuan; ?></span>
@@ -166,8 +166,8 @@
                                                     <?php else: ?>
                                                         <span class="badge badge-success">Selesai</span>
                                                         <?php echo form_input([
-                                                            'value' => $items->jml_diterima,
-                                                            'class' => 'form-control text-center',
+                                                            'value'    => $items->jml_diterima,
+                                                            'class'    => 'form-control text-center',
                                                             'disabled' => 'true'
                                                         ]); ?>
                                                     <?php endif; ?>
