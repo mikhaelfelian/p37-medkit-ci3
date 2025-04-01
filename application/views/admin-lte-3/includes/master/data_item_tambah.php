@@ -557,6 +557,5 @@
                 .append("<a>" + item.name + "</a>")
                 .appendTo(ul);
         };
-        <?php echo $this->session->flashdata('master_toast'); ?>
     });
 </script>
