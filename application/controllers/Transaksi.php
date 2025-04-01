@@ -11,12 +11,10 @@
  *     Transaksi controller
  */
 class transaksi extends CI_Controller {
-    //put your code here
     public function __construct() {
         parent::__construct();
         $this->load->library('cart');
         $this->load->library('Excel');
-
         $this->load->library('qrcode/ciqrcode');
     }
 
@@ -38,8 +36,7 @@ class transaksi extends CI_Controller {
             $this->load->view('admin-lte-3/includes/trans/index', $data);
             $this->load->view('admin-lte-3/5_footer', $data);
             $this->load->view('admin-lte-3/6_bawah', $data);
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -74,10 +71,6 @@ class transaksi extends CI_Controller {
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/trans/jual/sidebar_jual';
             /* --- Sidebar Menu --- */
-            
-//            echo '<pre>';
-//            print_r($this->session->userdata('trans_beli'));
-//            echo '</pre>';
 
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
@@ -86,7 +79,6 @@ class transaksi extends CI_Controller {
             $this->load->view('admin-lte-3/5_footer',$data);
             $this->load->view('admin-lte-3/6_bawah',$data);
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -124,10 +116,7 @@ class transaksi extends CI_Controller {
                                 ->where('tbl_trans_beli.status_hps', '0')
                                 ->like('tbl_m_supplier.nama', $sl)
                                 ->like('tbl_trans_beli.no_nota', $nt)
-//                                ->like('DATE(tbl_trans_beli.tgl_masuk)', $tg)
                                 ->like('DATE(tbl_trans_beli.tgl_keluar)', $tp)
-//                                ->like('DATE(tbl_trans_beli.tgl_bayar)', $tb)
-//                                ->like('tbl_trans_beli.status_bayar', $sb)
                                 ->order_by('tbl_trans_beli.id','desc')
                                 ->get('tbl_trans_beli')->num_rows();
             }            
@@ -173,13 +162,8 @@ class transaksi extends CI_Controller {
                    $data['sql_beli'] = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.no_po, tbl_trans_beli.no_nota, DATE(tbl_trans_beli.tgl_masuk) as tgl_masuk, DATE(tbl_trans_beli.tgl_bayar) as tgl_bayar, DATE(tbl_trans_beli.tgl_keluar) as tgl_keluar, tbl_trans_beli.jml_total, tbl_trans_beli.jml_retur, tbl_trans_beli.jml_subtotal, tbl_trans_beli.jml_gtotal, tbl_trans_beli.id_user, tbl_trans_beli.id_supplier, tbl_trans_beli.status_nota, tbl_trans_beli.status_bayar, tbl_m_supplier.nama, tbl_m_supplier.npwp, tbl_m_supplier.alamat, tbl_m_supplier.no_tlp, tbl_m_supplier.cp')
                            ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
                            ->where('tbl_trans_beli.status_hps', '0')
-//                           ->like('tbl_trans_beli.id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'purchasing' ? '' : $id_user))
                            ->like('tbl_m_supplier.nama', $sl)
                            ->like('tbl_trans_beli.no_nota', $nt)
-//                           ->like('DATE(tbl_trans_beli.tgl_masuk)', $tg)
-//                           ->like('DATE(tbl_trans_beli.tgl_keluar)', $tp)
-//                           ->like('DATE(tbl_trans_beli.tgl_bayar)', $tb)
-//                           ->like('tbl_trans_beli.status_bayar', $sb)
                            ->limit($config['per_page'],$hal)
                            ->order_by('tbl_trans_beli.tgl_masuk','desc')
                            ->get('tbl_trans_beli')->result();
@@ -187,13 +171,9 @@ class transaksi extends CI_Controller {
                    $data['sql_beli'] = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.no_po, tbl_trans_beli.no_nota, DATE(tbl_trans_beli.tgl_masuk) as tgl_masuk, DATE(tbl_trans_beli.tgl_bayar) as tgl_bayar, DATE(tbl_trans_beli.tgl_keluar) as tgl_keluar, tbl_trans_beli.jml_total, tbl_trans_beli.jml_retur, tbl_trans_beli.jml_subtotal, tbl_trans_beli.jml_gtotal, tbl_trans_beli.id_user, tbl_trans_beli.id_supplier, tbl_trans_beli.status_nota, tbl_trans_beli.status_bayar, tbl_m_supplier.nama, tbl_m_supplier.npwp, tbl_m_supplier.alamat, tbl_m_supplier.no_tlp, tbl_m_supplier.cp')
                            ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
                            ->where('tbl_trans_beli.status_hps', '0')
-//                           ->like('tbl_trans_beli.id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'purchasing' ? '' : $id_user))
                            ->like('tbl_m_supplier.nama', $sl)
                            ->like('tbl_trans_beli.no_nota', $nt)
-//                           ->like('DATE(tbl_trans_beli.tgl_masuk)', $tg)
                            ->like('DATE(tbl_trans_beli.tgl_keluar)', $tp)
-//                           ->like('DATE(tbl_trans_beli.tgl_bayar)', $tb)
-//                           ->like('tbl_trans_beli.status_bayar', $sb)
                            ->limit($config['per_page'])                           
                            ->order_by('tbl_trans_beli.tgl_masuk','desc')
                            ->get('tbl_trans_beli')->result();
@@ -223,7 +203,6 @@ class transaksi extends CI_Controller {
             $this->load->view('admin-lte-3/5_footer', $data);
             $this->load->view('admin-lte-3/6_bawah', $data);
         }else{
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -241,6 +220,7 @@ class transaksi extends CI_Controller {
             $query   = $this->input->get('q');
             $hal     = $this->input->get('halaman');
             $jml     = $this->input->get('jml');
+            $case    = $this->input->get('case') ?? '';
 
             $nt = $this->input->get('filter_nota');
             $tg = $this->input->get('filter_tgl');
@@ -264,40 +244,36 @@ class transaksi extends CI_Controller {
             }            
 
             /* -- Form Error -- */
-            $data['hasError']                = $this->session->flashdata('form_error');
+            $data['hasError'] = $this->session->flashdata('form_error');
             
-            // Config Pagination
+            // Config Pagination for AdminLTE 3
             $config['base_url']              = base_url('transaksi/beli/trans_beli_po_list.php?case='.$case.(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : '').(!empty($jml) ? '&jml='.$jml : ''));
             $config['total_rows']            = $jml_hal;
-            
             $config['query_string_segment']  = 'halaman';
             $config['page_query_string']     = TRUE;
             $config['per_page']              = $pengaturan->jml_item;
             $config['num_links']             = 3;
             
+            // AdminLTE 3 pagination styling
+            $config['full_tag_open']         = '<ul class="pagination pagination-sm m-0 float-right">';
+            $config['full_tag_close']        = '</ul>';
             $config['first_tag_open']        = '<li class="page-item">';
             $config['first_tag_close']       = '</li>';
-            
             $config['prev_tag_open']         = '<li class="page-item">';
             $config['prev_tag_close']        = '</li>';
-            
             $config['num_tag_open']          = '<li class="page-item">';
             $config['num_tag_close']         = '</li>';
-            
             $config['next_tag_open']         = '<li class="page-item">';
             $config['next_tag_close']        = '</li>';
-            
             $config['last_tag_open']         = '<li class="page-item">';
             $config['last_tag_close']        = '</li>';
-            
-            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
-            
-            $config['first_link']            = '&laquo;';
-            $config['prev_link']             = '&lsaquo;';
-            $config['next_link']             = '&rsaquo;';
-            $config['last_link']             = '&raquo;';
-            $config['anchor_class']          = 'class="page-link"';
+            $config['cur_tag_open']          = '<li class="page-item active"><a href="#" class="page-link">';
+            $config['cur_tag_close']         = '</a></li>';
+            $config['first_link']            = '<i class="fas fa-angle-double-left"></i>';
+            $config['prev_link']             = '<i class="fas fa-angle-left"></i>';
+            $config['next_link']             = '<i class="fas fa-angle-right"></i>';
+            $config['last_link']             = '<i class="fas fa-angle-double-right"></i>';
+            $config['attributes']            = array('class' => 'page-link');
             
             if(!empty($hal)){
                    $data['sql_beli'] = $this->db->select('tbl_trans_beli_po.id, tbl_trans_beli_po.id_supplier, tbl_trans_beli_po.no_nota, DATE(tbl_trans_beli_po.tgl_masuk) as tgl_masuk, DATE(tbl_trans_beli_po.tgl_bayar) as tgl_bayar, DATE(tbl_trans_beli_po.tgl_keluar) as tgl_keluar, tbl_trans_beli_po.keterangan, tbl_trans_beli_po.pengiriman, tbl_m_supplier.nama, tbl_m_supplier.npwp, tbl_m_supplier.alamat, tbl_m_supplier.no_tlp, tbl_m_supplier.cp')
@@ -339,7 +315,6 @@ class transaksi extends CI_Controller {
             $this->load->view('admin-lte-3/5_footer', $data);
             $this->load->view('admin-lte-3/6_bawah', $data);
         }else{
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -375,13 +350,6 @@ class transaksi extends CI_Controller {
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/trans/beli/sidebar_beli';
             /* --- Sidebar Menu --- */
-            
-//            echo '<pre>';
-//            print_r($data['sql_po']);
-//            echo '</pre>';
-//            echo '<pre>';
-//            print_r($this->session->userdata('trans_beli'));
-//            echo '</pre>';
 
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
@@ -390,7 +358,6 @@ class transaksi extends CI_Controller {
             $this->load->view('admin-lte-3/5_footer',$data);
             $this->load->view('admin-lte-3/6_bawah',$data);
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -435,34 +402,34 @@ class transaksi extends CI_Controller {
         if (akses::aksesLogin() == TRUE) {
             $setting  = $this->db->get('tbl_pengaturan')->row();
             $id       = $this->input->get('id');
+            $id_produk = $this->input->get('id_produk'); // Added missing variable
             $userid   = $this->ion_auth->user()->row()->id;
-
             
+            $data = []; // Initialize data array
             
             if(!empty($id)){
                 $data['sql_beli']       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
                 $data['sql_beli_det']   = $this->db->where('id_pembelian', general::dekrip($id))->get('tbl_trans_beli_det')->result();
                 $data['sql_supplier']   = $this->db->where('id', $data['sql_beli']->id_supplier)->get('tbl_m_supplier')->row();
-                $data['sql_item']       = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
+                
+                if(!empty($id_produk)) {
+                    $data['sql_item'] = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
+                }
+                
                 $data['sql_satuan']     = $this->db->get('tbl_m_satuan')->result();
             }
             
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/trans/beli/sidebar_beli';
             /* --- Sidebar Menu --- */
-//            
-//            echo '<pre>';
-//            print_r($data['sql_beli']);
-//            echo '</pre>';
 
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
             $this->load->view('admin-lte-3/3_navbar', $data);
             $this->load->view('admin-lte-3/includes/trans/beli/trans_beli_det', $data);
-            $this->load->view('admin-lte-3/5_footer',$data);
-            $this->load->view('admin-lte-3/6_bawah',$data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -829,9 +796,6 @@ class transaksi extends CI_Controller {
             $gambar2            = base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
             $gambar3            = base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
 
-            $judul  = "LAPORAN HARIAN ABSENSI";
-            $judul2 = "";
-            
             $this->load->library('MedBeliPDF');
             $pdf = new MedBeliPDF('P', 'cm', array(21.5,33));
             $pdf->judul = 'FAKTUR BELI';
@@ -842,6 +806,7 @@ class transaksi extends CI_Controller {
             $pdf->Image($gambar2,5,4,15,19);
             
             # Line Cell
+            $fill = FALSE;
             $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
             $pdf->Ln();
             
@@ -850,13 +815,13 @@ class transaksi extends CI_Controller {
             $pdf->Cell(1, .5, 'APA', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(17.5, .5, 'APT. UNGSARI RIZKI EKA PURWANTO, M.SC', 0, 1, 'L');
+            $pdf->Cell(17.5, .5, $setting->apt_apa, 0, 1, 'L');
             $pdf->Ln(0);
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(1, .5, 'SIPA', '', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(17.5, .5, '449.1/61/DPM-PTSP/SIPA/II/2022', '', 1, 'L', $fill);
+            $pdf->Cell(17.5, .5, $setting->apt_sipa, '', 1, 'L', $fill);
             $pdf->Ln();
             
             # DATA PEMBELIAN
@@ -870,11 +835,10 @@ class transaksi extends CI_Controller {
             $pdf->Ln();
             $pdf->Cell(2.5, .5, 'NPWP', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8.5, .5, (!empty($sql_supplier->npwp) ? $sql_medc->npwp : '-'), '0', 0, 'L', $fill);
+            $pdf->Cell(8.5, .5, (!empty($sql_supplier->npwp) ? $sql_supplier->npwp : '-'), '0', 0, 'L', $fill);
             $pdf->Cell(1.5, .5, 'No. PO', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(5, .5, $sql_beli->no_po, '0', 0, 'L', $fill);
-//            $pdf->Cell(5, .5, $this->tanggalan->tgl_indo3($sql_beli->tgl_masuk), '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(2.5, .5, 'Kode Supplier', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
@@ -918,9 +882,8 @@ class transaksi extends CI_Controller {
                 $no++;
             }
             
-            $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
             $jml_total      = $gtotal;
-            $jml_diskon     = $jml_total - ($jml_total - $sql_medc->jml_diskon);
+            $jml_diskon     = $jml_total - ($jml_total - $sql_beli->jml_diskon);
             $diskon         = ($jml_diskon / $jml_total) * 100; 
             
             // Kolom Total
@@ -966,27 +929,10 @@ class transaksi extends CI_Controller {
             $pdf->Cell(3, .5, general::format_angka($sql_beli->jml_gtotal), '', 0, 'R', $fill);
             $pdf->Ln(1);
 
-            // QR GENERATOR VALIDASI SPV
-//            $params['data']     = 'telah diverifikasi dan ditandatangani secara elektronik oleh manajemen. '.$sql_beli->no_nota.'-'.$sql_beli->tgl_simpan.' ['.$sql_supplier->kode.' '.$sql_supplier->nama.']';
-//            $params['level']    = 'H';
-//            $params['size']     = 2;
-//            $params['savename'] = FCPATH.'/file/qr/fpval-'.strtolower($sql_beli->id).'.png';
-//            $gambar4            = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
-//            $this->ciqrcode->generate($params);
-                        
-            // QR GENERATOR VALIDASI PETUGAS
-//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh petugas penanggung jawab ['.$oleh.']';
-//            $params['level']    = 'H';
-//            $params['size']     = 2;
-//            $params['savename'] = FCPATH.'/file/qr/fpuser-'.strtolower($sql_beli->id_user).'.png';
-//            $this->ciqrcode->generate($params);      
-//            $gambar5            = base_url('file/qr/fpuser-'.strtolower($sql_beli->id_user).'.png');
-            
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $gambar4 = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
             $pdf->Image($gambar4,1.25,$getY,6,3.5);
-//            $pdf->Image($gambar5,14,$getY,3.5,3.5);
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -994,7 +940,6 @@ class transaksi extends CI_Controller {
             $pdf->Ln();
             $pdf->SetFont('Arial', 'B', '10');
             $pdf->Cell(4, .5, 'Pemesan', '0', 0, 'C', $fill);
-//            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
             $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(8.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_beli->tgl_masuk), '0', 0, 'C', $fill);
