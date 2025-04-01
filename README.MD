@@ -59,7 +59,7 @@ This version includes significant changes from the original CodeIgniter 2 codeba
 - Improved error handling and logging
 
 ## Contributors
-- Mikhael Felian Waskito - mikhaelfelian@gmail.com (contributed 01/03/2026)
+- Mikhael Felian Waskito - mikhaelfelian@gmail.com (contributed 01/03/2025)
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
