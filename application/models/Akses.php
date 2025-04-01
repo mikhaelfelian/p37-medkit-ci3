@@ -1,7 +1,17 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
+/**
+ * Akses Model
+ * 
+ * This model handles access control functionality for the application
+ * 
+ * @author     Mikhael Felian Waskito
+ * @github     mikhaelfelian
+ * @modified   2025-04-01
+ */
 
-class akses extends CI_Model {
+
+class Akses extends CI_Model {
 
     function __construct() {
         parent::__construct();
