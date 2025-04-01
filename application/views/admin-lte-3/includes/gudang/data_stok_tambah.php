@@ -83,20 +83,7 @@
                         </div>
                         <div class="card-body table-responsive">
                             <?php echo form_open(base_url('gudang/set_stok_update_gd.php'), 'autocomplete="off"') ?>
-                            <?php echo form_hidden('id', $this->input->get('id')) ?>
-                            
-                            <div class="form-group">
-                                <label>Date Range:</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="far fa-calendar-alt"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control float-right" id="date_range" name="date_range">
-                                </div>
-                            </div>
-                            
+                            <?php echo form_hidden('id', $this->input->get('id')) ?>                           
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
