@@ -868,24 +868,24 @@ class Gudang extends CI_Controller {
             
             $config['base_url']              = base_url('gudang/data_mutasi.php?filter_tgl='.$tg.'&filter_status='.$sn);
             $config['total_rows']            = $jml_hal;
-            
+
             $config['query_string_segment']  = 'halaman';
             $config['page_query_string']     = TRUE;
             $config['per_page']              = $pengaturan->jml_item;
             $config['num_links']             = 2;
-            
+
             $config['full_tag_open']         = '<ul class="pagination pagination-sm">';
             $config['full_tag_close']        = '</ul>';
             
             $config['first_tag_open']        = '<li class="page-item">';
             $config['first_tag_close']       = '</li>';
-            
+
             $config['prev_tag_open']         = '<li class="page-item">';
             $config['prev_tag_close']        = '</li>';
-            
+
             $config['num_tag_open']          = '<li class="page-item">';
             $config['num_tag_close']         = '</li>';
-            
+
             $config['next_tag_open']         = '<li class="page-item">';
             $config['next_tag_close']        = '</li>';
             
@@ -904,20 +904,20 @@ class Gudang extends CI_Controller {
 
             if(!empty($hal)){
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
-                                            ->where('status_nota', $sn)
-                                            ->limit($config['per_page'],$hal)
+                           ->where('status_nota', $sn)
+                           ->limit($config['per_page'],$hal)
                                             ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
-                                            ->like('DATE(tgl_simpan)', $tg)
-                                            ->order_by('id','desc')
-                                            ->get('tbl_trans_mutasi')->result();
+                           ->like('DATE(tgl_simpan)', $tg)
+                           ->order_by('id','desc')
+                           ->get('tbl_trans_mutasi')->result();
             }else{
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
-                                            ->where('status_nota', $sn)
-                                            ->limit($config['per_page'])
+                           ->where('status_nota', $sn)
+                           ->limit($config['per_page'])
                                             ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
-                                            ->like('DATE(tgl_simpan)', $tg)
-                                            ->order_by('id','desc')
-                                            ->get('tbl_trans_mutasi')->result();
+                           ->like('DATE(tgl_simpan)', $tg)
+                           ->order_by('id','desc')
+                           ->get('tbl_trans_mutasi')->result();
             }
             
             $this->pagination->initialize($config);
