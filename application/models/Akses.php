@@ -13,7 +13,7 @@
 
 class Akses extends CI_Model {
 
-    function __construct() {
+    public function __construct() {
         parent::__construct();
     }
     
@@ -266,7 +266,7 @@ class Akses extends CI_Model {
         endif;
     }
     
-    function menuAksesTop() {
+    public function menuAksesTop() {
         $user = $this->ion_auth->user()->row();
         $grup = $this->ion_auth->get_users_groups($user->id)->row();
         
@@ -329,7 +329,7 @@ class Akses extends CI_Model {
         }
     }
     
-    function menuAkses() {
+    public function menuAkses() {
         $user = $this->ion_auth->user()->row();
         $grup = $this->ion_auth->get_users_groups($user->id)->row();
         
@@ -376,7 +376,7 @@ class Akses extends CI_Model {
         }
     }
         
-    function menuAksesSidebar() {
+    public function menuAksesSidebar() {
         $user = $this->ion_auth->user()->row();
         $grup = $this->ion_auth->get_users_groups($user->id)->row();
         
@@ -423,7 +423,7 @@ class Akses extends CI_Model {
         }
     }
     
-    function contentAkses() {
+    public function contentAkses() {
         $user = $this->ion_auth->user()->row();
         $grup = $this->ion_auth->get_users_groups($user->id)->row();
         
