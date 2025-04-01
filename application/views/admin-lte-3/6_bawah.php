@@ -17,14 +17,34 @@
                     $("input[name='" + data.name + "']").val(data.token);
                     
                     // Tampilkan notifikasi menggunakan Toastr
-                    toastr.success("CSRF Token berhasil diperbarui!", "Token Refreshed");
+                    // toastr.success("CSRF Token berhasil diperbarui!", "Token Refreshed");
                 }).fail(function() {
-                    toastr.error("Gagal memperbarui CSRF Token!", "Error");
+                    // toastr.error("Gagal memperbarui CSRF Token!", "Error");
                 });
             }
 
             // Setiap 2 menit (120000 ms), refresh token CSRF otomatis
             setInterval(refreshCsrfToken, 120000);
+            
+            function checkMutasiNotifications() {
+                $.getJSON("<?= base_url('notification/notif_gudang') ?>", function(response) {
+                    if (response.status && response.total > 0) {
+                        // Loop through each notification
+                        response.data.forEach(function(item) {
+                            toastr.info(
+                                item.message + '<br/>' +
+                                '<small>Oleh: ' + item.user + '</small>',
+                                'Mutasi #' + item.nomer
+                            );
+                        });
+                    }
+                }).fail(function() {
+                    console.log("Failed to check notifications");
+                });
+            }
+
+            // Set interval to check for notifications every 30 seconds (30000 ms)
+            setInterval(checkMutasiNotifications, 30000);
         </script>
     </body>
 </html>

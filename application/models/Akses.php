@@ -307,6 +307,10 @@ class akses extends CI_Model {
             case 'dokter':
                 $CI->load->view('admin-lte-3/includes/menu/notif_dokter');
                 break;
+
+            case 'gudang':
+                $CI->load->view('admin-lte-3/includes/menu/notif_gudang');
+                break;
         }
     }
     
