@@ -75,7 +75,11 @@
                 <?php } elseif (akses::hakKasir() == TRUE) { ?>
                     <li class="nav-item d-none d-sm-inline-block">
                         <a href="<?php echo base_url('pos/index.php') ?>" class="nav-link">Apotik</a>
-                    </li>                    
+                    </li>  
+                <?php } elseif (akses::hakGudang() == TRUE) { ?>
+                    <li class="nav-item d-none d-sm-inline-block">
+                        <a href="<?php echo base_url('gudang/index.php') ?>" class="nav-link">Gudang</a>
+                    </li>                   
                 <?php } ?>
                 
                 <!--MENU UNTUK PONSEL-->

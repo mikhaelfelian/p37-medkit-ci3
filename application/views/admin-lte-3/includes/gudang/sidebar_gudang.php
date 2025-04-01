@@ -1,4 +1,4 @@
-<?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE) { ?>
+<?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakGudang() == TRUE) { ?>
     <!-- <li class="nav-header">DATA PENERIMAAN</li>
     <li class="nav-item">
         <a href="<?php // echo base_url('gudang/trans_beli_list.php') ?>" class="nav-link">
