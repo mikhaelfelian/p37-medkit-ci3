@@ -954,6 +954,7 @@ $route['laporan/data_tracer_div.php']                   = "laporan/data_tracer_d
 $route['laporan/set_data_tracer_div.php']               = "laporan/set_data_tracer_div";
 $route['laporan/xls_data_tracer_div.php']               = "laporan/xls_data_tracer_div";
 
+
 // Laporan Stok Keluar
 $route['laporan/data_stok_keluar.php']                  = "laporan/data_stok_keluar";
 $route['laporan/data_stok_keluar_resep.php']            = "laporan/data_stok_keluar_resep";
@@ -961,6 +962,11 @@ $route['laporan/set_data_stok_keluar.php']              = "laporan/set_data_stok
 $route['laporan/set_data_stok_keluar_resep.php']        = "laporan/set_data_stok_keluar_resep";
 $route['laporan/xls_data_stok_keluar.php']              = "laporan/xls_data_stok_keluar";
 $route['laporan/xls_data_stok_keluar_resep.php']        = "laporan/xls_data_stok_keluar_resep";
+
+// Laporan Stok Keluar Laku
+$route['laporan/data_stok_keluar_laku.php']             = "laporan/data_stok_keluar_laku";
+$route['laporan/set_data_stok_keluar_laku.php']         = "laporan/set_data_stok_keluar_laku";
+$route['laporan/xls_data_stok_keluar_laku.php']         = "laporan/xls_data_stok_keluar_laku";
 
 // Laporan Stok Mutasi
 $route['laporan/data_stok_mutasi.php']                  = "laporan/data_stok_mutasi";

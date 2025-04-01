@@ -31,6 +31,12 @@
         </a>
     </li>
     <li class="nav-item">
+        <a href="<?php echo base_url('laporan/data_stok_keluar_laku.php') ?>" class="nav-link">
+            <i class="nav-icon fa fa-file-lines"></i>
+            <p>Data Obat Laku</p>
+        </a>
+    </li>
+    <li class="nav-item">
         <a href="<?php echo base_url('laporan/data_stok_mutasi.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-file-lines"></i>
             <p>Data Stok Mutasi</p>

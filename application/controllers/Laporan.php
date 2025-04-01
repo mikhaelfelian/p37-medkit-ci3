@@ -2478,6 +2478,155 @@ class laporan extends CI_Controller {
             redirect();
         }
     }
+
+    public function data_stok_keluar_laku() {
+        if (akses::aksesLogin() == TRUE) {
+            $hal        = $this->input->get('halaman');
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            
+            /* -- Blok Filter -- */
+            $dokter     = $this->input->get('id_dokter');
+            $tgl        = $this->input->get('tgl');
+            $tgl_awal   = $this->input->get('tgl_awal');
+            $tgl_akhir  = $this->input->get('tgl_akhir');
+            $case       = $this->input->get('case');
+            
+            $data['sql_doc'] = $this->db->where('id_user_group', '10')->get('tbl_m_karyawan')->result();
+            
+            // Count total records based on case
+            if ($case == 'per_tanggal') {
+                $jml = $this->db->select('COUNT(*) as count')
+                               ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                               ->where('tbl_trans_medcheck.status_bayar', '1')
+                               ->where('DATE(tbl_trans_medcheck.tgl_masuk)', $tgl)
+                               ->where('tbl_trans_medcheck_det.status', '4')
+                               ->group_by('tbl_trans_medcheck_det.id_item')
+                               ->get('tbl_trans_medcheck_det')
+                               ->num_rows();
+            } else if ($case == 'per_rentang') {
+                $jml = $this->db->select('COUNT(*) as count')
+                               ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                               ->where('tbl_trans_medcheck.status_bayar', '1')
+                               ->where('DATE(tbl_trans_medcheck.tgl_masuk) >=', $tgl_awal)
+                               ->where('DATE(tbl_trans_medcheck.tgl_masuk) <=', $tgl_akhir)
+                               ->where('tbl_trans_medcheck_det.status', '4')
+                               ->group_by('tbl_trans_medcheck_det.id_item')
+                               ->get('tbl_trans_medcheck_det')
+                               ->num_rows();
+            }
+
+            $data['hasError'] = $this->session->flashdata('form_error');
+            
+            $config['base_url']             = base_url('laporan/data_stok_keluar_laku.php?case='.$case.(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : ''));
+            $config['total_rows']           = $jml;
+            $config['query_string_segment'] = 'halaman';
+            $config['page_query_string']    = TRUE;
+            $config['per_page']             = $pengaturan->jml_item;
+            $config['num_links']            = 3;
+            
+            // AdminLTE 3 pagination styling
+            $config['full_tag_open']        = '<ul class="pagination pagination-sm m-0 float-right">';
+            $config['full_tag_close']       = '</ul>';
+            $config['first_tag_open']       = '<li class="page-item">';
+            $config['first_tag_close']      = '</li>';
+            $config['prev_tag_open']        = '<li class="page-item">';
+            $config['prev_tag_close']       = '</li>';
+            $config['num_tag_open']         = '<li class="page-item">';
+            $config['num_tag_close']        = '</li>';
+            $config['next_tag_open']        = '<li class="page-item">';
+            $config['next_tag_close']       = '</li>';
+            $config['last_tag_open']        = '<li class="page-item">';
+            $config['last_tag_close']       = '</li>';
+            $config['cur_tag_open']         = '<li class="page-item active"><a href="#" class="page-link">';
+            $config['cur_tag_close']        = '</a></li>';
+            $config['first_link']           = '<i class="fas fa-angle-double-left"></i>';
+            $config['prev_link']            = '<i class="fas fa-angle-left"></i>';
+            $config['next_link']            = '<i class="fas fa-angle-right"></i>';
+            $config['last_link']            = '<i class="fas fa-angle-double-right"></i>';
+            $config['attributes']           = array('class' => 'page-link');
+        
+            $sql_doc = $this->db->where('id', $this->general->dekrip($dokter))->get('tbl_m_karyawan')->row();
+            
+            switch ($case) {
+                case 'per_tanggal':
+                    if(!empty($hal)) {
+                        $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, SUM(tbl_trans_medcheck_det.jml) as jml, tbl_trans_medcheck_det.subtotal')
+                                                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                                                    ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                                                    ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                    ->where('DATE(tbl_trans_medcheck.tgl_masuk)', $tgl)
+                                                    ->where('tbl_trans_medcheck_det.status', '4')
+                                                    ->group_by('tbl_trans_medcheck_det.id_item')
+                                                    ->limit($config['per_page'], $hal)
+                                                    ->get('tbl_trans_medcheck_det')->result(); 
+                    } else {
+                        $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, SUM(tbl_trans_medcheck_det.jml) as jml, tbl_trans_medcheck_det.subtotal')
+                                                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                                                    ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                                                    ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                    ->where('DATE(tbl_trans_medcheck.tgl_masuk)', $tgl)
+                                                    ->where('tbl_trans_medcheck_det.status', '4')
+                                                    ->group_by('tbl_trans_medcheck_det.id_item')
+                                                    ->limit($config['per_page'])
+                                                    ->get('tbl_trans_medcheck_det')->result();                            
+                    }
+                    break;
+                
+                case 'per_rentang':
+                    if(!empty($hal)) {
+                        $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, SUM(tbl_trans_medcheck_det.jml) as jml, tbl_trans_medcheck_det.subtotal')
+                                                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                                                    ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                                                    ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                    ->where('DATE(tbl_trans_medcheck.tgl_masuk) >=', $tgl_awal)
+                                                    ->where('DATE(tbl_trans_medcheck.tgl_masuk) <=', $tgl_akhir)
+                                                    ->where('tbl_trans_medcheck_det.status', '4')
+                                                    ->group_by('tbl_trans_medcheck_det.id_item')
+                                                    ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                                                    ->limit($config['per_page'], $hal)
+                                                    ->get('tbl_trans_medcheck_det')->result(); 
+                    } else {
+                        $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.metode, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.tgl_simpan, tbl_trans_medcheck_det.id_dokter, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, SUM(tbl_trans_medcheck_det.jml) as jml, tbl_trans_medcheck_det.subtotal, tbl_m_kategori.keterangan AS kategori')
+                                                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                                                    ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                                                    ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                                                    ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                    ->where('DATE(tbl_trans_medcheck_det.tgl_simpan) >=', $tgl_awal)
+                                                    ->where('DATE(tbl_trans_medcheck_det.tgl_simpan) <=', $tgl_akhir)
+                                                    ->where('tbl_trans_medcheck_det.status', '4')
+                                                    ->group_by('tbl_trans_medcheck_det.id_item')
+                                                    ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                                                    ->limit($config['per_page'])
+                                                    ->get('tbl_trans_medcheck_det')->result();
+                    }
+                    break;
+        }
+            
+        // Initializing Config Pagination
+        $this->pagination->initialize($config);
+        
+        // Pagination Data
+        $data['total_rows'] = $config['total_rows'];
+        $data['PerPage']    = $config['per_page'];
+        $data['pagination'] = $this->pagination->create_links();
+        
+        /* Sidebar Menu */
+        $data['sidebar']    = 'admin-lte-3/includes/laporan/sidebar_lap';
+        /* --- Sidebar Menu --- */
+        
+        /* Load view tampilan */
+        $this->load->view('admin-lte-3/1_atas', $data);
+        $this->load->view('admin-lte-3/2_header', $data);
+        $this->load->view('admin-lte-3/3_navbar', $data);
+        $this->load->view('admin-lte-3/includes/laporan/data_stok_keluar_laku', $data);
+        $this->load->view('admin-lte-3/5_footer', $data);
+        $this->load->view('admin-lte-3/6_bawah', $data);
+    } else {
+        $errors = $this->ion_auth->messages();
+        $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+        redirect();
+    }
+}
         
     public function data_stok_mutasi(){
         if (akses::aksesLogin() == TRUE) {
@@ -4630,6 +4779,28 @@ class laporan extends CI_Controller {
         }else{
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function set_data_stok_keluar_laku(){
+        if (akses::aksesLogin() == TRUE) {
+            $tgl     = $this->input->post('tgl');
+            $tgl_rtg = $this->input->post('tgl_rentang');
+            
+            $tgl_rentang = explode('-', $tgl_rtg);
+            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+
+            if (!empty($tgl)) {
+                redirect(base_url('laporan/data_stok_keluar_laku.php?case=per_tanggal&tgl=' . $tgl_masuk));
+            } elseif ($tgl_rtg) {
+                redirect(base_url('laporan/data_stok_keluar_laku.php?case=per_rentang&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir));
+            }
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
             redirect();
         }
     }
@@ -9398,6 +9569,170 @@ class laporan extends CI_Controller {
         }else{
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+
+
+    public function xls_data_stok_keluar_laku(){
+        if (akses::aksesLogin() == TRUE) {
+            $jml        = $this->input->get('jml');
+            $tgl        = $this->input->get('tgl');
+            $tgl_awal   = $this->input->get('tgl_awal');
+            $tgl_akhir  = $this->input->get('tgl_akhir');
+            $case       = $this->input->get('case');
+            $hal        = $this->input->get('halaman');
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+
+            $grup       = $this->ion_auth->get_users_groups()->row();
+            $id_user    = $this->ion_auth->user()->row()->id;
+            $id_grup    = $this->ion_auth->get_users_groups()->row();
+
+            
+            switch ($case) {
+                case 'per_tanggal':
+                    $sql_omset = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, SUM(tbl_trans_medcheck_det.jml) AS jml, tbl_trans_medcheck_det.subtotal')
+                                                              ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                                                              ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                              ->where('DATE(tbl_trans_medcheck_det.tgl_simpan)', $tgl)
+                                                              ->where('tbl_trans_medcheck_det.status', '4')
+                                                              ->group_by('tbl_trans_medcheck_det.id_item')
+                                                              ->order_by('DATE(tbl_trans_medcheck_det.tgl_simpan)', 'ASC')
+                                                          ->get('tbl_trans_medcheck_det')->result();
+                    break;
+
+                case 'per_rentang':
+                        $sql_omset     = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.metode, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.tgl_simpan, tbl_trans_medcheck_det.id_dokter, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, SUM(tbl_trans_medcheck_det.jml) AS jml, tbl_trans_medcheck_det.satuan, tbl_trans_medcheck_det.subtotal, tbl_m_kategori.keterangan AS kategori')
+                                                  ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                                                              ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                                                              ->where('tbl_trans_medcheck.status_hps', '0')
+                                                              ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                              ->where('DATE(tbl_trans_medcheck_det.tgl_simpan) >=', $tgl_awal)
+                                                              ->where('DATE(tbl_trans_medcheck_det.tgl_simpan) <=', $tgl_akhir)
+                                                              ->where('tbl_trans_medcheck_det.status', '4')
+                                                              ->group_by('tbl_trans_medcheck_det.id_item')
+                                                              ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                                                          ->get('tbl_trans_medcheck_det')->result();
+                    break;
+            }
+
+            $objPHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $objPHPExcel->getActiveSheet();
+
+            // Header Tabel Nota
+            $sheet->getStyle('A1:H1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:H1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:H1')->getFont()->setBold(TRUE);
+            $sheet->getRowDimension('1')->setRowHeight(40);
+
+            $sheet->setCellValue('A1', 'No.')
+                  ->setCellValue('B1', 'TGL')
+                  ->setCellValue('C1', 'ITEM')
+                  ->setCellValue('D1', 'QTY')
+                  ->setCellValue('E1', 'SATUAN')
+                  ->setCellValue('F1', 'HARGA BELI')
+                  ->setCellValue('G1', 'HARGA JUAL')
+                  ->setCellValue('H1', 'SUBTOTAL');
+
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(18);
+            $sheet->getColumnDimension('C')->setWidth(35);
+            $sheet->getColumnDimension('D')->setWidth(8);
+            $sheet->getColumnDimension('E')->setWidth(12);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(16);
+
+            // Enable auto filter
+            $sheet->setAutoFilter('A1:H1');
+
+            if(!empty($sql_omset)){
+                $no    = 1;
+                $cell  = 2;
+                $total = 0;
+                foreach ($sql_omset as $penjualan){
+                    $sql_item   = $this->db->where('id', $penjualan->id_item)->get('tbl_m_produk')->row();
+                    $sql_so     = $this->db->where('id_user', $penjualan->id_dokter)->get('tbl_m_karyawan')->row();
+                    $dokter     = $this->db->where('id_user', $penjualan->id_dokter)->get('tbl_m_karyawan')->row();
+                    $platform   = $this->db->where('id', $penjualan->metode)->get('tbl_m_platform')->row();
+                    $total      = $total + $penjualan->subtotal;
+                    $subtot     = $penjualan->harga * $penjualan->jml;
+
+                    $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('B'.$cell.':D'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('G'.$cell.':H'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('G'.$cell.':H'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+               
+                    $sheet->setCellValue('A'.$cell, $no)
+                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                          ->setCellValue('C'.$cell, $penjualan->item)
+                          ->setCellValue('D'.$cell, (float)$penjualan->jml)
+                          ->setCellValue('E'.$cell, $penjualan->satuan)
+                          ->setCellValue('F'.$cell, isset($sql_item->harga_beli) ? $sql_item->harga_beli : 0)
+                          ->setCellValue('G'.$cell, $penjualan->harga)
+                          ->setCellValue('H'.$cell, $subtot);
+
+                    $no++;
+                    $cell++;
+                }
+
+                $sell1 = $cell;
+                
+                // Add sort functionality
+                $sheet->setAutoFilter($sheet->calculateWorksheetDimension());
+                
+                $sheet->getStyle('H'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                $sheet->getStyle('A'.$sell1.':H'.$sell1.'')->getFont()->setBold(TRUE);
+                $sheet->getStyle('A'.$sell1.':H'.$sell1)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->setCellValue('A' . $sell1, 'TOTAL')
+                      ->mergeCells('A'.$sell1.':G'.$sell1.'')
+                      ->setCellValue('H' . $sell1, $total);
+            }
+
+            // Rename worksheet
+            $sheet->setTitle('Lap Obat Laku');
+
+            /** Page Setup * */
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+
+            /* -- Margin -- */
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setFooter(0);
+
+
+            /** Page Setup * */
+            // Set document properties
+            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
+                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                    ->setTitle("Stok")
+                    ->setSubject("Aplikasi Bengkel POS")
+                    ->setDescription("Kunjungi http://tigerasoft.co.id")
+                    ->setKeywords("Pasifik POS")
+                    ->setCategory("Untuk mencetak nota dot matrix");
+
+
+            // Redirect output to a client's web browser (Excel5)
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="data_stok_laku_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
+
+            // If you're serving to IE over SSL, then the following may be needed
+            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+            header('Pragma: public'); // HTTP/1.0
+            
+            ob_clean();
+            $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xls');
+            $objWriter->save('php://output');            
+            exit;
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
             redirect();
         }
     }
