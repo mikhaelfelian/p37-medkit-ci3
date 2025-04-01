@@ -17,7 +17,7 @@
                 <?php echo form_close(); ?>
             <?php } else { ?>
                 <?php if ($sql_medc->status >= 5 AND $sql_medc->status_bayar != 1) { ?>
-                    <?php echo form_open_multipart(base_url('medcheck/set_medcheck_proses_batal.php'), 'id="medc_batal_posting" autocomplete="off"') ?>
+                    <?php echo form_open(base_url('medcheck/set_medcheck_proses_batal.php'), 'id="medc_batal_posting" autocomplete="off"') ?>
                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                     <?php echo form_hidden('status', $sql_medc->status); ?>
                     <?php echo form_hidden('jml_total', $gtotal); ?>
@@ -33,7 +33,7 @@
                 <?php } else { ?>
                     <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE) { ?>
                         <?php if ($sql_medc->tipe != '6') { ?>
-                            <?php echo form_open_multipart(base_url('medcheck/set_medcheck_bayar_batal.php'), 'autocomplete="off"') ?>
+                            <?php echo form_open(base_url('medcheck/set_medcheck_bayar_batal.php'), 'autocomplete="off"') ?>
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
 
                             <button type="submit" class="btn btn-app bg-danger" onclick="return confirm('Yakin Batal Bayar ?')">
