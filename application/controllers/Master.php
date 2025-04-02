@@ -483,6 +483,491 @@ class Master extends CI_Controller {
             $data['total_rows'] = $config['total_rows'];
             $data['PerPage']    = $config['per_page'];
             $data['pagination'] = $this->pagination->create_links();
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php
+/**
+ * Description of Master controller
+ *
+ * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @modified by Mikhael Felian Waskito - mikhaelfelian@gmail.com
+ * @date 2023-03-31
+ */
+
+class Master extends CI_Controller {
+    //put your code here
+    public function __construct() {
+        parent::__construct();
+        $this->load->library('Excel');
+        $this->load->library('qrcode/ciqrcode');
+    }
+    
+    public function index() {
+        if (Akses::aksesLogin() == TRUE) {
+            /* -- Grup hak akses -- */
+            $role        = $this->input->get('role');
+            $grup        = $this->ion_auth->get_users_groups()->row();
+            $id_user     = $this->ion_auth->user()->row()->id;
+            $id_grup     = $this->ion_auth->get_users_groups()->row();
+            $pengaturan  = $this->db->get('tbl_pengaturan')->row();
+
+            /* -- Blok Filter -- */
+            $query   = $this->input->get('q');
+            $hal     = $this->input->get('halaman');
+            $nt      = $this->input->get('filter_nota');
+            $fn      = explode('/', $nt);
+            $tg      = $this->input->get('filter_tgl');
+            $tb      = $this->input->get('filter_tgl_bayar');
+            $tp      = $this->input->get('filter_tgl_tempo');
+            $lk      = $this->input->get('filter_lokasi');
+            $cs      = $this->input->get('filter_cust');
+            $sn      = $this->input->get('filter_status');
+            $sl      = $this->input->get('filter_sales');
+            $stts    = $this->input->get('status');
+            $jml     = $this->input->get('jml');
+
+            if(!empty($jml)){
+                $jml_hal = $jml;
+            }else{
+                $jml_hal = $this->db->select('id, id_app, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_masuk) as tgl_masuk, DATE(tgl_bayar) as tgl_bayar, DATE(tgl_keluar) as tgl_keluar, jml_total, jml_gtotal, ppn, jml_ppn, id_user, id_sales, id_pelanggan, status_nota, status_bayar, status_grosir')
+                                ->where('status_nota !=', '4')
+                                ->where('status', $stts)
+                                ->like('no_nota', $fn[0])
+                                ->like('DATE(tgl_bayar)', $tb)
+                                ->like('DATE(tgl_keluar)', $tp)
+                                ->like('id_pelanggan', $cs)
+                                ->like('id_sales', $sl)
+                                ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : $id_user), ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'admin' ? '' : 'none'))
+                                ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'admin' ? '' : date('Y-m-d')))
+                                ->order_by('tgl_simpan','desc')
+                                ->get('tbl_trans_jual')->num_rows();
+            }
+            /* -- End Blok Filter -- */
+
+            /* -- Form Error -- */
+            $data['hasError']                = $this->session->flashdata('form_error');
+
+            /* -- Blok Pagination -- */
+            $config['base_url']              = base_url('transaksi/data_penj_list.php?filter_nota='.$nt.'&filter_tgl='.$tg.'&filter_sales='.$sl.'&filter_status='.$sn.'&jml='.$jml);
+            $config['total_rows']            = $jml_hal;
+
+            $config['query_string_segment']  = 'halaman';
+            $config['page_query_string']     = TRUE;
+            $config['per_page']              = $pengaturan->jml_item;
+            $config['num_links']             = 2;
+
+            $config['first_tag_open']        = '<li>';
+            $config['first_tag_close']       = '</li>';
+
+            $config['prev_tag_open']         = '<li>';
+            $config['prev_tag_close']        = '</li>';
+
+            $config['num_tag_open']          = '<li>';
+            $config['num_tag_close']         = '</li>';
+
+            $config['next_tag_open']         = '<li>';
+            $config['next_tag_close']        = '</li>';
+
+            $config['last_tag_open']         = '<li>';
+            $config['last_tag_close']        = '</li>';
+
+            $config['cur_tag_open']          = '<li><a href="#"><b>';
+            $config['cur_tag_close']         = '</b></a></li>';
+
+            $config['first_link']            = '&laquo;';
+            $config['prev_link']             = '&lsaquo;';
+            $config['next_link']             = '&rsaquo;';
+            $config['last_link']             = '&raquo;';
+            /* -- End Blok Pagination -- */
+
+            if(!empty($hal)){
+                   $data['penj'] = $this->db->select('id, id_app, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_masuk) as tgl_masuk, DATE(tgl_bayar) as tgl_bayar, DATE(tgl_keluar) as tgl_keluar, jml_total, jml_gtotal, ppn, jml_ppn, id_user, id_sales, id_pelanggan, status_nota, status_bayar, status_grosir')
+//                           ->where('status_nota !=', '4')
+//                           ->where('status', $stts)
+                           ->limit($config['per_page'],$hal)
+                           ->like('no_nota', $fn[0])
+                           ->like('DATE(tgl_bayar)', $tb)
+                           ->like('DATE(tgl_keluar)', $tp)
+                           ->like('id_pelanggan', $cs)
+                           ->like('id_sales', $sl)
+                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? '' : $id_user))
+                           ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'admin' ? $tg : date('Y-m-d')))
+                           ->order_by('tgl_simpan','desc')
+                           ->get('tbl_trans_jual')->result();
+            }else{
+                   $data['penj'] = $this->db->select('id, id_app, no_nota, kode_nota_dpn, kode_nota_blk, kode_nota_dpn, kode_nota_blk, DATE(tgl_masuk) as tgl_masuk, DATE(tgl_bayar) as tgl_bayar, DATE(tgl_keluar) as tgl_keluar, jml_total, jml_gtotal, ppn, jml_ppn, id_user, id_sales, id_pelanggan, status_nota, status_bayar, status_grosir')
+//                           ->where('status_nota !=', '4')
+//                           ->where('status', $stts)
+                           ->limit($config['per_page'])
+                           ->like('no_nota', $fn[0])
+                           ->like('DATE(tgl_bayar)', $tb)
+                           ->like('DATE(tgl_keluar)', $tp)
+                           ->like('id_pelanggan', $cs)
+                           ->like('id_sales', $sl)
+                           ->like('id_user', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'admin' ? '' : $id_user))
+                           ->like('tgl_masuk', ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'adminm' || $id_grup->name == 'admin' ? $tg : date('Y-m-d')))
+                           ->order_by('tgl_simpan','desc')
+                           ->get('tbl_trans_jual')->result();
+            }
+
+            $this->pagination->initialize($config);
+
+            /* Blok pagination */
+            $data['total_rows'] = $config['total_rows'];
+            $data['PerPage']    = $config['per_page'];
+            $data['pagination'] = $this->pagination->create_links();
+            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('transaksi/cetak_data_penj.php?'.(!empty($nt) ? 'filter_nota='.$nt : '').(!empty($tg) ? '&filter_tgl='.$tg : '').(!empty($tp) ? '&filter_tgl_tempo='.$tp : '').(!empty($cs) ? '&filter_cust='.$cs : '').(!empty($sl) ? '&filter_sales='.$sl : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning"><i class="fa fa-print"></i> Cetak</button>';
+            /* --End Blok pagination-- */
+            
+            /* Sidebar Menu */
+            $data['sidebar']    = 'admin-lte-3/includes/menu/side_master';
+            /* --- Sidebar Menu --- */
+            
+            /* Load view tampilan */
+            $this->load->view('admin-lte-3/1_atas', $data);
+            $this->load->view('admin-lte-3/2_header', $data);
+            $this->load->view('admin-lte-3/3_navbar', $data);
+            $this->load->view('admin-lte-3/includes/master/index', $data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function data_kategori_list() {
+        if (Akses::aksesLogin() == TRUE) {
+            $query      = $this->input->get('q');
+            $hal        = $this->input->get('halaman');
+            $jml        = $this->input->get('jml');
+            $kode       = $this->input->get('kode');
+            $kategori   = $this->input->get('kategori');
+            $jml_hal    = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_kategori'));
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            
+            $data['hasError'] = $this->session->flashdata('form_error');
+                        
+            $config['base_url']               = base_url('master/data_kategori_list.php?'.(isset($_GET['q']) ? '&q='.$_GET['q'].'&jml='.$jml_hal : ''));
+            $config['total_rows']             = $jml_hal;
+            
+            $config['query_string_segment']  = 'halaman';
+            $config['page_query_string']     = TRUE;
+            $config['per_page']              = $pengaturan->jml_item;
+            $config['num_links']             = 3;
+            
+            $config['first_tag_open']        = '<li class="page-item">';
+            $config['first_tag_close']       = '</li>';
+            
+            $config['prev_tag_open']         = '<li class="page-item">';
+            $config['prev_tag_close']        = '</li>';
+            
+            $config['num_tag_open']          = '<li class="page-item">';
+            $config['num_tag_close']         = '</li>';
+            
+            $config['next_tag_open']         = '<li class="page-item">';
+            $config['next_tag_close']        = '</li>';
+            
+            $config['last_tag_open']         = '<li class="page-item">';
+            $config['last_tag_close']        = '</li>';
+            
+            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+            $config['cur_tag_close']         = '</b></a></li>';
+            
+            $config['first_link']            = '&laquo;';
+            $config['prev_link']             = '&lsaquo;';
+            $config['next_link']             = '&rsaquo;';
+            $config['last_link']             = '&raquo;';
+            $config['anchor_class']          = 'class="page-link"';
+            
+            
+            if(!empty($hal)){
+                if (!empty($query)) {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('kategori', $query)
+                                               ->or_like('keterangan', $query)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                } else if (!empty($kode)) {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('kategori', $kode)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                } else if (!empty($kategori)) {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('keterangan', $kategori)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                } else {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                }
+            }else{
+                if (!empty($query)) {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('kategori', $query)
+                                               ->or_like('keterangan', $query)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                } else if (!empty($kode)) {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('kategori', $kode)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                } else if (!empty($kategori)) {
+                    $data['kategori'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('keterangan', $kategori)
+                                               ->order_by('kategori','asc')
+                                               ->get('tbl_m_kategori')->result();
+                } else {
+                    $data['kategori'] = $this->db->limit($config['per_page'])->order_by('kategori','asc')->get('tbl_m_kategori')->result();
+                }
+            }
+            
+            $this->pagination->initialize($config);
+            
+            /* Sidebar Menu */
+            $data['sidebar']    = 'admin-lte-3/includes/master/sidebar_kategori';
+            /* --- Sidebar Menu --- */
+            
+            $data['total_rows'] = $config['total_rows'];
+            $data['PerPage']    = $config['per_page'];
+            $data['pagination'] = $this->pagination->create_links();
+            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_kategori.php?'.(!empty($query) ? 'query='.$query : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
+
+            $this->load->view('admin-lte-3/1_atas', $data);
+            $this->load->view('admin-lte-3/2_header', $data);
+            $this->load->view('admin-lte-3/3_navbar', $data);
+            $this->load->view('admin-lte-3/includes/master/data_kategori_list', $data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function data_kategori_tambah() {
+        if (Akses::aksesLogin() == TRUE) {
+            $id   = $this->input->get('id');
+            
+            /* Sidebar Menu */
+            $data['sidebar']    = 'admin-lte-3/includes/master/sidebar_kategori';
+            /* --- Sidebar Menu --- */
+            
+            $data['kategori'] = $this->db->where('id', general::dekrip($id))->get('tbl_m_kategori')->row();
+
+            $this->load->view('admin-lte-3/1_atas', $data);
+            $this->load->view('admin-lte-3/2_header', $data);
+            $this->load->view('admin-lte-3/3_navbar', $data);
+            $this->load->view('admin-lte-3/includes/master/data_kategori_tambah', $data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function data_kategori_simpan() {
+        if (Akses::aksesLogin() == TRUE) {
+            $id       = $this->input->post('id');
+            $kategori = $this->input->post('kategori');
+            $ket      = $this->input->post('keterangan');
+
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
+            $this->form_validation->set_rules('kategori', 'Kategori', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = array(
+                    'kategori'     => form_error('kategori'),
+                );
+
+                $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
+                redirect(base_url('master/data_kategori_tambah.php?id='.$id));
+            } else {                
+                $data_penj = array(
+                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                    'kategori'      => $kategori,
+                    'keterangan'    => $ket
+                );
+                
+                try {
+                    if (check_form_submitted($this->input->post('form_id'))) {
+                        $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                        redirect(base_url('master/data_kategori_list.php'));
+                        return;
+                    }
+                    
+                    if (!crud::simpan('tbl_m_kategori', $data_penj)) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menyimpan data kategori");');
+                        throw new Exception("Gagal menyimpan data kategori");
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data kategori berhasil disimpan");');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_kategori_tambah.php?id='.$id));
+                    return;
+                }
+                
+                redirect(base_url('master/data_kategori_list.php'));
+            }
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function data_kategori_update() {
+        if (Akses::aksesLogin() == TRUE) {
+            $id       = $this->input->post('id');
+            $kategori = $this->input->post('kategori');
+            $ket      = $this->input->post('keterangan');
+
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
+            $this->form_validation->set_rules('kategori', 'Kategori', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = array(
+                    'kategori'     => form_error('kategori'),
+                );
+
+                $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
+                redirect(base_url('master/data_kategori_tambah.php?id='.$id));
+            } else {                
+                $data_penj = array(
+                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                    'kategori'      => $kategori,
+                    'keterangan'    => $ket
+                );
+                
+                $this->session->set_flashdata('master_toast', 'toastr.success("Data kategori berhasil diubah");');
+                crud::update('tbl_m_kategori','id', general::dekrip($id),$data_penj);
+                redirect(base_url('master/data_kategori_tambah.php?id='.$id));
+            }
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function data_kategori_hapus() {
+        if (Akses::aksesLogin() == TRUE) {
+            $id = $this->input->get('id');
+            
+            if(!empty($id)){
+                crud::delete('tbl_m_kategori','id',general::dekrip($id));
+                $this->session->set_flashdata('master_toast', 'toastr.success("Data kategori berhasil dihapus");');
+            } else {
+                $this->session->set_flashdata('master_toast', 'toastr.error("ID kategori tidak ditemukan");');
+            }
+            
+            redirect(base_url('master/data_kategori_list.php'));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+    public function set_kategori_cari() {
+        if (Akses::aksesLogin() == TRUE) {
+            redirect('master/data_kategori_list.php?' . http_build_query($_GET));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    
+    public function data_mcu_list() {
+        if (Akses::aksesLogin() == TRUE) {
+            $pemeriksaan      = $this->input->get('pemeriksaan');
+            $kategori         = $this->input->get('kategori');
+            $hal              = $this->input->get('halaman');
+            $jml              = $this->input->get('jml');
+            $jml_hal          = (!empty($jml) ? $jml  : $this->db->count_all('tbl_m_mcu'));
+            $pengaturan       = $this->db->get('tbl_pengaturan')->row();
+            
+            $data['hasError'] = $this->session->flashdata('form_error');
+                        
+            $config['base_url']               = base_url('master/data_mcu_list.php?'.(isset($_GET['pemeriksaan']) ? '&pemeriksaan='.$_GET['pemeriksaan'].'&kategori='.$_GET['kategori'].'&jml='.$jml_hal : ''));
+            $config['total_rows']             = $jml_hal;
+            
+            $config['query_string_segment']  = 'halaman';
+            $config['page_query_string']     = TRUE;
+            $config['per_page']              = $pengaturan->jml_item;
+            $config['num_links']             = 3;
+            
+            $config['first_tag_open']        = '<li class="page-item">';
+            $config['first_tag_close']       = '</li>';
+            
+            $config['prev_tag_open']         = '<li class="page-item">';
+            $config['prev_tag_close']        = '</li>';
+            
+            $config['num_tag_open']          = '<li class="page-item">';
+            $config['num_tag_close']         = '</li>';
+            
+            $config['next_tag_open']         = '<li class="page-item">';
+            $config['next_tag_close']        = '</li>';
+            
+            $config['last_tag_open']         = '<li class="page-item">';
+            $config['last_tag_close']        = '</li>';
+            
+            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+            $config['cur_tag_close']         = '</b></a></li>';
+            
+            $config['first_link']            = '&laquo;';
+            $config['prev_link']             = '&lsaquo;';
+            $config['next_link']             = '&rsaquo;';
+            $config['last_link']             = '&raquo;';
+            $config['anchor_class']          = 'class="page-link"';
+            
+            
+            if(!empty($hal)){
+                if (!empty($pemeriksaan) || !empty($kategori)) {
+                    $data['sql_mcu'] = $this->db->limit($config['per_page'],$hal)
+                                               ->like('pemeriksaan', $pemeriksaan)
+                                               ->like('id_kategori', $kategori)
+                                               ->order_by('pemeriksaan','asc')
+                                               ->get('tbl_m_mcu')->result();
+                } else {
+                    $data['sql_mcu'] = $this->db->limit($config['per_page'],$hal)
+                                               ->order_by('pemeriksaan','asc')
+                                               ->get('tbl_m_mcu')->result();
+                }
+            }else{
+                if (!empty($pemeriksaan) || !empty($kategori)) {
+                    $data['sql_mcu'] = $this->db->limit($config['per_page'])
+                                               ->like('pemeriksaan', $pemeriksaan)
+                                               ->like('id_kategori', $kategori)
+                                               ->order_by('pemeriksaan','asc')
+                                               ->get('tbl_m_mcu')->result();
+                } else {
+                    $data['sql_mcu'] = $this->db->limit($config['per_page'])->order_by('pemeriksaan','asc')->get('tbl_m_mcu')->result();
+                }
+            }
+            
+            $this->pagination->initialize($config);
+            
+            /* Sidebar Menu */
+            $data['sidebar']    = 'admin-lte-3/includes/master/sidebar_mcu';
+            /* --- Sidebar Menu --- */
+            
+            $data['total_rows'] = $config['total_rows'];
+            $data['PerPage']    = $config['per_page'];
+            $data['pagination'] = $this->pagination->create_links();
             $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_mcu.php?'.(!empty($pemeriksaan) ? 'pemeriksaan='.$pemeriksaan : '').(!empty($kategori) ? '&kategori='.$kategori : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
 
             $data['sql_mcu_kat']= $this->db->order_by('id', 'ASC')->get('tbl_m_mcu_kat')->result();
