@@ -10005,50 +10005,52 @@ class laporan extends CI_Controller {
             
             switch ($case) {
                 case 'per_tanggal':
-                    $sql_pasien     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
-                                               ->where('tbl_m_pasien.no_hp !=', '')
-                                               ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
-                                               ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
-                                               ->order_by('tbl_m_pasien.nama', 'ASC') 
-                                               ->get('tbl_m_pasien')->result();
+                    $sql_pasien = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
+                                          ->where('tbl_m_pasien.no_hp !=', '')
+                                          ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
+                                          ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
+                                          ->order_by('tbl_m_pasien.nama', 'ASC') 
+                                          ->get('tbl_m_pasien')->result();
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            # Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getFont()->setBold(TRUE);
+            // Set header styles
+            $sheet->getStyle('A1:N1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:N1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:N1')->getFont()->setBold(true);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'Whatsapp Number')
-                    ->setCellValue('B1', 'Name')
-                    ->setCellValue('C1', 'Col1')
-                    ->setCellValue('D1', 'Tgl Lahir')
-                    ->setCellValue('E1', 'Col3');
+            // Set headers
+            $sheet->setCellValue('A1', 'Whatsapp Number')
+                  ->setCellValue('B1', 'Name')
+                  ->setCellValue('C1', 'Col1')
+                  ->setCellValue('D1', 'Tgl Lahir')
+                  ->setCellValue('E1', 'Col3');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(18);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(55);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(10);
+            // Set column widths
+            $sheet->getColumnDimension('A')->setWidth(18);
+            $sheet->getColumnDimension('B')->setWidth(55);
+            $sheet->getColumnDimension('C')->setWidth(14);
+            $sheet->getColumnDimension('D')->setWidth(12);
+            $sheet->getColumnDimension('E')->setWidth(10);
 
+            // Fill data
             if(!empty($sql_pasien)){
                 $no    = 1;
                 $cell  = 2;
-                $total = 0;
                 foreach ($sql_pasien as $pasien){
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getNumberFormat()->setFormatCode('#');
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':C'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('D'.$cell.':E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('A'.$cell)->getNumberFormat()->setFormatCode('#');
+                    $sheet->getStyle('A'.$cell.':C'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('D'.$cell.':E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, (!empty($pasien->no_hp) ? "62".substr($pasien->no_hp, 1) : ''))
-                            ->setCellValue('B'.$cell, $pasien->nama)
-                            ->setCellValue('C'.$cell, $this->tanggalan->bulan_ke($pasien->bulan))
-                            ->setCellValue('D'.$cell, $this->tanggalan->tgl_indo8($pasien->tgl_lahir))
-                            ->setCellValue('E'.$cell, $pasien->bulan);
+                    $sheet->setCellValue('A'.$cell, (!empty($pasien->no_hp) ? "62".substr($pasien->no_hp, 1) : ''))
+                          ->setCellValue('B'.$cell, $pasien->nama)
+                          ->setCellValue('C'.$cell, $this->tanggalan->bulan_ke($pasien->bulan))
+                          ->setCellValue('D'.$cell, $this->tanggalan->tgl_indo8($pasien->tgl_lahir))
+                          ->setCellValue('E'.$cell, $pasien->bulan);
 
                     $no++;
                     $cell++;
@@ -10056,51 +10058,38 @@ class laporan extends CI_Controller {
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('Data Pasien');
+            $sheet->setTitle('Data Pasien');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Data Pasien")
+                        ->setSubject("Data Pasien WA")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id");
 
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-//            ob_start();
+            // Clean output buffer
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-//             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_pasien_wa_lap.xlsx"');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-//            ob_end_flush();
-            
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            $objWriter->save('php://output');
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_pasien_wa_lap.xlsx"');
+            header('Cache-Control: max-age=0');
+
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
-        }else{
+        } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
@@ -10108,113 +10097,112 @@ class laporan extends CI_Controller {
     }
     
     public function xls_data_pasien_st() {
-    if (akses::aksesLogin() == TRUE) {
-        // Ambil parameter dari URL
-        $jml        = $this->input->get('jml');
-        $tgl        = $this->input->get('tgl');
-        $tgl_awal   = $this->input->get('tgl_awal');
-        $tgl_akhir  = $this->input->get('tgl_akhir');
-        $statusPas  = $this->input->get('status_pas');
-        $case       = $this->input->get('case');
+        if (akses::aksesLogin() == TRUE) {
+            // Ambil parameter dari URL
+            $jml        = $this->input->get('jml');
+            $tgl        = $this->input->get('tgl');
+            $tgl_awal   = $this->input->get('tgl_awal');
+            $tgl_akhir  = $this->input->get('tgl_akhir');
+            $statusPas  = $this->input->get('status_pas');
+            $case       = $this->input->get('case');
 
-        // Pilih data berdasarkan filter
-        switch ($case) {
-            case 'per_tanggal':
-                $this->db->from("v_pasien");
-                $this->db->where("DATE(tgl_simpan)", $tgl);
-                if ($statusPas == "1") {
-                    $this->db->where("jumlah", '1'); // Pasien Baru
-                } elseif ($statusPas == "2") {
-                    $this->db->where("jumlah >", '1'); // Pasien Lama
-                }
-                break;
+            // Pilih data berdasarkan filter
+            switch ($case) {
+                case 'per_tanggal':
+                    $this->db->from("v_pasien");
+                    $this->db->where("DATE(tgl_simpan)", $tgl);
+                    if ($statusPas == "1") {
+                        $this->db->where("jumlah", '1'); // Pasien Baru
+                    } elseif ($statusPas == "2") {
+                        $this->db->where("jumlah >", '1'); // Pasien Lama
+                    }
+                    break;
 
-            case 'per_rentang':
-                $this->db->from("v_pasien");
-                $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
-                $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
-                if ($statusPas == "1") {
-                    $this->db->where("jumlah", '1'); // Pasien Baru
-                } elseif ($statusPas == "2") {
-                    $this->db->where("jumlah >", '1'); // Pasien Lama
-                }
-                break;
-                
-            default:
-                $this->db->from("v_pasien");
-                break;
-        }
+                case 'per_rentang':
+                    $this->db->from("v_pasien");
+                    $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
+                    $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
+                    if ($statusPas == "1") {
+                        $this->db->where("jumlah", '1'); // Pasien Baru
+                    } elseif ($statusPas == "2") {
+                        $this->db->where("jumlah >", '1'); // Pasien Lama
+                    }
+                    break;
+                    
+                default:
+                    $this->db->from("v_pasien");
+                    break;
+            }
 
-        $query = $this->db->get();
-        $sql_pasien = $query->result();
+            $query = $this->db->get();
+            $sql_pasien = $query->result();
 
-        // **Load PHPExcel**
-        $objPHPExcel = new PHPExcel();
+            // Load PhpSpreadsheet
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-        // **Header Tabel**
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', 'No')
-            ->setCellValue('B1', 'No. RM')
-            ->setCellValue('C1', 'Pasien')
-            ->setCellValue('D1', 'Alamat')
-            ->setCellValue('E1', 'Tgl Lahir')
-            ->setCellValue('F1', 'No. HP');
+            // Header Tabel
+            $sheet->setCellValue('A1', 'No')
+                  ->setCellValue('B1', 'No. RM')
+                  ->setCellValue('C1', 'Pasien')
+                  ->setCellValue('D1', 'Alamat')
+                  ->setCellValue('E1', 'Tgl Lahir')
+                  ->setCellValue('F1', 'No. HP');
 
-        // **Set Lebar Kolom**
-        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(35);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(55);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+            // Set Lebar Kolom
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(35);
+            $sheet->getColumnDimension('D')->setWidth(55);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(15);
 
-        // **Set Style Header**
-        $objPHPExcel->getActiveSheet()->getStyle("A1:F1")->getFont()->setBold(TRUE);
-        $objPHPExcel->getActiveSheet()->getStyle("A1:F1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            // Set Style Header
+            $sheet->getStyle("A1:F1")->getFont()->setBold(true);
+            $sheet->getStyle("A1:F1")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        // **Isi Data Pasien**
-        $cell = 2;
-        $no = 1;
+            // Isi Data Pasien
+            $cell = 2;
+            $no = 1;
 
-        foreach ($sql_pasien as $pasien) {
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A' . $cell, $no++)
-                ->setCellValue('B' . $cell, $pasien->kode_pasien)
-                ->setCellValue('C' . $cell, $pasien->pasien)
-                ->setCellValue('D' . $cell, $pasien->alamat)
-                ->setCellValue('E' . $cell, $this->tanggalan->tgl_indo2($pasien->tgl_lahir))
-                ->setCellValue('F' . $cell, (!empty($pasien->no_hp) ? "62" . substr($pasien->no_hp, 1) : ''));
-            $cell++;
-        }
+            foreach ($sql_pasien as $pasien) {
+                $sheet->setCellValue('A' . $cell, $no++)
+                      ->setCellValue('B' . $cell, $pasien->kode_pasien)
+                      ->setCellValue('C' . $cell, $pasien->pasien)
+                      ->setCellValue('D' . $cell, $pasien->alamat)
+                      ->setCellValue('E' . $cell, $this->tanggalan->tgl_indo2($pasien->tgl_lahir))
+                      ->setCellValue('F' . $cell, (!empty($pasien->no_hp) ? "62" . substr($pasien->no_hp, 1) : ''));
+                $cell++;
+            }
 
-        // **Set Nama Sheet**
-        $objPHPExcel->getActiveSheet()->setTitle('Data Pasien');
+            // Set Nama Sheet
+            $sheet->setTitle('Data Pasien');
 
-        // Tentukan nama file berdasarkan status pasien
-        $filename = "data_pasien";
-        if ($statusPas == "1") {
-            $filename .= "_baru.xlsx"; // Jika pasien baru
-        } elseif ($statusPas == "2") {
-            $filename .= "_lama.xlsx"; // Jika pasien lama
+            // Tentukan nama file berdasarkan status pasien
+            $filename = "data_pasien";
+            if ($statusPas == "1") {
+                $filename .= "_baru.xlsx"; // Jika pasien baru
+            } elseif ($statusPas == "2") {
+                $filename .= "_lama.xlsx"; // Jika pasien lama
+            } else {
+                $filename .= ".xlsx"; // Default tanpa status
+            }
+
+            // Set Format Header
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="' . $filename . '"');
+            header('Cache-Control: max-age=0');
+
+            // Simpan ke output
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            ob_end_clean(); // Menghindari error karena output buffering
+            $writer->save('php://output');
+            exit;
         } else {
-            $filename .= ".xlsx"; // Default tanpa status
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
         }
-
-        // **Set Format Header**
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-
-
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        ob_end_clean(); // Menghindari error karena output buffering
-        $objWriter->save('php://output');
-        exit;
-    } else {
-        $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-        redirect();
     }
-}
 
     public function xls_data_pasien_kunj(){
         if (akses::aksesLogin() == TRUE) {
@@ -10230,67 +10218,67 @@ class laporan extends CI_Controller {
             switch ($case){                
                 case 'per_tanggal':
                     $sql_pasien = $this->db->select('id, id_pasien, id_poli, tgl_simpan, poli, kode, nama, tgl_lahir, COUNT(id_pasien) AS jml_kunjungan, SUM(jml_gtotal) AS jml_gtotal')
-                                                   ->where('DATE(tgl_simpan)', $tgl)
-                                                   ->like('id_poli', $poli, (!empty($poli) ? 'none' : ''))
-                                                   ->like('tipe', $tipe, (!empty($tipe) ? 'none' : ''))
-                                                   ->group_by('tipe, id_pasien')
-                                                   ->order_by('COUNT(id_pasien)', 'desc')
-                                                   ->get('v_medcheck_visit')->result();
+                                           ->where('DATE(tgl_simpan)', $tgl)
+                                           ->like('id_poli', $poli, (!empty($poli) ? 'none' : ''))
+                                           ->like('tipe', $tipe, (!empty($tipe) ? 'none' : ''))
+                                           ->group_by('tipe, id_pasien')
+                                           ->order_by('COUNT(id_pasien)', 'desc')
+                                           ->get('v_medcheck_visit')->result();
                     break;
 
                 case 'per_rentang':
                     $sql_pasien = $this->db->select('id, id_pasien, id_poli, tgl_simpan, poli, kode, nama, tgl_lahir, COUNT(id_pasien) AS jml_kunjungan, SUM(jml_gtotal) AS jml_gtotal')
-                                                   ->where('DATE(tgl_simpan) >=', $tgl_awal)
-                                                   ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                   ->like('id_poli', $poli, (!empty($poli) ? 'none' : ''))
-                                                   ->like('tipe', $tipe, (!empty($tipe) ? 'none' : ''))
-                                                   ->group_by('tipe, id_pasien')
-                                                   ->order_by('COUNT(id_pasien)', 'desc')
-                                                   ->get('v_medcheck_visit')->result();
+                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                           ->like('id_poli', $poli, (!empty($poli) ? 'none' : ''))
+                                           ->like('tipe', $tipe, (!empty($tipe) ? 'none' : ''))
+                                           ->group_by('tipe, id_pasien')
+                                           ->order_by('COUNT(id_pasien)', 'desc')
+                                           ->get('v_medcheck_visit')->result();
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            # Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getFont()->setBold(TRUE);
+            // Header Tabel
+            $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:E1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:E1')->getFont()->setBold(true);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'No.')
-                    ->setCellValue('B1', 'RM')
-                    ->setCellValue('C1', 'Pasien')
-                    ->setCellValue('D1', 'Kunjungan')
-                    ->setCellValue('E1', 'Omset');
+            $sheet->setCellValue('A1', 'No.')
+                  ->setCellValue('B1', 'RM')
+                  ->setCellValue('C1', 'Pasien')
+                  ->setCellValue('D1', 'Kunjungan')
+                  ->setCellValue('E1', 'Omset');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(55);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(11);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(10);
+            $sheet->getColumnDimension('C')->setWidth(55);
+            $sheet->getColumnDimension('D')->setWidth(11);
+            $sheet->getColumnDimension('E')->setWidth(20);
 
             if(!empty($sql_pasien)){
-                $no    = 1;
-                $cell  = 2;
+                $no = 1;
+                $cell = 2;
                 $total_kunj = 0;
-                $total_oms  = 0;
+                $total_oms = 0;
+                
                 foreach ($sql_pasien as $pasien){
-                    $total_kunj = $total_kunj + $pasien->jml_kunjungan;
-                    $total_oms  = $total_oms + $pasien->jml_gtotal;
+                    $total_kunj += $pasien->jml_kunjungan;
+                    $total_oms += $pasien->jml_gtotal;
                     
-                    $objPHPExcel->getActiveSheet()->getStyle('E'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':B'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('C'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('D'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('E'.$cell)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_ACCOUNTING_IDR);
+                    $sheet->getStyle('A'.$cell.':B'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('C'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('D'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, $no)
-                            ->setCellValue('B'.$cell, $pasien->kode)
-                            ->setCellValue('C'.$cell, $pasien->nama)
-                            ->setCellValue('D'.$cell, $pasien->jml_kunjungan)
-                            ->setCellValue('E'.$cell, $pasien->jml_gtotal);
+                    $sheet->setCellValue('A'.$cell, $no)
+                          ->setCellValue('B'.$cell, $pasien->kode)
+                          ->setCellValue('C'.$cell, $pasien->nama)
+                          ->setCellValue('D'.$cell, $pasien->jml_kunjungan)
+                          ->setCellValue('E'.$cell, $pasien->jml_gtotal);
 
                     $no++;
                     $cell++;
@@ -10298,67 +10286,53 @@ class laporan extends CI_Controller {
                 
                 $sell = $cell;
                 
-                $objPHPExcel->getActiveSheet()->getStyle('E'.$sell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
-                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell.':B'.$sell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('C'.$sell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $objPHPExcel->getActiveSheet()->getStyle('D'.$sell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                $objPHPExcel->getActiveSheet()->getStyle('E'.$sell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('E'.$sell)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_ACCOUNTING_IDR);
+                $sheet->getStyle('A'.$sell.':B'.$sell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('C'.$sell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('D'.$sell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('E'.$sell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                     
-                $objPHPExcel->setActiveSheetIndex(0)
-                        ->setCellValue('A'.$sell, '')
-                        ->setCellValue('B'.$sell, '')
-                        ->setCellValue('C'.$sell, 'TOTAL')
-                        ->setCellValue('D'.$sell, $total_kunj)
-                        ->setCellValue('E'.$sell, $total_oms);
+                $sheet->setCellValue('A'.$sell, '')
+                      ->setCellValue('B'.$sell, '')
+                      ->setCellValue('C'.$sell, 'TOTAL')
+                      ->setCellValue('D'.$sell, $total_kunj)
+                      ->setCellValue('E'.$sell, $total_oms);
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('Data Kunjungan Pasien');
+            $sheet->setTitle('Data Kunjungan Pasien');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
-
-
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-//            ob_start();
-            ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-//             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_pasien_kunj_lap.xlsx"');
-
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-//            ob_end_flush();
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
             
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            $objWriter->save('php://output');
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
+
+            // Document properties
+            $spreadsheet->getProperties()
+                ->setCreator("Mikhael Felian Waskito")
+                ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                ->setTitle("Data Kunjungan Pasien")
+                ->setSubject("Laporan Kunjungan")
+                ->setDescription("Kunjungi http://tigerasoft.co.id")
+                ->setKeywords("Pasien Kunjungan")
+                ->setCategory("Laporan");
+
+            ob_end_clean();
+            
+            // Redirect output to client's browser
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_pasien_kunj_lap.xlsx"');
+            header('Cache-Control: max-age=0');
+            
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save('php://output');
             exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10373,63 +10347,62 @@ class laporan extends CI_Controller {
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
             
             switch ($case) {
-                    default:
-                    $sql_pasien     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
-//                                               ->where('tbl_m_pasien.no_hp !=', '')
-//                                               ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
-//                                               ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
-                                               ->order_by('tbl_m_pasien.nama', 'ASC') 
-                                               ->get('tbl_m_pasien')->result();
-                    break;
-                
                 case 'per_tanggal':
-                    $sql_pasien     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
-                                               ->where('tbl_m_pasien.no_hp !=', '')
-                                               ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
-                                               ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
-                                               ->order_by('tbl_m_pasien.nama', 'ASC') 
-                                               ->get('tbl_m_pasien')->result();
+                    $sql_pasien = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
+                                          ->where('tbl_m_pasien.no_hp !=', '')
+                                          ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
+                                          ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
+                                          ->order_by('tbl_m_pasien.nama', 'ASC') 
+                                          ->get('tbl_m_pasien')->result();
+                    break;
+                    
+                default:
+                    $sql_pasien = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
+                                          ->order_by('tbl_m_pasien.nama', 'ASC') 
+                                          ->get('tbl_m_pasien')->result();
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            # Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getFont()->setBold(TRUE);
+            // Set header styles
+            $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:F1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:F1')->getFont()->setBold(true);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'No')
-                    ->setCellValue('B1', 'No. RM')
-                    ->setCellValue('C1', 'Pasien')
-                    ->setCellValue('D1', 'Alamat')
-                    ->setCellValue('E1', 'Tgl Lahir')
-                    ->setCellValue('F1', 'No. HP');
+            // Set headers
+            $sheet->setCellValue('A1', 'No')
+                  ->setCellValue('B1', 'No. RM')
+                  ->setCellValue('C1', 'Pasien')
+                  ->setCellValue('D1', 'Alamat')
+                  ->setCellValue('E1', 'Tgl Lahir')
+                  ->setCellValue('F1', 'No. HP');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(35);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(55);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(10);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(10);
+            // Set column widths
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(10);
+            $sheet->getColumnDimension('C')->setWidth(35);
+            $sheet->getColumnDimension('D')->setWidth(55);
+            $sheet->getColumnDimension('E')->setWidth(10);
+            $sheet->getColumnDimension('F')->setWidth(10);
 
+            // Fill data
             if(!empty($sql_pasien)){
-                $no    = 1;
-                $cell  = 2;
-                $total = 0;
+                $no = 1;
+                $cell = 2;
                 foreach ($sql_pasien as $pasien){
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getNumberFormat()->setFormatCode('#');
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':C'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('D'.$cell.':E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('A'.$cell)->getNumberFormat()->setFormatCode('#');
+                    $sheet->getStyle('A'.$cell.':C'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('D'.$cell.':E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, '')
-                            ->setCellValue('B'.$cell, $pasien->kode_dpn.$pasien->kode)
-                            ->setCellValue('C'.$cell, $pasien->nama)
-                            ->setCellValue('D'.$cell, $pasien->alamat)
-                            ->setCellValue('E'.$cell, $this->tanggalan->tgl_indo8($pasien->tgl_lahir))
-                            ->setCellValue('F'.$cell, (!empty($pasien->no_hp) ? "62".substr($pasien->no_hp, 1) : ''));
+                    $sheet->setCellValue('A'.$cell, '')
+                          ->setCellValue('B'.$cell, $pasien->kode_dpn.$pasien->kode)
+                          ->setCellValue('C'.$cell, $pasien->nama)
+                          ->setCellValue('D'.$cell, $pasien->alamat ?? '')
+                          ->setCellValue('E'.$cell, $this->tanggalan->tgl_indo8($pasien->tgl_lahir))
+                          ->setCellValue('F'.$cell, (!empty($pasien->no_hp) ? "62".substr($pasien->no_hp, 1) : ''));
 
                     $no++;
                     $cell++;
@@ -10437,52 +10410,40 @@ class laporan extends CI_Controller {
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('Data Pasien');
+            $sheet->setTitle('Data Pasien');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Data Pasien")
+                        ->setSubject("Data Pasien")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id")
+                        ->setKeywords("Data Pasien")
+                        ->setCategory("Laporan");
 
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-//            ob_start();
+            // Clean output buffer
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-//             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_pasien.xlsx"');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-//            ob_end_flush();
-            
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            $objWriter->save('php://output');
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_pasien.xlsx"');
+            header('Cache-Control: max-age=0');
+
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10502,120 +10463,103 @@ class laporan extends CI_Controller {
             switch ($case){                
                 case 'per_tanggal':
                     $sql_pasien = $this->db
-                                                   ->where('DATE(tgl_simpan)', $tgl)
-                                                   ->get('v_medcheck_rm_rj')->result();
+                                       ->where('DATE(tgl_simpan)', $tgl)
+                                       ->get('v_medcheck_rm_rj')->result();
                     break;
 
                 case 'per_rentang':
                     $sql_pasien = $this->db
-                                                   ->where('DATE(tgl_simpan) >=', $tgl_awal)
-                                                   ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                   ->get('v_medcheck_rm_rj')->result();
+                                       ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                       ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                       ->get('v_medcheck_rm_rj')->result();
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            // Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:G1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(TRUE);
+            // Header Tabel
+            $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:G1')->getFont()->setBold(true);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'NO')
-                    ->setCellValue('B1', 'TGL')
-                    ->setCellValue('C1', 'POLI')
-                    ->setCellValue('D1', 'PASIEN')
-                    ->setCellValue('E1', 'DIAGNOSA')
-                    ->setCellValue('F1', 'KODE ICD')
-                    ->setCellValue('G1', 'ICD');
+            $sheet->setCellValue('A1', 'NO')
+                  ->setCellValue('B1', 'TGL')
+                  ->setCellValue('C1', 'POLI')
+                  ->setCellValue('D1', 'PASIEN')
+                  ->setCellValue('E1', 'DIAGNOSA')
+                  ->setCellValue('F1', 'KODE ICD')
+                  ->setCellValue('G1', 'ICD');
 
-            $objPHPExcel->getActiveSheet()->freezePane("A2");
-            $objPHPExcel->getActiveSheet()->setAutoFilter('A1:G1');
+            $sheet->freezePane("A2");
+            $sheet->setAutoFilter('A1:G1');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(7);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(40);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(35);
+            $sheet->getColumnDimension('A')->setWidth(7);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(40);
+            $sheet->getColumnDimension('E')->setWidth(25);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(35);
 
             if(!empty($sql_pasien)){
                 $no    = 1;
                 $cell  = 2;
-                $total = 0;
                 foreach ($sql_pasien as $det){
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':G'.$cell)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':B'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('F'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('G'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('E'.$cell)->getAlignment()->setWrapText(true);
-                    $objPHPExcel->getActiveSheet()->getStyle('G'.$cell)->getAlignment()->setWrapText(true);
+                    $sheet->getStyle('A'.$cell.':G'.$cell)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+                    $sheet->getStyle('A'.$cell.':B'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('C'.$cell.':E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('F'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('G'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('E'.$cell)->getAlignment()->setWrapText(true);
+                    $sheet->getStyle('G'.$cell)->getAlignment()->setWrapText(true);
                     
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, $no)
-                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($det->tgl_masuk))
-                            ->setCellValue('C'.$cell, $det->poli)
-                            ->setCellValue('D'.$cell, $det->pasien)
-                            ->setCellValue('E'.$cell, $det->diagnosa)
-                            ->setCellValue('F'.$cell, $det->kode_icd)
-                            ->setCellValue('G'.$cell, $det->diagnosa_en);
+                    $sheet->setCellValue('A'.$cell, $no)
+                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($det->tgl_masuk))
+                          ->setCellValue('C'.$cell, $det->poli)
+                          ->setCellValue('D'.$cell, $det->pasien)
+                          ->setCellValue('E'.$cell, $det->diagnosa)
+                          ->setCellValue('F'.$cell, $det->kode_icd)
+                          ->setCellValue('G'.$cell, $det->diagnosa_en);
 
                     $no++;
                     $cell++;
                 }
-
-                $sell1     = $cell;
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('Lap Diagnosa');
+            $sheet->setTitle('Lap Diagnosa');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Data Diagnosa")
+                        ->setSubject("Rekap Diagnosa")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id");
 
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-
-
+            // Clean output buffer
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-            // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_rekap_diagnosa_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_rekap_diagnosa_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xlsx"');
+            header('Cache-Control: max-age=0');
 
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10634,63 +10578,64 @@ class laporan extends CI_Controller {
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
             
             switch ($case) {
-                    case 'per_tanggal':
-                        $sql_karyawan     = $this->db->select('tbl_m_karyawan.id, tbl_m_karyawan.nik, tbl_m_karyawan.kode, tbl_m_karyawan.nama, tbl_m_karyawan.no_hp, tbl_m_karyawan.tgl_lahir, DAY(tbl_m_karyawan.tgl_lahir) AS hari, MONTH(tbl_m_karyawan.tgl_lahir) AS bulan')
-                                                            ->where('tbl_m_karyawan.no_hp !=', '')
-                                                            ->where('DAY(tbl_m_karyawan.tgl_lahir)', $tgl)
-                                                            ->where('MONTH(tbl_m_karyawan.tgl_lahir)', $bln)
-                                                            ->order_by('tbl_m_karyawan.nama', 'ASC') 
-                                                            ->get('tbl_m_karyawan')->result();
-                        break;
-                    
-                    case 'per_rentang':
-                        $sql_karyawan     = $this->db->select('tbl_m_karyawan.id, tbl_m_karyawan.nik, tbl_m_karyawan.kode, tbl_m_karyawan.nama, tbl_m_karyawan.no_hp, tbl_m_karyawan.tgl_lahir, DAY(tbl_m_karyawan.tgl_lahir) AS hari, MONTH(tbl_m_karyawan.tgl_lahir) AS bulan')
-                                                            ->where('tbl_m_karyawan.no_hp !=', '')
-                                                            ->where('DAY(tbl_m_karyawan.tgl_lahir) >=', $hr_awal)
-                                                            ->where('MONTH(tbl_m_karyawan.tgl_lahir) >=', $bln_awal)
-                                                            ->where('DAY(tbl_m_karyawan.tgl_lahir) <=', $hr_akhir)
-                                                            ->where('MONTH(tbl_m_karyawan.tgl_lahir) <=', $bln_akhir)
-//                                                            ->limit($config['per_page'], $hal)
-                                                            ->order_by('tbl_m_karyawan.nama', 'ASC') 
-                                                            ->get('tbl_m_karyawan')->result();
-                        break;
+                case 'per_tanggal':
+                    $sql_karyawan = $this->db->select('tbl_m_karyawan.id, tbl_m_karyawan.nik, tbl_m_karyawan.kode, tbl_m_karyawan.nama, tbl_m_karyawan.no_hp, tbl_m_karyawan.tgl_lahir, DAY(tbl_m_karyawan.tgl_lahir) AS hari, MONTH(tbl_m_karyawan.tgl_lahir) AS bulan')
+                                          ->where('tbl_m_karyawan.no_hp !=', '')
+                                          ->where('DAY(tbl_m_karyawan.tgl_lahir)', $tgl)
+                                          ->where('MONTH(tbl_m_karyawan.tgl_lahir)', $bln)
+                                          ->order_by('tbl_m_karyawan.nama', 'ASC') 
+                                          ->get('tbl_m_karyawan')->result();
+                    break;
+                
+                case 'per_rentang':
+                    $sql_karyawan = $this->db->select('tbl_m_karyawan.id, tbl_m_karyawan.nik, tbl_m_karyawan.kode, tbl_m_karyawan.nama, tbl_m_karyawan.no_hp, tbl_m_karyawan.tgl_lahir, DAY(tbl_m_karyawan.tgl_lahir) AS hari, MONTH(tbl_m_karyawan.tgl_lahir) AS bulan')
+                                          ->where('tbl_m_karyawan.no_hp !=', '')
+                                          ->where('DAY(tbl_m_karyawan.tgl_lahir) >=', $hr_awal)
+                                          ->where('MONTH(tbl_m_karyawan.tgl_lahir) >=', $bln_awal)
+                                          ->where('DAY(tbl_m_karyawan.tgl_lahir) <=', $hr_akhir)
+                                          ->where('MONTH(tbl_m_karyawan.tgl_lahir) <=', $bln_akhir)
+                                          ->order_by('tbl_m_karyawan.nama', 'ASC') 
+                                          ->get('tbl_m_karyawan')->result();
+                    break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            # Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:N1')->getFont()->setBold(TRUE);
+            // Set header styles
+            $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:E1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:E1')->getFont()->setBold(true);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'Whatsapp Number')
-                    ->setCellValue('B1', 'Name')
-                    ->setCellValue('C1', 'Col1')
-                    ->setCellValue('D1', 'Tgl Lahir')
-                    ->setCellValue('E1', 'Col3');
+            // Set headers
+            $sheet->setCellValue('A1', 'Whatsapp Number')
+                  ->setCellValue('B1', 'Name')
+                  ->setCellValue('C1', 'Col1')
+                  ->setCellValue('D1', 'Tgl Lahir')
+                  ->setCellValue('E1', 'Col3');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(18);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(55);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(10);
+            // Set column widths
+            $sheet->getColumnDimension('A')->setWidth(18);
+            $sheet->getColumnDimension('B')->setWidth(55);
+            $sheet->getColumnDimension('C')->setWidth(14);
+            $sheet->getColumnDimension('D')->setWidth(12);
+            $sheet->getColumnDimension('E')->setWidth(10);
 
+            // Fill data
             if(!empty($sql_karyawan)){
                 $no    = 1;
                 $cell  = 2;
-                $total = 0;
                 foreach ($sql_karyawan as $karyawan){
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getNumberFormat()->setFormatCode('#');
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell.':C'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('D'.$cell.':E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('A'.$cell)->getNumberFormat()->setFormatCode('#');
+                    $sheet->getStyle('A'.$cell.':C'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('D'.$cell.':E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, (!empty($karyawan->no_hp) ? "62".substr($karyawan->no_hp, 1) : ''))
-                            ->setCellValue('B'.$cell, $karyawan->nama)
-                            ->setCellValue('C'.$cell, $this->tanggalan->bulan_ke($karyawan->bulan))
-                            ->setCellValue('D'.$cell, $this->tanggalan->tgl_indo8($karyawan->tgl_lahir))
-                            ->setCellValue('E'.$cell, $karyawan->bulan);
+                    $sheet->setCellValue('A'.$cell, (!empty($karyawan->no_hp) ? "62".substr($karyawan->no_hp, 1) : ''))
+                          ->setCellValue('B'.$cell, $karyawan->nama)
+                          ->setCellValue('C'.$cell, $this->tanggalan->bulan_ke($karyawan->bulan))
+                          ->setCellValue('D'.$cell, $this->tanggalan->tgl_indo8($karyawan->tgl_lahir))
+                          ->setCellValue('E'.$cell, $karyawan->bulan);
 
                     $no++;
                     $cell++;
@@ -10698,52 +10643,38 @@ class laporan extends CI_Controller {
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('Data Karyawan');
+            $sheet->setTitle('Data Karyawan');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Data Karyawan")
+                        ->setSubject("Data Karyawan Ulang Tahun")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id");
 
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-//            ob_start();
+            // Clean output buffer
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-//             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_karyawan_wa_lap.xlsx"');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-//            ob_end_flush();
-            
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            $objWriter->save('php://output');
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_karyawan_wa_lap.xlsx"');
+            header('Cache-Control: max-age=0');
+
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10785,168 +10716,157 @@ class laporan extends CI_Controller {
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
             // Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:Z5')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:Z5')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:Z5')->getFont()->setBold(TRUE);
+            $sheet->getStyle('A1:Z5')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:Z5')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:Z5')->getFont()->setBold(true);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A1', 'LAPORAN TRACER PENGUNJUNG')->mergeCells('A1:S1');
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A2', $pengaturan->judul)->mergeCells('A2:S2');
+            $sheet->setCellValue('A1', 'LAPORAN TRACER PENGUNJUNG')
+                  ->mergeCells('A1:S1');
+            $sheet->setCellValue('A2', $pengaturan->judul)
+                  ->mergeCells('A2:S2');
             
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A4', 'No.')->mergeCells('A4:A5')
-                    ->setCellValue('B4', 'Pasien')->mergeCells('B4:B5')
-                    ->setCellValue('C4', 'Tanggal')->mergeCells('C4:C5')
-                    ->setCellValue('D4', 'Pendaftaran')->mergeCells('D4:D5')
-                    ->setCellValue('E4', 'PX Dokter')->mergeCells('E4:E5')
-                    ->setCellValue('F4', 'Laborat')->mergeCells('F4:H4')
-                    ->setCellValue('I4', 'Radiologi')->mergeCells('I4:M4')
-                    ->setCellValue('N4', 'Farmasi')->mergeCells('N4:Q4')
-                    ->setCellValue('R4', 'Rawat Inap')->mergeCells('R4:T4')
-                    ->setCellValue('U4', 'Selesai')->mergeCells('U4:U5')
-                    ->setCellValue('V4', 'Total')->mergeCells('V4:V5');
+            $sheet->setCellValue('A4', 'No.')
+                  ->mergeCells('A4:A5');
+            $sheet->setCellValue('B4', 'Pasien')
+                  ->mergeCells('B4:B5');
+            $sheet->setCellValue('C4', 'Tanggal')
+                  ->mergeCells('C4:C5');
+            $sheet->setCellValue('D4', 'Pendaftaran')
+                  ->mergeCells('D4:D5');
+            $sheet->setCellValue('E4', 'PX Dokter')
+                  ->mergeCells('E4:E5');
+            $sheet->setCellValue('F4', 'Laborat')
+                  ->mergeCells('F4:H4');
+            $sheet->setCellValue('I4', 'Radiologi')
+                  ->mergeCells('I4:M4');
+            $sheet->setCellValue('N4', 'Farmasi')
+                  ->mergeCells('N4:Q4');
+            $sheet->setCellValue('R4', 'Rawat Inap')
+                  ->mergeCells('R4:T4');
+            $sheet->setCellValue('U4', 'Selesai')
+                  ->mergeCells('U4:U5');
+            $sheet->setCellValue('V4', 'Total')
+                  ->mergeCells('V4:V5');
             
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A5', '')
-                    ->setCellValue('B5', '')
-                    ->setCellValue('C5', '')
-                    ->setCellValue('D5', '')
-                    ->setCellValue('E5', '')
-                    ->setCellValue('F5', 'Masuk')
-                    ->setCellValue('G5', 'Keluar')
-                    ->setCellValue('H5', 'Total')
-                    ->setCellValue('I5', 'Masuk')
-                    ->setCellValue('J5', 'Kirim')
-                    ->setCellValue('K5', 'Baca')
-                    ->setCellValue('L5', 'Selesai')
-                    ->setCellValue('M5', 'Total')
-                    ->setCellValue('N5', 'Masuk')
-                    ->setCellValue('O5', 'Bayar')
-                    ->setCellValue('P5', 'Diterima')
-                    ->setCellValue('Q5', 'Total')
-                    ->setCellValue('R5', 'Masuk')
-                    ->setCellValue('S5', 'Keluar')
-                    ->setCellValue('T5', 'Total')
-                    ->setCellValue('U5', '')
-                    ->setCellValue('W5', '');
+            $sheet->setCellValue('F5', 'Masuk');
+            $sheet->setCellValue('G5', 'Keluar');
+            $sheet->setCellValue('H5', 'Total');
+            $sheet->setCellValue('I5', 'Masuk');
+            $sheet->setCellValue('J5', 'Kirim');
+            $sheet->setCellValue('K5', 'Baca');
+            $sheet->setCellValue('L5', 'Selesai');
+            $sheet->setCellValue('M5', 'Total');
+            $sheet->setCellValue('N5', 'Masuk');
+            $sheet->setCellValue('O5', 'Bayar');
+            $sheet->setCellValue('P5', 'Diterima');
+            $sheet->setCellValue('Q5', 'Total');
+            $sheet->setCellValue('R5', 'Masuk');
+            $sheet->setCellValue('S5', 'Keluar');
+            $sheet->setCellValue('T5', 'Total');
             
-            $objPHPExcel->getActiveSheet()->freezePane("A6");
+            $sheet->freezePane("A6");
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(16);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(16);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(16);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(16);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(16);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(40);
+            $sheet->getColumnDimension('C')->setWidth(11);
+            $sheet->getColumnDimension('D')->setWidth(12);
+            $sheet->getColumnDimension('E')->setWidth(12);
+            $sheet->getColumnDimension('F')->setWidth(8);
+            $sheet->getColumnDimension('G')->setWidth(8);
+            $sheet->getColumnDimension('H')->setWidth(16);
+            $sheet->getColumnDimension('I')->setWidth(8);
+            $sheet->getColumnDimension('J')->setWidth(8);
+            $sheet->getColumnDimension('K')->setWidth(8);
+            $sheet->getColumnDimension('L')->setWidth(8);
+            $sheet->getColumnDimension('M')->setWidth(16);
+            $sheet->getColumnDimension('N')->setWidth(8);
+            $sheet->getColumnDimension('O')->setWidth(8);
+            $sheet->getColumnDimension('P')->setWidth(8);
+            $sheet->getColumnDimension('Q')->setWidth(16);
+            $sheet->getColumnDimension('R')->setWidth(16);
+            $sheet->getColumnDimension('S')->setWidth(20);
+            $sheet->getColumnDimension('T')->setWidth(16);
+            $sheet->getColumnDimension('U')->setWidth(20);
+            $sheet->getColumnDimension('V')->setWidth(20);
 
             if(!empty($sql_tracer)){
                 $no    = 1;
                 $cell  = 6;
-                $total = 0;
                 foreach ($sql_tracer as $trace){
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('Q'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                    $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('S'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('Q'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('R'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('S'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, $no)
-                            ->setCellValue('B'.$cell, $trace->nama_pgl)
-                            ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
-                            ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
-                            ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
-                            ->setCellValue('F'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_msk))
-                            ->setCellValue('G'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_klr))
-                            ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_sampling_msk, $trace->wkt_sampling_klr))
-                            ->setCellValue('I'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_msk))
-                            ->setCellValue('J'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_krm))
-                            ->setCellValue('K'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_baca))
-                            ->setCellValue('L'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_klr))
-                            ->setCellValue('M'.$cell, $this->tanggalan->usia_wkt($trace->wkt_rad_msk, $trace->wkt_rad_klr))
-                            ->setCellValue('N'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_msk))
-                            ->setCellValue('O'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_klr))
-                            ->setCellValue('P'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_trm))
-                            ->setCellValue('Q'.$cell, $this->tanggalan->usia_wkt($trace->wkt_resep_msk, $trace->wkt_resep_trm))
-                            ->setCellValue('R'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap))
-                            ->setCellValue('S'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap_keluar))
-                            ->setCellValue('T'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
-                            ->setCellValue('U'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
-                            ->setCellValue('V'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
+                    $sheet->setCellValue('A'.$cell, $no)
+                          ->setCellValue('B'.$cell, $trace->nama_pgl)
+                          ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
+                          ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
+                          ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
+                          ->setCellValue('F'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_msk))
+                          ->setCellValue('G'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_klr))
+                          ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_sampling_msk, $trace->wkt_sampling_klr))
+                          ->setCellValue('I'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_msk))
+                          ->setCellValue('J'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_krm))
+                          ->setCellValue('K'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_baca))
+                          ->setCellValue('L'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_klr))
+                          ->setCellValue('M'.$cell, $this->tanggalan->usia_wkt($trace->wkt_rad_msk, $trace->wkt_rad_klr))
+                          ->setCellValue('N'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_msk))
+                          ->setCellValue('O'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_klr))
+                          ->setCellValue('P'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_trm))
+                          ->setCellValue('Q'.$cell, $this->tanggalan->usia_wkt($trace->wkt_resep_msk, $trace->wkt_resep_trm))
+                          ->setCellValue('R'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap))
+                          ->setCellValue('S'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap_keluar))
+                          ->setCellValue('T'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
+                          ->setCellValue('U'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
+                          ->setCellValue('V'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
 
                     $no++;
                     $cell++;
                 }
-
-                $sell1     = $cell;
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('LAP TRACER');
+            $sheet->setTitle('LAP TRACER');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Laporan Tracer")
+                        ->setSubject("Laporan Tracer")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id")
+                        ->setKeywords("Tracer")
+                        ->setCategory("Laporan");
 
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-
+            // Clean output buffer
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-            // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_tracer_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_tracer_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xlsx"');
+            header('Cache-Control: max-age=0');
 
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10983,532 +10903,258 @@ class laporan extends CI_Controller {
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
             // Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A1:Z5')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:Z5')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A1:Z5')->getFont()->setBold(TRUE);
+            $sheet->getStyle('A1:Z5')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:Z5')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:Z5')->getFont()->setBold(true);
             
             switch ($tipe){
                 default:
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A4', 'No.')->mergeCells('A4:A5')
-                            ->setCellValue('B4', 'Pasien')->mergeCells('B4:B5')
-                            ->setCellValue('C4', 'Tanggal')->mergeCells('C4:C5')
-                            ->setCellValue('D4', 'Pendaftaran')->mergeCells('D4:D5')
-                            ->setCellValue('E4', 'PX Dokter')->mergeCells('E4:E5')
-                            ->setCellValue('F4', 'Selesai')->mergeCells('U4:U5')
-                            ->setCellValue('G4', 'Total')->mergeCells('V4:V5');
+                    $sheet->setCellValue('A4', 'No.')
+                          ->mergeCells('A4:A5');
+                    $sheet->setCellValue('B4', 'Pasien')
+                          ->mergeCells('B4:B5');
+                    $sheet->setCellValue('C4', 'Tanggal')
+                          ->mergeCells('C4:C5');
+                    $sheet->setCellValue('D4', 'Pendaftaran')
+                          ->mergeCells('D4:D5');
+                    $sheet->setCellValue('E4', 'PX Dokter')
+                          ->mergeCells('E4:E5');
+                    $sheet->setCellValue('F4', 'Selesai')
+                          ->mergeCells('F4:F5');
+                    $sheet->setCellValue('G4', 'Total')
+                          ->mergeCells('G4:G5');
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A5', '')
-                            ->setCellValue('B5', '')
-                            ->setCellValue('C5', '')
-                            ->setCellValue('D5', '')
-                            ->setCellValue('E5', '');
+                    $sheet->freezePane("A6");
 
-                    $objPHPExcel->getActiveSheet()->freezePane("A6");
-
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
+                    $sheet->getColumnDimension('A')->setWidth(6);
+                    $sheet->getColumnDimension('B')->setWidth(40);
+                    $sheet->getColumnDimension('C')->setWidth(11);
+                    $sheet->getColumnDimension('D')->setWidth(12);
+                    $sheet->getColumnDimension('E')->setWidth(12);
+                    $sheet->getColumnDimension('F')->setWidth(12);
+                    $sheet->getColumnDimension('G')->setWidth(12);
 
                     if(!empty($sql_tracer)){
                         $no    = 1;
                         $cell  = 6;
-                        $total = 0;
                         foreach ($sql_tracer as $trace){
-                            $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('Q'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('S'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                            $objPHPExcel->setActiveSheetIndex(0)
-                                    ->setCellValue('A'.$cell, $no)
-                                    ->setCellValue('B'.$cell, $trace->nama_pgl)
-                                    ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
-                                    ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
-                                    ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
-                                    ->setCellValue('F'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
-                                    ->setCellValue('G'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
-                                    ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
+                            $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            $sheet->getStyle('C'.$cell.':G'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            
+                            $sheet->setCellValue('A'.$cell, $no)
+                                  ->setCellValue('B'.$cell, $trace->nama_pgl)
+                                  ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
+                                  ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
+                                  ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
+                                  ->setCellValue('F'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
+                                  ->setCellValue('G'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
 
                             $no++;
                             $cell++;
                         }
-
-                        $sell1     = $cell;
                     }
                     break;
                 
                 case '1':
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A1', 'LAPORAN TRACER PENGUNJUNG')->mergeCells('A1:H1');
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A2', $pengaturan->judul)->mergeCells('A2:H2');
+                    $sheet->setCellValue('A1', 'LAPORAN TRACER PENGUNJUNG')
+                          ->mergeCells('A1:G1');
+                    $sheet->setCellValue('A2', $pengaturan->judul)
+                          ->mergeCells('A2:G2');
             
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A4', 'No.')->mergeCells('A4:A5')
-                            ->setCellValue('B4', 'Pasien')->mergeCells('B4:B5')
-                            ->setCellValue('C4', 'Tanggal')->mergeCells('C4:C5')
-                            ->setCellValue('D4', 'Pendaftaran')->mergeCells('D4:D5')
-                            ->setCellValue('E4', 'PX Dokter')->mergeCells('E4:E5')
-                            ->setCellValue('F4', 'Selesai')->mergeCells('F4:F5')
-                            ->setCellValue('G4', 'Total')->mergeCells('G4:G5');
+                    $sheet->setCellValue('A4', 'No.')
+                          ->mergeCells('A4:A5');
+                    $sheet->setCellValue('B4', 'Pasien')
+                          ->mergeCells('B4:B5');
+                    $sheet->setCellValue('C4', 'Tanggal')
+                          ->mergeCells('C4:C5');
+                    $sheet->setCellValue('D4', 'Pendaftaran')
+                          ->mergeCells('D4:D5');
+                    $sheet->setCellValue('E4', 'PX Dokter')
+                          ->mergeCells('E4:E5');
+                    $sheet->setCellValue('F4', 'Selesai')
+                          ->mergeCells('F4:F5');
+                    $sheet->setCellValue('G4', 'Total')
+                          ->mergeCells('G4:G5');
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A5', '')
-                            ->setCellValue('B5', '')
-                            ->setCellValue('C5', '')
-                            ->setCellValue('D5', '')
-                            ->setCellValue('E5', '');
+                    $sheet->freezePane("A6");
 
-                    $objPHPExcel->getActiveSheet()->freezePane("A6");
-
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
+                    $sheet->getColumnDimension('A')->setWidth(6);
+                    $sheet->getColumnDimension('B')->setWidth(40);
+                    $sheet->getColumnDimension('C')->setWidth(11);
+                    $sheet->getColumnDimension('D')->setWidth(12);
+                    $sheet->getColumnDimension('E')->setWidth(12);
+                    $sheet->getColumnDimension('F')->setWidth(12);
+                    $sheet->getColumnDimension('G')->setWidth(12);
 
                     if(!empty($sql_tracer)){
                         $no    = 1;
                         $cell  = 6;
-                        $total = 0;
                         foreach ($sql_tracer as $trace){
-                            $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('Q'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('S'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                            $objPHPExcel->setActiveSheetIndex(0)
-                                    ->setCellValue('A'.$cell, $no)
-                                    ->setCellValue('B'.$cell, $trace->nama_pgl)
-                                    ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
-                                    ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
-                                    ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
-                                    ->setCellValue('F'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
-                                    ->setCellValue('G'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
-                                    ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
+                            $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            $sheet->getStyle('C'.$cell.':G'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            
+                            $sheet->setCellValue('A'.$cell, $no)
+                                  ->setCellValue('B'.$cell, $trace->nama_pgl)
+                                  ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
+                                  ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
+                                  ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
+                                  ->setCellValue('F'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
+                                  ->setCellValue('G'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
 
                             $no++;
                             $cell++;
                         }
-
-                        $sell1     = $cell;
                     }
                     break;
                 
                 case '2':
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A4', 'No.')->mergeCells('A4:A5')
-                            ->setCellValue('B4', 'Pasien')->mergeCells('B4:B5')
-                            ->setCellValue('C4', 'Tanggal')->mergeCells('C4:C5')
-                            ->setCellValue('D4', 'Pendaftaran')->mergeCells('D4:D5')
-                            ->setCellValue('E4', 'PX Dokter')->mergeCells('E4:E5')
-                            ->setCellValue('F4', 'Laborat')->mergeCells('F4:H4')
-                            ->setCellValue('I4', 'Radiologi')->mergeCells('I4:M4')
-                            ->setCellValue('N4', 'Farmasi')->mergeCells('N4:Q4')
-                            ->setCellValue('R4', 'Rawat Inap')->mergeCells('R4:T4')
-                            ->setCellValue('U4', 'Selesai')->mergeCells('U4:U5')
-                            ->setCellValue('V4', 'Total')->mergeCells('V4:V5');
-
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A5', '')
-                            ->setCellValue('B5', '')
-                            ->setCellValue('C5', '')
-                            ->setCellValue('D5', '')
-                            ->setCellValue('E5', '')
-                            ->setCellValue('F5', 'Masuk')
-                            ->setCellValue('G5', 'Keluar')
-                            ->setCellValue('H5', 'Total')
-                            ->setCellValue('I5', 'Masuk')
-                            ->setCellValue('J5', 'Kirim')
-                            ->setCellValue('K5', 'Baca')
-                            ->setCellValue('L5', 'Selesai')
-                            ->setCellValue('M5', 'Total')
-                            ->setCellValue('N5', 'Masuk')
-                            ->setCellValue('O5', 'Bayar')
-                            ->setCellValue('P5', 'Diterima')
-                            ->setCellValue('Q5', 'Total')
-                            ->setCellValue('R5', 'Masuk')
-                            ->setCellValue('S5', 'Keluar')
-                            ->setCellValue('T5', 'Total')
-                            ->setCellValue('U5', '')
-                            ->setCellValue('W5', '');
-
-                    $objPHPExcel->getActiveSheet()->freezePane("A6");
-
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
-
-                    if(!empty($sql_tracer)){
-                        $no    = 1;
-                        $cell  = 6;
-                        $total = 0;
-                        foreach ($sql_tracer as $trace){
-                            $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('Q'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('S'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                            $objPHPExcel->setActiveSheetIndex(0)
-                                    ->setCellValue('A'.$cell, $no)
-                                    ->setCellValue('B'.$cell, $trace->nama_pgl)
-                                    ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
-                                    ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
-                                    ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
-                                    ->setCellValue('F'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_msk))
-                                    ->setCellValue('G'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_klr))
-                                    ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_sampling_msk, $trace->wkt_sampling_klr))
-                                    ->setCellValue('I'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_msk))
-                                    ->setCellValue('J'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_krm))
-                                    ->setCellValue('K'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_baca))
-                                    ->setCellValue('L'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_klr))
-                                    ->setCellValue('M'.$cell, $this->tanggalan->usia_wkt($trace->wkt_rad_msk, $trace->wkt_rad_klr))
-                                    ->setCellValue('N'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_msk))
-                                    ->setCellValue('O'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_klr))
-                                    ->setCellValue('P'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_trm))
-                                    ->setCellValue('Q'.$cell, $this->tanggalan->usia_wkt($trace->wkt_resep_msk, $trace->wkt_resep_klr))
-                                    ->setCellValue('R'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap))
-                                    ->setCellValue('S'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap_keluar))
-                                    ->setCellValue('T'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
-                                    ->setCellValue('U'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
-                                    ->setCellValue('V'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
-
-                            $no++;
-                            $cell++;
-                        }
-
-                        $sell1     = $cell;
-                    }
-                    break;
-                
                 case '3':
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A4', 'No.')->mergeCells('A4:A5')
-                            ->setCellValue('B4', 'Pasien')->mergeCells('B4:B5')
-                            ->setCellValue('C4', 'Tanggal')->mergeCells('C4:C5')
-                            ->setCellValue('D4', 'Pendaftaran')->mergeCells('D4:D5')
-                            ->setCellValue('E4', 'PX Dokter')->mergeCells('E4:E5')
-                            ->setCellValue('F4', 'Laborat')->mergeCells('F4:H4')
-                            ->setCellValue('I4', 'Radiologi')->mergeCells('I4:M4')
-                            ->setCellValue('N4', 'Farmasi')->mergeCells('N4:Q4')
-                            ->setCellValue('R4', 'Rawat Inap')->mergeCells('R4:T4')
-                            ->setCellValue('U4', 'Selesai')->mergeCells('U4:U5')
-                            ->setCellValue('V4', 'Total')->mergeCells('V4:V5');
-
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A5', '')
-                            ->setCellValue('B5', '')
-                            ->setCellValue('C5', '')
-                            ->setCellValue('D5', '')
-                            ->setCellValue('E5', '')
-                            ->setCellValue('F5', 'Masuk')
-                            ->setCellValue('G5', 'Keluar')
-                            ->setCellValue('H5', 'Total')
-                            ->setCellValue('I5', 'Masuk')
-                            ->setCellValue('J5', 'Kirim')
-                            ->setCellValue('K5', 'Baca')
-                            ->setCellValue('L5', 'Selesai')
-                            ->setCellValue('M5', 'Total')
-                            ->setCellValue('N5', 'Masuk')
-                            ->setCellValue('O5', 'Bayar')
-                            ->setCellValue('P5', 'Diterima')
-                            ->setCellValue('Q5', 'Total')
-                            ->setCellValue('R5', 'Masuk')
-                            ->setCellValue('S5', 'Keluar')
-                            ->setCellValue('T5', 'Total')
-                            ->setCellValue('U5', '')
-                            ->setCellValue('W5', '');
-
-                    $objPHPExcel->getActiveSheet()->freezePane("A6");
-
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
-
-                    if(!empty($sql_tracer)){
-                        $no    = 1;
-                        $cell  = 6;
-                        $total = 0;
-                        foreach ($sql_tracer as $trace){
-                            $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('Q'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('S'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                            $objPHPExcel->setActiveSheetIndex(0)
-                                    ->setCellValue('A'.$cell, $no)
-                                    ->setCellValue('B'.$cell, $trace->nama_pgl)
-                                    ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
-                                    ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
-                                    ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
-                                    ->setCellValue('F'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_msk))
-                                    ->setCellValue('G'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_klr))
-                                    ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_sampling_msk, $trace->wkt_sampling_klr))
-                                    ->setCellValue('I'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_msk))
-                                    ->setCellValue('J'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_krm))
-                                    ->setCellValue('K'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_baca))
-                                    ->setCellValue('L'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_klr))
-                                    ->setCellValue('M'.$cell, $this->tanggalan->usia_wkt($trace->wkt_rad_msk, $trace->wkt_rad_klr))
-                                    ->setCellValue('N'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_msk))
-                                    ->setCellValue('O'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_klr))
-                                    ->setCellValue('P'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_trm))
-                                    ->setCellValue('Q'.$cell, $this->tanggalan->usia_wkt($trace->wkt_resep_msk, $trace->wkt_resep_klr))
-                                    ->setCellValue('R'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap))
-                                    ->setCellValue('S'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap_keluar))
-                                    ->setCellValue('T'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
-                                    ->setCellValue('U'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
-                                    ->setCellValue('V'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
-
-                            $no++;
-                            $cell++;
-                        }
-
-                        $sell1     = $cell;
-                    }
-                    break;
-                
                 case '4':
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A4', 'No.')->mergeCells('A4:A5')
-                            ->setCellValue('B4', 'Pasien')->mergeCells('B4:B5')
-                            ->setCellValue('C4', 'Tanggal')->mergeCells('C4:C5')
-                            ->setCellValue('D4', 'Pendaftaran')->mergeCells('D4:D5')
-                            ->setCellValue('E4', 'PX Dokter')->mergeCells('E4:E5')
-                            ->setCellValue('F4', 'Laborat')->mergeCells('F4:H4')
-                            ->setCellValue('I4', 'Radiologi')->mergeCells('I4:M4')
-                            ->setCellValue('N4', 'Farmasi')->mergeCells('N4:Q4')
-                            ->setCellValue('R4', 'Rawat Inap')->mergeCells('R4:T4')
-                            ->setCellValue('U4', 'Selesai')->mergeCells('U4:U5')
-                            ->setCellValue('V4', 'Total')->mergeCells('V4:V5');
+                    $sheet->setCellValue('A4', 'No.')
+                          ->mergeCells('A4:A5');
+                    $sheet->setCellValue('B4', 'Pasien')
+                          ->mergeCells('B4:B5');
+                    $sheet->setCellValue('C4', 'Tanggal')
+                          ->mergeCells('C4:C5');
+                    $sheet->setCellValue('D4', 'Pendaftaran')
+                          ->mergeCells('D4:D5');
+                    $sheet->setCellValue('E4', 'PX Dokter')
+                          ->mergeCells('E4:E5');
+                    $sheet->setCellValue('F4', 'Laborat')
+                          ->mergeCells('F4:H4');
+                    $sheet->setCellValue('I4', 'Radiologi')
+                          ->mergeCells('I4:M4');
+                    $sheet->setCellValue('N4', 'Farmasi')
+                          ->mergeCells('N4:Q4');
+                    $sheet->setCellValue('R4', 'Rawat Inap')
+                          ->mergeCells('R4:T4');
+                    $sheet->setCellValue('U4', 'Selesai')
+                          ->mergeCells('U4:U5');
+                    $sheet->setCellValue('V4', 'Total')
+                          ->mergeCells('V4:V5');
 
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A5', '')
-                            ->setCellValue('B5', '')
-                            ->setCellValue('C5', '')
-                            ->setCellValue('D5', '')
-                            ->setCellValue('E5', '')
-                            ->setCellValue('F5', 'Masuk')
-                            ->setCellValue('G5', 'Keluar')
-                            ->setCellValue('H5', 'Total')
-                            ->setCellValue('I5', 'Masuk')
-                            ->setCellValue('J5', 'Kirim')
-                            ->setCellValue('K5', 'Baca')
-                            ->setCellValue('L5', 'Selesai')
-                            ->setCellValue('M5', 'Total')
-                            ->setCellValue('N5', 'Masuk')
-                            ->setCellValue('O5', 'Bayar')
-                            ->setCellValue('P5', 'Diterima')
-                            ->setCellValue('Q5', 'Total')
-                            ->setCellValue('R5', 'Masuk')
-                            ->setCellValue('S5', 'Keluar')
-                            ->setCellValue('T5', 'Total')
-                            ->setCellValue('U5', '')
-                            ->setCellValue('W5', '');
+                    $sheet->setCellValue('F5', 'Masuk');
+                    $sheet->setCellValue('G5', 'Keluar');
+                    $sheet->setCellValue('H5', 'Total');
+                    $sheet->setCellValue('I5', 'Masuk');
+                    $sheet->setCellValue('J5', 'Kirim');
+                    $sheet->setCellValue('K5', 'Baca');
+                    $sheet->setCellValue('L5', 'Selesai');
+                    $sheet->setCellValue('M5', 'Total');
+                    $sheet->setCellValue('N5', 'Masuk');
+                    $sheet->setCellValue('O5', 'Bayar');
+                    $sheet->setCellValue('P5', 'Diterima');
+                    $sheet->setCellValue('Q5', 'Total');
+                    $sheet->setCellValue('R5', 'Masuk');
+                    $sheet->setCellValue('S5', 'Keluar');
+                    $sheet->setCellValue('T5', 'Total');
 
-                    $objPHPExcel->getActiveSheet()->freezePane("A6");
+                    $sheet->freezePane("A6");
 
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(11);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(12);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(8);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(16);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('U')->setWidth(20);
-                    $objPHPExcel->getActiveSheet()->getColumnDimension('V')->setWidth(20);
+                    $sheet->getColumnDimension('A')->setWidth(6);
+                    $sheet->getColumnDimension('B')->setWidth(40);
+                    $sheet->getColumnDimension('C')->setWidth(11);
+                    $sheet->getColumnDimension('D')->setWidth(12);
+                    $sheet->getColumnDimension('E')->setWidth(12);
+                    $sheet->getColumnDimension('F')->setWidth(8);
+                    $sheet->getColumnDimension('G')->setWidth(8);
+                    $sheet->getColumnDimension('H')->setWidth(16);
+                    $sheet->getColumnDimension('I')->setWidth(8);
+                    $sheet->getColumnDimension('J')->setWidth(8);
+                    $sheet->getColumnDimension('K')->setWidth(8);
+                    $sheet->getColumnDimension('L')->setWidth(8);
+                    $sheet->getColumnDimension('M')->setWidth(16);
+                    $sheet->getColumnDimension('N')->setWidth(8);
+                    $sheet->getColumnDimension('O')->setWidth(8);
+                    $sheet->getColumnDimension('P')->setWidth(8);
+                    $sheet->getColumnDimension('Q')->setWidth(16);
+                    $sheet->getColumnDimension('R')->setWidth(16);
+                    $sheet->getColumnDimension('S')->setWidth(20);
+                    $sheet->getColumnDimension('T')->setWidth(16);
+                    $sheet->getColumnDimension('U')->setWidth(20);
+                    $sheet->getColumnDimension('V')->setWidth(20);
 
                     if(!empty($sql_tracer)){
                         $no    = 1;
                         $cell  = 6;
-                        $total = 0;
                         foreach ($sql_tracer as $trace){
-                            $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':P'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('Q'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                            $objPHPExcel->getActiveSheet()->getStyle('R'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                            $objPHPExcel->getActiveSheet()->getStyle('S'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-
-                            $objPHPExcel->setActiveSheetIndex(0)
-                                    ->setCellValue('A'.$cell, $no)
-                                    ->setCellValue('B'.$cell, $trace->nama_pgl)
-                                    ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
-                                    ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
-                                    ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
-                                    ->setCellValue('F'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_msk))
-                                    ->setCellValue('G'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_klr))
-                                    ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_sampling_msk, $trace->wkt_sampling_klr))
-                                    ->setCellValue('I'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_msk))
-                                    ->setCellValue('J'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_krm))
-                                    ->setCellValue('K'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_baca))
-                                    ->setCellValue('L'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_klr))
-                                    ->setCellValue('M'.$cell, $this->tanggalan->usia_wkt($trace->wkt_rad_msk, $trace->wkt_rad_klr))
-                                    ->setCellValue('N'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_msk))
-                                    ->setCellValue('O'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_klr))
-                                    ->setCellValue('P'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_trm))
-                                    ->setCellValue('Q'.$cell, $this->tanggalan->usia_wkt($trace->wkt_resep_msk, $trace->wkt_resep_klr))
-                                    ->setCellValue('R'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap))
-                                    ->setCellValue('S'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap_keluar))
-                                    ->setCellValue('T'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
-                                    ->setCellValue('U'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
-                                    ->setCellValue('V'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
+                            $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            $sheet->getStyle('C'.$cell.':V'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                            
+                            $sheet->setCellValue('A'.$cell, $no)
+                                  ->setCellValue('B'.$cell, $trace->nama_pgl)
+                                  ->setCellValue('C'.$cell, $this->tanggalan->tgl_indo($trace->tanggal))
+                                  ->setCellValue('D'.$cell, $this->tanggalan->wkt_indo($trace->wkt_daftar))
+                                  ->setCellValue('E'.$cell, $this->tanggalan->wkt_indo($trace->wkt_periksa))
+                                  ->setCellValue('F'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_msk))
+                                  ->setCellValue('G'.$cell, $this->tanggalan->wkt_indo($trace->wkt_sampling_klr))
+                                  ->setCellValue('H'.$cell, $this->tanggalan->usia_wkt($trace->wkt_sampling_msk, $trace->wkt_sampling_klr))
+                                  ->setCellValue('I'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_msk))
+                                  ->setCellValue('J'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_krm))
+                                  ->setCellValue('K'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_baca))
+                                  ->setCellValue('L'.$cell, $this->tanggalan->wkt_indo($trace->wkt_rad_klr))
+                                  ->setCellValue('M'.$cell, $this->tanggalan->usia_wkt($trace->wkt_rad_msk, $trace->wkt_rad_klr))
+                                  ->setCellValue('N'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_msk))
+                                  ->setCellValue('O'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_klr))
+                                  ->setCellValue('P'.$cell, $this->tanggalan->wkt_indo($trace->wkt_resep_trm))
+                                  ->setCellValue('Q'.$cell, $this->tanggalan->usia_wkt($trace->wkt_resep_msk, $trace->wkt_resep_klr))
+                                  ->setCellValue('R'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap))
+                                  ->setCellValue('S'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_ranap_keluar))
+                                  ->setCellValue('T'.$cell, $this->tanggalan->usia_wkt($trace->wkt_ranap, $trace->wkt_ranap_keluar))
+                                  ->setCellValue('U'.$cell, $this->tanggalan->tgl_indo5($trace->wkt_selesai))
+                                  ->setCellValue('V'.$cell, $this->tanggalan->usia_wkt($trace->wkt_daftar, $trace->wkt_selesai));
 
                             $no++;
                             $cell++;
                         }
-
-                        $sell1     = $cell;
                     }
                     break;
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('LAP TRACER');
+            $sheet->setTitle('LAP TRACER');
 
-            /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
-            /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Laporan Tracer")
+                        ->setSubject("Laporan Tracer")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id")
+                        ->setKeywords("Tracer")
+                        ->setCategory("Laporan");
 
-            /** Page Setup * */
-            // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-                    ->setTitle("Stok")
-                    ->setSubject("Aplikasi Bengkel POS")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-                    ->setKeywords("Pasifik POS")
-                    ->setCategory("Untuk mencetak nota dot matrix");
-
-
+            // Clean output buffer
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-            // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_tracer_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_tracer_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xlsx"');
+            header('Cache-Control: max-age=0');
 
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
-    
-    
     public function laporan_referal() {
         if (akses::aksesLogin() == TRUE) {
             try {
