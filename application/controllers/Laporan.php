@@ -1387,7 +1387,6 @@ class laporan extends CI_Controller {
             $tgl_akhir          = $this->input->get('tgl_akhir');
             $case               = $this->input->get('case');
             $hal                = $this->input->get('halaman');
-            $dokter             = $this->input->get('dokter');
             $pengaturan         = $this->db->get('tbl_pengaturan')->row();
             
             if(!empty($jml)){
@@ -1421,6 +1420,10 @@ class laporan extends CI_Controller {
             $config['per_page']              = $pengaturan->jml_item;
             $config['num_links']             = 3;
             
+            // AdminLTE 3 pagination styling
+            $config['full_tag_open']         = '<ul class="pagination pagination-sm">';
+            $config['full_tag_close']        = '</ul>';
+            
             $config['first_tag_open']        = '<li class="page-item">';
             $config['first_tag_close']       = '</li>';
             
@@ -1436,79 +1439,51 @@ class laporan extends CI_Controller {
             $config['last_tag_open']         = '<li class="page-item">';
             $config['last_tag_close']        = '</li>';
             
-            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
+            $config['cur_tag_open']          = '<li class="page-item active"><a href="#" class="page-link">';
+            $config['cur_tag_close']         = '</a></li>';
             
             $config['first_link']            = '&laquo;';
             $config['prev_link']             = '&lsaquo;';
             $config['next_link']             = '&rsaquo;';
             $config['last_link']             = '&raquo;';
-            $config['anchor_class']          = 'class="page-link"';
+            $config['attributes']            = ['class' => 'page-link'];
         
             $sql_doc = $this->db->where('id', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
             
             switch ($case){
                 case 'per_tanggal':
-                    if(!empty($jml)){
-                        $data['sql_penj']     = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                                          ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                                          ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                                          ->where('tbl_trans_medcheck.status_bayar', '1')
-                                                          ->where('DATE(tbl_trans_medcheck.tgl_bayar)', $tgl)
-                                                          ->where('tbl_trans_medcheck_det.status', '2')
-                                                          ->like('tbl_trans_medcheck.pasien', $pasien)
-                                                          ->like('tbl_trans_medcheck.tipe', $poli, (!empty($poli) ? 'none' : '')) 
-                                                          ->limit($config['per_page'], $hal)
-                                                      ->get('tbl_trans_medcheck_det')->result(); 
-                    }else{
-                        $data['sql_penj']     = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                                          ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                                          ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                                          ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                                                          ->where('tbl_trans_medcheck.status_bayar', '1')
-                                                          ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
-                                                          ->where('DATE(tbl_trans_medcheck_det.tgl_masuk)', $tgl)
-                                                          ->where('tbl_trans_medcheck_det.status !=', '4')
-                                                          ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                                                          ->limit($config['per_page'])
-                                                        ->get('tbl_trans_medcheck_det')->result();                          
-                    }
+                    $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
+                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                        ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                        ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                        ->where('tbl_trans_medcheck.status_bayar', '1')
+                        ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
+                        ->where('DATE(tbl_trans_medcheck_det.tgl_masuk)', $tgl)
+                        ->where('tbl_trans_medcheck_det.status !=', '4')
+                        ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                        ->limit($config['per_page'], $hal ?? 0)
+                        ->get('tbl_trans_medcheck_det')->result();
                     break;
                 
                 case 'per_rentang':
-                    if(!empty($hal)){
-                        $data['sql_penj']     = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                                          ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                                          ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                                          ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                                                          ->where('tbl_trans_medcheck.status_bayar', '1')
-                                                          ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
-                                                          ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
-                                                          ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
-                                                          ->where('tbl_trans_medcheck_det.status !=', '4')
-                                                          ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                                                          ->limit($config['per_page'], $hal)
-                                                        ->get('tbl_trans_medcheck_det')->result(); 
-                    }else{
-                        $data['sql_penj']     = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                                          ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                                          ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                                          ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                                                          ->where('tbl_trans_medcheck.status_bayar', '1')
-                                                          ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
-                                                          ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
-                                                          ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
-                                                          ->where('tbl_trans_medcheck_det.status !=', '4')
-                                                          ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                                                          ->limit($config['per_page'])
-                                                      ->get('tbl_trans_medcheck_det')->result();
-                    }
+                    $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
+                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                        ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                        ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                        ->where('tbl_trans_medcheck.status_bayar', '1')
+                        ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
+                        ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
+                        ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
+                        ->where('tbl_trans_medcheck_det.status !=', '4')
+                        ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                        ->limit($config['per_page'], $hal ?? 0)
+                        ->get('tbl_trans_medcheck_det')->result();
                     break;
             }
             
             // Initializing Config Pagination
             $this->pagination->initialize($config);
-//
+
             // Pagination Data
             $data['total_rows'] = $config['total_rows'];
             $data['PerPage']    = $config['per_page'];
@@ -6223,16 +6198,13 @@ class laporan extends CI_Controller {
                                                               ->where('tbl_trans_medcheck.status_bayar', '1')
                                                               ->where('tbl_trans_medcheck_det.status', '2')
                                                               ->where('DATE(tbl_trans_medcheck.tgl_bayar)', $tgl)
-//                                                              ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
-//                                                              ->like('tbl_trans_medcheck.metode', $plat, (!empty($plat) ? 'none' : ''))
-//                                                              ->like('tbl_trans_medcheck.tipe', $poli, (!empty($poli) ? 'none' : ''))                                                              
                                                               ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))                                                              
                                                 ->order_by('tbl_trans_medcheck.id', 'DESC')
                                                 ->get('tbl_trans_medcheck_det')->result();
                     break;
 
                 case 'per_rentang':
-                        $data['sql_omset']    = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.tgl_masuk, tbl_trans_medcheck.no_akun, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.pasien, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_trans_medcheck.jml_gtotal, tbl_trans_medcheck.jml_bayar, tbl_trans_medcheck.jml_kembali, tbl_trans_medcheck.metode, tbl_trans_medcheck.status_bayar, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_poli.lokasi, tbl_m_kategori.keterangan AS kategori, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.id_dokter, tbl_trans_medcheck_det.kode AS kode_item, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.resep, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.disk1, tbl_trans_medcheck_det.disk2, tbl_trans_medcheck_det.disk3, tbl_trans_medcheck_det.potongan, tbl_trans_medcheck_det.subtotal, tbl_trans_medcheck_det.resep, CONCAT(tbl_m_pasien.kode_dpn,\'\',tbl_m_pasien.kode) AS "kode_pasien"', false)
+                        $data['sql_omset'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.tgl_masuk, tbl_trans_medcheck.no_akun, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.pasien, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_trans_medcheck.jml_gtotal, tbl_trans_medcheck.jml_bayar, tbl_trans_medcheck.jml_kembali, tbl_trans_medcheck.metode, tbl_trans_medcheck.status_bayar, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_poli.lokasi, tbl_m_kategori.keterangan AS kategori, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.id_item, tbl_trans_medcheck_det.id_dokter, tbl_trans_medcheck_det.kode AS kode_item, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.resep, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.disk1, tbl_trans_medcheck_det.disk2, tbl_trans_medcheck_det.disk3, tbl_trans_medcheck_det.potongan, tbl_trans_medcheck_det.subtotal, tbl_trans_medcheck_det.resep, CONCAT(tbl_m_pasien.kode_dpn,\'\',tbl_m_pasien.kode) AS "kode_pasien"', false)
                                                               ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
                                                               ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
                                                               ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_trans_medcheck.id_poli')
@@ -6245,154 +6217,14 @@ class laporan extends CI_Controller {
                                                               ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.metode', $plat, (!empty($plat) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.tipe', $poli, (!empty($poli) ? 'none' : ''))
-                                                              ->like('tbl_trans_medcheck.pasien', $pasien, (!empty($pasien) ? 'none' : '')) 
+                                                              ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
                                                 ->order_by('tbl_trans_medcheck.id', 'DESC')
                                                 ->get('tbl_trans_medcheck_det')->result();
                     break;
             }
             
-            /* Load view tampilan */
-//            $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/includes/laporan/data_omset_htm_dokter', $data);
-//            $this->load->view('admin-lte-3/6_bawah', $data);
-
-//            $objPHPExcel = new PHPExcel();
-//
-//            // Header Tabel Nota
-//            $objPHPExcel->getActiveSheet()->getStyle('A1:I1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-//            $objPHPExcel->getActiveSheet()->getStyle('A1:I1')->getFont()->setBold(TRUE);
-//
-//            $objPHPExcel->setActiveSheetIndex(0)
-//                    ->setCellValue('A4', 'No.')
-//                    ->setCellValue('B4', 'Tgl')
-//                    ->setCellValue('C4', 'Pasien')
-//                    ->setCellValue('D4', 'Tipe')
-//                    ->setCellValue('E4', 'Dokter')
-//                    ->setCellValue('F4', 'No. Faktur')
-//                    ->setCellValue('G4', 'Qty')
-//                    ->setCellValue('H4', 'Kode')
-//                    ->setCellValue('I4', 'Item')
-//                    ->setCellValue('J4', 'Group')
-//                    ->setCellValue('K4', 'Harga')
-//                    ->setCellValue('L4', 'Subtotal')
-//                    ->setCellValue('M4', 'Jasa Dokter')
-//                    ->setCellValue('N4', 'Total Jasa');
-//
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(65);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(50);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(45);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(35);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(14);
-//
-//            if(!empty($sql_omset)){
-//                $no    = 1;
-//                $cell  = 5;
-//                $total = 0;
-//                foreach ($sql_omset as $penjualan){
-//                    $remun   = $this->db->where('id_medcheck_det', $penjualan->id_medcheck_det)->get('tbl_trans_medcheck_remun')->row();
-//                    $dokter  = $this->db->where('id_user', $penjualan->id_dokter)->get('tbl_m_karyawan')->row();
-//                    $item    = $this->db->where('id', $penjualan->id_item)->get('tbl_m_produk')->row();
-//                    $remun_nom   = ($remun->remun_tipe == '2' ? $remun->remun_nom : (($remun->remun_perc / 100) * $penjualan->harga));
-//                    $total   = $total + $penjualan->subtotal;
-//                    $subtot  = $penjualan->harga * $penjualan->jml;
-//
-//                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-//                    $objPHPExcel->getActiveSheet()->getStyle('B'.$cell.':J'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-//                    $objPHPExcel->getActiveSheet()->getStyle('K'.$cell.':N'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-//                    $objPHPExcel->getActiveSheet()->getStyle('K'.$cell.':N'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
-//                    $objPHPExcel->getActiveSheet()->getStyle('I'.$cell)->getAlignment()->setWrapText(true);
-//
-//                    $rsp = "\n";
-//                    foreach (json_decode($penjualan->resep) as $resep){
-//                        $rsp .= ' - '.$resep->item.' ['.$resep->jml.' '.$resep->satuan.']'."\n"; 
-//                    }
-//                    
-//                    $objPHPExcel->setActiveSheetIndex(0)
-//                            ->setCellValue('A'.$cell, $no)
-//                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-//                            ->setCellValue('C'.$cell, $penjualan->nama_pgl)
-//                            ->setCellValue('D'.$cell, general::status_rawat2($penjualan->tipe))
-//                            ->setCellValue('E'.$cell, $dokter->nama)
-//                            ->setCellValue('F'.$cell, $penjualan->no_rm)
-//                            ->setCellValue('G'.$cell, (float)$penjualan->jml)
-//                            ->setCellValue('H'.$cell, $item->kode)
-//                            ->setCellValue('I'.$cell, $penjualan->item.(!empty($penjualan->resep) ? $rsp : ''))
-//                            ->setCellValue('J'.$cell, $penjualan->kategori)
-//                            ->setCellValue('K'.$cell, $penjualan->harga)
-//                            ->setCellValue('L'.$cell, $subtot)
-//                            ->setCellValue('M'.$cell, $remun_nom)
-//                            ->setCellValue('N'.$cell, $remun->remun_subtotal);
-//
-//                    $no++;
-//                    $cell++;
-//                }
-//
-//                $sell1     = $cell;
-//                
-//                $objPHPExcel->getActiveSheet()->getStyle('L'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
-//                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell1.':F'.$sell1.'')->getFont()->setBold(TRUE);
-//                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell1.':F'.$sell1)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-//                $objPHPExcel->setActiveSheetIndex(0)
-//                        ->setCellValue('A' . $sell1, '')->mergeCells('A'.$sell1.':K'.$sell1.'')
-//                        ->setCellValue('L' . $sell1, $sql_omset_row->jml_gtotal);
-//            }
-//
-//            // Rename worksheet
-//            $objPHPExcel->getActiveSheet()->setTitle('Lap Omset');
-//
-//            /** Page Setup * */
-//            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-//            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-//
-//            /* -- Margin -- */
-//            $objPHPExcel->getActiveSheet()
-//                    ->getPageMargins()->setTop(0.25);
-//            $objPHPExcel->getActiveSheet()
-//                    ->getPageMargins()->setRight(0);
-//            $objPHPExcel->getActiveSheet()
-//                    ->getPageMargins()->setLeft(0);
-//            $objPHPExcel->getActiveSheet()
-//                    ->getPageMargins()->setFooter(0);
-//
-
-//            /** Page Setup * */
-//            // Set document properties
-//            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
-//                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
-//                    ->setTitle("Stok")
-//                    ->setSubject("Aplikasi Bengkel POS")
-//                    ->setDescription("Kunjungi http://tigerasoft.co.id")
-//                    ->setKeywords("Pasifik POS")
-//                    ->setCategory("Untuk mencetak nota dot matrix");
-//
-//
-//
-//            // Redirect output to a client’s web browser (Excel5)
-//            header('Content-Type: application/vnd.ms-excel');
-//            // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//            header('Content-Disposition: attachment;filename="data_omset_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
-//
-//            // If you're serving to IE over SSL, then the following may be needed
-//            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-//            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-//            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-//            header('Pragma: public'); // HTTP/1.0
-//
-//            ob_clean();
-//            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-//            $objWriter->save('php://output');
-//            exit;
-        }else{
-            $errors = $this->ion_auth->messages();
+        } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
