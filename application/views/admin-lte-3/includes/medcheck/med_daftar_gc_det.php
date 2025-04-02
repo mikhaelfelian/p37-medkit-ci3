@@ -64,11 +64,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4"><!-- Default box -->
-                    <?php // echo form_open(base_url('medcheck/set_gc_update.php'), 'autocomplete="off"') ?>
-                    <?php // echo form_hidden('id', general::enkrip($sql_dft->id)) ?>
-                    <?php // echo form_hidden('id_gc', general::enkrip($sql_dft_gc->id)) ?>
-
+                <div class="col-md-4">
+                    <!-- Default box -->
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">TANDA TANGAN</h3>
@@ -117,8 +114,3 @@
     }
 </style>
 <!-- Page script -->
-<script type="text/javascript">
-    $(function () {
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
-    });
-</script>

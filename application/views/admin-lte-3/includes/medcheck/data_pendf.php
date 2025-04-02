@@ -210,13 +210,8 @@
     $(function () {
         $("#tgl").datepicker({
             format: 'dd/mm/yyyy',
-            // defaultDate: "+1w",
-//            SetDate: new Date(),
             changeMonth: true,
-//            minDate: dateToday,
             autoclose: true
         });
-
-<?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>

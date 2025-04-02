@@ -126,47 +126,8 @@
     $(function () {
         $("#tgl").datepicker({
             format: 'dd/mm/yyyy',
-            //defaultDate: "+1w",
-//            SetDate: new Date(),
             changeMonth: true,
-//            minDate: dateToday,
             autoclose: true
         });
-
-//        // Data Pasien
-//        $('#pasien').autocomplete({
-//            source: function (request, response) {
-//                $.ajax({
-//                    url: "<?php // echo base_url('medcheck/json_medcheck_ant.php')  ?>",
-//                    dataType: "json",
-//                    data: {
-//                        term: request.term
-//                    },
-//                    success: function (data) {
-//                        response(data);
-//                    }
-//                });
-//            },
-//            minLength: 1,
-//            select: function (event, ui) {
-//                var $itemrow = $(this).closest('tr');
-//                //Populate the input fields from the returned values
-//                $itemrow.find('#id_daftar').val(ui.item.id);
-//                $('#id_daftar').val(ui.item.id);
-//                $('#no_antrian').val(ui.item.no_urut);
-//                $('#pasien').val(ui.item.nama2);
-//
-//                // Give focus to the next input field to recieve input from user
-//                $('#pasien').focus();
-//                return false;
-//            }
-//
-//            // Format the list menu output of the autocomplete
-//        }).data("ui-autocomplete")._renderItem = function (ul, item) {
-//            return $("<li></li>")
-//                    .data("item.autocomplete", item)
-//                    .append("<a>" + item.nama2 + "</a> <a>(" + item.jns_klm + ")</a></br><a>" + item.tgl_lahir + "</a></br><a>" + item.alamat + "</a><br/>-------------------------------------------------------------------------------------</a>")
-//                    .appendTo(ul);
-//        };
     });
 </script>

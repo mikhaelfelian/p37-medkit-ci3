@@ -229,10 +229,6 @@
             }
         });
     });
-    
-    $(function () {
-        <?php echo $this->session->flashdata('medcheck_toast'); ?>
-    });
 </script>
 
 <!-- Add this right after the opening <head> tag -->
