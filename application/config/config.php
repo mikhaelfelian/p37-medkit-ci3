@@ -389,7 +389,7 @@ $config['sess_samesite'] = 'Lax';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = 'tbl_sessions';
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
+$config['sess_time_to_update'] = 7200;
 $config['sess_regenerate_destroy'] = FALSE;
 
 /*
@@ -461,7 +461,7 @@ $config['csrf_protection'] = TRUE;
 $config['csrf_token_name'] = 'medkit_tokens';
 $config['csrf_cookie_name'] = 'medkit_cookies';
 $config['csrf_expire'] = 14400;
-$config['csrf_regenerate'] = TRUE;
+$config['csrf_regenerate'] = FALSE;
 $config['csrf_exclude_uris'] = array(
     'api/.*' // Example: exclude all API routes
 );

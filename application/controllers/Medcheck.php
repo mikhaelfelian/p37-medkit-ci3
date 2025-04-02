@@ -6886,44 +6886,44 @@ class Medcheck extends CI_Controller {
         }
     }
     
-    public function set_medcheck_lab_adm_save() {
+public function set_medcheck_lab_adm_save() {
         header('Content-Type: application/json');
         
-        if (akses::aksesLogin() == TRUE) {
-            try {
-                $this->db->trans_begin();
-                
-                // Sanitize and get POST data
-                $id_medcheck    = $this->security->xss_clean($this->input->post('id_medcheck'));
-                $id_pasien      = $this->security->xss_clean($this->input->post('id_pasien')); 
-                $tgl_masuk      = $this->security->xss_clean($this->input->post('tgl_masuk'));
-                $dokter         = $this->security->xss_clean($this->input->post('dokter'));
-                $dokter_kirim   = $this->security->xss_clean($this->input->post('dokter_kirim'));
-                $no_sample      = $this->security->xss_clean($this->input->post('no_sample'));
-                $hasil          = $this->security->xss_clean($this->input->post('hasil'));
-                $status         = $this->security->xss_clean($this->input->post('status'));
-                
-                // Validate required data
-                if (empty($id_medcheck) || empty($id_pasien) || empty($tgl_masuk)) {
-                    throw new Exception('Data tidak lengkap');
-                }
-                
-                // Decrypt IDs
-                $id_medcheck_dec = general::dekrip($id_medcheck);
-                $id_pasien_dec   = general::dekrip($id_pasien);
-                
-                // Format date
-                $tgl_masuk_formatted = $this->tanggalan->tgl_indo_sys($tgl_masuk);
-                
-                // Get patient info
-                $sql_pasien = $this->db->where('id', $id_pasien_dec)
-                                      ->get('tbl_m_pasien')
-                                      ->row();
-                                       
-                if (!$sql_pasien) {
-                    throw new Exception('Data pasien tidak ditemukan');
-                }
-                
+   if (akses::aksesLogin() == TRUE) {
+       try {
+           $this->db->trans_begin();
+           
+           // Sanitize and get POST data
+           $id_medcheck    = $this->security->xss_clean($this->input->post('id_medcheck'));
+           $id_pasien      = $this->security->xss_clean($this->input->post('id_pasien')); 
+           $tgl_masuk      = $this->security->xss_clean($this->input->post('tgl_masuk'));
+           $dokter         = $this->security->xss_clean($this->input->post('dokter'));
+           $dokter_kirim   = $this->security->xss_clean($this->input->post('dokter_kirim'));
+           $no_sample      = $this->security->xss_clean($this->input->post('no_sample'));
+           $hasil          = $this->security->xss_clean($this->input->post('hasil'));
+           $status         = $this->security->xss_clean($this->input->post('status'));
+           
+           // Validate required data
+           if (empty($id_medcheck) || empty($id_pasien) || empty($tgl_masuk)) {
+               throw new Exception('Data tidak lengkap');
+           }
+           
+           // Decrypt IDs
+           $id_medcheck_dec = general::dekrip($id_medcheck);
+           $id_pasien_dec   = general::dekrip($id_pasien);
+           
+           // Format date
+           $tgl_masuk_formatted = $this->tanggalan->tgl_indo_sys($tgl_masuk);
+           
+           // Get patient info
+           $sql_pasien = $this->db->where('id', $id_pasien_dec)
+                                 ->get('tbl_m_pasien')
+                                 ->row();
+                                 
+           if (!$sql_pasien) {
+               throw new Exception('Data pasien tidak ditemukan');
+           }
+           
                 // Prepare data for insert
                 $data = array(
                     'id_medcheck'     => $id_medcheck_dec,
@@ -6938,40 +6938,40 @@ class Medcheck extends CI_Controller {
                 
                 // Handle file upload
                 if (!empty($_FILES['file_audiometri']['name'])) {
-                    // Setup file paths
-                    $kode_pasien = preg_replace('/[^A-Za-z0-9\-]/', '', 
-                        strtolower($sql_pasien->kode_dpn . $sql_pasien->kode)
-                    );
-                    
-                    $base_path = './file/pasien/' . $kode_pasien;
-                    $upload_path = $base_path . '/audiometri';
-                    
-                    // Create directories if needed
-                    if (!is_dir($base_path)) {
-                        mkdir($base_path, 0777, true);
-                    }
-                    if (!is_dir($upload_path)) {
-                        mkdir($upload_path, 0777, true);
-                    }
-                    
-                    // Configure upload
-                    $config = array(
-                        'upload_path'   => $upload_path,
-                        'allowed_types' => 'pdf|jpg|jpeg|png',
-                        'max_size'      => 5120,
-                        'file_name'     => 'audiometri_' . date('YmdHis'),
-                        'remove_spaces' => TRUE,
-                        'overwrite'     => TRUE
-                    );
-                    
-                    $this->load->library('upload');
-                    $this->upload->initialize($config);
-                    
-                    if (!$this->upload->do_upload('file_audiometri')) {
-                        throw new Exception($this->upload->display_errors('', ''));
-                    }
-                    
-                    $upload_data = $this->upload->data();
+           // Setup file paths
+           $kode_pasien = preg_replace('/[^A-Za-z0-9\-]/', '', 
+               strtolower($sql_pasien->kode_dpn . $sql_pasien->kode)
+           );
+           
+           $base_path = './file/pasien/' . $kode_pasien;
+           $upload_path = $base_path . '/audiometri';
+           
+           // Create directories if needed
+           if (!is_dir($base_path)) {
+               mkdir($base_path, 0777, true);
+           }
+           if (!is_dir($upload_path)) {
+               mkdir($upload_path, 0777, true);
+           }
+           
+           // Configure upload
+           $config = array(
+               'upload_path'   => $upload_path,
+               'allowed_types' => 'pdf|jpg|jpeg|png',
+               'max_size'      => 5120,
+               'file_name'     => 'audiometri_' . date('YmdHis'),
+               'remove_spaces' => TRUE,
+               'overwrite'     => TRUE
+           );
+           
+           $this->load->library('upload');
+           $this->upload->initialize($config);
+           
+           if (!$this->upload->do_upload('file_audiometri')) {
+               throw new Exception($this->upload->display_errors('', ''));
+           }
+           
+           $upload_data = $this->upload->data();
                     $data['nama_file'] = $upload_data['file_name'];
                 } else {
                     throw new Exception('File hasil audiometri wajib diunggah');
@@ -6981,33 +6981,33 @@ class Medcheck extends CI_Controller {
                 $insert_result = $this->db->insert('tbl_trans_medcheck_lab_audiometri', $data);
                 
                 if (!$insert_result || $this->db->trans_status() === FALSE) {
-                    throw new Exception('Gagal menyimpan data audiometri');
-                }
-                
+               throw new Exception('Gagal menyimpan data audiometri');
+           }
+           
                 // If everything is successful, commit the transaction
-                $this->db->trans_commit();
+           $this->db->trans_commit();
                 
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'Data audiometri berhasil disimpan',
                     'redirect' => base_url('medcheck/tambah.php?act=pen_adm&id=' . $id_medcheck . '&status=' . $status)
                 ]);
-                
-            } catch (Exception $e) {
-                $this->db->trans_rollback();
+           
+       } catch (Exception $e) {
+           $this->db->trans_rollback();
                 echo json_encode([
                     'status' => 'error',
                     'message' => $e->getMessage()
                 ]);
             }
-        } else {
+   } else {
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Authentifikasi gagal, silahkan login ulang!'
             ]);
-        }
-    }
-
+   }
+}
+    
     public function set_medcheck_lab_adm_delete() {
         if (akses::aksesLogin() == TRUE) {
             try {

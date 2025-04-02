@@ -8470,24 +8470,17 @@ class Master extends CI_Controller {
         if (Akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
             $id                 = $this->input->get('id');
-            $id_medcheck        = $this->input->get('id');
-            $id_rad             = $this->input->get('id_rad');
             $id_kary            = $this->input->get('id_karyawan');
             
-            $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
-            $sql_medc_item      = $this->db->where('id_medcheck', general::dekrip($id_medcheck))
-                                           ->where('id_rad', general::dekrip($id_rad))
-//                                           ->where('status', '5')
-                                           ->where('status_hsl', '1')
-                                           ->get('tbl_trans_medcheck_det')->result(); 
-            $sql_medc_rad       = $this->db->where('id', general::dekrip($id_rad))->get('tbl_trans_medcheck_rad')->row(); 
             $sql_kary           = $this->db->where('id', general::dekrip($id_kary))->get('tbl_m_karyawan')->row(); 
             $sql_kary_cuti      = $this->db->where('id', general::dekrip($id))->get('tbl_m_karyawan_cuti')->row(); 
-            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
-            $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
-            $sql_dokter_rad     = $this->db->where('id_user', $sql_medc_rad->id_dokter)->get('tbl_m_karyawan')->row();
-            $sql_dokter_krm     = $this->db->where('id_user', $sql_medc_rad->id_dokter_kirim)->get('tbl_m_karyawan')->row();
-            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
+            
+            if (empty($sql_kary) || empty($sql_kary_cuti)) {
+                $this->session->set_flashdata('login_toast', 'toastr.error("Data tidak ditemukan!");');
+                redirect();
+                return;
+            }
+            
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
@@ -8509,7 +8502,9 @@ class Master extends CI_Controller {
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
             $pdf->Ln();
             
-            // Blok ID PASIEN
+            $fill = FALSE;
+            
+            // Blok ID KARYAWAN
             $pdf->SetFont('Arial', '', '9');
             $pdf->Cell(5.5, .5, 'Nama', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
@@ -8519,10 +8514,6 @@ class Master extends CI_Controller {
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $this->tanggalan->tgl_indo($sql_kary->tgl_lahir).' - '.$this->tanggalan->usia($sql_kary->tgl_lahir).' ('.general::jns_klm($sql_kary->jns_klm).')', '0', 0, 'L', $fill);
             $pdf->Ln();
-//            $pdf->Cell(5.5, .5, 'Jenis Kelamin / Gender', '0', 0, 'L', $fill);
-//            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-//            $pdf->Cell(8, .5, $this->tanggalan->usia($sql_pasien->tgl_lahir).' ('.general::jns_klm($sql_pasien->jns_klm).')', '0', 0, 'L', $fill);
-//            $pdf->Ln();
             $pdf->Cell(5.5, .5, 'Alamat', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, (!empty($sql_kary->alamat) ? $sql_kary->alamat : (!empty($sql_kary->alamat_dom) ? $sql_kary->alamat_dom : '-')), '0', 0, 'L', $fill);
@@ -8535,10 +8526,17 @@ class Master extends CI_Controller {
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $this->tanggalan->tgl_indo($sql_kary_cuti->tgl_keluar), '0', 0, 'L', $fill);
             $pdf->Ln(1);
-                        
 
             // QR GENERATOR VALIDASI
-            $qr_validasi        = FCPATH.'/file/karyawan/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $kode_karyawan = $sql_kary->id;
+            $qr_validasi = FCPATH.'/file/karyawan/'.strtolower($kode_karyawan).'/qr-validasi-'.strtolower($kode_karyawan).'.png';
+            
+            // Create directory if it doesn't exist
+            $dir = FCPATH.'/file/karyawan/'.strtolower($kode_karyawan);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            
             $params['data']     = 'Saya yang bertandatangan dibawah ini:';
             $params['data']    .= strtoupper($sql_kary->nama);
             $params['level']    = 'H';
@@ -8546,22 +8544,13 @@ class Master extends CI_Controller {
             $params['savename'] = $qr_validasi; 
             $this->ciqrcode->generate($params);
             
-            $gambar5            = $qr_validasi; 
-                        
-//            // QR GENERATOR DOKTER
-//            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter_rad->id).'.png';
-//            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter_rad->nama_dpn) ? $sql_dokter_rad->nama_dpn.' ' : '').$sql_dokter_rad->nama.(!empty($sql_dokter_rad->nama_blk) ? ', '.$sql_dokter_rad->nama_blk : '').']';
-//            $params['level']    = 'H';
-//            $params['size']     = 2;
-//            $params['savename'] = $qr_dokter;
-//            $this->ciqrcode->generate($params);
-//            
-//            $gambar5            = $qr_dokter;  
+            $gambar5 = $qr_validasi; 
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-//            $pdf->Image($gambar4,2,$getY,2,2);
             $pdf->Image($gambar5,12.5,$getY,2,2);
+            
+            $ket = '';
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -8585,8 +8574,10 @@ class Master extends CI_Controller {
             
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
+            $filename = 'cuti_karyawan_' . $sql_kary->nama . '.pdf';
+            
             ob_start();
-            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
+            $pdf->Output($filename, $type);
             ob_end_flush();
         } else {
             $errors = $this->ion_auth->messages();

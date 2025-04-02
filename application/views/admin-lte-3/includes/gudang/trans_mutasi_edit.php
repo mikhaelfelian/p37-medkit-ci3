@@ -26,10 +26,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
-                    <?php echo form_open_multipart(base_url('gudang/set_trans_mutasi_update.php'), 'autocomplete="off"') ?>
+                    <?php echo form_open(base_url('gudang/set_trans_mutasi_update.php'), 'id="mutasi_form" autocomplete="off"') ?>
                     <?php echo form_hidden('id', $this->input->get('id')) ?>
                     <?php echo form_hidden('gd_asal', '2') ?>
                     <?php echo form_hidden('gd_tujuan', '1') ?>
+                    <?php echo add_form_protection(); ?>
                     
                     <div class="card card-default rounded-0">
                         <div class="card-header">
@@ -47,39 +48,55 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row <?php echo (!empty($hasError['tipe']) ? 'text-danger' : '') ?>">
-                                <label for="inputEmail3" class="col-sm-4 col-form-label">Tipe <i class="text-danger">*</i></label>
-                                <div class="col-sm-8">                                    
-                                    <select id="tipe" name="tipe" class="form-control rounded-0 <?php echo (!empty($hasError['tipe']) ? 'is-invalid' : '') ?>" readonly="TRUE">
-                                        <!--<option value="">- Pilih -</option>-->
-                                        <option value="1" selected="">Pindah Gudang</option>
-                                        <!--<option value="2">Stok Masuk</option>-->
-                                        <!--<option value="3">Stok Keluar</option>-->
-                                    </select>
+                            <?php if (Akses::hakFarmasi() == TRUE): ?>
+                                <?php echo form_hidden('tipe', '1') ?>
+                            <?php else: ?>
+                                <div class="form-group row <?php echo (!empty($hasError['tipe']) ? 'text-danger' : '') ?>">
+                                    <label for="inputEmail3" class="col-sm-4 col-form-label">Tipe <i
+                                            class="text-danger">*</i></label>
+                                    <div class="col-sm-8">
+                                        <select id="tipe" name="tipe"
+                                            class="form-control rounded-0 <?php echo (!empty($hasError['tipe']) ? 'is-invalid' : '') ?>"
+                                            readonly="TRUE">
+                                            <option value="1" selected="">Pindah Gudang</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row <?php echo (!empty($hasError['gd_asal']) ? 'text-danger' : '') ?>">
-                                <label for="inputEmail3" class="col-sm-4 col-form-label">Gudang Asal <i class="text-danger">*</i></label>
-                                <div class="col-sm-8">                                    
-                                    <select name="" class="form-control rounded-0 <?php echo (!empty($hasError['gd_asal']) ? 'is-invalid' : '') ?>" readonly="TRUE">
-                                        <option value="">- Pilih -</option>
-                                        <?php foreach ($sql_gudang as $gd_asal) { ?>
-                                            <option value="<?php echo $gd_asal->id ?>" <?php echo ($gd_asal->status == '0' ? 'selected' : '') ?>><?php echo $gd_asal->gudang . ($gd_asal->status == '1' ? ' [Utama]' : ''); ?></option>
-                                        <?php } ?>
-                                    </select>
+                                <div
+                                    class="form-group row <?php echo (!empty($hasError['gd_asal']) ? 'text-danger' : '') ?>">
+                                    <label for="inputEmail3" class="col-sm-4 col-form-label">Gudang Asal <i
+                                            class="text-danger">*</i></label>
+                                    <div class="col-sm-8">
+                                        <select name=""
+                                            class="form-control rounded-0 <?php echo (!empty($hasError['gd_asal']) ? 'is-invalid' : '') ?>"
+                                            readonly="TRUE">
+                                            <option value="">- Pilih -</option>
+                                            <?php foreach ($sql_gudang as $gd_asal) { ?>
+                                                <option value="<?php echo $gd_asal->id ?>" <?php echo ($gd_asal->status == '2' ? 'selected' : '') ?>>
+                                                    <?php echo $gd_asal->gudang . ($gd_asal->status == '1' ? ' [Utama]' : ''); ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row <?php echo (!empty($hasError['gd_tujuan']) ? 'text-danger' : '') ?>">
-                                <label for="inputEmail3" class="col-sm-4 col-form-label">Gudang Tujuan <i class="text-danger">*</i></label>
-                                <div class="col-sm-8">                                    
-                                    <select name="" class="form-control rounded-0 <?php echo (!empty($hasError['gd_tujuan']) ? 'is-invalid' : '') ?>" readonly="TRUE">
-                                        <option value="">- Pilih -</option>
-                                        <?php foreach ($sql_gudang as $gd_tujuan) { ?>
-                                            <option value="<?php echo $gd_tujuan->id ?>" <?php echo ($gd_tujuan->status == '1' ? 'selected' : '') ?>><?php echo $gd_tujuan->gudang . ($gd_tujuan->status == '1' ? ' [Utama]' : ''); ?></option>
-                                        <?php } ?>
-                                    </select>
+                                <div
+                                    class="form-group row <?php echo (!empty($hasError['gd_tujuan']) ? 'text-danger' : '') ?>">
+                                    <label for="inputEmail3" class="col-sm-4 col-form-label">Gudang Tujuan <i
+                                            class="text-danger">*</i></label>
+                                    <div class="col-sm-8">
+                                        <select name=""
+                                            class="form-control rounded-0 <?php echo (!empty($hasError['gd_tujuan']) ? 'is-invalid' : '') ?>"
+                                            readonly="TRUE">
+                                            <option value="">- Pilih -</option>
+                                            <?php foreach ($sql_gudang as $gd_tujuan) { ?>
+                                                <option value="<?php echo $gd_tujuan->id ?>" <?php echo ($gd_tujuan->status == '1' ? 'selected' : '') ?>>
+                                                    <?php echo $gd_tujuan->gudang . ($gd_tujuan->status == '1' ? ' [Utama]' : ''); ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endif; ?>
                             <div class="form-group row">
                                 <label for="inputEmail3" class="col-sm-4 col-form-label">Keterangan</label>
                                 <div class="col-sm-8">                                    
@@ -98,14 +115,16 @@
                             </div>
                         </div>
                     </div>
+                    <?php echo add_double_submit_protection('mutasi_form') ?>
                     <?php echo form_close() ?>
                 </div>
                 <div class="col-md-6">
                     <?php if (!empty($sql_penj)) { ?>
-                        <?php echo form_open_multipart(base_url('gudang/cart_mutasi_simpan.php'), 'autocomplete="off"') ?>
+                        <?php echo form_open(base_url('gudang/cart_mutasi_simpan.php'), 'id="cart_mutasi_form" autocomplete="off"') ?>
                         <?php echo form_hidden('id', $this->input->get('id')); ?>
                         <?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
                         <?php echo form_hidden('route', 'gudang/trans_mutasi_edit.php'); ?>
+                        <?php echo add_form_protection(); ?>
 
                         <div class="card card-default rounded-0">
                             <div class="card-header">
@@ -143,8 +162,8 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <select id="satuan" name="satuan" class="form-control rounded-0">
-                                                <?php foreach ($sql_produk_sat as $satuan) { ?>
-                                                    <option value="<?php echo $satuan->satuan ?>"><?php echo ucwords($satuan->satuan) . ($satuan->satuan != $sql_satuan->satuanTerkecil ? ' (' . $satuan->jml . ' ' . $sql_satuan->satuanTerkecil . ')' : '') ?></option>
+                                                <?php foreach ($sql_produk_satuan as $satuan) { ?>
+                                                    <option value="<?php echo $satuan->id ?>"><?php echo $satuan->satuanBesar ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -178,6 +197,7 @@
                                 </div>
                             </div>
                         </div>
+                        <?php echo add_double_submit_protection('cart_mutasi_form') ?>
                         <?php echo form_close() ?>
                     <?php } ?>
                 </div>

@@ -34,7 +34,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
-                    <?php echo form_open_multipart(base_url('gudang/set_trans_mutasi.php'), 'id="form_mutasi" autocomplete="off"') ?>
+                    <?php echo form_open(base_url('gudang/set_trans_mutasi.php'), 'id="form_mutasi" autocomplete="off"') ?>
                     <?php echo add_form_protection(); ?>
                     <?php echo form_hidden('gd_asal', '2'); ?>
                     <?php echo form_hidden('gd_tujuan', '1'); ?>
@@ -178,7 +178,7 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <select id="satuan" name="satuan" class="form-control rounded-0">
-                                                <?php foreach ($sql_produk_sat as $satuan) { ?>
+                                                <?php foreach ($sql_satuan as $satuan) { ?>
                                                     <option value="<?php echo $satuan->satuan ?>">
                                                         <?php echo ucwords($satuan->satuan) . ($satuan->satuan != $sql_satuan->satuanTerkecil ? ' (' . $satuan->jml . ' ' . $sql_satuan->satuanTerkecil . ')' : '') ?>
                                                     </option>
@@ -372,4 +372,61 @@
 
         <?php echo $this->session->flashdata('gudang_toast'); ?>
     });
+</script>
+
+<script>
+$(document).ready(function() {
+    // Handle Receive All button click
+    $('#receiveAllBtn').on('click', function(e) {
+        e.preventDefault();
+        
+        // Confirm before proceeding
+        if (!confirm('Apakah Anda yakin ingin menerima semua item?')) {
+            return;
+        }
+
+        // Show loading state
+        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
+
+        // Submit the form via AJAX
+        $.ajax({
+            url: $('#formReceiveAll').attr('action'),
+            type: 'POST',
+            data: $('#formReceiveAll').serialize(),
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    toastr.success(response.message);
+                    // Reload the page after 1.5 seconds
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    toastr.error(response.message || 'Terjadi kesalahan');
+                    // Re-enable the button
+                    $('#receiveAllBtn').prop('disabled', false)
+                        .html('<i class="fas fa-check-circle"></i> Terima Semua');
+                }
+            },
+            error: function(xhr, status, error) {
+                toastr.error('Terjadi kesalahan: ' + error);
+                // Re-enable the button
+                $('#receiveAllBtn').prop('disabled', false)
+                    .html('<i class="fas fa-check-circle"></i> Terima Semua');
+            }
+        });
+    });
+
+    // Validate quantity inputs
+    $('.receive-qty').on('input', function() {
+        var max = parseInt($(this).data('max'));
+        var val = parseInt($(this).val());
+        
+        if (val > max) {
+            $(this).val(max);
+        } else if (val < 0) {
+            $(this).val(0);
+        }
+    });
+});
 </script>
