@@ -230,9 +230,9 @@
     <div class="card-footer">
         <div class="row">
             <div class="col-lg-6">
-                <?php if ($sql_medc->status == 5) { ?>
+                <?php // if ($sql_medc->status == 5) { ?>
                     <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url(!empty($_GET['route']) ? $this->input->get('route') : 'medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=3') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
-                <?php } ?>
+                <?php // } ?>
             </div>
             <div class="col-lg-6 text-right">
                 <?php if (!empty($sql_medc_lab_dt)) { ?>
