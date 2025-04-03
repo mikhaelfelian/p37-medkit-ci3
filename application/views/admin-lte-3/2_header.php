@@ -13,7 +13,7 @@
                             <a href="<?php echo base_url($menu->modules_route) ?>" class="nav-link"><?php echo $menu->modules_name ?></a>
                         </li>
                     <?php } ?>
-                <?php } ?>
+                <?php } ?> 
 
                 <?php if (akses::hakPerawat() == TRUE OR akses::hakFarmasi() == TRUE OR akses::hakAnalis() == TRUE) { ?>
                     <li class="nav-item d-none d-sm-inline-block">
