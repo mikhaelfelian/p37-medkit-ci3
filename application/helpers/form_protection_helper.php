@@ -13,6 +13,7 @@ if (!function_exists('add_form_protection')) {
         $output = form_hidden('form_id', $form_id);
         
         // Store form ID in session
+        $CI->session->unset_userdata('submitted_forms');
         if (!$CI->session->userdata('submitted_forms')) {
             $CI->session->set_userdata('submitted_forms', array());
         }
