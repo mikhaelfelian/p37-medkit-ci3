@@ -1184,7 +1184,7 @@ class Gudang extends CI_Controller {
                          ]);
 
                 $status = '8';
-                $ket    = 'Permintaan Stok Farmasi';
+                $ket    = 'Permintaan Stok Farmasi - '.$this->ion_auth->user($sql_mut_det->id_user)->row()->first_name;
                 
                 # Catat log barang keluar ke tabel
                 $data_mut_hist = [
@@ -1371,24 +1371,25 @@ class Gudang extends CI_Controller {
                     $sql_brg_stk_7an = $this->db->where('id_produk', $sql_brg->id)
                                                ->where('id_gudang', $sess_mut['id_gd_tujuan'])
                                                ->get('tbl_m_produk_stok')->row();
-                    $sql_satuan = $this->db->where('satuanBesar', $satuan)->get('tbl_m_satuan')->row();
+                    $sql_satuan = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
                 
                     // Data yang akan dimasukkan ke tabel mutasi detail
                     $data_mut_det = [
                         'id_mutasi'    => general::dekrip($id),
                         'id_item'      => $sql_brg->id,
                         'id_satuan'    => $sql_satuan->id,
+                        'id_user'      => $this->ion_auth->user()->row()->id,
                         'no_nota'      => $sess_mut['no_nota'],
                         'tgl_simpan'   => $sess_mut['tgl_simpan'],
                         'tgl_terima'   => '0000-00-00 00:00:00',
                         'tgl_ed'       => (!empty($tgl_ed) ? $tgl_ed : '0000-00-00'),
-                        'satuan'       => $satuan,
+                        'satuan'       => $sql_satuan->satuanBesar,
                         'keterangan'   => $ket,
                         'kode'         => $sql_brg->kode,
                         'kode_batch'   => $kodeb,
                         'produk'       => strtoupper($sql_brg->produk),
                         'jml'          => (int)$jml,
-                        'jml_satuan'   => (int)$sql_satuan->jml,
+                        'jml_satuan'   => (!empty($sql_satuan->jml) ? $sql_satuan->jml : 1),
                         'status_terima'=> '0',
                     ];
                 

@@ -178,9 +178,9 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <select id="satuan" name="satuan" class="form-control rounded-0">
-                                                <?php foreach ($sql_satuan as $satuan) { ?>
-                                                    <option value="<?php echo $satuan->satuan ?>">
-                                                        <?php echo ucwords($satuan->satuan) . ($satuan->satuan != $sql_satuan->satuanTerkecil ? ' (' . $satuan->jml . ' ' . $sql_satuan->satuanTerkecil . ')' : '') ?>
+                                                <?php foreach ($sql_produk_satuan as $satuan) { ?>
+                                                    <option value="<?php echo $satuan->id ?>">
+                                                        <?php echo ucwords($satuan->satuanBesar) . ($satuan->satuanBesar != $sql_satuan->satuanTerkecil ? ' (' . $satuan->jml . ' ' . $sql_satuan->satuanTerkecil . ')' : '') ?>
                                                     </option>
                                                 <?php } ?>
                                             </select>
