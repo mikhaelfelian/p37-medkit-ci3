@@ -941,7 +941,7 @@ class Pos extends CI_Controller {
                 
                 # Generate invoice number - using MAX to avoid duplicates
                 $sql_invoice    = $this->db->select_max('no_nota')->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->row();
-                $no_nota        = (!empty($sql_invoice->no_nota) ? $sql_invoice->no_nota + 1 : 1);
+                $no_nota        = (!empty($sql_invoice->no_nota) ? (int)$sql_invoice->no_nota + 1 : 1);
                 $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
                 
                 // Check if form is submitted to prevent duplicate submissions
@@ -984,7 +984,7 @@ class Pos extends CI_Controller {
                     
                     # No Nota
                     $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->num_rows();
-                    $no_nota   = $nomer + 1;
+                    $no_nota        = (int)$nomer + 1;
                     $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
                     
                     $data = [
