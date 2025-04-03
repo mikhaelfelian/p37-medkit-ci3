@@ -19397,7 +19397,7 @@ public function set_medcheck_lab_adm_save() {
                 $diskon = ($jml_diskon / $jml_total) * 100;
             } else {
                 $diskon = 0;
-            }
+            } 
             
             // Kolom Total
             $pdf->SetTextColor(5,148,19);
