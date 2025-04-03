@@ -945,7 +945,7 @@ class Pos extends CI_Controller {
                 $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
                 
                 // Check if form is submitted to prevent duplicate submissions
-                if (!check_form_submitted('trans_jual_proses_form')) {
+                if (check_form_submitted('trans_jual_proses_form')) {
                     $this->session->set_flashdata('apt_toast', 'toastr.error("Form already submitted!");');
                     redirect(base_url('pos/trans_jual.php?id='.$id));
                 }
