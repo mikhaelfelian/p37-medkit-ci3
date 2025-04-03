@@ -940,9 +940,9 @@ class Pos extends CI_Controller {
                 $no_akun        = strtoupper(date('Mdy').sprintf('%04d', $nomor_id));
                 
                 # Generate invoice number - using MAX to avoid duplicates
-                $sql_invoice    = $this->db->select_max('no_nota_urut')->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->row();
-                $no_nota_urut   = (!empty($sql_invoice->no_nota_urut) ? $sql_invoice->no_nota_urut + 1 : 1);
-                $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota_urut);
+                $sql_invoice    = $this->db->select_max('no_nota')->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->row();
+                $no_nota        = (!empty($sql_invoice->no_nota) ? $sql_invoice->no_nota + 1 : 1);
+                $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
                 
                 // Check if form is submitted to prevent duplicate submissions
                 if (!check_form_submitted('trans_jual_proses_form')) {
@@ -984,8 +984,8 @@ class Pos extends CI_Controller {
                     
                     # No Nota
                     $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->num_rows();
-                    $no_nota_urut   = $nomer + 1;
-                    $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota_urut);
+                    $no_nota   = $nomer + 1;
+                    $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
                     
                     $data = [
                         'id_app'       => $this->ion_auth->user()->row()->id_app,
