@@ -1153,8 +1153,8 @@ class Gudang extends CI_Controller {
                                            ->get('tbl_m_produk_stok')
                                            ->row();
                 
-                $jml_akhir_stk = $sql_gudang_asl->jml - $sql_mut_det->jml;
-                $jml_akhir_7an = $sql_gudang_7an->jml + $sql_mut_det->jml;
+                $jml_akhir_stk = $sql_gudang_asl->jml - $quantities[$key];
+                $jml_akhir_7an = $sql_gudang_7an->jml + $quantities[$key];
                 $sql_gudang_ck = $this->db->where('id_produk', $sql_mut_det->id_item)
                                           ->where('id_gudang', $sql_mut_det->id_gd_tujuan)
                                           ->get('tbl_m_produk_stok');
@@ -1166,6 +1166,9 @@ class Gudang extends CI_Controller {
                 # Tambahkan stok daripada gudang tujuan
                 $this->db->where('id', $sql_gudang_7an->id)
                          ->update('tbl_m_produk_stok', ['jml' => $jml_akhir_7an]);
+
+                $this->db->where('id', $sql_mut_det->id)
+                         ->update('tbl_trans_mutasi_det', ['tgl_terima' => date('Y-m-d H:i:s'),'jml_diterima' => $quantities[$key]]);
 
                 # Sinkronkan stok terkait
                 $jml_akhir_glob = $this->db->select_sum('jml')
@@ -1181,7 +1184,7 @@ class Gudang extends CI_Controller {
                          ]);
 
                 $status = '8';
-                $ket    = 'Mutasi stok antar gudang';
+                $ket    = 'Permintaan Stok Farmasi';
                 
                 # Catat log barang keluar ke tabel
                 $data_mut_hist = [
@@ -1196,7 +1199,7 @@ class Gudang extends CI_Controller {
                     'produk'        => $sql_cek_brg->produk,
                     'keterangan'    => $ket,
                     'jml'           => (int)$sql_mut_det->jml,
-                    'jml_satuan'    => (int)$sql_mut_det->jml_satuan,
+                    'jml_satuan'    => 1,
                     'satuan'        => $sql_mut_det->satuan,
                     'nominal'       => 0,
                     'status'        => $status
