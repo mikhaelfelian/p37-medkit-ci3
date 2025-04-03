@@ -12109,38 +12109,38 @@ public function set_medcheck_lab_adm_save() {
                     $subtotal    = ($disk3 - $potongan) * (int)$jml;
 
                     $data = [
-                    'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                    'id_medcheck'   => (int)$sql_medc->id,
-                    'id_item'       => (int)$sql_item->id,
-                    'id_item_kat'   => (int)$sql_item->id_kategori,
-                    'id_item_sat'   => (int)$sql_item->id_satuan,
-                    'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                    'id_dokter'     => (int)$dokter,
-                    'id_lab'        => (int)general::dekrip($id_lab),
-                    'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
-                    'id_rad'        => (int)general::dekrip($id_rad),
-                    'kode'          => $sql_item->kode,
-                    'item'          => $sql_item->produk,
-                    'keterangan'    => $keterangan,
-                    'hasil_lab'     => $hasil,
-                    'harga'         => $harga,
-                    'jml'           => (int)$jml,
-                    'jml_satuan'    => '1',
-                    'satuan'        => $sql_sat->satuanTerkecil,
-                    'disk1'         => (float)$diskon1,
-                    'disk2'         => (float)$diskon2,
-                    'disk3'         => (float)$diskon3,
-                    'diskon'        => (float)$diskon,
+                        'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                        'id_medcheck'   => (int)$sql_medc->id,
+                        'id_item'       => (int)$sql_item->id,
+                        'id_item_kat'   => (int)$sql_item->id_kategori,
+                        'id_item_sat'   => (int)$sql_item->id_satuan,
+                        'id_user'       => (int)$this->ion_auth->user()->row()->id,
+                        'id_dokter'     => (int)$dokter,
+                        'id_lab'        => (int)general::dekrip($id_lab),
+                        'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
+                        'id_rad'        => (int)general::dekrip($id_rad),
+                        'kode'          => $sql_item->kode,
+                        'item'          => $sql_item->produk,
+                        'keterangan'    => $keterangan,
+                        'hasil_lab'     => $hasil,
+                        'harga'         => $harga,
+                        'jml'           => (int)$jml,
+                        'jml_satuan'    => '1',
+                        'satuan'        => $sql_sat->satuanTerkecil,
+                        'disk1'         => (float)$diskon1,
+                        'disk2'         => (float)$diskon2,
+                        'disk3'         => (float)$diskon3,
+                        'diskon'        => (float)$diskon,
                         'potongan'      => (float)$jml_pot,
-                    'subtotal'      => (float)$subtotal,
-                    'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                    'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
+                        'subtotal'      => (float)$subtotal,
+                        'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
+                        'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
                     ];
                 
-                # Cek apakah sudah di posting atau belum ?
-                # Kalau sudah yg bisa input hny rad, lab, dokter
+                    # Cek apakah sudah di posting atau belum ?
+                    # Kalau sudah yg bisa input hny rad, lab, dokter
                     if ($sql_medc->status < 5) {
                     # Start Transact SQL
                         $this->db->trans_begin();
@@ -21059,9 +21059,9 @@ public function set_medcheck_lab_adm_save() {
     
     public function json_item() {
         // Check if this is an AJAX request
-        if (!$this->input->is_ajax_request()) {
-            exit('No direct script access allowed');
-        }
+        // if (!$this->input->is_ajax_request()) {
+        //     exit('No direct script access allowed');
+        // }
         
         if (akses::aksesLogin() == TRUE) {
             $term  = $this->input->get('term');
@@ -21122,14 +21122,14 @@ public function set_medcheck_lab_adm_save() {
                 foreach ($sql as $sql){
                     $sql_satuan = $this->db->where('id', $sql->id_satuan)->get('tbl_m_satuan')->row();
                     $sql_stok   = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $sql->id)->where('id_gudang', $sg)->get('tbl_m_produk_stok')->row();
-                        
+                    
                     $produk[] = [
                             'id'            => general::enkrip($sql->id),
                             'kode'          => $sql->kode,
                             'name'          => $sql->produk,
                             'alias'         => (!empty($sql->produk_alias) ? $sql->produk_alias : ''),
                             'kandungan'     => (!empty($sql->produk_kand) ? '('.strtolower($sql->produk_kand).')' : ''),
-                            'jml'           => ($sql_stok->jml < 0 ? 0 : $sql_stok->jml.' '.$sql_satuan->satuanTerkecil),
+                            'jml'           => ($sql_stok->jml < 0 ? '0' : $sql_stok->jml.' '.$sql_satuan->satuanTerkecil),
                             'satuan'        => $sql_satuan->satuanTerkecil,
                             'harga'         => (float)$sql->harga_jual,
                             'harga_beli'    => (float)$sql->harga_beli,

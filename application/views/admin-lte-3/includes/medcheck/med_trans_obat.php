@@ -179,11 +179,17 @@
                 processResults: function (data) {
                     return {
                         results: $.map(data, function (item) {
-                            return {
-                                id: item.kode,
-                                text: item.name,
-                                item: item
-                            };
+                            // Only include items with quantity greater than 0
+                            if (parseFloat(item.jml) > 0) {
+                                return {
+                                    id: item.kode,
+                                    text: item.name,
+                                    item: item
+                                };
+                            }
+                            return null;
+                        }).filter(function(item) {
+                            return item !== null;
                         })
                     };
                 },
