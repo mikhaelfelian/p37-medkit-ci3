@@ -166,7 +166,7 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <!--<button type="button" onclick="window.location.href = '<?php // echo base_url('master/data_pasien_list.php')     ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>-->
+                                    <button type="button" onclick="window.location.href = '<?php echo base_url('master/data_karyawan_list.php') ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>
                                 </div>
                                 <div class="col-lg-6 text-right">
                                     <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>
