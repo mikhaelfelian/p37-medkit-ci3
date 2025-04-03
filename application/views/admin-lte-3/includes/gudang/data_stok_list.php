@@ -130,7 +130,7 @@
                                                         <?php echo $sql_stok->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
                                                 <?php } ?>
                                                 <td>
-                                                    <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakFarmasi() == TRUE) { ?>
+                                                    <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakFarmasi() == TRUE || akses::hakGudang() == TRUE) { ?>
                                                         <?php echo anchor(base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($barang->id)), '<i class="fas fa-box-open"></i> Stok', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
                                                         <?php echo nbs() ?>
                                                     <?php } ?>
