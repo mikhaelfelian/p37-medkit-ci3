@@ -114,8 +114,8 @@
                         </table>
                     <?php } ?>
                     <hr/>
-                    <strong><i class="far fa-file-alt mr-1"></i> Alergi :</strong>
-                    <p><small><?php echo ($sql_medc->alergi) ?></small></p>
+                    <strong class="text-danger"><i class="far fa-file-alt mr-1"></i> Alergi :</strong>
+                    <p class="text-danger"><small><?php echo ($sql_medc->alergi) ?></small></p>
                     <hr/>
                     <strong><i class="far fa-file-alt mr-1"></i> DIAGNOSA :</strong>
                     <p><small><?php echo ($sql_medc->diagnosa) ?></small></p>
