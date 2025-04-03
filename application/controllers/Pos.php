@@ -946,7 +946,7 @@ class Pos extends CI_Controller {
                 
                 // Check if form is submitted to prevent duplicate submissions
                 if (check_form_submitted('trans_jual_proses_form')) {
-                    $this->session->set_flashdata('apt_toast', 'toastr.error("Form already submitted!");');
+                    $this->session->set_flashdata('apt_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
                     redirect(base_url('pos/trans_jual.php?id='.$id));
                 }
                 
@@ -986,9 +986,10 @@ class Pos extends CI_Controller {
                     $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->num_rows();
                     $no_nota        = (int)$nomer + 1;
                     $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
-                    
+                    $uuid           = $this->uuid->v4();
+
                     $data = [
-                        'id_app'       => $this->ion_auth->user()->row()->id_app,
+                        'uuid'         => $uuid,
                         'id_user'      => $this->ion_auth->user()->row()->id,
                         'id_pasien'    => (!empty($sess_medc['id_pelanggan']) ? $sess_medc['id_pelanggan'] : '0'),
                         'id_poli'      => '5',
