@@ -19380,10 +19380,24 @@ public function set_medcheck_lab_adm_save() {
                 $gtotal = $gtotal + $sub;
             }
             
-            $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
-            $jml_total      = $sql_medc_sum->subtotal + $sql_medc_sum->diskon + $sql_medc_sum->potongan;
-            $jml_diskon     = $jml_total - ($jml_total - $sql_medc->jml_diskon);
-            $diskon         = ($jml_diskon / $jml_total) * 100; 
+            // Get summary data
+            $sql_medc_sum = $this->db->select('SUM(subtotal) as subtotal, SUM(diskon) as diskon, SUM(potongan) as potongan')
+                                    ->where('id_medcheck', $sql_medc->id)
+                                    ->get('tbl_trans_medcheck_det')
+                                    ->row();
+            
+            $sql_platform = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
+            
+            // Prevent division by zero
+            $jml_total = ($sql_medc_sum->subtotal + $sql_medc_sum->diskon + $sql_medc_sum->potongan);
+            $jml_diskon = $jml_total - ($jml_total - $sql_medc->jml_diskon);
+            
+            // Calculate discount percentage only if total amount is greater than zero
+            if ($jml_total > 0) {
+                $diskon = ($jml_diskon / $jml_total) * 100;
+            } else {
+                $diskon = 0;
+            }
             
             // Kolom Total
             $pdf->SetTextColor(5,148,19);
