@@ -12756,16 +12756,21 @@ public function set_medcheck_lab_adm_save() {
                 $sql_item   = $this->db->where('id', $sql_res_rw->id_item)->get('tbl_m_produk')->row();
                 $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                 $sql_sat_pk = $this->db->where('id', $dos_sat)->get('tbl_m_satuan_pakai')->row();
+                $sql_pnjm   = $this->db->where('id', $sql_medc->tipe_bayar)->get('tbl_m_penjamin')->row();
                 $harga      = general::format_angka_db($hrg);
-                $percent    = $sql_pnjm->persen / 100;
-                $ass            = ($harga * $sql_pnjm->persen);
-                $harga_tot  = ($sql_item->status_racikan == '1' ? $harga : ($sql_pnjm->persen != 0 ? $ass : $harga)); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
+
+                // Add division by zero protection
+                $percent    = ($sql_pnjm && $sql_pnjm->persen) ? ($sql_pnjm->persen / 100) : 0;
+                $ass        = ($sql_pnjm && $sql_pnjm->persen) ? ($harga * $sql_pnjm->persen) : 0;
+                $harga_tot  = ($sql_item->status_racikan == '1') ? $harga : 
+                              (($sql_pnjm && $sql_pnjm->persen != 0) ? $ass : $harga);
                 $potongan   = general::format_angka_db($pot);
                 $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
                 
-                $disk1      = $harga_tot - (($diskon1 / 100) * $harga_tot);
-                $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
+                // Also protect the discount calculations
+                $disk1      = (100 != 0) ? $harga_tot - (($diskon1 / 100) * $harga_tot) : $harga_tot;
+                $disk2      = (100 != 0) ? $disk1 - (($diskon2 / 100) * $disk1) : $disk1;
+                $disk3      = (100 != 0) ? $disk2 - (($diskon3 / 100) * $disk2) : $disk2;
                 $diskon     = $harga - $disk3;
                 $subtotal   = ($disk3 - $potongan) * (int)$jml;
                 
@@ -12790,11 +12795,6 @@ public function set_medcheck_lab_adm_save() {
                 
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data item berhasil disimpan !!")');
                 redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act=res_input&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
-
-//                echo $sql_res_rw->id;
-//                echo '<pre>';
-//                print_r($data_resep);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
