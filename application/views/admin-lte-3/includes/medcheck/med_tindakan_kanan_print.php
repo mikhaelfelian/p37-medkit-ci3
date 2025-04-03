@@ -27,6 +27,11 @@
                     $(document).ready(function() {
                         $('.posting-form').on('submit', function(e) {
                             e.preventDefault();
+                            // Get confirmation from user before proceeding
+                            if (!confirm("Apakah Anda yakin ingin melakukan posting transaksi ini?")) {
+                                return false;
+                            }
+                            
                             const form = $(this);
                             const submitBtn = form.find('button[type="submit"]');
                             
