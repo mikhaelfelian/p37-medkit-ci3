@@ -124,18 +124,53 @@
 
         $(document).on('click', '#btn-submit', function () {
             var signature = signaturePad.toDataURL();
+            
+            // Get CSRF token
+            var csrfName = $('input[name="csrf_test_name"]').attr('name');
+            var csrfHash = $('input[name="csrf_test_name"]').val();
+            var medkitTokens = $('input[name="medkit_tokens"]').val();
+
+            // Prepare the data
+            var postData = {
+                [csrfName]: csrfHash,
+                medkit_tokens: medkitTokens,
+                id: "<?php echo $this->input->get('id') ?>",
+                id_resep: "<?php echo $this->input->get('id_resep') ?>",
+                foto: signature
+            };
 
             $.ajax({
                 url: "<?php echo base_url('medcheck/set_medcheck_resep_upd_ttd.php') ?>",
-                data: {
-                    id: "<?php echo $this->input->get('id') ?>",
-                    id_resep: "<?php echo $this->input->get('id_resep') ?>",
-                    foto: signature
+                type: "POST",
+                data: postData,
+                dataType: 'json',
+                beforeSend: function() {
+                    $('#btn-submit').prop('disabled', true).html(
+                        '<i class="fas fa-spinner fa-spin"></i> Memproses...'
+                    );
                 },
-                method: "POST",
-                success: function () {
-                    toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
-                    window.location.href='<?php echo base_url('medcheck/tambah.php?id='.$this->input->get('id').'&status='.$this->input->get('status')) ?>';
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
+                        setTimeout(function() {
+                            window.location.href = '<?php echo base_url('medcheck/tambah.php?id='.$this->input->get('id').'&status='.$this->input->get('status')) ?>';
+                        }, 1500);
+                    } else {
+                        toastr.error(response.message || "Terjadi kesalahan");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error("Terjadi kesalahan: " + error);
+                    console.error("Error details:", {
+                        status: status,
+                        error: error,
+                        response: xhr.responseText
+                    });
+                },
+                complete: function() {
+                    $('#btn-submit').prop('disabled', false).html(
+                        '<i class="fa fa-save"></i> Simpan'
+                    );
                 }
             });
         });

@@ -12620,7 +12620,8 @@ public function set_medcheck_lab_adm_save() {
                                     
                 try {
                     // Check if form is submitted
-                    if (!check_form_submitted('form_id')) {
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
                         throw new Exception('Invalid form submission');
                     }
 
@@ -12629,13 +12630,13 @@ public function set_medcheck_lab_adm_save() {
                         throw new Exception('Stok tidak cukup. <b>Stok tersedia: </b>' . $sql_stok->jml . ', Permintaan: ' . $jml);
                     }
 
-                $harga      = general::format_angka_db($hrg);
-                $percent    = $sql_pnjm->persen / 100;
+                    $harga      = general::format_angka_db($hrg);
+                    $percent    = $sql_pnjm->persen / 100;
                     $ass        = ($harga * $sql_pnjm->persen);
                     # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                     $harga_tot  = ($sql_item->status_racikan == '1' ? $harga : ($sql_pnjm->persen != 0 ? $ass : $harga));
-                $potongan   = general::format_angka_db($pot);
-                $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
+                    $potongan   = general::format_angka_db($pot);
+                    $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
                     
                     // Convert all values to float to avoid type errors
                     $harga_tot  = (float) $harga_tot;
@@ -12645,43 +12646,43 @@ public function set_medcheck_lab_adm_save() {
                     $potongan   = (float) $potongan;
                     $jml        = (int) $jml;
                 
-                $disk1      = $harga_tot - (($diskon1 / 100) * $harga_tot);
-                $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
-                $diskon     = $harga_tot - $disk3;
+                    $disk1      = $harga_tot - (($diskon1 / 100) * $harga_tot);
+                    $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
+                    $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
+                    $diskon     = $harga_tot - $disk3;
                     $subtotal   = ($disk3 - $potongan) * $jml;
 
                     $data_resep = [
-                    'id_medcheck'   => (int)$sql_medc->id,
-                    'id_resep'      => (int)general::dekrip($id_resep),
-                    'id_item'       => (int)$sql_item->id,
-                    'id_item_kat'   => (int)$sql_item->id_kategori,
-                    'id_item_sat'   => (int)$sql_item->id_satuan,
-                    'id_user'       => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                    'kode'          => $sql_item->kode,
-                    'item'          => $sql_item->produk,
-                    'dosis'         => (!empty($dos_jml1) ? $dos_jml1.' '.$sql_sat_pk->satuan.' Tiap '.$dos_jml2.' '.general::tipe_obat_pakai($dos_wkt) : ''),
-                    'dosis_ket'     => $dos_ket,
-                    'keterangan'    => $ket,
-                    'harga'         => (!empty($disk3) ? round($disk3) : 0),
+                        'id_medcheck'   => (int)$sql_medc->id,
+                        'id_resep'      => (int)general::dekrip($id_resep),
+                        'id_item'       => (int)$sql_item->id,
+                        'id_item_kat'   => (int)$sql_item->id_kategori,
+                        'id_item_sat'   => (int)$sql_item->id_satuan,
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'kode'          => $sql_item->kode,
+                        'item'          => $sql_item->produk,
+                        'dosis'         => (!empty($dos_jml1) ? $dos_jml1.' '.$sql_sat_pk->satuan.' Tiap '.$dos_jml2.' '.general::tipe_obat_pakai($dos_wkt) : ''),
+                        'dosis_ket'     => $dos_ket,
+                        'keterangan'    => $ket,
+                        'harga'         => (!empty($disk3) ? round($disk3) : 0),
                         'jml'           => $jml,
-                    'jml_satuan'    => '1',
-                    'satuan'        => $sql_sat->satuanTerkecil,
-                    'status'        => (int)$status,
-                    'status_resep'  => '0',
-                    'status_pj'     => ($ass > 0 ? '1' : '0'),
-                    'status_mkn'    => (!empty($status_mkn) ? $status_mkn : '0'),
-                    'status_etiket' => (!empty($status_et) ? $status_et : '0'),
+                        'jml_satuan'    => '1',
+                        'satuan'        => $sql_sat->satuanTerkecil,
+                        'status'        => (int)$status,
+                        'status_resep'  => '0',
+                        'status_pj'     => ($ass > 0 ? '1' : '0'),
+                        'status_mkn'    => (!empty($status_mkn) ? $status_mkn : '0'),
+                        'status_etiket' => (!empty($status_et) ? $status_et : '0'),
                     ];
                 
-                if($sql_medc->status < 5){
+                    if($sql_medc->status < 5){
                         # Start transaction
                         $this->db->trans_begin();
                 
-                    # Simpan ke tabel resep
-                    $this->db->insert('tbl_trans_medcheck_resep_det', $data_resep);
+                        # Simpan ke tabel resep
+                        $this->db->insert('tbl_trans_medcheck_resep_det', $data_resep);
                 
                         # Check if transaction successful
                         if ($this->db->trans_status() === FALSE) {
@@ -12693,9 +12694,9 @@ public function set_medcheck_lab_adm_save() {
                         }
                     }else{
                         $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data resep gagal disimpan karena sudah ada di posting !!")');
-                }
+                    }
                                 
-                redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
+                    redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
                 } catch (Exception $e) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan: ' . $e->getMessage() . '")');
                     redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
@@ -12909,7 +12910,7 @@ public function set_medcheck_lab_adm_save() {
                 
                 try {                    
                     // Check if form has been submitted
-                    if (!check_form_submitted('form_id')) {
+                    if (check_form_submitted('form_id')) {
                         throw new Exception('Invalid form submission');
                     }
 
@@ -13830,7 +13831,7 @@ public function set_medcheck_lab_adm_save() {
                 redirect(base_url($route));
             }else{
                 try {
-                    if (!check_form_submitted('lab_hasil_form')) {
+                    if (check_form_submitted('lab_hasil_form')) {
                         throw new Exception('Invalid form submission');
                         // Redirect to route if form already submitted
                         redirect(base_url($route));
