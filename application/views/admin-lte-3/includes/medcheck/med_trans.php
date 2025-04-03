@@ -187,10 +187,33 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     <!--<button type="button" onclick="window.location.href = '<?php echo base_url('master/data_kategori_list.php') ?>'" class="btn btn-primary btn-flat">&laquo; Kembali</button>-->
                                 </div>
                                 <div class="col-lg-6 text-right">
-                                    <button type="button" class="btn btn-warning btn-flat"><i class="fa fa-undo"></i>
-                                        Bersih</button>
+                                    <button type="button" class="btn btn-warning btn-flat" id="reset-form" onclick="resetForm()"><i class="fa fa-undo"></i>
+                                        Bersih
+                                    </button>
+                                    <script>
+                                    function resetForm() {
+                                        // Reset all form inputs
+                                        document.getElementById('medcheck_form').reset();
+                                        
+                                        // Reset Select2 elements if they exist
+                                        if ($.fn.select2 !== undefined) {
+                                            $('.select2bs4').val(null).trigger('change');
+                                        }
+                                        
+                                        // Reset any autoNumeric fields
+                                        $("input[id=ttv]").each(function() {
+                                            $(this).val('');
+                                        });
+                                        
+                                        // Reset file input
+                                        $('input[type="file"]').val('');
+                                        
+                                        toastr.success('Form berhasil dibersihkan');
+                                    }
+                                    </script>
                                     <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i>
-                                        Set Periksa</button>
+                                        Set Periksa
+                                    </button>
                                 </div>
                             </div>
                         </div>
