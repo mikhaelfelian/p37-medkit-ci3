@@ -26,7 +26,10 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <?php echo form_open(base_url('gudang/trans_mutasi_terima_simpan.php'), ['id' => 'mutasi_terima_form', 'class' => 'receive-form', 'autocomplete' => 'off']); ?>
+                    <?php echo form_open(base_url('gudang/trans_mutasi_terima_simpan.php'), [
+                        'id' => 'mutasi_terima_form', 
+                        'autocomplete' => 'off'
+                    ]); ?>
                     <?php echo add_form_protection(); ?>
                     <div class="card card-default rounded-0">
                         <div class="card-header">
@@ -34,140 +37,74 @@
                         </div>
                         <div class="card-body">
                             <?php echo $this->session->flashdata('gudang') ?>
-                            <div class="mb-3">
-                                <button type="button" id="receiveAllBtn" class="btn btn-primary btn-flat">
-                                    <i class="fas fa-check-double"></i> Terima Semua
-                                </button>
-                            </div>
                             <table class="table table-striped" id="mutasiTable">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" width="25">No</th>
-                                        <th class="text-left" width="70">Kode</th>
-                                        <th class="text-left" width="250">Produk</th>
-                                        <th class="text-right" width="50">Jml</th>
-                                        <th class="text-center" width="100">Jml Diterima</th>
-                                        <th class="text-center" width="75">Jml Kurang</th>
-                                        <th class="text-center" width="50">Aksi</th>
-                                    </tr>
+                                        <th class="text-center">No</th>
+                                    <th class="text-left">Kode</th>
+                                    <th class="text-left">Produk</th>
+                                    <th class="text-right">Jml</th>
+                                        <th class="text-center">Jml Diterima</th>
+                                        <th class="text-center">Jml Kurang</th>
+                                </tr>                               
                                 </thead>
                                 <tbody>
-                                    <?php
+                                <?php
                                     $no = 1;
-                                    $jml_total = $jml_diskon = $jml_gtotal = $jml_item = $jml_item_krg = 0;
-
-                                    foreach ($sql_penj_det as $items):
-                                        // Pre-calculate all needed values
-                                        $jml_total += $items->subtotal;
-                                        $jml_diskon += ($items->diskon + $items->potongan);
-                                        $jml_gtotal += $items->subtotal;
+                                    foreach ($sql_penj_det as $items): 
                                         $remaining_stock = $items->jml - $items->jml_diterima;
-                                        $jml_item += ($items->jml * $items->jml_satuan);
-                                        $jml_item_krg += $remaining_stock;
-
-                                        // Get product data
-                                        $produk = $this->db->where('kode', $items->kode)->get('tbl_m_produk')->row();
-                                        ?>
-                                        <tr id="row-<?php echo $items->id; ?>">
-
-                                            <?php
-                                            // Hidden inputs
-                                            echo form_hidden([
-                                                'id' => general::enkrip($items->id),
-                                                'no_nota' => $this->input->get('id'),
-                                                'current_stock' => $remaining_stock
-                                            ]);
+                                    ?>
+                                        <tr>
+                                            <?php 
+                                            // Hidden inputs for each row
+                                            echo form_hidden('id[]', general::enkrip($items->id));
+                                            echo form_hidden('no_nota', $this->input->get('id'));
+                                            echo form_hidden('current_stock[]', $remaining_stock);
                                             ?>
 
-                                            <!-- Item Number -->
                                             <td class="text-center"><?php echo $no++; ?></td>
-
-                                            <!-- Product Code -->
-                                            <td class="text-left">
-                                                <?php echo anchor(
-                                                    base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($produk->id)),
-                                                    $items->kode,
-                                                    ['target' => '_blank', 'class' => 'product-link']
-                                                ); ?>
-                                                <br />
-                                                <small class="text-muted"><b>ID:</b><?php echo $items->id; ?></small>
-                                            </td>
-
-                                            <!-- Product Name & User -->
-                                            <td class="text-left">
-                                                <div class="product-info">
-                                                    <div class="product-name"><?php echo ucwords($items->produk); ?></div>
-                                                    <small class="text-muted">
-                                                        <i><?php echo $this->ion_auth->user($items->id_user)->row()->first_name; ?></i>
-                                                    </small>
-                                                </div>
-                                            </td>
-
-                                            <!-- Total Quantity -->
+                                            <td class="text-left"><?php echo $items->kode; ?></td>
+                                            <td class="text-left"><?php echo ucwords($items->produk); ?></td>
                                             <td class="text-right">
-                                                <span class="quantity">
-                                                    <?php echo $items->jml . ' ' . $items->satuan; ?>
-                                                    <?php echo !empty($items->keterangan) ? $items->keterangan : ''; ?>
-                                                </span>
-                                            </td>
-
-                                            <!-- Receive Quantity Input -->
+                                                <?php echo $items->jml . ' ' . $items->satuan; ?>
+                                        </td>
                                             <td class="text-center">
-                                                <div class="form-group mb-0">
-                                                    <?php if ($remaining_stock > 0): ?>
+                                                <?php if ($remaining_stock > 0): ?>
+                                                    <div class="form-group mb-0">
                                                         <small class="text-muted">Max: <?php echo $remaining_stock; ?></small>
                                                         <div class="input-group">
                                                             <?php echo form_input([
-                                                                'name' => 'jml_terima',
-                                                                'class' => 'form-control text-center receive-qty rounded-0',
+                                                                'name' => 'jml_terima[]',
+                                                                'class' => 'form-control text-center',
                                                                 'type' => 'number',
                                                                 'min' => '0',
                                                                 'max' => $remaining_stock,
-                                                                'step' => '1',
                                                                 'required' => 'required',
-                                                                'placeholder' => $remaining_stock,
-                                                                'data-id' => $items->id,
-                                                                'data-max' => $remaining_stock
+                                                                'placeholder' => $remaining_stock
                                                             ]); ?>
-                                                            <div class="input-group-append rounded-0">
-                                                                <span
-                                                                    class="input-group-text rounded-0"><?php echo $items->satuan; ?></span>
-                                                            </div>
-                                                        </div>
-                                                    <?php else: ?>
-                                                        <span class="badge badge-success">Selesai</span>
-                                                        <?php echo form_input([
-                                                            'value' => $items->jml_diterima,
-                                                            'class' => 'form-control text-center',
-                                                            'disabled' => 'true'
-                                                        ]); ?>
-                                                    <?php endif; ?>
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text"><?php echo $items->satuan; ?></span>
                                                 </div>
-                                            </td>
-
-                                            <!-- Remaining Quantity Display -->
-                                            <td class="text-center">
-                                                <div class="remaining-qty" id="remaining-display-<?php echo $items->id; ?>">
-                                                    <?php echo $remaining_stock; ?>
                                                 </div>
-                                            </td>
-
-                                            <!-- Action Button -->
-                                            <td class="text-center">
-                                                <!--
-                                                <?php if ($remaining_stock > 0): ?>
-                                                    <button type="submit" class="btn btn-success btn-sm btn-receive rounded-0">
-                                                        <i class="fas fa-check-circle"></i> Terima
-                                                    </button>
+                                            </div>
+                                                <?php else: ?>
+                                                    <span class="badge badge-success">Selesai</span>
+                                                    <?php echo form_input([
+                                                        'value' => $items->jml_diterima,
+                                                        'class' => 'form-control text-center',
+                                                        'disabled' => 'true'
+                                                    ]); ?>
                                                 <?php endif; ?>
-                                                -->
-                                            </td>
-                                        </tr>
+                                        </td>
+                                            <td class="text-center">
+                                                <?php echo $remaining_stock; ?>
+                                        </td>
+                                    </tr>
                                     <?php endforeach; ?>
 
                                     <?php if (empty($sql_penj_det)): ?>
                                         <tr>
-                                            <td colspan="7" class="text-center">Tidak ada data</td>
+                                            <td colspan="6" class="text-center">Tidak ada data</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -176,23 +113,28 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <button type="button" class="btn btn-primary btn-flat"
-                                        onclick="window.location.href = '<?php echo base_url('gudang/data_mutasi_terima.php') ?>'"><i
-                                            class="fas fa-arrow-left"></i> Kembali</button>
+                                    <a href="<?php echo base_url('gudang/data_mutasi_terima.php') ?>" 
+                                       class="btn btn-primary btn-flat">
+                                        <i class="fas fa-arrow-left"></i> Kembali
+                                    </a>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <button type="submit" class="btn btn-success btn-flat"><i class="fa fa-check-circle"></i> Terima</button>
-
-                                    <?php if ($jml_kurang == '0' && $sql_penj->status_terima == '0') { ?>
-                                        <button type="button"
-                                            onclick="window.location.href = '<?php echo base_url('gudang/set_trans_mutasi_finish.php?id=' . $this->input->get('id')) ?>'"
-                                            class="btn btn-success btn-flat"><i class="fa fa-check"></i> Selesai</button>
-                                    <?php } ?>
+                                    <?php if ($jml_kurang == '0' && $sql_penj->status_terima == '0'): ?>
+                                        <a href="<?php echo base_url('gudang/set_trans_mutasi_finish.php?id=' . $this->input->get('id')) ?>" 
+                                           class="btn btn-success btn-flat">
+                                            <i class="fa fa-check"></i> Selesai
+                                        </a>
+                                    <?php else: ?>
+                                        <button type="submit" class="btn btn-success btn-flat">
+                                            <i class="fa fa-check-circle"></i> Terima
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <?php echo add_double_submit_protection('mutasi_terima_form') ?>
+
+                    <?php echo add_double_submit_protection('mutasi_terima_form'); ?>
                     <?php echo form_close(); ?>
                 </div>
             </div>
@@ -271,151 +213,106 @@
 </script>
 
 <script>
-    $(document).ready(function () {
-        console.log('Document ready - initializing mutasi terima form handlers');
+    $(document).ready(function() {
+        const form = $('#mutasi_terima_form');
+        const submitBtn = form.find('button[type="submit"]');
+        const modal = $('#mutasi_terima_modal');
+        const redirectUrl = '<?php echo base_url("gudang/data_mutasi_terima.php") ?>';
+        const csrfToken = {
+            name: '<?php echo $this->security->get_csrf_token_name(); ?>',
+            hash: '<?php echo $this->security->get_csrf_hash(); ?>'
+        };
 
-        // Handle quantity input changes
-        $('.receive-qty').on('input', function () {
-            const input = $(this);
-            const max = parseFloat(input.data('max'));
-            const val = parseFloat(input.val()) || 0;
-            const id = input.data('id');
-
-            console.log('Input changed:', {
-                id: id,
-                value: val,
-                max: max
-            });
-
-            // Validate input
-            if (val < 0) input.val(0);
-            if (val > max) input.val(max);
-
-            // Update remaining display
-            const remaining = max - parseFloat(input.val());
-            console.log('Remaining calculated:', remaining);
-            $(`#remaining-display-${id}`).text(remaining.toFixed(0));
+        // Form submission handler
+        form.on('submit', function(e) {
+            e.preventDefault();
+            handleFormSubmit();
         });
 
-        // Form submission handling
-        $('.receive-form').on('submit', function (e) {
-            e.preventDefault();
-            const form = $(this);
-            const submitBtn = form.find('.btn-receive');
-            const formData = form.serialize();
+        // Modal close handler
+        modal.on('hidden.bs.modal', function() {
+            resetForm();
+        });
 
-            console.log('Form submitted:', {
-                formId: form.attr('id'),
-                action: form.attr('action'),
-                data: formData
-            });
-
-            // Disable button to prevent double submission
-            submitBtn.prop('disabled', true);
-
+        function handleFormSubmit() {
+            // Clear previous errors
+            clearErrors();
+            
             // Show loading state
-            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Proses...');
+            toggleLoadingState(true);
+
+            // Prepare form data
+            const formData = new FormData(form[0]);
+            formData.append(csrfToken.name, csrfToken.hash);
 
             $.ajax({
                 url: form.attr('action'),
                 type: 'POST',
                 data: formData,
-                dataType: 'json',
-                success: function (response) {
-                    console.log('AJAX success response:', response);
+                processData: false,
+                contentType: false,
+                dataType: 'json'
+            })
+            .done(handleSuccess)
+            .fail(handleError)
+            .always(() => toggleLoadingState(false));
+        }
 
-                    if (response.success) {
-                        toastr.success(response.message);
+        function handleSuccess(response) {
+            console.log('Response:', response);
+            
+            if (response.success) {
+                toastr.success(response.message || 'Data berhasil disimpan');
+                resetForm();
+                modal.modal('hide');
 
-                        // Update the row instead of reloading
-                        const rowId = form.closest('tr').attr('id');
-                        const remainingDisplay = $(`#remaining-display-${response.data.id}`);
-                        const qtyInput = form.find('input[name="jml_terima"]');
-
-                        console.log('Updating row:', {
-                            rowId: rowId,
-                            remaining: response.data.remaining
-                        });
-
-                        // Update remaining quantity
-                        remainingDisplay.text(response.data.remaining);
-
-                        // If no remaining quantity, disable input and show completed
-                        if (response.data.remaining <= 0) {
-                            console.log('Item fully received, disabling controls');
-                            qtyInput.prop('disabled', true);
-                            submitBtn.replaceWith('<span class="badge badge-success">Selesai</span>');
-                        } else {
-                            // Reset input and re-enable button
-                            console.log('Item partially received, resetting form');
-                            qtyInput.val('').prop('disabled', false);
-                            submitBtn.html('<i class="fas fa-check-circle"></i> Terima')
-                                .prop('disabled', false);
-                        }
-
-                    } else {
-                        console.error('Server returned error:', response.message);
-                        toastr.error(response.message);
-                        submitBtn.html('<i class="fas fa-check-circle"></i> Terima')
-                            .prop('disabled', false);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('AJAX Error:', {
-                        status: status,
-                        error: error,
-                        response: xhr.responseText
-                    });
-
-                    toastr.error(
-                        xhr.responseText ?
-                            `Error: ${xhr.responseText}` :
-                            'Terjadi kesalahan sistem. Silakan coba lagi.'
-                    );
-
-                    submitBtn.html('<i class="fas fa-check-circle"></i> Terima')
-                        .prop('disabled', false);
-                }
-            });
-        });
-
-        // Add input validation
-        $('.receive-qty').on('input', function () {
-            const input = $(this);
-            const form = input.closest('form');
-            const submitBtn = form.find('.btn-receive');
-            const val = parseFloat(input.val()) || 0;
-            const max = parseFloat(input.data('max'));
-
-            console.log('Validating input:', {
-                value: val,
-                max: max,
-                valid: (val > 0 && val <= max)
-            });
-
-            // Validate input
-            if (val <= 0 || val > max) {
-                submitBtn.prop('disabled', true);
-                input.addClass('is-invalid');
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 800);
             } else {
-                submitBtn.prop('disabled', false);
-                input.removeClass('is-invalid');
+                handleValidationErrors(response.errors);
+                toastr.error(response.message || 'Terjadi kesalahan saat menyimpan data');
             }
-        });
+        }
 
-        // Add form reset handling
-        $('.receive-form').on('reset', function (e) {
-            const form = $(this);
-            const submitBtn = form.find('.btn-receive');
+        function handleError(xhr, status, error) {
+            console.error('AJAX Error:', {
+                status: status,
+                error: error,
+                response: xhr.responseText
+            });
+            
+            toastr.error('Terjadi kesalahan sistem. Silakan coba lagi.');
+        }
 
-            console.log('Form reset:', form.attr('id'));
+        function toggleLoadingState(isLoading) {
+            submitBtn.prop('disabled', isLoading);
+            submitBtn.html(isLoading ? 
+                '<i class="fas fa-spinner fa-spin"></i> Menyimpan...' : 
+                '<i class="fa fa-save"></i> Simpan'
+            );
+        }
 
-            submitBtn.prop('disabled', false)
-                .html('<i class="fas fa-check-circle"></i> Terima');
-            form.find('.is-invalid').removeClass('is-invalid');
-        });
+        function clearErrors() {
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+        }
 
-        console.log('Mutasi terima form handlers initialized');
+        function handleValidationErrors(errors) {
+            if (!errors) return;
+            
+            Object.entries(errors).forEach(([field, message]) => {
+                const input = form.find(`[name="${field}"]`);
+                input.addClass('is-invalid');
+                input.after(`<div class="invalid-feedback">${message}</div>`);
+            });
+        }
+
+        function resetForm() {
+            form[0].reset();
+            clearErrors();
+        }
     });
 </script>
 
@@ -477,14 +374,10 @@
 <script>
 $(document).ready(function() {
     $('#receiveAllBtn').on('click', function() {
-        // Get the CSRF token
-        var csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>';
-        var csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
-        
-        // Collect items data
         var itemsData = [];
         var hasItems = false;
         
+        // Collect items data
         $('.receive-qty').each(function() {
             var $input = $(this);
             var remaining = parseInt($input.attr('data-max'));
@@ -492,11 +385,18 @@ $(document).ready(function() {
             
             if (remaining > 0) {
                 hasItems = true;
-                itemsData.push({
+                var item = {
                     id: $row.find('input[name="id"]').val(),
                     no_nota: $row.find('input[name="no_nota"]').val(),
-                    jml_terima: remaining
-                });
+                    jml_terima: remaining,
+                    current_stock: $row.find('input[name="current_stock"]').val(),
+                    kode: $row.find('.product-link').text().trim(),
+                    produk: $row.find('.product-name').text().trim(),
+                    satuan: $row.find('.input-group-text').text().trim(),
+                    rowId: $row.attr('id').replace('row-', '')
+                };
+                console.log('Adding item:', item);
+                itemsData.push(item);
             }
         });
 
@@ -506,49 +406,105 @@ $(document).ready(function() {
         }
 
         if (confirm('Anda yakin ingin menerima semua item yang tersisa?')) {
+            // Show loading state
             $('#receiveAllBtn').prop('disabled', true).html(
                 '<i class="fas fa-spinner fa-spin"></i> Memproses...'
             );
 
-            // Create form data
-            var formData = new FormData();
-            formData.append(csrfName, csrfHash);
-            formData.append('receive_all', '1');
-            formData.append('items', JSON.stringify(itemsData));
-            formData.append('medkit_tokens', $('input[name="medkit_tokens"]').val());
-            formData.append('form_id', $('input[name="form_id"]').val());
+            // Get the CSRF token and form protection
+            var csrfName = $('.receive-form input[name="csrf_test_name"]').attr('name');
+            var csrfHash = $('.receive-form input[name="csrf_test_name"]').val();
+            var medkitTokens = $('input[name="medkit_tokens"]').val();
+
+            // Prepare the data
+            var postData = {
+                [csrfName]: csrfHash,
+                medkit_tokens: medkitTokens,
+                receive_all: '1',
+                items: JSON.stringify(itemsData),
+                no_nota_master: $('input[name="no_nota"]').val()
+            };
+
+            console.log('Sending data:', postData);
 
             $.ajax({
                 url: '<?php echo base_url("gudang/trans_mutasi_terima_simpan") ?>',
                 type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
+                data: postData,
                 dataType: 'json',
                 success: function(response) {
-                    console.log('Response:', response); // Debug line
-                    if (response.success) {
+                    console.log('%c Success Response:', 'background: #4CAF50; color: white; padding: 2px 5px;');
+                    console.log(response);
+                    
+                    if (response && response.success) {
+                        if (response.debug) {
+                            console.log('%c Debug Info:', 'background: #2196F3; color: white; padding: 2px 5px;');
+                            console.log(response.debug);
+                        }
+                        
+                        // Update each processed row
+                        if (response.data && Array.isArray(response.data)) {
+                            console.log('Processing multiple items:', response.data);
+                            response.data.forEach(function(item) {
+                                console.log('Processing item:', item);
+                                updateRowAfterReceive(item);
+                            });
+                        } else if (response.data) {
+                            console.log('Processing single item:', response.data);
+                            updateRowAfterReceive(response.data);
+                        }
+                        
                         toastr.success(response.message);
-                        window.location.reload();
                     } else {
+                        console.error('Error in response:', response);
                         toastr.error(response.message || 'Terjadi kesalahan sistem');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('AJAX Error:', {
+                    console.error('AJAX Error Details:', {
                         status: status,
                         error: error,
-                        response: xhr.responseText
+                        responseText: xhr.responseText,
+                        xhr: xhr
                     });
                     toastr.error('Terjadi kesalahan sistem. Silakan coba lagi.');
-                },
-                complete: function() {
-                    $('#receiveAllBtn').prop('disabled', false).html(
-                        '<i class="fas fa-check-double"></i> Terima Semua'
-                    );
                 }
             });
         }
     });
-});
+
+    // Helper function to update row after receiving items
+    function updateRowAfterReceive(item) {
+        var $row = $('#row-' + (item.rowId || item.id));
+        if ($row.length) {
+            // Update the remaining quantity display
+            $row.find('.remaining-qty').text(item.remaining || 0);
+            
+            // Update the receive input section
+            var $receiveSection = $row.find('.form-group');
+            if (parseInt(item.remaining) === 0) {
+                // If fully received, replace with "Selesai" badge and disabled input
+                $receiveSection.html(
+                    '<span class="badge badge-success">Selesai</span>' +
+                    '<input class="form-control text-center" disabled value="' + 
+                    (item.jml_diterima || item.jml_terima) + '">'
+                );
+            } else {
+                // Update max value and placeholder for partial receive
+                var $receiveInput = $row.find('.receive-qty');
+                $receiveInput.attr({
+                    'max': item.remaining,
+                    'data-max': item.remaining,
+                    'placeholder': item.remaining
+                });
+                $receiveInput.closest('.form-group')
+                    .find('small.text-muted')
+                    .text('Max: ' + item.remaining);
+            }
+
+            // Update hidden inputs if needed
+            $row.find('input[name="current_stock"]').val(item.new_stock || 0);
+        }
+    }
+    });
 </script>
