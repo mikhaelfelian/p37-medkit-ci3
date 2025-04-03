@@ -21634,9 +21634,9 @@ public function set_medcheck_lab_adm_save() {
                 $sql_grup   = $this->ion_auth->group($get_grup->id)->row();
                 
                 // Generate username and email
-                $username = 'es_' . strtolower(str_replace(' ', '', $nama)).uniqid();
-                $email = $username . '@esensia.co.id';
-                $pass = 'admin1234';
+                $username = 'es_dr.' . strtolower(str_replace(' ', '', $nama)).uniqid();
+                $email    = $username . '@esensia.co.id';
+                $pass     = 'admin1234';
                 
                 // Check if username already exists
                 $cek = $this->db->select('username')->where('username', $username)->get('tbl_ion_users')->num_rows();
