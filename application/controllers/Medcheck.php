@@ -5465,9 +5465,9 @@ class Medcheck extends CI_Controller {
                         $this->db->where('id', $stok->id_item)->update('tbl_m_produk', $data_stok_glob);
                     }
 
-                            $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil di proses!");');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil di proses!");');
                 }else{
-                            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi sudah pernah di proses!");');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi sudah pernah di proses!");');
                 }
                 
                 # Poin Pasien
@@ -5485,21 +5485,32 @@ class Medcheck extends CI_Controller {
                 }
                 
                 if ($this->db->trans_status() === FALSE) {
-                            # Rollback transaction if any query failed
+                    # Rollback transaction if any query failed
                     $this->db->trans_rollback();
-                            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal di proses: Database error");');
+                    
+                    // Return JSON response for failure
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'error', 'message' => 'Transaksi gagal di proses: Database error']);
+                    exit;
                 } else {
-                        # Commit the transaction if all queries were executed successfully
+                    # Commit the transaction if all queries were executed successfully
                     $this->db->trans_commit();
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil di proses!");');
-                    }
+                    
+                    // Return JSON response for success
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'success', 'message' => 'Transaksi berhasil di proses']);
+                    exit;
+                }
                 } catch (Exception $e) {
                     # Rollback
                     $this->db->trans_rollback();
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal di proses: ' . $e->getMessage() . '");');
-                }
-                
-                redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
+                    
+                    // Return JSON response for exception
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'error', 'message' => 'Transaksi gagal di proses: ' . $e->getMessage()]);
+                    exit;
+                }                
+                // redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -5507,8 +5518,6 @@ class Medcheck extends CI_Controller {
             redirect();
         }
     }
-
-
     public function set_medcheck_proses_batal(){
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->post('id');
