@@ -5487,7 +5487,7 @@ class Medcheck extends CI_Controller {
                 if ($this->db->trans_status() === FALSE) {
                     # Rollback transaction if any query failed
                     $this->db->trans_rollback();
-                    
+
                     // Return JSON response for failure
                     header('Content-Type: application/json');
                     echo json_encode(['status' => 'error', 'message' => 'Transaksi gagal di proses: Database error']);
@@ -5495,7 +5495,7 @@ class Medcheck extends CI_Controller {
                 } else {
                     # Commit the transaction if all queries were executed successfully
                     $this->db->trans_commit();
-                    
+
                     // Return JSON response for success
                     header('Content-Type: application/json');
                     echo json_encode(['status' => 'success', 'message' => 'Transaksi berhasil di proses']);
@@ -12109,38 +12109,38 @@ public function set_medcheck_lab_adm_save() {
                     $subtotal    = ($disk3 - $potongan) * (int)$jml;
 
                     $data = [
-                        'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                        'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
-                        'id_medcheck'   => (int)$sql_medc->id,
-                        'id_item'       => (int)$sql_item->id,
-                        'id_item_kat'   => (int)$sql_item->id_kategori,
-                        'id_item_sat'   => (int)$sql_item->id_satuan,
-                        'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                        'id_dokter'     => (int)$dokter,
-                        'id_lab'        => (int)general::dekrip($id_lab),
-                        'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
-                        'id_rad'        => (int)general::dekrip($id_rad),
-                        'kode'          => $sql_item->kode,
-                        'item'          => $sql_item->produk,
-                        'keterangan'    => $keterangan,
-                        'hasil_lab'     => $hasil,
-                        'harga'         => $harga,
-                        'jml'           => (int)$jml,
-                        'jml_satuan'    => '1',
-                        'satuan'        => $sql_sat->satuanTerkecil,
-                        'disk1'         => (float)$diskon1,
-                        'disk2'         => (float)$diskon2,
-                        'disk3'         => (float)$diskon3,
-                        'diskon'        => (float)$diskon,
+                    'tgl_simpan'    => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                    'tgl_masuk'     => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s') : date('Y-m-d H:i:s')),
+                    'id_medcheck'   => (int)$sql_medc->id,
+                    'id_item'       => (int)$sql_item->id,
+                    'id_item_kat'   => (int)$sql_item->id_kategori,
+                    'id_item_sat'   => (int)$sql_item->id_satuan,
+                    'id_user'       => (int)$this->ion_auth->user()->row()->id,
+                    'id_dokter'     => (int)$dokter,
+                    'id_lab'        => (int)general::dekrip($id_lab),
+                    'id_lab_kat'    => (int)general::dekrip($id_lab_kat),
+                    'id_rad'        => (int)general::dekrip($id_rad),
+                    'kode'          => $sql_item->kode,
+                    'item'          => $sql_item->produk,
+                    'keterangan'    => $keterangan,
+                    'hasil_lab'     => $hasil,
+                    'harga'         => $harga,
+                    'jml'           => (int)$jml,
+                    'jml_satuan'    => '1',
+                    'satuan'        => $sql_sat->satuanTerkecil,
+                    'disk1'         => (float)$diskon1,
+                    'disk2'         => (float)$diskon2,
+                    'disk3'         => (float)$diskon3,
+                    'diskon'        => (float)$diskon,
                         'potongan'      => (float)$jml_pot,
-                        'subtotal'      => (float)$subtotal,
-                        'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                        'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
+                    'subtotal'      => (float)$subtotal,
+                    'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
+                    'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
                     ];
                 
-                    # Cek apakah sudah di posting atau belum ?
-                    # Kalau sudah yg bisa input hny rad, lab, dokter
+                # Cek apakah sudah di posting atau belum ?
+                # Kalau sudah yg bisa input hny rad, lab, dokter
                     if ($sql_medc->status < 5) {
                     # Start Transact SQL
                         $this->db->trans_begin();
@@ -21058,10 +21058,10 @@ public function set_medcheck_lab_adm_save() {
     }
     
     public function json_item() {
-        // Check if this is an AJAX request
-        // if (!$this->input->is_ajax_request()) {
-        //     exit('No direct script access allowed');
-        // }
+        //Check if this is an AJAX request
+        if (!$this->input->is_ajax_request()) {
+            exit('No direct script access allowed');
+        }
         
         if (akses::aksesLogin() == TRUE) {
             $term  = $this->input->get('term');
@@ -21122,7 +21122,7 @@ public function set_medcheck_lab_adm_save() {
                 foreach ($sql as $sql){
                     $sql_satuan = $this->db->where('id', $sql->id_satuan)->get('tbl_m_satuan')->row();
                     $sql_stok   = $this->db->select('SUM(jml * jml_satuan) AS jml')->where('id_produk', $sql->id)->where('id_gudang', $sg)->get('tbl_m_produk_stok')->row();
-                    
+                        
                     $produk[] = [
                             'id'            => general::enkrip($sql->id),
                             'kode'          => $sql->kode,
@@ -21157,18 +21157,14 @@ public function set_medcheck_lab_adm_save() {
     
     public function json_icd() {
         if (akses::aksesLogin() == TRUE) {
-            $term  = $this->input->get('term');
-            $stat  = $this->input->get('status');
-//            $sql   = $this->db->select('id,kode,diagnosa,diagnosa_en')->where('status_icd', $stat)->like('kode',$term)->like('diagnosa',$term)->like('diagnosa_en',$term)->limit(10)->get('tbl_m_icd')->result();
-            $sql   = $this->db->select('id,kode,icd')
-//                                ->where('status_icd', $stat)
+            $term = $this->input->get('term');
+            $stat = $this->input->get('status');
+            
+            $sql = $this->db->select('id, kode, icd')
                                 ->where("(kode LIKE '%".$term."%' OR icd LIKE '%".$term."%')")
-                            ->limit(500)->get('tbl_m_icd')->result();
-//            $sql   = $this->db->select('id,kode,icd,diagnosa,diagnosa_en')
-//                                ->where('status_icd', $stat)
-//                                ->where("(kode LIKE '%".$term."%' OR diagnosa LIKE '%".$term."%' OR diagnosa_en LIKE '%".$term."%')")
-//                            ->limit(500)->get('tbl_m_icd')->result();
-
+                           ->limit(500)
+                           ->get('tbl_m_icd')
+                           ->result();
 
             if(!empty($sql)){
                 foreach ($sql as $sql){
@@ -21177,16 +21173,12 @@ public function set_medcheck_lab_adm_save() {
                         'kode'          => $sql->kode,
                         'diagnosa'      => $sql->icd,
                         'diagnosa_en'   => $sql->icd,
-//                        'diagnosa_en'   => ($sql->icd != $sql->diagnosa_en ? $sql->icd.' &raquo; ' : '').$sql->diagnosa_en,
                     );
                 }
                 
-//                if(!empty($term)){
-//                    echo json_encode($produk);
-//                }
         return $this->output
         ->set_content_type('application/json')
-        ->set_status_header(200) // Return status
+                    ->set_status_header(200)
         ->set_output(json_encode($produk));
             }
         } else {
@@ -21229,10 +21221,6 @@ public function set_medcheck_lab_adm_save() {
                 }
                 
                 echo json_encode($produk);
-                
-//                echo '<pre>';
-//                print_r(json_encode($produk, JSON_PRETTY_PRINT));
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -21263,10 +21251,6 @@ public function set_medcheck_lab_adm_save() {
                 }
                 
                 echo json_encode($produk);
-                
-//                echo '<pre>';
-//                print_r(json_encode($produk, JSON_PRETTY_PRINT));
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -21311,10 +21295,6 @@ public function set_medcheck_lab_adm_save() {
                 }
                 
                 echo json_encode($produk);
-                
-//                echo '<pre>';
-//                print_r(json_encode($produk, JSON_PRETTY_PRINT));
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -21490,8 +21470,6 @@ public function set_medcheck_lab_adm_save() {
     
     
     
-    
-    
     /**
      * Add Parameter
      * 
@@ -21581,6 +21559,144 @@ public function set_medcheck_lab_adm_save() {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
+        }
+    }
+
+    public function set_master_dokter() {
+        if (Akses::aksesLogin() == TRUE) {
+            // Check if request is AJAX
+            $is_ajax = $this->input->is_ajax_request();
+            
+            if (!$is_ajax) {
+                exit('No direct script access allowed');
+            }
+
+            $nik          = $this->input->post('nik');
+            $kode         = $this->input->post('kode');
+            $nama_dpn     = $this->input->post('nama_dpn');
+            $nama         = $this->input->post('nama');
+            $nama_blk     = $this->input->post('nama_blk');
+            $jns_klm      = $this->input->post('jns_klm');
+            $no_hp        = $this->input->post('no_hp');
+            $no_rmh       = $this->input->post('no_rmh');
+            $alamat       = $this->input->post('alamat');
+            $alamat_dom   = $this->input->post('alamat_dom');
+            $tgl_lahir    = $this->input->post('tgl_lahir');
+            $tmp_lahir    = $this->input->post('tmp_lahir');
+            $kota         = $this->input->post('kota');
+            $jabatan      = $this->input->post('jabatan');
+            $user         = $this->input->post('user');
+            $pass1        = $this->input->post('pass1');
+            $pass2        = $this->input->post('pass2');
+            $grup         = '10';
+        
+            // Set validation rules
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('nik', 'NIK', 'required|trim');
+            $this->form_validation->set_rules('nama', 'Nama Lengkap', 'required|trim');
+            $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
+        
+            // Run validation
+            if ($this->form_validation->run() === FALSE) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => $this->form_validation->error_array()
+                ]);
+                return;
+            }
+        
+            try {
+                // Start transaction
+                $this->db->trans_begin();
+                
+                $pengaturan = $this->db->get('tbl_pengaturan')->row();
+                
+                $sql_num    = $this->db->get('tbl_m_karyawan')->num_rows() + 1;
+                $kode_no    = sprintf('%05d', $sql_num);
+                
+                $get_grup   = $this->ion_auth->get_users_groups(general::dekrip($id_user))->row();
+                $sql_grup   = $this->ion_auth->group($get_grup->id)->row();
+                
+                // Generate username and email
+                $username = 'es_' . strtolower(str_replace(' ', '', $nama));
+                $email = $username . '@esensia.co.id';
+                $pass = 'admin1234';
+                
+                // Check if username already exists
+                $cek = $this->db->select('username')->where('username', $username)->get('tbl_ion_users')->num_rows();
+                
+                if($cek > 0){
+                    throw new Exception('Username sudah ada');
+                } else {
+                    $data_user = array(
+                        'id_app'        => $pengaturan->id_app,
+                        'first_name'    => (!empty($nama_dpn) ? $nama_dpn.' ' : '').strtoupper($nama).(!empty($nama_blk) ? ', '.$nama_blk : ''),
+                        'username'      => $username,
+                        'password'      => $pass,
+                        'address'       => $alamat,
+                        'birthdate'     => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
+                    );
+                    
+                    $this->ion_auth->register($username, $pass, $email, $data_user, array($grup));
+                    $sql_user = $this->db->where('username', $username)->get('tbl_ion_users')->row();
+                }
+        
+                // Prepare data for tbl_m_karyawan
+                $data_kary = [
+                    'id_user'           => (!empty($sql_user->id) ? $sql_user->id : '0'),
+                    'id_user_group'     => (!empty($grup) ? $grup : '0'),
+                    'tgl_simpan'        => date('Y-m-d H:i:s'),
+                    'nik'               => $nik,
+                    'nama'              => strtoupper($nama),
+                    'nama_dpn'          => $nama_dpn,
+                    'nama_blk'          => $nama_blk,
+                    'alamat'            => $alamat,
+                    'alamat_dom'        => $alamat_dom,
+                    'no_hp'             => $no_hp,
+                    'no_rmh'            => $no_rmh,
+                    'jabatan'           => $jabatan,
+                    'jns_klm'           => $jns_klm,
+                    'tgl_lahir'         => $this->tanggalan->tgl_indo_sys($tgl_lahir),
+                    'tmp_lahir'         => $tmp_lahir,
+                ];
+        
+                
+                $this->db->insert('tbl_m_karyawan', $data_kary);
+                $last_id_kary = $this->db->insert_id();
+        
+                // Check transaction status
+                if ($this->db->trans_status() === FALSE) {
+                    throw new Exception('Gagal menyimpan data');
+                }
+        
+                // Commit transaction
+                $this->db->trans_commit();
+        
+                // Send success response
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Data dokter berhasil disimpan',
+                    'redirect' => base_url('medcheck/index.php'),
+                    'id' => general::enkrip($last_id_dokter)
+                ]);
+        
+            } catch (Exception $e) {
+                // Rollback transaction
+                $this->db->trans_rollback();
+        
+                // Send error response
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+        } else {
+            $errors = $this->ion_auth->messages();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Authentifikasi gagal, silahkan login ulang!'
+            ]);
         }
     }
 }

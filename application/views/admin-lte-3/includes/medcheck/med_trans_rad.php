@@ -117,10 +117,6 @@
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
-<!-- Toastr -->
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
-
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {                
@@ -129,7 +125,7 @@
         // Select2   
         $('.select2bs4').select2({theme: 'bootstrap4'});
 
-<?php if ($_GET['act'] != 'rad_hasil_lamp') { ?>
+        <?php if ($_GET['act'] != 'rad_hasil_lamp') { ?>
             // Data Item Cart
             $('#kode').autocomplete({
                 source: function (request, response) {
@@ -165,42 +161,42 @@
                         .append("<a>" + item.name + "</a>")
                         .appendTo(ul);
             };
-<?php } ?>
-<?php if (!empty($sql_produk)) { ?>
-            // Cari Data Dokter
-            $('#dokter').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "<?php echo base_url('medcheck/json_dokter.php') ?>",
-                        dataType: "json",
-                        data: {
-                            term: request.term
+        <?php } ?>
+        <?php if (!empty($sql_produk)) { ?>
+                    // Cari Data Dokter
+                    $('#dokter').autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: "<?php echo base_url('medcheck/json_dokter.php') ?>",
+                                dataType: "json",
+                                data: {
+                                    term: request.term
+                                },
+                                success: function (data) {
+                                    response(data);
+                                }
+                            });
                         },
-                        success: function (data) {
-                            response(data);
+                        minLength: 1,
+                        select: function (event, ui) {
+                            var $itemrow = $(this).closest('tr');
+                            //Populate the input fields from the returned values
+                            $itemrow.find('#id_dokter').val(ui.item.id_user);
+                            $('#id_dokter').val(ui.item.id_user);
+                            $('#dokter').val(ui.item.nama);
+
+                            // Give focus to the next input field to recieve input from user
+                            $('#dokter').focus();
+                            return false;
                         }
-                    });
-                },
-                minLength: 1,
-                select: function (event, ui) {
-                    var $itemrow = $(this).closest('tr');
-                    //Populate the input fields from the returned values
-                    $itemrow.find('#id_dokter').val(ui.item.id_user);
-                    $('#id_dokter').val(ui.item.id_user);
-                    $('#dokter').val(ui.item.nama);
 
-                    // Give focus to the next input field to recieve input from user
-                    $('#dokter').focus();
-                    return false;
-                }
-
-                // Format the list menu output of the autocomplete
-            }).data("ui-autocomplete")._renderItem = function (ul, item) {
-                return $("<li></li>")
-                        .data("item.autocomplete", item)
-                        .append("<a>" + item.nama + "</a>")
-                        .appendTo(ul);
-            };
-<?php } ?>
+                        // Format the list menu output of the autocomplete
+                    }).data("ui-autocomplete")._renderItem = function (ul, item) {
+                        return $("<li></li>")
+                                .data("item.autocomplete", item)
+                                .append("<a>" + item.nama + "</a>")
+                                .appendTo(ul);
+                    };
+        <?php } ?>
     });
 </script>
