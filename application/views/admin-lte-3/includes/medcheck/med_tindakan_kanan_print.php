@@ -110,7 +110,7 @@
                     <?php echo form_close(); ?>
                     <br/>
                 <?php } else { ?>
-                    <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE) { ?>
+                    <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE) { ?>
                         <?php if ($sql_medc->tipe != '6') { ?>
                             <?php echo form_open(base_url('medcheck/set_medcheck_bayar_batal.php'), 'autocomplete="off"') ?>
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
