@@ -1,5 +1,14 @@
 <?php
 /**
+ * Set default timezone to Asia/Jakarta
+ * This ensures all date/time functions use the correct timezone
+ */
+date_default_timezone_set('Asia/Jakarta');
+
+// Force timezone for any date/time operations
+ini_set('date.timezone', 'Asia/Jakarta');
+
+/**
  * CodeIgniter
  *
  * An open source application development framework for PHP
