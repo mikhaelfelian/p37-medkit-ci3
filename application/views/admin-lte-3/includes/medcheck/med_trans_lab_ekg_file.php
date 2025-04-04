@@ -1,4 +1,4 @@
-<?php echo form_open_multipart(base_url('medcheck/set_medcheck_lab_ekg_upload'), [
+<?php echo form_open_multipart(base_url('medcheck/set_medcheck_lab_ekg_upload.php'), [
     'id' => 'uploadForm',
     'autocomplete' => 'off',
     'enctype' => 'multipart/form-data'
