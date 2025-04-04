@@ -74,13 +74,15 @@
                                                         <small class="text-muted">Max: <?php echo $remaining_stock; ?></small>
                                                         <div class="input-group">
                                                             <?php echo form_input([
-                                                                'name' => 'jml_terima[]',
-                                                                'class' => 'form-control text-center',
-                                                                'type' => 'number',
-                                                                'min' => '0',
-                                                                'max' => $remaining_stock,
-                                                                'required' => 'required',
-                                                                'placeholder' => $remaining_stock
+                                                                'name'        => 'jml_terima[]',
+                                                                'class'       => 'form-control text-center',
+                                                                'type'        => 'number',
+                                                                'min'         => '0',
+                                                                'max'         => $remaining_stock,
+                                                                'required'    => 'required',
+                                                                'placeholder' => $remaining_stock,
+                                                                'value'       => $remaining_stock,
+                                                                'readonly'    => 'true'
                                                             ]); ?>
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text"><?php echo $items->satuan; ?></span>
