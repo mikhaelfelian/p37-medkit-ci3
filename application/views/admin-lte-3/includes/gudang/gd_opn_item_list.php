@@ -83,10 +83,10 @@
                                                     </td>
                                                     <td class="text-center"><?php echo $no; ?>.</td>
                                                     <td class="text-left"><?php echo $produk->produk ?></td>
-                                                    <td class="text-right"><?php echo (float) $produk->jml ?></td>
+                                                    <td class="text-right"><?php echo (float) $penj_det['options']['jml_sys'] ?></td>
                                                     <td class="text-right">
                                                         <?php echo (float) $penj_det['qty'] . ' ' . $penj_det->satuan ?></td>
-                                                    <td class="text-right"><?php echo (float) $penj_det['qty'] - $produk->jml ?>
+                                                    <td class="text-right"><?php echo (float) $penj_det['qty'] - $penj_det['options']['jml_sys'] ?>
                                                     </td>
                                                 </tr>
                                                 <?php $no++; ?>
@@ -220,7 +220,7 @@
                                                 <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakKasir() == TRUE) { ?>
                                                     <?php $satuan = ($sql_satuan->jml > 0) ? floor($barang->jml / $sql_satuan->jml) : 0; ?>
                                                     <td class="text-right" style="width: 80px;">
-                                                        <?php echo $barang->jml . ' ' . $sql_satuan->satuanTerkecil; ?></td>
+                                                        <?php echo $barang->stok . ' ' . $sql_satuan->satuanTerkecil; ?></td>
                                                 <?php } ?>
                                                 <td class="text-right" style="width: 150px;">
                                                     <?php echo general::format_angka($barang->harga_jual) ?></td>

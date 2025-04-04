@@ -205,7 +205,8 @@ class Gudang extends CI_Controller {
             $jml_hal         = (!empty($jml) ? $jml  : $this->db->where('so', '0')->get('tbl_m_produk')->num_rows());
             $pengaturan      = $this->db->get('tbl_pengaturan')->row();
             
-            $data['hasError'] = $this->session->flashdata('form_error');
+            $trans_opname       = $this->session->userdata('trans_opname');
+            $data['hasError']   = $this->session->flashdata('form_error');
                         
             $config['base_url']               = base_url('gudang/data_opname_item_list.php?nota='.$this->input->get('nota').'&route='.$this->input->get('route').(!empty($filter_kode) ? '&filter_kode='.$filter_kode : '').(!empty($filter_brcd) ? '&filter_barcode='.$filter_brcd : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($sort_order) ? '&sort_order='.$sort_order : '').(!empty($jml) ? '&jml='.$jml : ''));
             $config['total_rows']             = $jml_hal;
@@ -243,45 +244,49 @@ class Gudang extends CI_Controller {
 
             if(!empty($hal)){
                 if (!empty($jml)) {
-                    $data['barang'] = $this->db->limit($config['per_page'],$hal)
-//                                                   ->where('so', '0')
-//                                                   ->where('status_subt', '1')
-                                                   ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%')")
-                                                   ->like('kode', $filter_kode)
-//                                                   ->like('barcode', $filter_brcd, (!empty($filter_brcd) ? 'none' : ''))
-//                                                   ->like('produk', $filter_produk)
-                                                   ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
-                                                   ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
-                                                   ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
+                    $data['barang'] = $this->db->select('tbl_m_produk.*, tbl_m_produk_stok.jml as stok')
+                                               ->from('tbl_m_produk')
+                                               ->join('tbl_m_produk_stok', 'tbl_m_produk.id = tbl_m_produk_stok.id_produk')
+                                               ->where('tbl_m_produk_stok.id_gudang', $trans_opname['id_gudang'])
+                                               ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%')")
+                                               ->like('kode', $filter_kode)
+                                               ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
+                                               ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
+                                               ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
                                                ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-                                               ->get('tbl_m_produk')->result();
+                                               ->limit($config['per_page'], $hal)
+                                               ->get()->result();
                 } else {
-                    $data['barang'] = $this->db
-//                            ->where('so', '0')
-                            ->limit($config['per_page'],$hal)->order_by('produk', (!empty($sort_order) ? $sort_order : 'asc'))->get('tbl_m_produk')->result();
+                    $data['barang'] = $this->db->select('tbl_m_produk.*, tbl_m_produk_stok.jml as stok')
+                                               ->from('tbl_m_produk')
+                                               ->join('tbl_m_produk_stok', 'tbl_m_produk.id = tbl_m_produk_stok.id_produk')
+                                               ->where('tbl_m_produk_stok.id_gudang', $trans_opname['id_gudang'])
+                                               ->order_by('produk', (!empty($sort_order) ? $sort_order : 'asc'))
+                                               ->limit($config['per_page'], $hal)
+                                               ->get()->result();
                 }
-            }else{
+            } else {
                 if (!empty($jml)) {
-                    $data['barang'] = $this->db->limit($config['per_page'],$hal)
-//                                                   ->where('so', '0')
-//                                                   ->where('status_subt', '1')
-                                                   ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%')")
-                                                   ->like('kode', $filter_kode)
-//                                                   ->like('barcode', $filter_brcd, 'none')
-//                                                   ->like('produk', $filter_produk)
-                                                   ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
-                                                   ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
-                                                   ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
+                    $data['barang'] = $this->db->select('tbl_m_produk.*, tbl_m_produk_stok.jml as stok')
+                                               ->from('tbl_m_produk')
+                                               ->join('tbl_m_produk_stok', 'tbl_m_produk.id = tbl_m_produk_stok.id_produk')
+                                               ->where('tbl_m_produk_stok.id_gudang', $trans_opname['id_gudang'])
+                                               ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%')")
+                                               ->like('kode', $filter_kode)
+                                               ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
+                                               ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
+                                               ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
                                                ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-                                               ->get('tbl_m_produk')->result();
-                } else {
-                    $data['barang'] = $this->db
-//                                               ->where('so', '0')
-//                                               ->where('status_subt', '1')
                                                ->limit($config['per_page'])
+                                               ->get()->result();
+                } else {
+                    $data['barang'] = $this->db->select('tbl_m_produk.*, tbl_m_produk_stok.jml as stok')
+                                               ->from('tbl_m_produk')
+                                               ->join('tbl_m_produk_stok', 'tbl_m_produk.id = tbl_m_produk_stok.id_produk')
+                                               ->where('tbl_m_produk_stok.id_gudang', $trans_opname['id_gudang'])
                                                ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-//                                               ->order_by(!empty($sort_type) ? $sort_type : 'id', (isset($sort_order) ? $sort_order : 'desc'))
-                                               ->get('tbl_m_produk')->result();
+                                               ->limit($config['per_page'])
+                                               ->get()->result();
                 }
             }
             
@@ -1911,8 +1916,9 @@ class Gudang extends CI_Controller {
                 
                 redirect(base_url('gudang/data_opname_tambah.php?id='.$no_nota));
             } else {
+                $trans_opname = $this->session->userdata('trans_opname');
                 $sql_brg      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
-                $sql_brg_stok = $this->db->where('id_produk', general::dekrip($id_brg))->where('status', '1')->get('tbl_m_produk_stok')->row();
+                $sql_brg_stok = $this->db->where('id_produk', general::dekrip($id_brg))->where('id_gudang', $trans_opname['id_gudang'])->get('tbl_m_produk_stok')->row();
                 $sql_brg_sat  = $this->db->where('id', $sql_brg->id_satuan)->get('tbl_m_satuan')->row();
                 $sql_merk     = $this->db->where('id', $sql_brg->id_merk)->get('tbl_m_merk')->row();
                 $sql_so       = $this->db->where('id', general::dekrip($no_nota))->get('tbl_util_so')->row();
@@ -1935,11 +1941,12 @@ class Gudang extends CI_Controller {
                         'id_user'   => $this->ion_auth->user()->row()->id,
                         'id_produk' => $sql_brg->id,
                         'id_satuan' => $sql_brg->id_satuan,
+                        'id_gudang' => $trans_opname['id_gudang'],
                         'kode'      => $sql_brg->kode,
                         'produk'    => $sql_brg->produk,
                         'satuan'    => $sql_brg_sat->satuanBesar,
                         'satuan_ket'=> ($sql_brg_sat->ket > '1' ? ' ('.($qty * $sql_brg_sat->ket).' '.$sql_brg_sat->satuanTerkecil.')' : ''),
-                        'jml_sys'   => $qty,
+                        'jml_sys'   => $sql_brg_stok->jml,
                         'jml_satuan'=> 1,
                         'kode'      => $sql_brg->kode,
                     ]
@@ -2107,7 +2114,10 @@ class Gudang extends CI_Controller {
                         $sql_brg_stok       = $this->db->where('id_produk', $sess_det['options']['id_produk'])->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
                         $sql_merk           = $this->db->where('id', $sql_brg->id_merk)->get('tbl_m_merk')->row();
                         $jml_so             = $sess_det['qty'];
-                        $jml_sls            = $sess_det['qty'] - $sql_brg_stok->jml;
+                        
+                        // Prevent division by zero by ensuring jml_sys is not zero or null
+                        $jml_sys = !empty($sess_det['options']['jml_sys']) ? $sess_det['options']['jml_sys'] : 0;
+                        $jml_sls = $sess_det['qty'] - $jml_sys;
                         
                         $data_stok = [
                             'tgl_modif'     => date('Y-m-d H:i:s'),
@@ -2127,8 +2137,8 @@ class Gudang extends CI_Controller {
                             'satuan'        => $sess_det['options']['satuan'],
                             'jml'           => (!empty($sess_det['qty']) ? $sess_det['qty'] : '0'),
                             'jml_so'        => (!empty($sess_det['qty']) ? $sess_det['qty'] : '0'),
-                            'jml_sys'       => (!empty($sql_brg_stok->jml) ? $sql_brg_stok->jml : '0'),
-                            'jml_sls'       => (!empty($jml_sls) ? $jml_sls : '0'),
+                            'jml_sys'       => $jml_sys,
+                            'jml_sls'       => $jml_sls,
                             'jml_satuan'    => 1,
                             'merk'          => $sql_merk->merk
                         ];
