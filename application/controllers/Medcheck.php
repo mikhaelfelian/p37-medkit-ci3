@@ -12821,7 +12821,7 @@ public function set_medcheck_lab_adm_save() {
             $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!")');
             redirect();
         }
-    }    
+    }  
 
     public function cart_medcheck_resep_hapus() {
         if (akses::aksesLogin() == TRUE) {
