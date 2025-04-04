@@ -5123,11 +5123,18 @@ class Medcheck extends CI_Controller {
                               foreach (json_decode($medc_det->resep) as $rc){
                                   $sql_item_rc          = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
                                   $sql_gudang_stok_rc   = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rc->id)->get('tbl_m_produk_stok')->row();
-                                  
+
+
                                   # Cek resep Item stockable atau tidak ? 
                                   if($sql_item_rc->status_subt == '1'){
                                       $jml_akhir_rc         = $sql_item_rc->jml - $rc->jml;
                                       $jml_akhir_rc_stk     = $sql_gudang_stok_rc->jml - $rc->jml;
+                                      
+                                      # Check if stock is sufficient
+                                      if ($jml_akhir_rc_stk < 0) {
+                                          $this->db->trans_rollback();
+                                          throw new Exception("Stok tidak mencukupi untuk item racikan ".$sql_item_rc->produk.". Stok tersedia: ".$sql_gudang_stok_rc->jml);
+                                      }
                                       
                                             $data_item_rc = [
                                           'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -5188,6 +5195,12 @@ class Medcheck extends CI_Controller {
                                 $sql_gudang_stok = $this->db->select('SUM(jml) AS jml')->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
                                 $jml_akhir       = $sql_item->jml - $medc_det->jml;
                                 $jml_akhir_stk   = $sql_gudang_stok->jml - $medc_det->jml;
+
+                                # Check if stock is sufficient
+                                if ($jml_akhir_stk < 0) {
+                                    $this->db->trans_rollback();
+                                    throw new Exception("Stok tidak mencukupi untuk item ".$sql_item->produk.". Stok tersedia: ".$sql_gudang_stok->jml);
+                                }
                                                     
                                         $data_item = [
                                     'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -5253,6 +5266,16 @@ class Medcheck extends CI_Controller {
                                         $jml_akhir_reff     = $sql_item_rf->jml - ($reff->jml * $medc_det->jml);
                                         $jml_akhir_reff_stk = $sql_gudang_stok->jml - ($reff->jml * $medc_det->jml);
                                   
+                                                // Check if stock is sufficient
+                                                if ($jml_akhir_reff_stk < 0) {
+                                                    // Rollback transaction
+                                                    $this->db->trans_rollback();
+                                                    
+                                                    // Throw exception with error message
+                                                    throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
+                                                }
+
+
                                                 $data_item_reff = [
                                             'tgl_modif'  => date('Y-m-d H:i:s'),
                                             'jml'        => $jml_akhir_reff
@@ -5433,6 +5456,12 @@ class Medcheck extends CI_Controller {
                         
                         # Hitung ulang secara live, stok saat ini dikurangi stok yang keluar
                         $stok_akhir         = $sql_gudang_stok->jml - $stok->jml;
+
+                        # Check if stock is sufficient
+                        if ($stok_akhir < 0) {
+                            $this->db->trans_rollback();
+                            throw new Exception("Stok tidak mencukupi untuk item {$sql_gudang_stok->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
+                        }
                         
                         # Kumpulkan informasi pengurangan stok disini
                                 $data_stok = [

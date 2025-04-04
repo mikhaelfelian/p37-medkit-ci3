@@ -1022,6 +1022,12 @@ class Pos extends CI_Controller {
                         $jml_akhir       = $sql_item->jml - $cart['qty'];
                         $jml_akhir_stk   = $sql_gudang_stok->jml - $cart['qty'];
                         
+                        // Check if stock is sufficient
+                        if ($jml_akhir_stk < 0) {
+                            $this->db->trans_rollback();
+                            throw new Exception("Stok tidak mencukupi untuk item ".$sql_item->produk.". Stok tersedia: ".$sql_gudang_stok->jml);
+                        }
+                        
                         $data_cart = [
                             'id_medcheck'   => (int)$last_id,
                             'id_item'       => (int)$sql_item->id,
