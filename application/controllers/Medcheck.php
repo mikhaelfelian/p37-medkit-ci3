@@ -21168,6 +21168,7 @@ public function set_medcheck_lab_adm_save() {
                             'harga'         => (float)$sql->harga_jual,
                             'harga_beli'    => (float)$sql->harga_beli,
                             'harga_grosir'  => (float)$sql->harga_grosir,
+                            'status_racikan'=> $sql->status_racikan
                     ];
                 }
 

@@ -215,7 +215,7 @@
                     return {
                         results: $.map(data, function (item) {
                             // Only include items with quantity greater than 0
-                            if (parseFloat(item.jml) > 0) {
+                            if (parseFloat(item.jml) > 0 || item.status_racikan == 1) {
                                 return {
                                     id: item.kode,
                                     text: item.name,
