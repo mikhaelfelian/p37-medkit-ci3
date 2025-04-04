@@ -488,7 +488,7 @@
                                         ->row();
                                     $global_stock = $current_stock ? $current_stock->total : 0;
 
-                                    if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdmin() == TRUE) { ?>
+                                    if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE) { ?>
                                         <tr>
                                             <th colspan="4" class="text-right">Total Stok Masuk</th>
                                             <td class="text-right"><?php echo number_format($tot_sm, 0) ?></td>
