@@ -36,7 +36,11 @@
     <?php echo form_hidden('id_item', general::enkrip($sql_produk->id)); ?>
     <?php echo form_hidden('status', $this->input->get('status')); ?>
     <?php echo form_hidden('act', $this->input->get('act')); ?>
-    <?php echo add_form_protection(); ?>
+    <?php 
+        if(isset($_GET['id_produk'])){
+            echo add_form_protection();
+        }
+    ?>
 
     <div class="card">
         <div class="card-header">
