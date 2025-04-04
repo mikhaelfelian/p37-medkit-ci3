@@ -3003,13 +3003,11 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('barang', 'Item', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $this->session->set_flashdata('form_error', [
                     'kategori' => form_error('kategori'),
                     'kode'     => form_error('kode'),
                     'barang'   => form_error('barang'),
-                );
-
-                $this->session->set_flashdata('form_error', $msg_error);
+                ]);
                 $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_barang_tambah.php'));
             } else {
@@ -3020,14 +3018,15 @@ class Master extends CI_Controller {
                         return;
                     }
                     
-                $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
-                $sql_brg = $this->db->get('tbl_m_produk');
-                $sql_kat = $this->db->where('id', $kategori)->get('tbl_m_kategori')->row();
-                $sql_gdg = $this->db->get('tbl_m_gudang')->result();
-                
-                $kd_item = sprintf('%02d', $kategori).sprintf('%04d', $sql_brg->num_rows() + 1);
+                    $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
+                    $sql_brg = $this->db->get('tbl_m_produk');
+                    $sql_gdg = $this->db->get('tbl_m_gudang')->result();
+                    
+                    $kd_item = sprintf('%02d', $kategori).sprintf('%04d', $sql_brg->num_rows() + 1);
 
-                $data = array(
+                    $this->db->trans_begin();
+
+                    $data = [
                         'tgl_simpan'        => date('Y-m-d H:i:s'),
                         'id_kategori'       => (!empty($kategori) ? $kategori : 0),
                         'id_merk'           => (!empty($merk) ? $merk : 0),
@@ -3041,7 +3040,7 @@ class Master extends CI_Controller {
                         'jml'               => 0,                
                         'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
                         'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
-                        'harga_jual'        => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
+                        'harga_jual_het'    => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
                         'harga_grosir'      => (!empty($harga_gr) ? general::format_angka_db($harga_gr) : 0),
                         'remun_tipe'        => (!empty($rem_tipe) ? $rem_tipe : '0'),
                         'remun_nom'         => (!empty($rem_nom) ? $rem_nom : '0'),
@@ -3052,48 +3051,44 @@ class Master extends CI_Controller {
                         'status_subt'       => (!empty($stat_sub) ? $stat_sub : '0'),
                         'status_racikan'    => (!empty($tipe_rc) ? $tipe_rc : '0'),
                         'status'            => (!empty($tipe) ? $tipe : '0')
-                    );
+                    ];
                     
-                    if (!$this->db->insert('tbl_m_produk', $data)) {
-                        throw new Exception("Gagal menyimpan data item");
+                    $this->db->insert('tbl_m_produk', $data);
+                    $last_id = $this->db->insert_id();
+
+                    if($last_id > 0 && $stat_sub == '1'){
+                        foreach ($sql_gdg as $gudang) {
+                            $data_stok = [
+                                'id_produk'     => $last_id,
+                                'id_satuan'     => $sql_sat->id,
+                                'id_gudang'     => $gudang->id,
+                                'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                'jml'           => 0,
+                                'jml_satuan'    => $sql_sat->jml,
+                                'satuan'        => $sql_sat->satuanTerkecil,
+                                'satuanKecil'   => $sql_sat->satuanTerkecil,
+                                'status'        => $gudang->status,
+                            ];
+                            
+                            $this->db->insert('tbl_m_produk_stok', $data_stok);
+                        }                          
                     }
                     
-                    $last_id = crud::last_id();
-
-                    if($last_id > 0){
-                        if($stat_sub == '1'){
-                            foreach ($sql_gdg as $gudang) {
-                                $data_stok = array(
-                                    'id_produk'     => $last_id,
-                                    'id_satuan'     => $sql_sat->id,
-                                    'id_gudang'     => $gudang->id,
-                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                    'jml'           => 0,
-                                    'jml_satuan'    => $sql_sat->jml,
-                                    'satuan'        => $sql_sat->satuanTerkecil,
-                                    'satuanKecil'   => $sql_sat->satuanTerkecil,
-                                    'status'        => $gudang->status,
-                                );
-                                
-                                if (!$this->db->insert('tbl_m_produk_stok', $data_stok)) {
-                                    throw new Exception("Gagal menyimpan data stok item");
-                                }
-                            }                          
-                        }
-                        
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        throw new Exception("Gagal menyimpan data item");
+                    } else {
+                        $this->db->trans_commit();
                         $this->session->set_flashdata('master_toast', 'toastr.success("Data item berhasil disimpan");');
                         redirect(base_url('master/data_barang_tambah.php?id='.general::enkrip($last_id)));
-                    } else {
-                        throw new Exception("Gagal mendapatkan ID item yang disimpan");
                     }
                 } catch (Exception $e) {
+                    $this->db->trans_rollback();
                     $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
-                        redirect(base_url('master/data_barang_tambah.php'));
-                    return;
-                    }     
+                    redirect(base_url('master/data_barang_tambah.php'));
+                }     
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -3104,13 +3099,9 @@ class Master extends CI_Controller {
             $id      = $this->input->post('id');
             $idp     = $this->input->post('item_id');
             $kode    = $this->input->post('kode');
-            $ket     = $this->input->post('barang');
             $jml     = $this->input->post('jml');
             $sat     = $this->input->post('satuan');
-            $harga_jl= general::format_angka_db($this->input->post('harga'));
             
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('item_id', 'ID Barang', 'required');
@@ -3118,53 +3109,59 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('item', 'Item', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'item_id'         => form_error('item_id'),
-                    'kode'            => form_error('kode'),
-                    'item'            => form_error('item'),
-                );
+                $msg_error = [
+                    'item_id' => form_error('item_id'),
+                    'kode'    => form_error('kode'),
+                    'item'    => form_error('item'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 $this->session->set_flashdata('master_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             } else {
                 try {
+                    // Check for double submission
                     if (check_form_submitted($this->input->post('form_id'))) {
                         $this->session->set_flashdata('master_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
                         redirect(base_url('master/data_barang_tambah.php?id='.$id));
                         return;
                     }
                     
-                $sql         = $this->db->where('kode', $kode)->get('tbl_m_produk')->row();
-                $sql_satuan  = $this->db->where('id', (!empty($sat) ? $sat : $sql->id_satuan))->get('tbl_m_satuan')->row();
-                
-                $data_penj = array(
-                    'id_produk'         => general::dekrip($id),
-                    'id_produk_item'    => (int)$sql->id,
-                    'id_satuan'         => (int)$sql_satuan->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'kode'              => $sql->kode,
-                    'item'              => $sql->produk,
-                    'harga'             => (float)$sql->harga_jual,      
-                    'jml'               => (int)$jml,
-                    'jml_satuan'        => (int)$sql_satuan->jml,
-                    'satuan'            => $sql_satuan->satuanTerkecil,
-                );
-                
-                    if (!crud::simpan('tbl_m_produk_ref', $data_penj)) {
-                        throw new Exception("Gagal menyimpan data item");
-                    }
+                    // Begin transaction
+                    $this->db->trans_begin();
                     
-                    $this->session->set_flashdata('master_toast', 'toastr.success("Item lab berhasil di tambahkan");');
+                    $sql = $this->db->where('kode', $kode)->get('tbl_m_produk')->row();
+                    $sql_satuan = $this->db->where('id', (!empty($sat) ? $sat : $sql->id_satuan))->get('tbl_m_satuan')->row();
+                    
+                    $data_penj = [
+                        'id_produk'      => general::dekrip($id),
+                        'id_produk_item' => (int)$sql->id,
+                        'id_satuan'      => (int)$sql_satuan->id,
+                        'tgl_simpan'     => date('Y-m-d H:i:s'),
+                        'kode'           => $sql->kode,
+                        'item'           => $sql->produk,
+                        'harga'          => (float)$sql->harga_jual,      
+                        'jml'            => (int)$jml,
+                        'jml_satuan'     => (int)$sql_satuan->jml,
+                        'satuan'         => $sql_satuan->satuanTerkecil,
+                    ];
+                    
+                    $this->db->insert('tbl_m_produk_ref', $data_penj);
+                    
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        throw new Exception("Gagal menyimpan data item");
+                    } else {
+                        $this->db->trans_commit();
+                        $this->session->set_flashdata('master_toast', 'toastr.success("Item lab berhasil di tambahkan");');
+                    }
                 } catch (Exception $e) {
+                    $this->db->trans_rollback();
                     $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
-                    redirect(base_url('master/data_barang_tambah.php?id='.$id));
-                    return;
                 }
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
