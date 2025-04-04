@@ -21093,9 +21093,9 @@ public function set_medcheck_lab_adm_save() {
     
     public function json_item() {
         //Check if this is an AJAX request
-        if (!$this->input->is_ajax_request()) {
-            exit('No direct script access allowed');
-        }
+        // if (!$this->input->is_ajax_request()) {
+        //     exit('No direct script access allowed');
+        // }
         
         if (akses::aksesLogin() == TRUE) {
             $term  = $this->input->get('term');
@@ -21105,7 +21105,7 @@ public function set_medcheck_lab_adm_save() {
             
             switch ($page){
                 default:
-                    $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep')
+                    $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep, tbl_m_produk.status_racikan')
                                     ->where('status_hps', '0')
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
@@ -21142,7 +21142,7 @@ public function set_medcheck_lab_adm_save() {
                     break;
                     
                 case 'obat':
-                    $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep')
+                    $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep, tbl_m_produk.status_racikan')
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '4')
                                     ->where('status_hps', '0')
@@ -21168,7 +21168,7 @@ public function set_medcheck_lab_adm_save() {
                             'harga'         => (float)$sql->harga_jual,
                             'harga_beli'    => (float)$sql->harga_beli,
                             'harga_grosir'  => (float)$sql->harga_grosir,
-                            'status_racikan'=> $sql->status_racikan
+                            'status_racikan'=> (int)$sql->status_racikan
                     ];
                 }
 
