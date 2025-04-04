@@ -5111,7 +5111,7 @@ class Medcheck extends CI_Controller {
                     # Update data nota dll
                     $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', $data);           
                       
-                    foreach ($sql_medc_det2 as $medc_det){
+                    foreach ($sql_medc_det2 as $medc_det) {
                         $sql_item        = $this->db->where('id', $medc_det->id_item)->get('tbl_m_produk')->row();
                         $sql_item_ref    = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref');   
                         $sql_satuan      = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
@@ -5119,248 +5119,247 @@ class Medcheck extends CI_Controller {
     
                           
                         # Item racikan kumpulkan dahulu disini
-                        if(!empty($medc_det->resep)){
-                              foreach (json_decode($medc_det->resep) as $rc){
-                                  $sql_item_rc          = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
-                                  $sql_gudang_stok_rc   = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rc->id)->get('tbl_m_produk_stok')->row();
+                        if(!empty($medc_det->resep)) {
+                            foreach (json_decode($medc_det->resep) as $rc) {
+                                $sql_item_rc          = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
+                                $sql_gudang_stok_rc   = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rc->id)->get('tbl_m_produk_stok')->row();
 
 
-                                  # Cek resep Item stockable atau tidak ? 
-                                  if($sql_item_rc->status_subt == '1'){
-                                      $jml_akhir_rc         = $sql_item_rc->jml - $rc->jml;
-                                      $jml_akhir_rc_stk     = $sql_gudang_stok_rc->jml - $rc->jml;
-                                      
-                                      # Check if stock is sufficient
-                                      if ($jml_akhir_rc_stk < 0) {
-                                          $this->db->trans_rollback();
-                                          throw new Exception("Stok tidak mencukupi untuk item racikan ".$sql_item_rc->produk.". Stok tersedia: ".$sql_gudang_stok_rc->jml);
-                                      }
-                                      
-                                            $data_item_rc = [
-                                          'tgl_modif'  => date('Y-m-d H:i:s'),
-                                                    'jml'        => $jml_akhir_rc, 
-                                            ];
-                                      
-                                            $data_item_rc_stk = [
-                                          'tgl_modif'  => date('Y-m-d H:i:s'),
-                                          'jml'        => $jml_akhir_rc_stk,
-                                            ];
-                                      
-                                            $data_stok_trace_rc = [
-                                          'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                          'tgl_masuk'         => $sql_medc->tgl_masuk,
-                                          'id_medcheck'       => $sql_medc->id,
-                                          'id_medcheck_det'   => $rc->id, 
-                                          'id_gudang'         => $sql_gudang->id, 
-                                          'id_item'           => $sql_item_rc->id,
-                                          'item'              => $sql_item_rc->produk,
-                                          'stok_awal'         => $sql_gudang_stok_rc->jml, 
-                                          'jml'               => $rc->jml, 
-                                          'stok_akhir'        => $jml_akhir_rc_stk, 
-                                          'keterangan'        => 'Racikan',
-                                          'status'            => $sql_item_rc->status,
-                                            ];
-                                      
-                                            $data_penj_hist_rc = [
-                                          'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                          'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                          'id_gudang'     => $sql_gudang->id,
-                                          'id_pelanggan'  => $sql_medc->id_pasien,
-                                          'id_produk'     => $sql_item_rc->id,
-                                          'id_user'       => $this->ion_auth->user()->row()->id,
-                                          'id_penjualan'  => $sql_medc->id,
-                                          'no_nota'       => $no_nota,
-                                          'kode'          => $sql_item_rc->kode,
-                                          'produk'        => $sql_item_rc->produk,
-                                          'keterangan'    => $sql_medc->pasien.' - RACIKAN',
-                                          'jml'           => (int)$rc->jml,
-                                          'jml_satuan'    => (int)$sql_satuan->jml,
-                                          'satuan'        => $sql_satuan->satuanTerkecil,
-                                          'nominal'       => (float)$rc->harga,
-                                          'status'        => '4'
-                                            ];
-                                            
-                                      # Simpan ke tabel riwayat produk
-                                      $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rc);
-                                      
-                                      # Simpan ke tabel stok produk trace
-                                      $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rc);
-                                  }
-                              }
-                          }                      
+                                # Cek resep Item stockable atau tidak ? 
+                                if($sql_item_rc->status_subt == '1') {
+                                    $jml_akhir_rc         = $sql_item_rc->jml - $rc->jml;
+                                    $jml_akhir_rc_stk     = $sql_gudang_stok_rc->jml - $rc->jml;
+                                    
+                                    # Check if stock is sufficient
+                                    if ($jml_akhir_rc_stk < 0) {
+                                        $this->db->trans_rollback();
+                                        throw new Exception("Stok tidak mencukupi untuk item racikan ".$sql_item_rc->produk.". Stok tersedia: ".$sql_gudang_stok_rc->jml);
+                                    }
+                                    
+                                    $data_item_rc = [
+                                        'tgl_modif'  => date('Y-m-d H:i:s'),
+                                        'jml'        => $jml_akhir_rc, 
+                                    ];
+                                    
+                                    $data_item_rc_stk = [
+                                        'tgl_modif'  => date('Y-m-d H:i:s'),
+                                        'jml'        => $jml_akhir_rc_stk,
+                                    ];
+                                    
+                                    $data_stok_trace_rc = [
+                                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                                        'tgl_masuk'         => $sql_medc->tgl_masuk,
+                                        'id_medcheck'       => $sql_medc->id,
+                                        'id_medcheck_det'   => $rc->id, 
+                                        'id_gudang'         => $sql_gudang->id, 
+                                        'id_item'           => $sql_item_rc->id,
+                                        'item'              => $sql_item_rc->produk,
+                                        'stok_awal'         => $sql_gudang_stok_rc->jml, 
+                                        'jml'               => $rc->jml, 
+                                        'stok_akhir'        => $jml_akhir_rc_stk, 
+                                        'keterangan'        => 'Racikan',
+                                        'status'            => $sql_item_rc->status,
+                                    ];
+                                    
+                                    $data_penj_hist_rc = [
+                                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                        'tgl_masuk'     => $sql_medc->tgl_masuk,
+                                        'id_gudang'     => $sql_gudang->id,
+                                        'id_pelanggan'  => $sql_medc->id_pasien,
+                                        'id_produk'     => $sql_item_rc->id,
+                                        'id_user'       => $this->ion_auth->user()->row()->id,
+                                        'id_penjualan'  => $sql_medc->id,
+                                        'no_nota'       => $no_nota,
+                                        'kode'          => $sql_item_rc->kode,
+                                        'produk'        => $sql_item_rc->produk,
+                                        'keterangan'    => $sql_medc->pasien.' - RACIKAN',
+                                        'jml'           => (int)$rc->jml,
+                                        'jml_satuan'    => (int)$sql_satuan->jml,
+                                        'satuan'        => $sql_satuan->satuanTerkecil,
+                                        'nominal'       => (float)$rc->harga,
+                                        'status'        => '4'
+                                    ];
+                                        
+                                    # Simpan ke tabel riwayat produk
+                                    $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rc);
+                                    
+                                    # Simpan ke tabel stok produk trace
+                                    $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rc);
+                                }
+                            }
+                        }                      
                         # -- END OF RACIKAN
                           
                         # Cek Item Produk non resep stockable
-                        if($sql_item->status_subt == '1'){
-                                $sql_gudang_stok = $this->db->select('SUM(jml) AS jml')->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
-                                $jml_akhir       = $sql_item->jml - $medc_det->jml;
-                                $jml_akhir_stk   = $sql_gudang_stok->jml - $medc_det->jml;
+                        if($sql_item->status_subt == '1') {
+                            $sql_gudang_stok = $this->db->select('SUM(jml) AS jml')->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
+                            $jml_akhir       = $sql_item->jml - $medc_det->jml;
+                            $jml_akhir_stk   = $sql_gudang_stok->jml - $medc_det->jml;
 
-                                # Check if stock is sufficient
-                                if ($jml_akhir_stk < 0) {
-                                    $this->db->trans_rollback();
-                                    throw new Exception("Stok tidak mencukupi untuk item ".$sql_item->produk.". Stok tersedia: ".$sql_gudang_stok->jml);
-                                }
-                                                    
-                                        $data_item = [
-                                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                                    'jml'        => $jml_akhir,     # ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
-                                        ];
-                                                    
-                                        $data_item_stk = [
-                                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                                    'jml'        => $jml_akhir_stk, # ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
-                                        ];
-                                                    
-                                        $data_stok_trace = [
-                                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                    'tgl_masuk'         => $sql_medc->tgl_masuk,
-                                    'id_medcheck'       => $sql_medc->id,
-                                    'id_medcheck_det'   => $medc_det->id, 
-                                    'id_gudang'         => $sql_gudang->id, 
-                                    'id_item'           => $sql_item->id, 
-                                    'item'              => $sql_item->produk, 
-                                    'stok_awal'         => $sql_gudang_stok->jml, 
-                                    'jml'               => $medc_det->jml, 
-                                    'stok_akhir'        => $jml_akhir_stk, 
-                                    'status'            => $sql_item->status, 
-                                        ];
-                                
-                                        $data_penj_hist = [
-                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                    'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                    'id_gudang'     => $sql_gudang->id,
-                                    'id_pelanggan'  => $sql_medc->id_pasien,
-                                    'id_produk'     => $sql_item->id,
-                                    'id_user'       => $this->ion_auth->user()->row()->id,
-                                    'id_penjualan'  => $sql_medc->id,
-                                    'no_nota'       => $no_nota,
-                                    'kode'          => $sql_item->kode,
-                                    'produk'        => $sql_item->produk,
-                                    'keterangan'    => $sql_medc->pasien,
-                                    'jml'           => (int)$medc_det->jml,
-                                    'jml_satuan'    => (int)$sql_satuan->jml,
-                                    'satuan'        => $sql_satuan->satuanTerkecil,
-                                    'nominal'       => (float)$medc_det->harga,
-                                    'status'        => '4'
-                                        ];
-                                
-                                # Simpan ke tabel riwayat produk
-                                $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
-                                
-                                # Simpan ke tabel stok produk trace
-                                $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
-                          }                      
+                            # Check if stock is sufficient
+                            if ($jml_akhir_stk < 0) {
+                                $this->db->trans_rollback();
+                                throw new Exception("Stok tidak mencukupi untuk item ".$medc_det->item.". Stok tersedia: ".$sql_gudang_stok->jml);
+                            }
+                                                
+                            $data_item = [
+                                'tgl_modif'  => date('Y-m-d H:i:s'),
+                                'jml'        => $jml_akhir,     # ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
+                            ];
+                                                
+                            $data_item_stk = [
+                                'tgl_modif'  => date('Y-m-d H:i:s'),
+                                'jml'        => $jml_akhir_stk, # ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
+                            ];
+                                                
+                            $data_stok_trace = [
+                                'tgl_simpan'        => date('Y-m-d H:i:s'),
+                                'tgl_masuk'         => $sql_medc->tgl_masuk,
+                                'id_medcheck'       => $sql_medc->id,
+                                'id_medcheck_det'   => $medc_det->id, 
+                                'id_gudang'         => $sql_gudang->id, 
+                                'id_item'           => $sql_item->id, 
+                                'item'              => $sql_item->produk, 
+                                'stok_awal'         => $sql_gudang_stok->jml, 
+                                'jml'               => $medc_det->jml, 
+                                'stok_akhir'        => $jml_akhir_stk, 
+                                'status'            => $sql_item->status, 
+                            ];
+                            
+                            $data_penj_hist = [
+                                'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                'tgl_masuk'     => $sql_medc->tgl_masuk,
+                                'id_gudang'     => $sql_gudang->id,
+                                'id_pelanggan'  => $sql_medc->id_pasien,
+                                'id_produk'     => $sql_item->id,
+                                'id_user'       => $this->ion_auth->user()->row()->id,
+                                'id_penjualan'  => $sql_medc->id,
+                                'no_nota'       => $no_nota,
+                                'kode'          => $sql_item->kode,
+                                'produk'        => $sql_item->produk,
+                                'keterangan'    => $sql_medc->pasien,
+                                'jml'           => (int)$medc_det->jml,
+                                'jml_satuan'    => (int)$sql_satuan->jml,
+                                'satuan'        => $sql_satuan->satuanTerkecil,
+                                'nominal'       => (float)$medc_det->harga,
+                                'status'        => '4'
+                            ];
+                            
+                            # Simpan ke tabel riwayat produk
+                            $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
+                            
+                            # Simpan ke tabel stok produk trace
+                            $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
+                        }                      
                         # -- END OF ITEM
                           
                         # Jika punya refrensi item, maka jabarkan dulu
-                        if($sql_item_ref->num_rows() > 0){
-                                foreach ($sql_item_ref->result() as $reff){
-                                    $sql_item_rf        = $this->db->where('id', $reff->id_produk_item)->get('tbl_m_produk')->row();
-                                    $sql_item_sat_rf    = $this->db->where('id', $reff->id_satuan)->get('tbl_m_satuan')->row();
-                                    $sql_gudang_stok    = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rf->id)->get('tbl_m_produk_stok')->row();
-                                    $rf_subtot          = $sql_item_rf->harga_jual * $reff->jml;
-                                  
-                                    # Cek apakah stockabel
-                                    if($sql_item_rf->status_subt == '1'){
-                                        $jml_akhir_reff     = $sql_item_rf->jml - ($reff->jml * $medc_det->jml);
-                                        $jml_akhir_reff_stk = $sql_gudang_stok->jml - ($reff->jml * $medc_det->jml);
-                                  
-                                                // Check if stock is sufficient
-                                                if ($jml_akhir_reff_stk < 0) {
-                                                    // Rollback transaction
-                                                    $this->db->trans_rollback();
-                                                    
-                                                    // Throw exception with error message
-                                                    throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
-                                                }
-
-
-                                                $data_item_reff = [
-                                            'tgl_modif'  => date('Y-m-d H:i:s'),
-                                            'jml'        => $jml_akhir_reff
-                                                ];
-                                  
-                                                $data_item_reff_stk = [
-                                            'tgl_modif'  => date('Y-m-d H:i:s'),
-                                            'jml'        => $jml_akhir_reff_stk
-                                                ];
+                        if($sql_item_ref->num_rows() > 0) {
+                            foreach ($sql_item_ref->result() as $reff) {
+                                $sql_item_rf        = $this->db->where('id', $reff->id_produk_item)->get('tbl_m_produk')->row();
+                                $sql_item_sat_rf    = $this->db->where('id', $reff->id_satuan)->get('tbl_m_satuan')->row();
+                                $sql_gudang_stok    = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rf->id)->get('tbl_m_produk_stok')->row();
+                                $rf_subtot          = $sql_item_rf->harga_jual * $reff->jml;
+                              
+                                # Cek apakah stockabel
+                                if($sql_item_rf->status_subt == '1') {
+                                    $jml_akhir_reff     = $sql_item_rf->jml - ($reff->jml * $medc_det->jml);
+                                    $jml_akhir_reff_stk = $sql_gudang_stok->jml - ($reff->jml * $medc_det->jml);
+                              
+                                    // Check if stock is sufficient
+                                    if ($jml_akhir_reff_stk < 0) {
+                                        // Rollback transaction
+                                        $this->db->trans_rollback();
                                         
-                                                $data_stok_trace_rf = [
-                                            'tgl_simpan'        => date('Y-m-d H:i:s'),
-                                            'tgl_masuk'         => $sql_medc->tgl_masuk,
-                                            'id_medcheck'       => $sql_medc->id,
-                                            'id_medcheck_det'   => $medc_det->id, 
-                                            'id_gudang'         => $sql_gudang_stok->id_gudang, 
-                                            'id_item'           => $sql_item_rf->id,
-                                            'item'              => $sql_item_rf->produk, 
-                                            'stok_awal'         => $sql_gudang_stok->jml, 
-                                            'jml'               => ($reff->jml * $medc_det->jml), 
-                                            'stok_akhir'        => $jml_akhir_reff_stk,
-                                            'keterangan'        => 'Reff',
-                                            'status'            => $sql_item_rf->status,
-                                                ];
-                                                                        
-                                                $data_penj_hist_rf = [
-                                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                            'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                            'id_gudang'     => $sql_gudang->id,
-                                            'id_pelanggan'  => $sql_medc->id_pasien,
-                                            'id_produk'     => $sql_item_rf->id,
-                                            'id_user'       => $this->ion_auth->user()->row()->id,
-                                            'id_penjualan'  => $sql_medc->id,
-                                            'no_nota'       => $no_nota,
-                                            'kode'          => $sql_item_rf->kode,
-                                            'produk'        => $sql_item_rf->produk,
-                                            'keterangan'    => $sql_medc->pasien.' - REFERENCE ITEM',
-                                            'jml'           => (int)($reff->jml * $medc_det->jml),
-                                            'jml_satuan'    => (int)$sql_satuan->jml,
-                                            'satuan'        => $sql_satuan->satuanTerkecil,
-                                            'nominal'       => (float)$medc_det->harga,
-                                            'status'        => '4'
-                                                ];
-                                        
-                                                $data_det = [
-                                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                            'tgl_modif'     => date('Y-m-d H:i:s'),
-                                            'tgl_masuk'     => $sql_medc->tgl_masuk,
-                                            'id_medcheck'   => (int)$sql_medc->id,
-                                            'id_item'       => (int)$sql_item_rf->id,
-                                            'id_item_kat'   => (int)$sql_item_rf->id_kategori,
-                                            'id_item_sat'   => (int)$sql_item_rf->id_satuan,
-                                            'id_user'       => (int)$this->ion_auth->user()->row()->id,
-                                            'id_dokter'     => (int)$sql_medc->id_dokter,
-                                            'kode'          => $sql_item_rf->kode,
-                                            'item'          => $sql_item_rf->produk,
-                                            'jml'           => (int)$reff->jml,
-                                            'jml_satuan'    => $sql_item_sat_rf->jml, 
-                                            'harga'         => $sql_item_rf->harga,
-                                            'subtotal'      => $rf_subtot,
-                                            'satuan'        => $sql_item_sat_rf->satuanBesar,
-                                            'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
-                                            'status_pkt'    => '1',
-                                                ];  
-                                        
-                                        # Simpan te tabel riwayat produk
-                                        $this->db->insert('tbl_trans_medcheck_det', $data_det);
-                                        
-                                        # Simpan te tabel riwayat produk
-                                        $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rf);
-                                
-                                        # Simpan ke tabel stok produk trace
-                                        $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rf);
+                                        // Throw exception with error message
+                                        throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
                                     }
+
+                                    $data_item_reff = [
+                                        'tgl_modif'  => date('Y-m-d H:i:s'),
+                                        'jml'        => $jml_akhir_reff
+                                    ];
+                              
+                                    $data_item_reff_stk = [
+                                        'tgl_modif'  => date('Y-m-d H:i:s'),
+                                        'jml'        => $jml_akhir_reff_stk
+                                    ];
+                                    
+                                    $data_stok_trace_rf = [
+                                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                                        'tgl_masuk'         => $sql_medc->tgl_masuk,
+                                        'id_medcheck'       => $sql_medc->id,
+                                        'id_medcheck_det'   => $medc_det->id, 
+                                        'id_gudang'         => $sql_gudang_stok->id_gudang, 
+                                        'id_item'           => $sql_item_rf->id,
+                                        'item'              => $sql_item_rf->produk, 
+                                        'stok_awal'         => $sql_gudang_stok->jml, 
+                                        'jml'               => ($reff->jml * $medc_det->jml), 
+                                        'stok_akhir'        => $jml_akhir_reff_stk,
+                                        'keterangan'        => 'Reff',
+                                        'status'            => $sql_item_rf->status,
+                                    ];
+                                                                    
+                                    $data_penj_hist_rf = [
+                                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                        'tgl_masuk'     => $sql_medc->tgl_masuk,
+                                        'id_gudang'     => $sql_gudang->id,
+                                        'id_pelanggan'  => $sql_medc->id_pasien,
+                                        'id_produk'     => $sql_item_rf->id,
+                                        'id_user'       => $this->ion_auth->user()->row()->id,
+                                        'id_penjualan'  => $sql_medc->id,
+                                        'no_nota'       => $no_nota,
+                                        'kode'          => $sql_item_rf->kode,
+                                        'produk'        => $sql_item_rf->produk,
+                                        'keterangan'    => $sql_medc->pasien.' - REFERENCE ITEM',
+                                        'jml'           => (int)($reff->jml * $medc_det->jml),
+                                        'jml_satuan'    => (int)$sql_satuan->jml,
+                                        'satuan'        => $sql_satuan->satuanTerkecil,
+                                        'nominal'       => (float)$medc_det->harga,
+                                        'status'        => '4'
+                                    ];
+                                    
+                                    $data_det = [
+                                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                                        'tgl_masuk'     => $sql_medc->tgl_masuk,
+                                        'id_medcheck'   => (int)$sql_medc->id,
+                                        'id_item'       => (int)$sql_item_rf->id,
+                                        'id_item_kat'   => (int)$sql_item_rf->id_kategori,
+                                        'id_item_sat'   => (int)$sql_item_rf->id_satuan,
+                                        'id_user'       => (int)$this->ion_auth->user()->row()->id,
+                                        'id_dokter'     => (int)$sql_medc->id_dokter,
+                                        'kode'          => $sql_item_rf->kode,
+                                        'item'          => $sql_item_rf->produk,
+                                        'jml'           => (int)$reff->jml,
+                                        'jml_satuan'    => $sql_item_sat_rf->jml, 
+                                        'harga'         => $sql_item_rf->harga,
+                                        'subtotal'      => $rf_subtot,
+                                        'satuan'        => $sql_item_sat_rf->satuanBesar,
+                                        'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
+                                        'status_pkt'    => '1',
+                                    ];  
+                                    
+                                    # Simpan te tabel riwayat produk
+                                    $this->db->insert('tbl_trans_medcheck_det', $data_det);
+                                    
+                                    # Simpan te tabel riwayat produk
+                                    $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rf);
+                            
+                                    # Simpan ke tabel stok produk trace
+                                    $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rf);
                                 }
                             }
+                        }
                           
                         # Kalau remun tidak kosong, maka lakukan simpan
                         # Remun untuk menghitung pendapatan dokter                        
-                        if($sql_item->remun_tipe > 0){
+                        if($sql_item->remun_tipe > 0) {
                             # Cek Remun (lab atau radiologi)
-                            if($sql_item->status == '5'){
+                            if($sql_item->status == '5') {
                                 $sql_rad    = $this->db->where('id', $medc_det->id_rad)->get('tbl_trans_medcheck_rad')->row();
                                 $dokter     = (!empty($sql_rad->id_dokter) ? $sql_rad->id_dokter : $medc_det->id_dokter); 
-                            }else{
+                            } else {
                                 $dokter     = $medc_det->id_dokter; 
                             }
                             
@@ -5375,7 +5374,7 @@ class Medcheck extends CI_Controller {
                             $remun      = ($sql_item->remun_tipe == '2' ? $sql_item->remun_nom : (($sql_item->remun_perc / 100) * $medc_det->harga));
                             $remun_tot  = $remun * $medc_det->jml;
                             
-                                    $data_remun = [
+                            $data_remun = [
                                 'id_medcheck'       => (int)$sql_medc->id,
                                 'id_medcheck_det'   => (int)$medc_det->id,
                                 'id_dokter'         => (int)$dokter,
@@ -5388,10 +5387,10 @@ class Medcheck extends CI_Controller {
                                 'remun_nom'         => (float)$sql_item->remun_nom,
                                 'remun_tipe'        => (int)$sql_item->remun_tipe,
                                 'remun_subtotal'    => (float)$remun_tot,
-                                    ];
+                            ];
 
                             # Cek jika ada tidak ada value kembar
-                            if($sql_cek_remun->num_rows() == 0){
+                            if($sql_cek_remun->num_rows() == 0) {
                                 # Simpan ke tabel Remun
                                 $this->db->insert('tbl_trans_medcheck_remun', $data_remun);
                             }
@@ -5399,15 +5398,15 @@ class Medcheck extends CI_Controller {
                           
                         # Kalau apresiasi tidak kosong, maka lakukan simpan
                         # Apresiasi untuk menghitung pendapatan dari lab
-                        if($sql_item->apres_tipe > 0){
+                        if($sql_item->apres_tipe > 0) {
                             # Cek Apresiasi asas (lab atau radiologi)
-                            if(!empty($medc_det->id_rad)){
+                            if(!empty($medc_det->id_rad)) {
                                 $sql_rad    = $this->db->where('id', $medc_det->id_rad)->get('tbl_trans_medcheck_rad')->row();
                                 $dokter     = (!empty($sql_rad->id_dokter_kirim) ? $sql_rad->id_dokter_kirim : $medc_det->id_dokter); 
-                            }elseif(!empty($medc_det->id_lab)){
+                            } elseif(!empty($medc_det->id_lab)) {
                                 $sql_lab    = $this->db->where('id', $medc_det->id_lab)->get('tbl_trans_medcheck_lab')->row();
                                 $dokter     = (!empty($sql_lab->id_dokter) ? $sql_lab->id_dokter : $medc_det->id_dokter);                                
-                            }else{
+                            } else {
                                 $dokter     = $medc_det->id_dokter; 
                             }
                             
@@ -5423,7 +5422,7 @@ class Medcheck extends CI_Controller {
                             $apres      = ($sql_item->apres_tipe == '2' ? $sql_item->apres_nom : (($sql_item->apres_perc / 100) * $medc_det->harga));
                             $apres_tot  = $apres * $medc_det->jml;
                             
-                                    $data_apres = [
+                            $data_apres = [
                                 'id_medcheck'       => (int)$sql_medc->id,
                                 'id_medcheck_det'   => (int)$medc_det->id,
                                 'id_dokter'         => (int)$dokter,
@@ -5436,10 +5435,10 @@ class Medcheck extends CI_Controller {
                                 'apres_nom'         => (float)$sql_item->apres_nom,
                                 'apres_tipe'        => (int)$sql_item->apres_tipe,
                                 'apres_subtotal'    => (float)$apres_tot,
-                                    ];
+                            ];
                             
                             # Cek jika ada tidak ada value kembar
-                            if($sql_cek_apres->num_rows() == 0){
+                            if($sql_cek_apres->num_rows() == 0) {
                                 # Simpan ke tabel Apres
                                 $this->db->insert('tbl_trans_medcheck_apres', $data_apres);
                             }
@@ -5452,43 +5451,49 @@ class Medcheck extends CI_Controller {
                     
                     foreach ($sql_medc_stok as $stok){
                         # Ambil data stok dari item dari gudang dan item terkait
-                        $sql_gudang_stok    = $this->db->where('id_gudang', $stok->id_gudang)->where('id_produk', $stok->id_item)->get('tbl_m_produk_stok')->row();
+                        $sql_gudang_stok = $this->db->where('id_gudang', $stok->id_gudang)
+                                                    ->where('id_produk', $stok->id_item)
+                                                    ->get('tbl_m_produk_stok')
+                                                    ->row();
                         
                         # Hitung ulang secara live, stok saat ini dikurangi stok yang keluar
-                        $stok_akhir         = $sql_gudang_stok->jml - $stok->jml;
+                        $stok_akhir = $sql_gudang_stok->jml - $stok->jml;
 
                         # Check if stock is sufficient
                         if ($stok_akhir < 0) {
                             $this->db->trans_rollback();
-                            throw new Exception("Stok tidak mencukupi untuk item {$sql_gudang_stok->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
+                            throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
                         }
                         
                         # Kumpulkan informasi pengurangan stok disini
-                                $data_stok = [
+                        $data_stok = [
                             'tgl_modif' => date('Y-m-d H:i:s'),
                             'jml'       => $stok_akhir
-                                ];
+                        ];
                         
                         # Simpan stok akhir ke tabel gudang,update stok nya
                         $this->db->where('id', $sql_gudang_stok->id)->update('tbl_m_produk_stok', $data_stok);
                         
                         # Kumpulkan informasi pengurangan stok pada tabel tracer stok disini
-                                $data_stok_trace = [
+                        $data_stok_trace = [
                             'stok_awal'     => $sql_gudang_stok->jml,
                             'stok_akhir'    => $stok_akhir
-                                ];
+                        ];
                         
                         # Update pada tabel tracer stok nya
                         $this->db->where('id', $stok->id)->update('tbl_trans_medcheck_stok', $data_stok_trace);
                         
                         # Sinkronkan stok atas dan bawah, kemudian jumlahkan dengan sum dan catat sementara
-                        $stok_glob = $this->db->select_sum('jml')->where('id_produk', $stok->id_item)->get('tbl_m_produk_stok')->row();
+                        $stok_glob = $this->db->select_sum('jml')
+                                              ->where('id_produk', $stok->id_item)
+                                              ->get('tbl_m_produk_stok')
+                                              ->row();
                         
                         # Stok atas bawah yang sinkron, catat disini
-                                $data_stok_glob = [
+                        $data_stok_glob = [
                             'tgl_modif' => date('Y-m-d H:i:s'),
                             'jml'       => $stok_glob->jml
-                                ];
+                        ];
                         
                         # Simpan stok akhir global ke tabel master item utama
                         $this->db->where('id', $stok->id_item)->update('tbl_m_produk', $data_stok_glob);
@@ -5502,12 +5507,12 @@ class Medcheck extends CI_Controller {
                 # Poin Pasien
                 if($sql_poin->num_rows() == 0){
                             $data_poin = [
-                        'id_pasien'     => $sql_medc->id_pasien,
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                        'jml_poin'      => 0,
-                        'jml_poin_nom'  => 0,
-                        'status'        => 1,
+                                'id_pasien'     => $sql_medc->id_pasien,
+                                'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                'tgl_modif'     => date('Y-m-d H:i:s'),
+                                'jml_poin'      => 0,
+                                'jml_poin_nom'  => 0,
+                                'status'        => 1,
                             ];
                     
                     $this->db->insert('tbl_m_pasien_poin', $data_poin);
@@ -12749,10 +12754,6 @@ public function set_medcheck_lab_adm_save() {
             $diskon1    = $this->input->post('disk1');
             $diskon2    = $this->input->post('disk2');
             $diskon3    = $this->input->post('disk3');
-            $pot        = $this->input->post('potongan');
-            $keterangan = $this->input->post('keterangan');
-            $hasil      = $this->input->post('hasil_lab');
-            $status     = $this->input->post('status');
             $dos_jml1   = $this->input->post('dos_jml1');
             $dos_jml2   = $this->input->post('dos_jml2');
             $dos_sat    = $this->input->post('dos_sat');
@@ -12760,9 +12761,9 @@ public function set_medcheck_lab_adm_save() {
             $dos_ket    = $this->input->post('dos_ket');
             $act        = $this->input->post('act');
             $status_res = $this->input->post('tipe');
-            $ed         = $this->input->post('ed');
             $ket        = $this->input->post('keterangan');
             $status_mkn = $this->input->post('status_mkn');
+            $status     = $this->input->post('status');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
@@ -12771,64 +12772,53 @@ public function set_medcheck_lab_adm_save() {
             $this->form_validation->set_rules('harga', 'Harga', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'        => form_error('id'),
                     'kode'      => form_error('kode'),
                     'harga'     => form_error('harga'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
+                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Validasi form gagal")');
                 redirect(base_url('medcheck/tambah.php?id='.$id));
             } else {
-                $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_res_rw = $this->db->where('id', general::dekrip($id_item))->get('tbl_trans_medcheck_resep_det')->row();
-                $sql_item   = $this->db->where('id', $sql_res_rw->id_item)->get('tbl_m_produk')->row();
-                $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                $sql_sat_pk = $this->db->where('id', $dos_sat)->get('tbl_m_satuan_pakai')->row();
-                $sql_pnjm   = $this->db->where('id', $sql_medc->tipe_bayar)->get('tbl_m_penjamin')->row();
-                $harga      = general::format_angka_db($hrg);
-
-                // Add division by zero protection
-                $percent    = ($sql_pnjm && $sql_pnjm->persen) ? ($sql_pnjm->persen / 100) : 0;
-                $ass        = ($sql_pnjm && $sql_pnjm->persen) ? ($harga * $sql_pnjm->persen) : 0;
-                $harga_tot  = ($sql_item->status_racikan == '1') ? $harga : 
-                              (($sql_pnjm && $sql_pnjm->persen != 0) ? $ass : $harga);
-                $potongan   = general::format_angka_db($pot);
-                $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
+                try {
+                    $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                    $sql_res_rw = $this->db->where('id', general::dekrip($id_item))->get('tbl_trans_medcheck_resep_det')->row();
+                    $sql_item   = $this->db->where('id', $sql_res_rw->id_item)->get('tbl_m_produk')->row();
+                    $sql_sat_pk = $this->db->where('id', $dos_sat)->get('tbl_m_satuan_pakai')->row();
+                    
+                    $data_resep = [
+                        'jml'           => (int)$jml,
+                        'dosis'         => (!empty($dos_jml1) ? $dos_jml1.' '.$sql_sat_pk->satuan.' Tiap '.$dos_jml2.' '.general::tipe_obat_pakai($dos_wkt) : ''),
+                        'dosis_ket'     => $dos_ket,
+                        'keterangan'    => $ket,
+                        'status_mkn'    => (!empty($status_mkn) ? $status_mkn : '0'),
+                        'status_resep'  => (int)$status_res, 
+                    ];
+                    
+                    # Transactional database
+                    $this->db->trans_start();
+                    
+                    # Update ke tabel resep
+                    $this->db->where('id', $sql_res_rw->id)->update('tbl_trans_medcheck_resep_det', $data_resep);
+                    
+                    # Complete
+                    $this->db->trans_complete();
+                    
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception("Database transaction failed");
+                    }
+                    
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data item berhasil disimpan !!")');
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan: ' . $e->getMessage() . '")');
+                }
                 
-                // Also protect the discount calculations
-                $disk1      = (100 != 0) ? $harga_tot - (($diskon1 / 100) * $harga_tot) : $harga_tot;
-                $disk2      = (100 != 0) ? $disk1 - (($diskon2 / 100) * $disk1) : $disk1;
-                $disk3      = (100 != 0) ? $disk2 - (($diskon3 / 100) * $disk2) : $disk2;
-                $diskon     = $harga - $disk3;
-                $subtotal   = ($disk3 - $potongan) * (int)$jml;
-                
-                $data_resep = array(
-//                    'tgl_ed'        => (!empty($ed) ? $this->tanggalan->tgl_indo_sys($ed) : '0000-00-00'),
-                    'jml'           => (int)$jml,
-                    'dosis'         => (!empty($dos_jml1) ? $dos_jml1.' '.$sql_sat_pk->satuan.' Tiap '.$dos_jml2.' '.general::tipe_obat_pakai($dos_wkt) : ''),
-                    'dosis_ket'     => $dos_ket,
-                    'keterangan'    => $ket,
-                    'status_mkn'    => (!empty($status_mkn) ? $status_mkn : '0'),
-                    'status_resep'  => (int)$status_res, 
-                );
-                
-                # Transactional database
-                $this->db->trans_start();
-                
-                # Update ke tabel resep
-                $this->db->where('id', $sql_res_rw->id)->update('tbl_trans_medcheck_resep_det', $data_resep);
-                
-                # Complete
-                $this->db->trans_complete();
-                
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data item berhasil disimpan !!")');
                 redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act=res_input&' : '').'id='.$id.'&id_resep='.$id_resep.'&status='.$status));
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!")');
             redirect();
         }
     }    
