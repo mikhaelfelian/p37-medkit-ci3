@@ -1,6 +1,6 @@
 <div class="card" id="medc_posting_container">
     <div class="card-body rounded-0">
-        <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakKasir() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakPerawat() == TRUE) { ?>
+        <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakKasir() == TRUE OR akses::hakAdminM() == TRUE) { ?>
             
             <?php if ($sql_medc->status < 5 AND $sql_medc->status_bayar == 0) { ?>
                     <?php 
