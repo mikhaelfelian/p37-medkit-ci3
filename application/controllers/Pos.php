@@ -574,9 +574,6 @@ class Pos extends CI_Controller {
                 redirect(base_url('medcheck/tambah.php?id='.$id));
             } else {
                 $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                if (!$sql_medc) {
-                    throw new Exception("Data transaksi tidak ditemukan");
-                }
                 
                 $sql_medc_det   = $this->db->select('SUM(potongan) AS potongan, SUM(diskon) AS diskon, SUM(subtotal) AS subtotal')->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->row();   
                 $sql_medc_det2  = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->result();
@@ -819,10 +816,7 @@ class Pos extends CI_Controller {
                          
                         $this->session->set_flashdata('apt_toast', 'toastr.success("Transaksi berhasil di batalkan dan dihapus!!");');
                     }
-                    
-                    // Release lock
-                    $this->cache->delete($lock_key);
-                    
+                                        
                     redirect(base_url('pos/trans_jual_list.php'));
                     
                 } catch (Exception $e) {
