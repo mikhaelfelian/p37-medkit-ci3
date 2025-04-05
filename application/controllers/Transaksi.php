@@ -804,7 +804,9 @@ class transaksi extends CI_Controller {
             $pdf->addPage('', '', false);
             
             # Gambar Watermark Tengah
-            $pdf->Image($gambar2, 5, 4, 15, 19);
+            if (file_exists(str_replace(base_url(), FCPATH, $gambar2))) {
+                $pdf->Image($gambar2, 5, 4, 15, 19);
+            }
             
             # Line Cell
             $fill = false;
@@ -1065,7 +1067,9 @@ class transaksi extends CI_Controller {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $gambar4 = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
-            $pdf->Image($gambar4,1.25,$getY,6,3.5);
+            if (file_exists(FCPATH . 'assets/theme/admin-lte-3/dist/img/es-stempel.png')) {
+                $pdf->Image($gambar4, 1.25, $getY, 6, 3.5);
+            }
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
