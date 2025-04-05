@@ -17,9 +17,9 @@
                     $("input[name='" + data.name + "']").val(data.token);
                     
                     // Tampilkan notifikasi menggunakan Toastr
-                    toastr.success("CSRF Token berhasil diperbarui!", "Token Refreshed");
+                    // toastr.success("CSRF Token berhasil diperbarui!", "Token Refreshed");
                 }).fail(function() {
-                    toastr.error("Gagal memperbarui CSRF Token!", "Error");
+                    // toastr.error("Gagal memperbarui CSRF Token!", "Error");
                 });
             }
 
