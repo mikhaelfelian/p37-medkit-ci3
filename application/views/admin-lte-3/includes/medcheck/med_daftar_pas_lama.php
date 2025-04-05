@@ -4,7 +4,7 @@
             <label
                 class="control-label"><?php echo (!empty($pasien) ? 'NIK <small><i>(* KTP / Passport / KIA)</i></small>' : 'Cari Pasien*') ?></label>
             <div class="input-group mb-3">
-                <?php echo form_input(array('id' => 'nik_lama', 'name' => 'nik', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->nik) ? $pasien->nik : $this->session->flashdata('nik_lama')), 'placeholder' => ($pasien->nik == '' ? 'Cari data Pasien' : ''))) ?>
+                <?php echo form_input(array('id' => 'nik_lama', 'name' => 'nik', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->nik) ? ($pasien->nik == '-' ? $this->uuid->v4() : $pasien->nik) : $this->session->flashdata('nik_lama')), 'placeholder' => ($pasien->nik == '' ? 'Cari data Pasien' : ''))) ?>
                 <?php if (empty($pasien)) { ?>
                     <div class="input-group-append">
                         <span class="input-group-text rounded-0"><i class="fas fa-search"></i></span>
