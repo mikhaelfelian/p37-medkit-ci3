@@ -4253,8 +4253,9 @@ class Medcheck extends CI_Controller {
             // Set lock for 5 minutes
             $this->cache->file->save($lock_key, true, 300);
             
+            $this->db->trans_begin();
+            
             try {
-                $this->db->trans_begin();
 
                 // Data Pengaturan here
                 $pengaturan = $this->db->get('tbl_pengaturan')->row();
@@ -4491,23 +4492,19 @@ class Medcheck extends CI_Controller {
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('id', 'ID', 'required');
-//            $this->form_validation->set_rules('anamnesa', 'Tipe', 'required');
-//            $this->form_validation->set_rules('status_periksa', 'Periksa', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'                => form_error('id'),
-//                    'status_periksa'    => form_error('status_periksa'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
                 $this->session->set_flashdata('medcheck_toast', 'toastr.error("Entri data pemeriksaan gagal !");');
                 redirect(base_url('medcheck/tambah.php?id='.$id.$rute));
             } else {
                 $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
                         
-                $data = array(
+                $data = [
                     'tgl_modif'         => date('Y-m-d H:i:s'),
                     'tgl_periksa'       => (!empty($tgl_periksa) ? $tgl_periksa : '0000-00-00 00:00:00'),
                     'keluhan'           => $keluhan,
@@ -4532,9 +4529,9 @@ class Medcheck extends CI_Controller {
                     'status'            => $status,
                     'status_periksa'    => (!empty($st_priksa) ? $st_priksa : '0'),
                     'status_nota'       => '2',
-                );
+                ];
                 
-                $this->db->where('id', $sql_medc->id_pasien)->update('tbl_m_pasien', array('alergi' => $alergi));
+                $this->db->where('id', $sql_medc->id_pasien)->update('tbl_m_pasien', ['alergi' => $alergi]);
                 $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', $data);
 
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data pemeriksaan berhasil !");');
@@ -4544,12 +4541,6 @@ class Medcheck extends CI_Controller {
                 }else{
                     redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
                 }
-                   
-//                redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
-//                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
-//                
-//                echo '<pre>';
-//                print_r($data);
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -4616,7 +4607,7 @@ class Medcheck extends CI_Controller {
                                                       ->result();
                         
                             $harga      = $sql_item->harga_jual;
-                            $percent    = $sql_pnjm->persen / 100;
+                            $percent    = ($sql_pnjm->persen > 0) ? ($sql_pnjm->persen / 100) : 0;
                             $ass        = ($harga * $sql_pnjm->persen);
                             # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                             $harga_pcs  = ($sql_pnjm->persen != 0 ? $ass : $harga);
@@ -4678,7 +4669,7 @@ class Medcheck extends CI_Controller {
                                                       ->result();
                         
                             $harga      = $sql_item->harga_jual;
-                            $percent    = $sql_pnjm->persen / 100;
+                            $percent    = ($sql_pnjm->persen > 0) ? ($sql_pnjm->persen / 100) : 0;
                             $ass        = ($harga * $sql_pnjm->persen);
                             $harga_pcs  = ($sql_pnjm->persen != 0 ? $ass : $harga);
                             $harga_tot  = ($sql_item->status_racikan == '1' ? $harga : $harga_pcs);
@@ -4748,7 +4739,6 @@ class Medcheck extends CI_Controller {
             redirect();
         }
     }
-
     public function set_medcheck_transfer() {
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->post('id');
@@ -4765,25 +4755,25 @@ class Medcheck extends CI_Controller {
             $this->form_validation->set_rules('id', 'ID', 'required');
             $this->form_validation->set_rules('tipe', 'tipe', 'required');
             
-            if($tipe == '3'){
+            if ($tipe == '3') {
                 $this->form_validation->set_rules('kamar', 'Kamar', 'required');
                 $this->form_validation->set_rules('kamar_nm', 'Kamar', 'required');
             }
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'        => form_error('id'),
                     'tipe'      => form_error('tipe'),
                     'kamar'     => form_error('kamar'),
                     'kamar_nm'  => form_error('kamar_nm'),
-                );
+                ];
                 
                 $err_kamar      = form_error('kamar');
                 $err_kamar_nm   = form_error('kamar_nm');
-                if(!empty($err_kamar)){
+                if (!empty($err_kamar)) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Pilih kelas perawatan !");');
                 }
-                if(!empty($err_kamar_nm)){
+                if (!empty($err_kamar_nm)) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Nama ruang / kamar harus diisi !");');
                 }
 
@@ -4797,19 +4787,19 @@ class Medcheck extends CI_Controller {
                 # Hapus berkas transfer sebelumnya
                 $this->db->where('id_medcheck', $sql_medc->id)->delete('tbl_trans_medcheck_trf');
                 
-                if($sql_medc_kmr->num_rows() > 0){
+                if ($sql_medc_kmr->num_rows() > 0) {
                     $kamar2     = $sql_medc_kmr->row()->id_kamar;
                     $sql_kamar2 = $this->db->where('id', $kamar2)->get('tbl_m_kamar')->row();
                     $jml2       = $sql_kamar2->jml - 1;
                     
                     # Update kamar
-                    $this->db->where('id', $kamar2)->update('tbl_m_kamar', array('jml' => $jml2));
+                    $this->db->where('id', $kamar2)->update('tbl_m_kamar', ['jml' => $jml2]);
                     
                     # Hapus berkas kamar
                     $this->db->where('id_medcheck', $sql_medc->id)->delete('tbl_trans_medcheck_kamar');
                 }
                 
-                $data = array(
+                $data = [
                     'id_medcheck'           => $sql_medc->id,
                     'id_user'               => $this->ion_auth->user()->row()->id,
                     'id_pasien'             => $sql_medc->id_pasien,
@@ -4820,28 +4810,28 @@ class Medcheck extends CI_Controller {
                     'tgl_simpan'            => date('Y-m-d H:i:s'),
                     'keterangan_perawat'    => $catatan,
                     'status'                => '0',
-                );
+                ];
                 
-                $data_medc = array(
+                $data_medc = [
                     'id_poli'   => (!empty($poli_7an) ? $poli_7an : $sql_medc->id_poli),
                     'id_dokter' => (!empty($dokter) ? $dokter : $sql_medc->id_dokter),
                     'tipe'      => $tipe,
                     'tgl_modif' => date('Y-m-d H:i:s'),
                     'tgl_ranap' => ($tipe == '3' ? date('Y-m-d H:i:s') : '0000-00-00 00:00:00'),
-                );
+                ];
                 
                 # Cek tipe rawat
-                if($tipe == '3'){
-                    $sql_kamar      = $this->db->where('id', $kamar)->get('tbl_m_kamar')->row();
-                    $jml            = $sql_kamar->jml + 1;
+                if ($tipe == '3') {
+                    $sql_kamar = $this->db->where('id', $kamar)->get('tbl_m_kamar')->row();
+                    $jml = $sql_kamar->jml + 1;
                         
-                    if($sql_kamar->jml <= $sql_kamar->jml_max){                                              
-                        $data_kmr_master = array(
+                    if ($sql_kamar->jml <= $sql_kamar->jml_max) {                                              
+                        $data_kmr_master = [
                             'tgl_modif' => date('Y-m-d H:i:s'),
                             'jml'       => $jml,
-                        );
+                        ];
                         
-                        $data_kmr = array(
+                        $data_kmr = [
                             'id_medcheck'=> $sql_medc->id,
                             'id_kamar'   => $sql_kamar->id,
                             'id_pasien'  => $sql_medc->id_pasien,
@@ -4850,20 +4840,20 @@ class Medcheck extends CI_Controller {
                             'kamar'      => $kamar_nm,
                             'keterangan' => 'Transfer Pasien',
                             'status'     => '1',
-                        );
+                        ];
 
                         $this->db->insert('tbl_trans_medcheck_kamar', $data_kmr);
 
                         # Update tabel kamar
                         $this->db->where('id', $sql_kamar->id)->update('tbl_m_kamar', $data_kmr_master);
-                    }else{
+                    } else {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.error("Kamar sudah penuh !");');
                         redirect(base_url('medcheck/transfer.php?id='.general::enkrip($sql_medc->id)));
                     }                  
                 }
                                 
                 # Masukkan data dokter
-                $data_dokter = array(
+                $data_dokter = [
                     'id_medcheck'   => $sql_medc->id,
                     'id_user'       => $this->ion_auth->user()->row()->id,
                     'id_pasien'     => (!empty($sql_medc->id_pasien) ? $sql_medc->id_pasien : '0'),
@@ -4871,7 +4861,7 @@ class Medcheck extends CI_Controller {
                     'tgl_simpan'    => date('Y-m-d H:i:s'),
                     'keterangan'    => '',
                     'status'        => '1'
-                );
+                ];
                 
                 $this->db->where('id_medcheck', $sql_medc->id)->where('status', '1')->update('tbl_trans_medcheck_dokter', $data_dokter);
 
@@ -4880,15 +4870,14 @@ class Medcheck extends CI_Controller {
                 
                 # Inputkan data catatan transfer
                 $this->db->insert('tbl_trans_medcheck_trf', $data);
-                $last_id = crud::last_id();
+                $last_id = $this->db->insert_id();
 
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Pasien berhasil di transfer !");');
                 
                 redirect(base_url('medcheck/transfer.php?id='.general::enkrip($sql_medc->id).'&trf_id='.general::enkrip($last_id)));
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
@@ -5019,36 +5008,34 @@ class Medcheck extends CI_Controller {
 
     public function set_medcheck_update_inv() {
         if (akses::aksesLogin() == TRUE) {
-            $id         = $this->input->get('id');
+            $id = $this->input->get('id');
             
-            if(!empty($id)){
-                $sql_medc         = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_medc_det     = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->result();
-                $sql_medc_det_sum = $this->db->select('SUM(subtotal) AS subtotal, SUM(diskon) AS diskon, SUM(potongan) AS potongan')->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->row();
-                
-                $jml_total  = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->potongan;
-                $jml_diskon =$sql_medc_det_sum->potongan;
-                
-                $data = array(
-                    'jml_total'     => $jml_total,
-                    'jml_diskon'    => $jml_diskon,
-                    'jml_subtotal'  => $sql_medc_det_sum->subtotal,
-                    'jml_gtotal'    => $sql_medc_det_sum->subtotal,
-                );
-                
-                crud::update('tbl_trans_medcheck', 'id', $sql_medc->id, $data);
+            try {
+                if(!empty($id)) {
+                    $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                    $sql_medc_det_sum = $this->db->select('SUM(subtotal) AS subtotal, SUM(diskon) AS diskon, SUM(potongan) AS potongan')
+                                               ->where('id_medcheck', $sql_medc->id)
+                                               ->get('tbl_trans_medcheck_det')
+                                               ->row();
+                    
+                    $jml_total   = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->potongan;
+                    $jml_diskon  = $sql_medc_det_sum->potongan;
+                    
+                    $data = [
+                        'jml_total'    => $jml_total,
+                        'jml_diskon'   => $jml_diskon,
+                        'jml_subtotal' => $sql_medc_det_sum->subtotal,
+                        'jml_gtotal'   => $sql_medc_det_sum->subtotal,
+                    ];
+                    $this->db->where('id', $sql_medc->id)->update('tbl_trans_medcheck', $data);
+                    
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil di proses!");');
+                    redirect(base_url('medcheck/invoice/bayar.php?id='.$id));
+                }
+            } catch (Exception $e) {
+                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
+                redirect(base_url('medcheck'));
             }
-            
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil di proses !!</div>');
-                redirect(base_url('medcheck/invoice/bayar.php?id='.$id));
-//                           
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//                           
-//                echo '<pre>';
-//                print_r($sql_medc_det_sum);
-//                echo '</pre>';
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -14315,20 +14302,20 @@ public function set_medcheck_lab_adm_save() {
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             
             $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedPDF('P', 'cm', ['21.5', '33']);
             $pdf->SetAutoPageBreak('auto', 7);
-            $pdf->SetMargins(1,0.35,1);
+            $pdf->SetMargins(1, 0.35, 1);
             $pdf->header = 0;
-            $pdf->addPage('','',false);
+            $pdf->addPage('', '', false);
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,15,19);
+                $pdf->Image($gambar2, 5, 4, 15, 19);
             }
                         
             // Blok Isi Surat
-            switch ($sql_medc_srt->tipe){                
-                case '1' :
+            switch ($sql_medc_srt->tipe) {                
+                case '1':
                     $judul = "SURAT KETERANGAN ".strtoupper(general::tipe_surat($sql_medc_srt->tipe));
 
                     // Blok Judul
@@ -14419,12 +14406,6 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(14.5, .5, $sql_medc_srt->bw_ket, '', 0, 'L', $fill);
-                    
-//                    $pdf->SetFont('Arial', 'B', '10');
-//                    $pdf->Cell(2, .5, $this->tanggalan->tgl_indo2($sql_medc_srt->tgl_keluar).'.', '', 0, 'L', $fill);
-//                    $pdf->Ln();
-//                    $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(19, .5, 'Harap yang berkepentingan maklum.', '', 0, 'L', $fill);
                     $pdf->Ln(1);
             
                     $pdf->SetFont('Arial', '', '10');
@@ -14432,7 +14413,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln(2);
                     break;
                 
-                case '2' :
+                case '2':
                     $judul = "SURAT KETERANGAN ".strtoupper(general::tipe_surat($sql_medc_srt->tipe));
 
                     // Blok Judul
@@ -14484,7 +14465,8 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-                    $pdf->SetFont('Arial', '', '10');$pdf->MultiCell(13, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
+                    $pdf->SetFont('Arial', '', '10');
+                    $pdf->MultiCell(13, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
                     $pdf->Ln(1);
 
                     $pdf->SetFont('Arial', '', '10');
@@ -14495,8 +14477,6 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(1.5, .5, $sql_medc_srt->jml_hari.' hari', '', 0, 'L', $fill);                  
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(5, .5, 'terhitung mulai tanggal', '', 0, 'L', $fill);
-//                    $pdf->Ln();
-//                    $pdf->Cell(2.5, .5, 'mulai tanggal', '', 0, 'L', $fill);
                     $pdf->SetFont('Arial', 'B', '10');
                     $pdf->Cell(2.5, .5, $this->tanggalan->tgl_indo2($sql_medc_srt->tgl_masuk), '', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
@@ -14513,7 +14493,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln(2);
                     break;
                 
-                case '3' :
+                case '3':
                     $judul = "SURAT KETERANGAN ".strtoupper(general::tipe_surat($sql_medc_srt->tipe));
 
                     // Blok Judul
@@ -14565,15 +14545,14 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(2, .5, '', '0', 0, 'L', $fill);
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-                    $pdf->SetFont('Arial', '', '10');$pdf->MultiCell(13, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
+                    $pdf->SetFont('Arial', '', '10');
+                    $pdf->MultiCell(13, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
                     $pdf->Ln(1);
 
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(19, .5, 'Bahwa pasien sedang dalam perawatan di kamar rawat inap kami, sehingga tidak dapat', '', 0, 'L', $fill);
                     $pdf->Ln();
                     $pdf->Cell(8.5, .5, 'melaksanakan kewajibannya mulai tanggal', '', 0, 'L', $fill);
-//                    $pdf->Ln();
-//                    $pdf->Cell(2.5, .5, 'mulai tanggal', '0', 0, 'L', $fill);
                     $pdf->SetFont('Arial', 'B', '10');
                     $pdf->Cell(2.5, .5, $this->tanggalan->tgl_indo2($sql_medc_srt->tgl_masuk), '', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
@@ -14590,7 +14569,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln(2);
                     break;
                 
-                case '4' :
+                case '4':
                     $judul = "SURAT KETERANGAN ".strtoupper(general::tipe_surat($sql_medc_srt->tipe));
 
                     // Blok Judul
@@ -14642,7 +14621,8 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(2, .5, '', '0', 0, 'L', $fill);
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-                    $pdf->SetFont('Arial', '', '10');$pdf->MultiCell(13, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
+                    $pdf->SetFont('Arial', '', '10');
+                    $pdf->MultiCell(13, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
                     $pdf->Ln(1);
 
                     $pdf->SetFont('Arial', '', '10');
@@ -14676,7 +14656,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln();
 
                     // Blok Paragraf Pertama
-                    $fill = FALSE;
+                    $fill = false;
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(19, .5, 'Yang bertanda tangan di bawah ini,', '', 0, 'L', $fill);
                     $pdf->Ln();
@@ -14770,7 +14750,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln();
 
                     // Blok Paragraf Pertama
-                    $fill = FALSE;
+                    $fill = false;
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(19, .5, 'Yang bertanda tangan di bawah ini, menerangkan bahwa :', '', 0, 'L', $fill);
                     $pdf->Ln(1);
@@ -14865,7 +14845,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln();
 
                     // Blok Paragraf Pertama
-                    $fill = FALSE;
+                    $fill = false;
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(19, .5, 'Yang bertanda tangan di bawah ini, menerangkan bahwa :', '', 0, 'L', $fill);
                     $pdf->Ln(1);
@@ -14961,14 +14941,12 @@ public function set_medcheck_lab_adm_save() {
                     
                     // BLOK TUJUAN RUJUKAN
                     $pdf->SetFont('Arial', 'B', '10');
-//                    $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
                     $pdf->Cell(3.5, .5, 'Kepada Yth', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(14, .5, $sql_medc_srt->ruj_dokter, '0', 0, 'L', $fill);
                     $pdf->Ln();
                     $pdf->SetFont('Arial', 'B', '10');
-//                    $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
                     $pdf->Cell(3.5, .5, 'di', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
@@ -14976,7 +14954,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln(1);
 
                     // Blok Paragraf Pertama
-                    $fill = FALSE;
+                    $fill = false;
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(19, .5, 'Mohon penatalaksanaan lebih lanjut terhadap pasien :', '', 0, 'L', $fill);
                     $pdf->Ln(1);
@@ -15108,21 +15086,11 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(13, .5, $sql_pasien->alamat, '0', 0, 'L', $fill);
                     $pdf->MultiCell(13, .5, $sql_pasien->alamat, '0', 'L');
                     $pdf->Ln(1);
 
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->MultiCell(19, .5, 'Berdasarkan pemeriksaan yang dilakukan pada tanggal '.$this->tanggalan->tgl_indo3($sql_medc_srt->vks_tgl_periksa).' menerangkan bahwa pasien diatas telah diberikan vaksin '.$sql_medc_srt->keterangan.' di '.$setting->judul.' dan dinyatakan sehat.', '0', 'J');
-//                    $pdf->Cell(10, .5, 'Berdasarkan pemeriksaan yang dilakukan pada tanggal ', '', 0, 'L', $fill);
-//                    $pdf->SetFont('Arial', 'i', '10');
-//                    $pdf->Cell(3.5, .5, $this->tanggalan->tgl_indo3($sql_medc_srt->vks_tgl_periksa), '', 0, 'C', $fill);
-//                    $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(11.5, .5, 'di '.$setting->judul, '', 0, 'L', $fill);
-//                    $pdf->Ln();
-//                    $pdf->SetFont('Arial', 'Bi', '10');
-//                    $pdf->Cell(1, .5, '', '', 0, 'L', $fill);
-//                    $pdf->Cell(18, .5, $sql_medc_srt->keterangan, '', 0, 'L', $fill);
                     $pdf->Ln();
             
                     $pdf->SetFont('Arial', '', '10');
@@ -15194,7 +15162,6 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(13, .5, $sql_pasien->alamat, '0', 0, 'L', $fill);
                     $pdf->MultiCell(13, .5, $sql_pasien->alamat, '0', 'L');
                     $pdf->Ln(1);
 
@@ -15203,21 +15170,6 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln();
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->MultiCell(19, .5, $sql_medc_srt->hml_periksa, '0', 'J');
-//                    $pdf->Cell(10, .5, 'Berdasarkan pemeriksaan yang dilakukan pada tanggal ', '', 0, 'L', $fill);
-//                    $pdf->SetFont('Arial', 'i', '10');
-//                    $pdf->Cell(3.5, .5, $this->tanggalan->tgl_indo3($sql_medc_srt->vks_tgl_periksa), '', 0, 'C', $fill);
-//                    $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(11.5, .5, 'di '.$setting->judul, '', 0, 'L', $fill);
-//                    $pdf->Ln();
-//                    $pdf->SetFont('Arial', 'Bi', '10');
-//                    $pdf->Cell(1, .5, '', '', 0, 'L', $fill);
-//                    $pdf->Cell(18, .5, $sql_medc_srt->keterangan, '', 0, 'L', $fill);
-//                    $pdf->Ln();
-//                    $pdf->Cell(1, .5, ($sql_medc_srt->hml_tipe_ijin == '1' ? 'V' : ''), '1', 0, 'C', $fill);
-//                    $pdf->Cell(10, .5, 'Perlu cuti hamil / bersalin selama 3 (tiga) bulan terhitung dari ', 'TB', 0, 'L', $fill);
-//                    $pdf->Cell(2, .5, ($sql_medc_srt->hml_tipe_ijin == '1' ? $this->tanggalan->tgl_indo2($sql_medc_srt->hml_tgl_awal) : ''), 'TB', 0, 'L', $fill);
-//                    $pdf->Cell(1, .5, 's/d', 'TB', 0, 'C', $fill);
-//                    $pdf->Cell(4, .5, ($sql_medc_srt->hml_tipe_ijin == '1' ? $this->tanggalan->tgl_indo2($sql_medc_srt->hml_tgl_akhir) : ''), 'TBR', 0, 'L', $fill);
                     $pdf->Ln();
                     
                     if($sql_medc_srt->hml_tipe_ijin == '1'){
@@ -15248,17 +15200,6 @@ public function set_medcheck_lab_adm_save() {
                         $pdf->Ln();                        
                     }
 
-//                    $pdf->Cell(1, .5, ($sql_medc_srt->hml_tipe_ijin == '2' ? 'V' : ''), 'LBR', 0, 'C', $fill);
-//                    $pdf->Cell(8, .5, 'Ijin tidak menjalankan tugas karena sakit, selama', 'B', 0, 'L', $fill);
-//                    $pdf->Cell(.5, .5, (float)$jml_hari, 'B', 0, 'C', $fill);
-//                    $pdf->Cell(3.5, .5, 'Hari, terhitung dari', 'B', 0, 'L', $fill);
-//                    $pdf->Cell(2, .5, ($sql_medc_srt->hml_tipe_ijin == '2' ? $this->tanggalan->tgl_indo2($sql_medc_srt->hml_tgl_awal) : ''), 'B', 0, 'L', $fill);
-//                    $pdf->Cell(1, .5, 's/d', 'B', 0, 'C', $fill);
-//                    $pdf->Cell(2, .5, ($sql_medc_srt->hml_tipe_ijin == '2' ? $this->tanggalan->tgl_indo2($sql_medc_srt->hml_tgl_akhir) : ''), 'BR', 0, 'L', $fill);
-//                    $pdf->Ln();
-//
-//                    $pdf->Cell(1, .5, ($sql_medc_srt->hml_tipe_terbang == '1' ? 'V' : 'X'), 'LBR', 0, 'C', $fill);
-//                    $pdf->Cell(17, .5, 'Cukup sehat untuk perjalanan / penerbangan dalam negeri / luar negeri', 'BR', 0, 'L', $fill);
                     $pdf->Ln(1);
             
                     $pdf->SetFont('Arial', '', '10');
@@ -15317,7 +15258,6 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(13, .5, $sql_pasien->alamat, '0', 0, 'L', $fill);
                     $pdf->MultiCell(13, .5, $sql_pasien->alamat, '0', 'L');
                     $pdf->Ln(1);
 
@@ -15325,12 +15265,7 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->MultiCell(19, .5, 'Berdasarkan hasil pemeriksaan sampel urine untuk pemeriksaan Test Narkoba di Laboratorium '.$setting->judul.', sampel urine pasien dinyatakan dengan hasil :', '0', 'J');
                     $pdf->SetFont('Arial', 'Bi', '10');
                     $pdf->Cell(19, .5, ($sql_medc_srt->nza_status == '1' ? 'POSITIF' : 'NEGATIF'), '', 0, 'C', $fill);
-//                    $pdf->Cell(19, .5, 'Berdasarkan hasil pemeriksaan sampel urine untuk pemeriksaan Test Narkoba di Laboratorium '.$setting->judul.',', '', 0, 'L', $fill);
                     $pdf->Ln();
-//                    $pdf->Cell(7.5, .5, 'sampel urine pasien dinyatakan dengan hasil', '', 0, 'L', $fill);
-//                    $pdf->SetFont('Arial', 'Bi', '10');
-//                    $pdf->Cell(2, .5, ($sql_medc_srt->nza_status == '1' ? 'POSITIF' : 'NEGATIF'), '', 0, 'L', $fill);
-//                    $pdf->Ln(1);
             
                     $pdf->SetFont('Arial', '', '10');
                     $pdf->Cell(19, .5, 'Demikian surat keterangan ini dibuat agar dapat digunakan sebagaimana mestinya.', '', 0, 'L', $fill);
@@ -15401,7 +15336,6 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Cell(3.5, .5, 'Alamat', '0', 0, 'L', $fill);
                     $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
                     $pdf->SetFont('Arial', '', '10');
-//                    $pdf->Cell(13, .5, $sql_pasien->alamat, '0', 0, 'L', $fill);
                     $pdf->MultiCell(13, .5, $sql_pasien->alamat, '0', 'L');
                     $pdf->Ln(1);
 
