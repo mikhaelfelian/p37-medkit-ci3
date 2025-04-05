@@ -159,18 +159,20 @@
                                             <?php echo form_input(array('id' => 'item', 'name' => 'item', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['item']) ? ' is-invalid' : ''), 'placeholder' => 'Inputkan Nama Item ...', 'value' => (!empty($sql_produk->produk) ? $sql_produk->produk : ''), 'readonly' => 'TRUE')) ?>
                                         </div>
                                     </div>
-                                    <?php foreach ($sql_produk_stk as $stok) { ?>
-                                        <div class="form-group row">
-                                            <label for="inputEmail3" class="col-sm-3 col-form-label"><i><small>Stok
-                                                        <?php echo $stok->gudang ?></small></i></label>
-                                            <div class="col-sm-2">
-                                                <?php echo form_input(array('id' => 'stok', 'name' => 'stok', 'class' => 'form-control pull-right text-center rounded-0', 'value' => (!empty($stok->jml) ? (float) $stok->jml : ''), 'disabled' => 'TRUE')) ?>
+                                    <?php if (Akses::hakFarmasi() != TRUE): ?>
+                                        <?php foreach ($sql_produk_stk as $stok) { ?>
+                                            <div class="form-group row">
+                                                <label for="inputEmail3" class="col-sm-3 col-form-label"><i><small>Stok
+                                                            <?php echo $stok->gudang ?></small></i></label>
+                                                <div class="col-sm-2">
+                                                    <?php echo form_input(array('id' => 'stok', 'name' => 'stok', 'class' => 'form-control pull-right text-center rounded-0', 'value' => (!empty($stok->jml) ? (float) $stok->jml : ''), 'disabled' => 'TRUE')) ?>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <?php echo form_input(array('id' => 'st', 'name' => 'st', 'class' => 'form-control pull-right text-left rounded-0', 'value' => (!empty($stok->satuan) ? $stok->satuan : ''), 'disabled' => 'TRUE')) ?>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-4">
-                                                <?php echo form_input(array('id' => 'st', 'name' => 'st', 'class' => 'form-control pull-right text-left rounded-0', 'value' => (!empty($stok->satuan) ? $stok->satuan : ''), 'disabled' => 'TRUE')) ?>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
+                                        <?php } ?>
+                                    <?php endif; ?>
                                     <div class="form-group row <?php echo (!empty($hasError['jml']) ? 'text-danger' : '') ?>">
                                         <label for="inputEmail3" class="col-sm-3 col-form-label">Jml</label>
                                         <div class="col-sm-2">
@@ -287,13 +289,13 @@
                                     <div class="col-md-6">
                                     </div>
                                     <div class="col-md-6 text-right">
-                                        <?php if (!empty($sql_penj_det)) { ?>                                            
+                                        <?php if (!empty($sql_penj_det)) { ?>
                                             <?php echo form_open(base_url('gudang/set_trans_mutasi_proses.php?id=' . $this->input->get('id')), 'id="mutasi_proses_form"'); ?>
                                             <?php echo add_form_protection(); ?>
                                             <?php echo form_hidden('id', $this->input->get('id')); ?>
                                             <button type="submit" class="btn btn-success btn-flat">
-                                                    <i class="fa fa-check-circle"></i> Proses
-                                                </button>
+                                                <i class="fa fa-check-circle"></i> Proses
+                                            </button>
                                             <?php echo add_double_submit_protection('mutasi_proses_form'); ?>
                                             <?php echo form_close(); ?>
                                         <?php } ?>
@@ -375,58 +377,58 @@
 </script>
 
 <script>
-$(document).ready(function() {
-    // Handle Receive All button click
-    $('#receiveAllBtn').on('click', function(e) {
-        e.preventDefault();
-        
-        // Confirm before proceeding
-        if (!confirm('Apakah Anda yakin ingin menerima semua item?')) {
-            return;
-        }
+    $(document).ready(function () {
+        // Handle Receive All button click
+        $('#receiveAllBtn').on('click', function (e) {
+            e.preventDefault();
 
-        // Show loading state
-        $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
+            // Confirm before proceeding
+            if (!confirm('Apakah Anda yakin ingin menerima semua item?')) {
+                return;
+            }
 
-        // Submit the form via AJAX
-        $.ajax({
-            url: $('#formReceiveAll').attr('action'),
-            type: 'POST',
-            data: $('#formReceiveAll').serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    toastr.success(response.message);
-                    // Reload the page after 1.5 seconds
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1500);
-                } else {
-                    toastr.error(response.message || 'Terjadi kesalahan');
+            // Show loading state
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
+
+            // Submit the form via AJAX
+            $.ajax({
+                url: $('#formReceiveAll').attr('action'),
+                type: 'POST',
+                data: $('#formReceiveAll').serialize(),
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        // Reload the page after 1.5 seconds
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        toastr.error(response.message || 'Terjadi kesalahan');
+                        // Re-enable the button
+                        $('#receiveAllBtn').prop('disabled', false)
+                            .html('<i class="fas fa-check-circle"></i> Terima Semua');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Terjadi kesalahan: ' + error);
                     // Re-enable the button
                     $('#receiveAllBtn').prop('disabled', false)
                         .html('<i class="fas fa-check-circle"></i> Terima Semua');
                 }
-            },
-            error: function(xhr, status, error) {
-                toastr.error('Terjadi kesalahan: ' + error);
-                // Re-enable the button
-                $('#receiveAllBtn').prop('disabled', false)
-                    .html('<i class="fas fa-check-circle"></i> Terima Semua');
+            });
+        });
+
+        // Validate quantity inputs
+        $('.receive-qty').on('input', function () {
+            var max = parseInt($(this).data('max'));
+            var val = parseInt($(this).val());
+
+            if (val > max) {
+                $(this).val(max);
+            } else if (val < 0) {
+                $(this).val(0);
             }
         });
     });
-
-    // Validate quantity inputs
-    $('.receive-qty').on('input', function() {
-        var max = parseInt($(this).data('max'));
-        var val = parseInt($(this).val());
-        
-        if (val > max) {
-            $(this).val(max);
-        } else if (val < 0) {
-            $(this).val(0);
-        }
-    });
-});
 </script>
