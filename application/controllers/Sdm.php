@@ -1537,7 +1537,9 @@ class Sdm extends CI_Controller {
                 $pdf->Image($gambar4, 2, $getY, 2, 2);
             }
             
-            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
+            if(file_exists($gambar5)) {
+                $pdf->Image($gambar5, 12.5, $getY, 2, 2);
+            }
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
