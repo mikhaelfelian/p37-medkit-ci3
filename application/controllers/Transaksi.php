@@ -792,9 +792,9 @@ class transaksi extends CI_Controller {
             $sql_supplier       = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
             $oleh               = $this->ion_auth->user($sql_beli->id_user)->row()->first_name;
             
-            $gambar1            = base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
-            $gambar2            = base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
-            $gambar3            = base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
             $this->load->library('MedBeliPDF');
             $pdf = new MedBeliPDF('P', 'cm', [21.5, 33]);
@@ -980,9 +980,9 @@ class transaksi extends CI_Controller {
             $sql_supplier = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
             $oleh         = $this->ion_auth->user($sql_beli->id_user)->row()->first_name;
             
-            $gambar1      = base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
-            $gambar2      = base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
-            $gambar3      = base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $gambar1      = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2      = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3      = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
             $judul        = "PURCHASE ORDER";
             $fill         = FALSE;
