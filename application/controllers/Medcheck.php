@@ -11782,7 +11782,7 @@ public function set_medcheck_lab_adm_save() {
                     ];
                     
                     // Start Transaction
-                    $this->db->trans_begin();
+                    $this->db->trans_begin(); 
                     
                     if($sql_medc_ass->num_rows() > 0){
                         $ass_id = $sql_medc_ass->row()->id;
