@@ -589,13 +589,11 @@ class Pos extends CI_Controller {
                 $jml_total      = $sql_medc_det->subtotal + $sql_medc_det->potongan + $sql_medc_det->diskon;
                 
                 try {
-                    // // Get form ID and check for double submission
-                    // $form_id = $this->input->post('form_id');
-                    // if (check_form_submitted($form_id)) {
-                    //     $this->session->set_flashdata('apt_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
-                    //     redirect(base_url('pos/trans_jual_list.php'));
-                    //     return;
-                    // }
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Detected double form submission. Please try again.');
+                    }
                     
                     // // Create a lock key for this transaction
                     // $lock_key = 'trans_batal_' . general::dekrip($id);
