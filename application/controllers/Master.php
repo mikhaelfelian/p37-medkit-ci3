@@ -8336,12 +8336,13 @@ class Master extends CI_Controller {
                 mkdir($dir, 0777, true);
             }
             
-            $params['data']     = 'Saya yang bertandatangan dibawah ini:';
-            $params['data']    .= strtoupper($sql_kary->nama);
-            $params['level']    = 'H';
-            $params['size']     = 2;
-            $params['savename'] = $qr_validasi; 
-            $this->ciqrcode->generate($params);
+            $params['data'] = 'Saya yang bertandatangan dibawah ini:';
+            $params['data'] .= strtoupper($sql_kary->nama);
+            $params['level'] = 'H';
+            $params['size'] = 2;
+            
+            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
+            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
             
             $gambar5 = $qr_validasi; 
             
