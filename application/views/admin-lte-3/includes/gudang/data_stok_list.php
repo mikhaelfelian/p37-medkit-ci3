@@ -100,14 +100,13 @@
                                             $sql_kat = $this->db->where('id', $barang->id_kategori)->get('tbl_m_kategori')->row();
                                             $sql_mrk = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
                                             $sql_stok = $this->db->select('SUM(jml * jml_satuan) AS jml')
-                                                ->where('id_produk', $barang->id)
-                                                ->where('status', '1')
-                                                ->get('tbl_m_produk_stok')
-                                                ->row();
+                                                                 ->where('id_produk', $barang->id)
+                                                                 ->where('status', '1')
+                                                                 ->get('tbl_m_produk_stok')
+                                                                 ->row();
                                             ?>
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?></td>
-                                                <!--<td><?php echo (!empty($sql_mrk->merk) ? strtoupper($sql_mrk->merk) : '-') ?></td>-->
                                                 <td style="width: 200px;">
                                                     <?php echo (!empty($sql_kat->keterangan) ? strtoupper($sql_kat->keterangan) : '-') ?>
                                                 </td>
