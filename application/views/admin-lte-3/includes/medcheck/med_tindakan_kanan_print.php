@@ -80,7 +80,7 @@
                                     });
                                     
                                     // Show error message using existing toastr setup
-                                    toastr.error('Tidak ada item yang di posting atau terjadi kesalahan sistem');
+                                    toastr.error(xhr.responseText);
                                     
                                     // Reset button state
                                     submitBtn.prop('disabled', false)

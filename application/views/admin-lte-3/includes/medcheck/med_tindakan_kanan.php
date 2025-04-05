@@ -204,7 +204,8 @@
                     case 'penjamin_edit':
                         ?>                        
                         <li class="list-group-item rounded-0">
-                            <?php echo form_open_multipart(base_url('medcheck/set_medcheck_upd_penj.php'), 'autocomplete="off"') ?>
+                            <?php echo form_open(base_url('medcheck/set_medcheck_upd_penj.php'), 'id="penjamin_form" autocomplete="off"') ?>
+                            <?php echo add_form_protection() ?>
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)) ?>
                             <b>Penjamin</b><br/>
                             <span class="float-left text-danger">
@@ -218,6 +219,7 @@
                             </span>
                             <?php echo nbs(2) ?>
                             <button type="submit" class="btn btn-primary btn-flat btn-sm rounded-0"><i class="fa fa-save"></i> Simpan</button>
+                            <?php echo add_double_submit_protection('penjamin_form')?>
                             <?php echo form_close() ?>
                         </li>
                         <?php
