@@ -7948,15 +7948,14 @@ public function set_medcheck_lab_adm_save() {
     
     public function set_medcheck_resep_copy() {
         if (akses::aksesLogin() == TRUE) {
-            $id         = $this->input->post('id');
-            $id_medc    = $this->input->post('id_medc');
-            $id_resep   = $this->input->post('id_resep');
-            $petugas    = $this->input->post('petugas');
-            $foto       = $this->input->post('foto');
-            $status     = $this->input->post('status');
+            $id       = $this->input->post('id');
+            $id_medc  = $this->input->post('id_medc');
+            $id_resep = $this->input->post('id_resep');
+            $petugas  = $this->input->post('petugas');
+            $foto     = $this->input->post('foto');
+            $status   = $this->input->post('status');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
@@ -7973,24 +7972,24 @@ public function set_medcheck_lab_adm_save() {
                     // Start transaction
                     $this->db->trans_begin();
                     
-                $sql_medc       = $this->db->where('id', general::dekrip($id_medc))->get('tbl_trans_medcheck')->row(); 
-                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-    
-                $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_resep')->num_rows() + 1;
-                $no_surat       = sprintf('%03d', $nomer).'/'.$pengaturan->kode_resep.'/'.date('m').'/'.date('Y');
-                
-                    $grup       = $this->ion_auth->get_users_groups()->row();
-                    $is_farm    = ($grup->name == 'farmasi' ? '2' : '0');
+                    $sql_medc   = $this->db->where('id', general::dekrip($id_medc))->get('tbl_trans_medcheck')->row(); 
+                    $pengaturan = $this->db->get('tbl_pengaturan')->row();
+        
+                    $nomer    = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_resep')->num_rows() + 1;
+                    $no_surat = sprintf('%03d', $nomer).'/'.$pengaturan->kode_resep.'/'.date('m').'/'.date('Y');
+                    
+                    $grup    = $this->ion_auth->get_users_groups()->row();
+                    $is_farm = ($grup->name == 'farmasi' ? '2' : '0');
                     
                     $data = [
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'id_medcheck'   => $sql_medc->id,
-                    'id_pasien'     => $sql_medc->id_pasien,
-                    'id_user'       => $this->ion_auth->user()->row()->id,
-                    'id_farmasi'    => $this->ion_auth->user()->row()->id,
-                    'id_dokter'     => $sql_medc->id_dokter,
-                    'no_resep'      => $no_surat,
-                    'status'        => $is_farm,
+                        'tgl_simpan'  => date('Y-m-d H:i:s'),
+                        'id_medcheck' => $sql_medc->id,
+                        'id_pasien'   => $sql_medc->id_pasien,
+                        'id_user'     => $this->ion_auth->user()->row()->id,
+                        'id_farmasi'  => $this->ion_auth->user()->row()->id,
+                        'id_dokter'   => $sql_medc->id_dokter,
+                        'no_resep'    => $no_surat,
+                        'status'      => $is_farm,
                     ];
                     
                     $this->db->insert('tbl_trans_medcheck_resep', $data);
@@ -8005,7 +8004,7 @@ public function set_medcheck_lab_adm_save() {
                     $this->db->trans_commit();
                     
                     $this->session->set_flashdata('medcheck_toast', 'toastr.success("Resep berhasil di copy!");');
-                redirect(base_url('medcheck/tambah.php?act=res_input_copy&id='.$id.'&id_resep='.$id_resep.'&status='.$status));  
+                    redirect(base_url('medcheck/tambah.php?act=res_input_copy&id='.$id.'&id_resep='.$id_resep.'&status='.$status));  
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$e->getMessage().'");');
@@ -8013,7 +8012,6 @@ public function set_medcheck_lab_adm_save() {
                 }
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10172,40 +10170,32 @@ public function set_medcheck_lab_adm_save() {
 
     public function set_medcheck_retur() {
         if (akses::aksesLogin() == TRUE) {
-            $id         = $this->input->post('id');
-            $pasien     = $this->input->post('id_pasien');
-            $tgl        = $this->input->post('tgl');
-            $ket        = $this->input->post('ket');
+            $id     = $this->input->post('id');
+            $pasien = $this->input->post('id_pasien');
+            $tgl    = $this->input->post('tgl');
+            $ket    = $this->input->post('ket');
+            
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id' => form_error('id'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-
                 redirect(base_url('medcheck/retur/retur.php'));
             } else {                        
-                $data = array(
+                $data = [
                     'id'         => general::dekrip($id),
                     'tgl'        => $this->tanggalan->tgl_indo_sys($tgl),
                     'keterangan' => $ket,
-                );
+                ];
                 
                 $this->session->set_userdata('trans_medcheck_retur', $data);
                 redirect(base_url('medcheck/retur/retur.php?act=retur_input&id='.$id));
-
                 
-//                $this->session->set_userdata('trans_medcheck_retur', $data);
-//                redirect(base_url('medcheck/retur.php?id='.general::enkrip(rand(1,256))));
-                
-//                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil diselesaikan</div>');
-//                crud::update('tbl_trans_medcheck', 'id', general::dekrip($id), $data);             
-//                redirect(base_url('medcheck/index.php?tipe='.$sql_medc->tipe));
-//                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
+                // Removed commented out code that was not being used
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -10231,42 +10221,33 @@ public function set_medcheck_lab_adm_save() {
             $this->form_validation->set_rules('nominal', 'Sejumlah', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'       => form_error('id'),
-                    'dari'     => form_error('dari'),
-                    'nominal'  => form_error('nominal'),
-                );
+                $msg_error = [
+                    'id'      => form_error('id'),
+                    'dari'    => form_error('dari'),
+                    'nominal' => form_error('nominal'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
 
                 redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
             } else {
-                $sql_medc               = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_jml_dp             = $this->db->select_sum('nominal')->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_kwi')->row();
-                $tot_dp                 = $sql_jml_dp->nominal + general::format_angka_db($nominal);
+                $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                $sql_jml_dp = $this->db->select_sum('nominal')->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_kwi')->row();
+                $tot_dp     = $sql_jml_dp->nominal + general::format_angka_db($nominal);
 
-                $data = array(
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'tgl_masuk'         => $sql_medc->tgl_masuk,
-                    'id_medcheck'       => general::dekrip($id),
-                    'id_user'           => $this->ion_auth->user()->row()->id,
-                    'dari'              => $dari,
-                    'nominal'           => general::format_angka_db($nominal),
-                    'ket'               => (!empty($ket) ? $ket : ''),
-                    'diagnosa'          => (!empty($diag) ? $diag : ''),
-                    'status_kwi'        => $status_kwi,
-                );
+                $data = [
+                    'tgl_simpan'  => date('Y-m-d H:i:s'),
+                    'tgl_masuk'   => $sql_medc->tgl_masuk,
+                    'id_medcheck' => general::dekrip($id),
+                    'id_user'     => $this->ion_auth->user()->row()->id,
+                    'dari'        => $dari,
+                    'nominal'     => general::format_angka_db($nominal),
+                    'ket'         => (!empty($ket) ? $ket : ''),
+                    'diagnosa'    => (!empty($diag) ? $diag : ''),
+                    'status_kwi'  => $status_kwi,
+                ];
                 
                 $this->db->insert('tbl_trans_medcheck_kwi', $data);
-                
-//                if($status_kwi == '2'){
-//                    $data_medc = array(
-//                        'tgl_modif' => date('Y-m-d H:i:s'),
-//                        'jml_dp'    => $tot_dp,
-//                    );
-//                    
-//                    $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', $data_medc);
-//                }
 
                 if ($this->db->affected_rows() > 0) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri DP berhasil disimpan !");');
@@ -10274,15 +10255,7 @@ public function set_medcheck_lab_adm_save() {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Entri DP gagal disimpan !");');
                 }
                 
-                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.(!empty($route) ? '&route='.$route : '')));
-
-//                echo '<pre>';
-//                print_r($data);
-//                
-//                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data kwitansi berhasil disimpan</div>');
-//                crud::simpan('tbl_trans_medcheck_kwi', $data);
-//                
-//                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.(!empty($route) ? '&route='.$route : '')));                
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -19294,7 +19267,6 @@ public function set_medcheck_lab_adm_save() {
     public function pdf_medcheck_nota_rajal() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
-//            $id                 = $this->input->get('id');
             $id_medcheck        = $this->input->get('id');
             
             $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
@@ -19309,19 +19281,19 @@ public function set_medcheck_lab_adm_save() {
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
-            $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
+            $kasir              = !empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name;
 
             $judul              = ($sql_medc->tipe == '6' ? 'INVOICE FARMASI' : ($sql_medc->status_bayar == '1' ? 'INVOICE' : 'TAGIHAN'));
             
             $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 7);
-            $pdf->SetMargins(1,0.35,1);
+            $pdf->SetMargins(1, 0.35, 1);
             $pdf->addPage();
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,17,19);
+                $pdf->Image($gambar2, 5, 4, 17, 19);
             }
             
             // Blok Judul
@@ -19331,25 +19303,25 @@ public function set_medcheck_lab_adm_save() {
             
             // Blok ID PASIEN
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(3.5, .5, 'Nama / Name', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, strtoupper($sql_pasien->nama_pgl).' ('.$sql_pasien->kode_dpn . $sql_pasien->kode.')', '0', 0, 'L', $fill);
+            $pdf->Cell(3.5, .5, 'Nama / Name', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, strtoupper($sql_pasien->nama_pgl).' ('.$sql_pasien->kode_dpn . $sql_pasien->kode.')', '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3.5, .5, 'Alamat / Address', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, (!empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 0, 'L', $fill);
+            $pdf->Cell(3.5, .5, 'Alamat / Address', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, !empty($sql_pasien->alamat) ? $sql_pasien->alamat : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-'), '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3.5, .5, 'Tanggal / Date', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, $this->tanggalan->tgl_indo5($sql_medc->tgl_masuk).' - '.$this->tanggalan->tgl_indo5(date('Y-m-d H:i')), '0', 0, 'L', $fill);
+            $pdf->Cell(3.5, .5, 'Tanggal / Date', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, $this->tanggalan->tgl_indo5($sql_medc->tgl_masuk).' - '.$this->tanggalan->tgl_indo5(date('Y-m-d H:i')), '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3.5, .5, 'Kasir / Cashier', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name, '0', 0, 'L', $fill);
+            $pdf->Cell(3.5, .5, 'Kasir / Cashier', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name, '0', 0, 'L', $fill ?? false);
             $pdf->Ln(1);
                         
-            $fill = FALSE;
-            $pdf->SetTextColor(5,148,19);
+            $fill = false;
+            $pdf->SetTextColor(5, 148, 19);
             $pdf->SetFont('Arial', 'B', '11');
             $pdf->Cell(7, 1, 'DESKRIPSI', 'TB', 0, 'L', $fill);
             $pdf->Cell(1, 1, 'JML', 'TB', 0, 'C', $fill);
@@ -19357,12 +19329,13 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(2, 1, 'DISK (%)', 'TB', 0, 'R', $fill);
             $pdf->Cell(3, 1, 'POTONGAN', 'TB', 0, 'R', $fill);
             $pdf->Cell(3, 1, 'SUBTOTAL', 'TB', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
+            $pdf->SetTextColor(0, 0, 0);
             $pdf->Ln();
             
-            $fill = FALSE;
-            $no = 1; $gtotal = 0;
-            foreach ($sql_medc_det as $det){
+            $fill = false;
+            $no = 1; 
+            $gtotal = 0;
+            foreach ($sql_medc_det as $det) {
                 $sql_medc_itm = $this->db->where('id_medcheck', $det->id_medcheck)->where('id_item_kat', $det->id_item_kat)->where('status_pkt', '0')->get('tbl_trans_medcheck_det')->result();
                 $sql_medc_kat = $this->db->where('id', $det->id_item_kat)->get('tbl_m_kategori')->row();
                 
@@ -19372,21 +19345,21 @@ public function set_medcheck_lab_adm_save() {
                 
                 // Detail Pemeriksaan dan hasilnya
                 $sub = 0;
-                foreach ($sql_medc_itm as $medc){                  
-//                    if ($medc->jml >= 0) {
-//                        $subtot  = $medc->harga * $medc->jml;
-                        $sub     = $sub + $medc->subtotal;
-                        
-                        $pdf->SetFont('Arial', '', '7.5');
-                        $pdf->Cell(7, .5, $medc->item, '', 0, '', $fill);
-                        $pdf->Cell(1, .5, (float) $medc->jml, '', 0, 'C', $fill);
-                        $pdf->Cell(3, .5, general::format_angka($medc->harga), '', 0, 'R', $fill);
-                        $pdf->Cell(2, .5, ($medc->disk1 != 0 ? (float)$medc->disk1 : '').($medc->disk2 != 0 ? ' + '.(float)$medc->disk2 : '').($medc->disk3 != 0 ? ' + '.(float)$medc->disk3 : ''), '', 0, 'C', $fill);
-                        $pdf->Cell(3, .5, general::format_angka($medc->potongan), '', 0, 'R', $fill);
-                        $pdf->Cell(3, .5, general::format_angka($medc->subtotal), '', 0, 'R', $fill);
-                        $pdf->Ln();
-                        
-                        foreach (json_decode($medc->resep) as $racikan) {
+                foreach ($sql_medc_itm as $medc) {                  
+                    $sub += $medc->subtotal;
+                    
+                    $pdf->SetFont('Arial', '', '7.5');
+                    $pdf->Cell(7, .5, $medc->item, '', 0, '', $fill);
+                    $pdf->Cell(1, .5, (float) $medc->jml, '', 0, 'C', $fill);
+                    $pdf->Cell(3, .5, general::format_angka($medc->harga), '', 0, 'R', $fill);
+                    $pdf->Cell(2, .5, ($medc->disk1 != 0 ? (float)$medc->disk1 : '').($medc->disk2 != 0 ? ' + '.(float)$medc->disk2 : '').($medc->disk3 != 0 ? ' + '.(float)$medc->disk3 : ''), '', 0, 'C', $fill);
+                    $pdf->Cell(3, .5, general::format_angka($medc->potongan), '', 0, 'R', $fill);
+                    $pdf->Cell(3, .5, general::format_angka($medc->subtotal), '', 0, 'R', $fill);
+                    $pdf->Ln();
+                    
+                    $resep = json_decode($medc->resep);
+                    if ($resep !== null) {
+                        foreach ($resep as $racikan) {
                             $pdf->SetFont('Arial', 'i', '9');
                             $pdf->Cell(7, .5, '- R/ '.strtolower($racikan->item), '', 0, '', $fill);
                             $pdf->Cell(1, .5, (float) $racikan->jml, '', 0, 'C', $fill);
@@ -19394,9 +19367,9 @@ public function set_medcheck_lab_adm_save() {
                             $pdf->Cell(3, .5, general::format_angka($racikan->subtotal), '', 0, 'R', $fill);
                             $pdf->Ln();                            
                         }
-                        
-                        $no++;
-//                    }
+                    }
+                    
+                    $no++;
                 }
                 
                 // Kolom Subtotal
@@ -19405,7 +19378,7 @@ public function set_medcheck_lab_adm_save() {
                 $pdf->Cell(3, .5, general::format_angka($sub), 'B', 0, 'R', $fill);
                 $pdf->Ln();
                 
-                $gtotal = $gtotal + $sub;
+                $gtotal += $sub;
             }
             
             // Get summary data
@@ -19421,37 +19394,33 @@ public function set_medcheck_lab_adm_save() {
             $jml_diskon = $jml_total - ($jml_total - $sql_medc->jml_diskon);
             
             // Calculate discount percentage only if total amount is greater than zero
-            if ($jml_total > 0) {
-                $diskon = ($jml_diskon / $jml_total) * 100;
-            } else {
-                $diskon = 0;
-            } 
+            $diskon = ($jml_total > 0) ? ($jml_diskon / $jml_total) * 100 : 0;
             
             // Kolom Total
-            $pdf->SetTextColor(5,148,19);
+            $pdf->SetTextColor(5, 148, 19);
             $pdf->SetFont('Arial', 'B', '8');
             $pdf->Cell(1, .5, 'POIN', '', 0, 'C', $fill);
             $pdf->Cell(15, .5, 'TOTAL', '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
+            $pdf->SetTextColor(0, 0, 0);
             $pdf->Cell(3, .5, general::format_angka($sql_medc->jml_total), '', 0, 'R', $fill);
             $pdf->Ln();
-            $pdf->SetTextColor(5,148,19);
-            $pdf->Cell(1, .5, general::format_angka($sql_pasien_poin->jml_poin), '', 0, 'C', $fill);
+            $pdf->SetTextColor(5, 148, 19);
+            $pdf->Cell(1, .5, general::format_angka($sql_pasien_poin->jml_poin ?? 0), '', 0, 'C', $fill);
             $pdf->Cell(15, .5, 'DISKON '.(!empty($diskon) ? $diskon.'%' : ''), '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
+            $pdf->SetTextColor(0, 0, 0);
             $pdf->Cell(3, .5, '('.general::format_angka($jml_diskon).')', '', 0, 'R', $fill);
             $pdf->Ln();
             $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
+            $pdf->SetTextColor(5, 148, 19);
             $pdf->Cell(3, .5, 'GRAND TOTAL', 'T', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
+            $pdf->SetTextColor(0, 0, 0);
             $pdf->Cell(3, .5, general::format_angka($sql_medc_det_sum->subtotal), 'T', 0, 'R', $fill);
             $pdf->Ln();
             
             $jml_tot_byr = 0;
-            foreach ($sql_medc_plat as $plat){
-                $sql_plat    = $this->db->where('id', $plat->id_platform)->get('tbl_m_platform')->row();
-                $jml_tot_byr = $jml_tot_byr + $plat->nominal;
+            foreach ($sql_medc_plat as $plat) {
+                $sql_plat = $this->db->where('id', $plat->id_platform)->get('tbl_m_platform')->row();
+                $jml_tot_byr += $plat->nominal;
 
                 $pdf->SetFont('Arial', 'i', '8');
                 $pdf->Cell(16, .5, '('.$this->tanggalan->tgl_indo5($plat->tgl_simpan).') '.$sql_plat->platform, '', 0, 'R', $fill);
@@ -19463,9 +19432,9 @@ public function set_medcheck_lab_adm_save() {
             $jml_kembali = $jml_tot_byr - $sql_medc_det_sum->subtotal;
             
             $pdf->Cell(13, .5, '', '', 0, 'R', $fill);
-            $pdf->SetTextColor(5,148,19);
+            $pdf->SetTextColor(5, 148, 19);
             $pdf->Cell(3, .5, 'KEMBALIAN', '', 0, 'R', $fill);
-            $pdf->SetTextColor(0,0,0);
+            $pdf->SetTextColor(0, 0, 0);
             $pdf->Cell(3, .5, ($jml_kembali >= 0 ? general::format_angka($jml_kembali) : 0), '', 0, 'R', $fill);
             
             $pdf->Ln(1);
@@ -19478,8 +19447,6 @@ public function set_medcheck_lab_adm_save() {
             // QR GENERATOR VALIDASI
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
             
             require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
@@ -19496,8 +19463,8 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-            $pdf->Image($gambar4,1,$getY,2,2);
-            $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar4, 1, $getY, 2, 2);
+            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
 
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -19512,7 +19479,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(7.5, .5, '('.$kasir.')', '', 0, 'L', $fill);
             $pdf->Ln();
 
-            $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+            $type = $_GET['type'] ?? 'I';
 
             ob_start();
             $pdf->Output($sql_pasien->nama_pgl.'_INV'. '.pdf', $type);
@@ -19550,7 +19517,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,17,19);
+                $pdf->Image($gambar2,5,4,17,19);
             }
             
             // Blok Judul
@@ -19635,15 +19602,18 @@ public function set_medcheck_lab_adm_save() {
                         $pdf->Cell(3, .5, general::format_angka($medc->subtotal), '', 0, 'R', $fill);
                         $pdf->Ln();
                         
-                        foreach (json_decode($medc->resep) as $racikan) {
-                            $pdf->SetFont('Arial', 'i', '9');
-                            $pdf->Cell(1, .5, '', '', 0, 'C', $fill);
-                            $pdf->Cell(4, .5, '', '', 0, 'L', $fill);
-                            $pdf->Cell(7, .5, '- R/ '.strtolower($racikan->item), '', 0, '', $fill);
-                            $pdf->Cell(1, .5, (float) $racikan->jml, '', 0, 'C', $fill);
-                            $pdf->Cell(3, .5, general::format_angka($racikan->harga), '', 0, 'R', $fill);
-                            $pdf->Cell(3, .5, general::format_angka($racikan->subtotal), '', 0, 'R', $fill);
-                            $pdf->Ln();                            
+                        $resep_data = json_decode($medc->resep);
+                        if (is_array($resep_data)) {
+                            foreach ($resep_data as $racikan) {
+                                $pdf->SetFont('Arial', 'i', '9');
+                                $pdf->Cell(1, .5, '', '', 0, 'C', $fill);
+                                $pdf->Cell(4, .5, '', '', 0, 'L', $fill);
+                                $pdf->Cell(7, .5, '- R/ '.strtolower($racikan->item), '', 0, '', $fill);
+                                $pdf->Cell(1, .5, (float) $racikan->jml, '', 0, 'C', $fill);
+                                $pdf->Cell(3, .5, general::format_angka($racikan->harga), '', 0, 'R', $fill);
+                                $pdf->Cell(3, .5, general::format_angka($racikan->subtotal), '', 0, 'R', $fill);
+                                $pdf->Ln();                            
+                            }
                         }
                         
                         $no++;
@@ -19692,10 +19662,10 @@ public function set_medcheck_lab_adm_save() {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             if (file_exists($gambar4)) {
-            $pdf->Image($gambar4,1,$getY,2,2);
+                $pdf->Image($gambar4,1,$getY,2,2);
             }
             if (file_exists($gambar5)) {
-            $pdf->Image($gambar5,12.5,$getY,2,2);
+                $pdf->Image($gambar5,12.5,$getY,2,2);
             }
 
             $pdf->SetFont('Arial', '', '10');
@@ -19711,7 +19681,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(7.5, .5, '('.$kasir.')', '', 0, 'L', $fill);
             $pdf->Ln();
 
-            $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+            $type = $_GET['type'] ?? 'I';
 
             ob_start();
             $pdf->Output($sql_pasien->nama_pgl.'_BILLING'. '.pdf', $type);
