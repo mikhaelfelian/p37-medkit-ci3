@@ -5554,7 +5554,7 @@ class Medcheck extends CI_Controller {
                     
                     // Return JSON response for exception
                     header('Content-Type: application/json');
-                    echo json_encode(['status' => 'error', 'message' => 'Transaksi gagal di proses: ' . $e->getMessage()]);
+                    echo json_encode(['status' => 'error', 'message' => 'Transaksi gagal di proses: <br/>' . $e->getMessage()]);
                     exit;
                 }            }
         } else {
