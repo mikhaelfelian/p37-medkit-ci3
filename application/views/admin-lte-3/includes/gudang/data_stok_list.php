@@ -101,6 +101,7 @@
                                             $sql_mrk = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
                                             $sql_stok = $this->db->select('SUM(jml * jml_satuan) AS jml')
                                                 ->where('id_produk', $barang->id)
+                                                ->where('status', '1')
                                                 ->get('tbl_m_produk_stok')
                                                 ->row();
                                             ?>
@@ -131,7 +132,7 @@
                                                     </td>
                                                 <?php } ?>
                                                 <td>
-                                                    <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakFarmasi() == TRUE || akses::hakGudang() == TRUE) { ?>
+                                                    <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE ||  akses::hakGudang() == TRUE) { ?>
                                                         <?php echo anchor(base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($barang->id)), '<i class="fas fa-box-open"></i> Stok', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
                                                         <?php echo nbs() ?>
                                                     <?php } ?>
