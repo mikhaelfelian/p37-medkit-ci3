@@ -1493,7 +1493,7 @@ class Sdm extends CI_Controller {
             $pdf->Cell(4.5, .5, 'Untuk Keperluan', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->MultiCell(8, .5, $sql_kary->keterangan, '0', 'L', $fill);
-            $pdf->Ln(1);
+            // $pdf->Ln(1);
             
             $pdf->Cell(19, .5, 'Demikian permohonan '.$sql_kary->tipe.' kerja ini saya ajukan.', '0', 0, 'L', $fill);
             $pdf->Ln(2);                        
