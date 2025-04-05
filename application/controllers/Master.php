@@ -1974,33 +1974,36 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('kode', 'Kode', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'kode' => form_error('kode'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_kamar_tambah.php?id='.$id));
+                redirect(base_url('master/data_kamar_list.php'));
             } else {                
-                $data = array(
-                    'tgl_simpan' => date('Y-m-d H:i:s'),
-                    'kode'       => $kode,
-                    'kamar'      => $kamar,
-                    'jml_max'    => $max,
-                    'status'     => '1',
-                );
-                
-                $this->db->insert('tbl_m_kamar',$data);
-                
-                if ($this->db->affected_rows() > 0) {
-                    $this->session->set_flashdata('master_toast', 'toastr.success("Data kamar berhasil disimpan !");');
-                }else{
-                    $this->session->set_flashdata('master_toast', 'toastr.error("Data kamar gagal disimpan !");');
-                }                
+                try {
+                    $data = [
+                        'tgl_simpan' => date('Y-m-d H:i:s'),
+                        'kode'       => $kode,
+                        'kamar'      => $kamar,
+                        'jml_max'    => $max,
+                        'status'     => '1',
+                    ];
+                    
+                    $this->db->insert('tbl_m_kamar', $data);
+                    
+                    if ($this->db->affected_rows() > 0) {
+                        $this->session->set_flashdata('master_toast', 'toastr.success("Data kamar berhasil disimpan !");');
+                    } else {
+                        throw new Exception("Data kamar gagal disimpan!");
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                }
                 
                 redirect(base_url('master/data_kamar_list.php'));
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -3018,11 +3021,11 @@ class Master extends CI_Controller {
                         return;
                     }
                     
-                    $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
-                    $sql_brg = $this->db->get('tbl_m_produk');
-                    $sql_gdg = $this->db->get('tbl_m_gudang')->result();
-                    
-                    $kd_item = sprintf('%02d', $kategori).sprintf('%04d', $sql_brg->num_rows() + 1);
+                $sql_sat = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
+                $sql_brg = $this->db->get('tbl_m_produk');
+                $sql_gdg = $this->db->get('tbl_m_gudang')->result();
+                
+                $kd_item = sprintf('%02d', $kategori).sprintf('%04d', $sql_brg->num_rows() + 1);
 
                     $this->db->trans_begin();
 
@@ -3057,23 +3060,23 @@ class Master extends CI_Controller {
                     $last_id = $this->db->insert_id();
 
                     if($last_id > 0 && $stat_sub == '1'){
-                        foreach ($sql_gdg as $gudang) {
+                            foreach ($sql_gdg as $gudang) {
                             $data_stok = [
-                                'id_produk'     => $last_id,
-                                'id_satuan'     => $sql_sat->id,
-                                'id_gudang'     => $gudang->id,
-                                'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                'jml'           => 0,
-                                'jml_satuan'    => $sql_sat->jml,
-                                'satuan'        => $sql_sat->satuanTerkecil,
-                                'satuanKecil'   => $sql_sat->satuanTerkecil,
-                                'status'        => $gudang->status,
+                                    'id_produk'     => $last_id,
+                                    'id_satuan'     => $sql_sat->id,
+                                    'id_gudang'     => $gudang->id,
+                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                    'jml'           => 0,
+                                    'jml_satuan'    => $sql_sat->jml,
+                                    'satuan'        => $sql_sat->satuanTerkecil,
+                                    'satuanKecil'   => $sql_sat->satuanTerkecil,
+                                    'status'        => $gudang->status,
                             ];
-                            
-                            $this->db->insert('tbl_m_produk_stok', $data_stok);
-                        }                          
-                    }
-                    
+                                
+                                $this->db->insert('tbl_m_produk_stok', $data_stok);
+                            }                          
+                        }
+                        
                     if ($this->db->trans_status() === FALSE) {
                         $this->db->trans_rollback();
                         throw new Exception("Gagal menyimpan data item");
@@ -3085,8 +3088,8 @@ class Master extends CI_Controller {
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
                     $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
-                    redirect(base_url('master/data_barang_tambah.php'));
-                }     
+                        redirect(base_url('master/data_barang_tambah.php'));
+                    }     
             }
         } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -3101,7 +3104,7 @@ class Master extends CI_Controller {
             $kode    = $this->input->post('kode');
             $jml     = $this->input->post('jml');
             $sat     = $this->input->post('satuan');
-            
+
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('item_id', 'ID Barang', 'required');
@@ -3989,9 +3992,7 @@ class Master extends CI_Controller {
             $no_hp        = $this->input->post('no_hp');
             $alamat       = $this->input->post('alamat');
             $tipe_member  = $this->input->post('tipe_member');
-            $disk1        = $this->input->post('disk1');
-            $disk2        = $this->input->post('disk2');
-            $disk3        = $this->input->post('disk3');
+            $lokasi       = $this->input->post('lokasi');
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
@@ -4000,112 +4001,55 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('nik', 'NIK', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'nik'     => form_error('nik'),
-                );
+                $msg_error = [
+                    'nik' => form_error('nik'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_customer_tambah.php'));
             } else {
-                $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
-                $kode    = sprintf('%05d', $sql_num);
-                $sql_kat = $this->db->get('tbl_m_kategori');
-                
-                $data_penj = array(
-                    'tgl_simpan'  => date('Y-m-d H:i:s'),
-                    'kode'        => $kode,
-                    'nik'         => $nik,
-                    'nama'        => $nama,
-                    'tgl_lahir'   => $tgl_lhr,
-                    'jns_klm'     => $jns_klm,
-                    'no_hp'       => $no_hp,
-                    'lokasi'      => $lokasi,
-                    'alamat'      => $alamat
-                );
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data member berhasil diubah</div>');
-                crud::simpan('tbl_m_pelanggan', $data_penj);
-                
-                $sql_max = $this->db->select_max('id')->get('tbl_m_pelanggan')->row();
-                $sql_ckk = $this->db->where('id_pelanggan', general::dekrip($id))->get('tbl_m_pelanggan_diskon');
-                
-                foreach ($sql_kat->result() as $kat){                    
-                    $data_disk = array(
-                        'tgl_simpan'   => date('Y-m-d H:i:s'),
-                        'id_pelanggan' => $sql_max->id,
-                        'id_kategori'  => $kat->id,
-                        'disk1'        => str_replace(',','.', $_POST['disk1'][$kat->id]),
-                        'disk2'        => str_replace(',','.', $_POST['disk2'][$kat->id]),
-                        'disk3'        => str_replace(',','.', $_POST['disk3'][$kat->id]),
-                    );
+                try {
+                    $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
+                    $kode    = sprintf('%05d', $sql_num);
+                    $sql_kat = $this->db->get('tbl_m_kategori');
                     
-                    echo '<pre>';
-                    print_r($data_disk);
+                    $data_penj = [
+                        'tgl_simpan'  => date('Y-m-d H:i:s'),
+                        'kode'        => $kode,
+                        'nik'         => $nik,
+                        'nama'        => $nama,
+                        'nama_toko'   => $nama_toko,
+                        'no_hp'       => $no_hp,
+                        'lokasi'      => $lokasi,
+                        'alamat'      => $alamat
+                    ];
                     
-//                    if($_POST['disk1'][$kat->id] != '0' AND $_POST['disk2'][$kat->id] != '0' AND $_POST['disk3'][$kat->id] != '0'){
-                        crud::simpan('tbl_m_pelanggan_diskon',$data_disk);
-                        crud::update('tbl_m_pelanggan','id', $sql_max->id, array('id_kategori' => $kat->id));
-//                    }
+                    $this->db->insert('tbl_m_pelanggan', $data_penj);
+                    
+                    $sql_max = $this->db->select_max('id')->get('tbl_m_pelanggan')->row();
+                    
+                    foreach ($sql_kat->result() as $kat) {                    
+                        $data_disk = [
+                            'tgl_simpan'   => date('Y-m-d H:i:s'),
+                            'id_pelanggan' => $sql_max->id,
+                            'id_kategori'  => $kat->id,
+                            'disk1'        => str_replace(',','.', $_POST['disk1'][$kat->id]),
+                            'disk2'        => str_replace(',','.', $_POST['disk2'][$kat->id]),
+                            'disk3'        => str_replace(',','.', $_POST['disk3'][$kat->id]),
+                        ];
+                        
+                        $this->db->insert('tbl_m_pelanggan_diskon', $data_disk);
+                        $this->db->where('id', $sql_max->id)->update('tbl_m_pelanggan', ['id_kategori' => $kat->id]);
+                    }
+                    
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data customer berhasil disimpan");');
+                    redirect(base_url('master/data_customer_list.php'));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_customer_tambah.php'));
                 }
-                
-                
-                
-                redirect(base_url('master/data_customer_list.php'));
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_customer_simpan2() {
-        if (Akses::aksesLogin() == TRUE) {
-            $nik          = $this->input->post('nik');
-            $nama         = $this->input->post('nama');
-            $nama_toko    = $this->input->post('nama_toko');
-            $lokasi       = $this->input->post('lokasi');
-            $no_hp        = $this->input->post('no_hp');
-            $alamat       = $this->input->post('alamat');
-            $tipe_member  = $this->input->post('tipe_member');
-            $disk1        = $this->input->post('disk1');
-            $disk2        = $this->input->post('disk2');
-            $disk3        = $this->input->post('disk3');
-            
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
-//            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-//
-//            $this->form_validation->set_rules('nik', 'NIK', 'required');
-//
-//            if ($this->form_validation->run() == FALSE) {
-//                $msg_error = array(
-//                    'nik'     => form_error('nik'),
-//                );
-//
-//                $this->session->set_flashdata('form_error', $msg_error);
-//                redirect(base_url('master/data_customer_tambah.php'));
-//            } else {
-                $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
-                $kode    = sprintf('%05d', $sql_num);
-                
-                $data_penj = array(
-                    'tgl_modif'   => date('Y-m-d H:i:s'),
-                    'kode'        => $kode,
-                    'nik'         => $nik,
-                    'nama'        => $nama,
-                    'nama_toko'   => $nama_toko,
-                    'no_hp'       => $no_hp,
-                    'lokasi'      => $lokasi,
-                    'alamat'      => $alamat
-                );
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data member berhasil diubah</div>');
-                crud::simpan('tbl_m_pelanggan', $data_penj);
-
-//            }
-        } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -4123,9 +4067,6 @@ class Master extends CI_Controller {
             $tgl_lhr      = $this->input->post('tgl_lahir');
             $jns_klm      = $this->input->post('jns_klm');
             $tipe_member  = $this->input->post('tipe_member');
-            $disk1        = $this->input->post('disk1');
-            $disk2        = $this->input->post('disk2');
-            $disk3        = $this->input->post('disk3');
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
@@ -4134,54 +4075,44 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('nik', 'NIK', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'nik'     => form_error('nik'),
-                );
+                $msg_error = [
+                    'nik' => form_error('nik'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_customer_tambah.php?id='.$id));
             } else {
-                $sql_kat = $this->db->get('tbl_m_kategori');
-                $sql_ckk = $this->db->where('id_pelanggan', general::dekrip($id))->get('tbl_m_pelanggan_diskon');
-                $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
-                $kode    = sprintf('%05d', $sql_num);
-                
-                $data_penj = array(
-                    'tgl_modif'   => date('Y-m-d H:i:s'),
-                    'kode'        => $kode,
-                    'nik'         => $nik,
-                    'nama'        => $nama,
-                    'tgl_lahir'   => $this->tanggalan->tgl_indo_sys($tgl_lhr),
-                    'jns_klm'     => $jns_klm,
-                    'no_hp'       => $no_hp,
-                    'lokasi'      => $lokasi,
-                    'alamat'      => $alamat
-                );
-                
-//                if($sql_ckk->num_rows() > 0){
-//                    crud::delete('tbl_m_pelanggan_diskon','id_pelanggan',general::dekrip($id));
-//                }
-//                
-//                foreach ($sql_kat->result() as $kat){                    
-//                    $data_disk = array(
-//                        'tgl_simpan'   => date('Y-m-d H:i:s'),
-//                        'id_pelanggan' => general::dekrip($id),
-//                        'id_kategori'  => $kat->id,
-//                        'disk1'        => str_replace(',','.', $_POST['disk1'][$kat->id]),
-//                        'disk2'        => str_replace(',','.', $_POST['disk2'][$kat->id]),
-//                        'disk3'        => str_replace(',','.', $_POST['disk3'][$kat->id]),
-//                    );
-//                    
-//                    crud::simpan('tbl_m_pelanggan_diskon',$data_disk);
-//                    crud::update('tbl_m_pelanggan','id', general::dekrip($id), array('id_kategori' => $kat->id));
-//                }
-                
-                $this->session->set_flashdata('member', '<div class="alert alert-success">Data pelanggan berhasil diubah</div>');
-                crud::update('tbl_m_pelanggan','id', general::dekrip($id),$data_penj);                
-                redirect(base_url('master/data_customer_tambah.php?id='.$id));
+                try {
+                    $sql_num = $this->db->get('tbl_m_pelanggan')->num_rows() + 1;
+                    $kode    = sprintf('%05d', $sql_num);
+                    
+                    $data_penj = [
+                        'tgl_modif'   => date('Y-m-d H:i:s'),
+                        'kode'        => $kode,
+                        'nik'         => $nik,
+                        'nama'        => $nama,
+                        'tgl_lahir'   => $this->tanggalan->tgl_indo_sys($tgl_lhr),
+                        'jns_klm'     => $jns_klm,
+                        'no_hp'       => $no_hp,
+                        'lokasi'      => $lokasi,
+                        'alamat'      => $alamat
+                    ];
+                    
+                    $this->db->where('id', general::dekrip($id))->update('tbl_m_pelanggan', $data_penj);
+                    
+                    if ($this->db->affected_rows() > 0) {
+                        $this->session->set_flashdata('master_toast', 'toastr.success("Data pelanggan berhasil diubah");');
+                    } else {
+                        throw new Exception("Perubahan data pelanggan gagal disimpan");
+                    }
+                    
+                    redirect(base_url('master/data_customer_tambah.php?id='.$id));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_customer_tambah.php?id='.$id));
+                }
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -4202,90 +4133,7 @@ class Master extends CI_Controller {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }
-        
-    public function data_customer_import() {
-        if (Akses::aksesLogin() == TRUE) {
-            $id   = $this->input->get('id');
-            
-            $data['barang'] = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk')->row();
-            $data['satuan'] = $this->db->get('tbl_m_satuan')->result();
-
-            $this->load->view('admin-lte-2/1_atas', $data);
-            $this->load->view('admin-lte-2/2_header', $data);
-//            $this->load->view('admin-lte-2/3_navbar', $data);
-            $this->load->view('admin-lte-2/includes/master/data_customer_import', $data);
-            $this->load->view('admin-lte-2/5_footer', $data);
-            $this->load->view('admin-lte-2/6_bawah', $data);
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }
-    
-    public function data_customer_upload() {
-        if (Akses::aksesLogin() == TRUE) {
-            $this->load->helper('file');
-            
-            if (!empty($_FILES['fupload']['name'])) {
-                $folder = realpath('file/import');
-                $config['upload_path']      = './file/import';
-                $config['allowed_types']    = 'xls|xlsx';
-                $config['remove_spaces']    = TRUE;
-                $config['overwrite']        = TRUE;
-                $this->load->library('upload', $config);
-                                
-                if (!$this->upload->do_upload('fupload')) {
-                    $this->session->set_flashdata('pengaturan', 'Error : <b>' . $this->upload->display_errors() . '</b>.');
-                    redirect(base_url('master/data_customer_import.php?err='.$this->upload->display_errors()));
-                }else{
-                    $f           = $this->upload->data();
-                    $path        = realpath('./file/import') . '/';                    
-                    $objPHPExcel = PHPExcel_IOFactory::load($path.$f['orig_name']);
-                    
-                    foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-                        $worksheetTitle     = $worksheet->getTitle();
-                        $highestRow         = $worksheet->getHighestRow();
-                        $highestColumn      = $worksheet->getHighestColumn();
-                        $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-                        
-                        for ($row = 3; $row <= $highestRow; ++ $row) {
-                            $val=array();
-                            
-                            for ($col = 0; $col < $highestColumnIndex; ++$col) {
-                                $cell = $worksheet->getCellByColumnAndRow($col, $row);
-                                $val[] = $cell->getValue();
-                            }
-							
-                            if (!empty($val[1])) {
-                                $produk = array(
-                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                    'kode'          => $val[1],
-                                    'nik'           => $val[2],
-                                    'nama'          => $val[3],
-                                    'nama_toko'     => $val[4],
-                                    'no_hp'         => $val[5],
-                                    'lokasi'        => $val[6],
-                                    'alamat'        => $val[7],
-                                    'status_plgn'   => 1,
-                                );
-
-                                crud::simpan('tbl_m_pelanggan', $produk);
-                            }
-                        }
-                    }
-                    
-                    unlink($path.$f['orig_name']);
-                    redirect(base_url('master/data_customer_list.php'));
-                }
-            }  
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
-        }
-    }    
+    }   
     
     public function data_karyawan_list() {
         if (Akses::aksesLogin() == TRUE) {
@@ -4602,6 +4450,7 @@ class Master extends CI_Controller {
             $pass1        = $this->input->post('pass1');
             $pass2        = $this->input->post('pass2');
             $grup         = $this->input->post('grup');
+            $email        = $this->input->post('email');
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
 
@@ -4616,7 +4465,7 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('alamat_dom', 'Alamat Dom', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'nik'           => form_error('nik'),
                     'nama'          => form_error('nama'),
                     'jns_klm'       => form_error('jns_klm'),
@@ -4624,7 +4473,7 @@ class Master extends CI_Controller {
                     'tgl_lahir'     => form_error('tgl_lahir'),
                     'alamat'        => form_error('alamat'),
                     'alamat_dom'    => form_error('alamat_dom'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_karyawan_tambah.php'));
@@ -4632,31 +4481,28 @@ class Master extends CI_Controller {
                 $sql_num    = $this->db->get('tbl_m_karyawan')->num_rows() + 1;
                 $kode_no    = sprintf('%05d', $sql_num);
                 
-                $get_grup   = $this->ion_auth->get_users_groups(general::dekrip($id_user))->row();
-                $sql_grup   = $this->ion_auth->group($get_grup->id)->row();
-                
-                $cek        = $this->db->select('username')->where('username', $user)->get('tbl_ion_users')->num_rows();
+                $cek = $this->db->select('username')->where('username', $user)->get('tbl_ion_users')->num_rows();
                 
                 if($cek > 0){
                     $this->session->set_flashdata('member', '<div class="alert alert-danger">Username sudah ada</div>');
                     redirect(base_url('master/data_karyawan_tambah.php'));
                 }else{               
                     if(!empty($user) AND !empty($pass1)) {
-                        $data_user = array(
+                        $data_user = [
                             'id_app'        => $pengaturan->id_app,
                             'first_name'    => (!empty($nama_dpn) ? $nama_dpn.' ' : '').strtoupper($nama).(!empty($nama_blk) ? ', '.$nama_blk : ''),
                             'username'      => $user,
                             'password'      => $pass2,
                             'address'       => $alamat,
                             'birthdate'     => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                        );
+                        ];
                         
-                        $this->ion_auth->register($user, $pass2, $email, $data_user, array($grup));
+                        $this->ion_auth->register($user, $pass2, $email, $data_user, [$grup]);
                         $sql_user  = $this->db->where('username', $user)->get('tbl_ion_users')->row();
                     }
                 }
                     
-                $data_kary = array(
+                $data_kary = [
                     'id_user'           => (!empty($sql_user->id) ? $sql_user->id : '0'),
                     'id_user_group'     => (!empty($grup) ? $grup : '0'),
                     'tgl_simpan'        => date('Y-m-d H:i:s'),
@@ -4672,21 +4518,13 @@ class Master extends CI_Controller {
                     'jns_klm'           => $jns_klm,
                     'tgl_lahir'         => $this->tanggalan->tgl_indo_sys($tgl_lahir),
                     'tmp_lahir'         => $tmp_lahir,
-                );
+                ];
                 
                 $this->db->insert('tbl_m_karyawan', $data_kary);
-                $last_id = crud::last_id();
+                $last_id = $this->db->insert_id();
                 
-                $this->session->set_flashdata('master_toast', 'toastr.success("Data karyawan berhasil dibuat !");');
+                $this->session->set_flashdata('master_toast', 'success|Data karyawan berhasil dibuat !');
                 redirect(base_url('master/data_karyawan_tambah.php?id='.general::enkrip($last_id)));
-                                    
-//                echo general::dekrip($id);
-//                echo '<pre>';
-//                print_r($data_kary);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_user);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -4708,7 +4546,6 @@ class Master extends CI_Controller {
             $nm_pasangan    = $this->input->post('nm_pasangan');
             $nm_anak        = $this->input->post('nm_anak');
             $tgl_lhr_psg    = $this->input->post('tgl_lhr_psg');
-            $status_kawin   = $this->input->post('status_kawin');
             $rute           = $this->input->post('route');
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
@@ -4720,84 +4557,82 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('nm_ibu', 'Divisi', 'required');
             
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'        => form_error('id'),
                     'nm_ayah'   => form_error('nm_ayah'),
                     'nm_ibu'    => form_error('nm_ibu'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_kel.php?id='.$id)));
             } else {
-               $sql_kary    = $this->db->where('id', general::dekrip($id))->get('tbl_m_karyawan')->row();
-               $sql_kel     = $this->db->where('id', general::dekrip($id_kel))->get('tbl_m_karyawan_kel');
-               $path        = 'file/karyawan/'.$sql_kary->id.'/';
-               $tgl_awal    = $this->tanggalan->tgl_indo_sys($tgl_msk);
-               $tgl_akhir   = $this->tanggalan->tgl_indo_sys($tgl_klr);
-               
-               if($sql_kel->num_rows() > 0){
-                   $id_kel = $sql_kel->row()->id;
-                   $this->db->where('id', $id_kel)->delete('tbl_m_karyawan_kel');
+               try {
+                   $sql_kary    = $this->db->where('id', general::dekrip($id))->get('tbl_m_karyawan')->row();
+                   $sql_kel     = $this->db->where('id', general::dekrip($id_kel))->get('tbl_m_karyawan_kel');
+                   $path        = 'file/karyawan/'.$sql_kary->id.'/';
+                   
+                   if($sql_kel->num_rows() > 0){
+                       $id_kel = $sql_kel->row()->id;
+                       $this->db->where('id', $id_kel)->delete('tbl_m_karyawan_kel');
+                   }
+                   
+                   # Buat Folder Untuk File KK
+                   $file_name = '';
+                   $file_type = '';
+                   $file_ext = '';
+                   
+                   if (!empty($_FILES['fupload']['name'])) {              
+                        # Buat Folder Untuk File Karyawan
+                        if (!file_exists($path)) {
+                            mkdir($path, 0777, true);
+                        }
+                        
+                        $config['upload_path']      = realpath($path);
+                        $config['allowed_types']    = 'jpg|png|pdf|jpeg';
+                        $config['remove_spaces']    = TRUE;
+                        $config['overwrite']        = TRUE;
+                        $config['file_name']        = 'file_kk_'.$sql_kary->id.sprintf('%05d', rand(1,256));
+                        $this->load->library('upload', $config);
+                        
+                        if (!$this->upload->do_upload('fupload')) {
+                            $this->session->set_flashdata('master_toast', 'error|Error : '.$this->upload->display_errors());
+                        } else {
+                            $f          = $this->upload->data();
+                            $file_name  = $f['orig_name'];
+                            $file_type  = $f['file_type'];
+                            $file_ext   = $f['file_ext'];
+                        }
+                    }
+                    
+                   $data = [
+                       'id_karyawan'    => $sql_kary->id,
+                       'id_user'        => $this->ion_auth->user()->row()->id,
+                       'tgl_simpan'     => date('Y-m-d H:i:s'),
+                       'tgl_lhr_ayah'   => (!empty($tgl_lhr_ayah) ? $this->tanggalan->tgl_indo_sys($tgl_lhr_ayah) : '0000-00-00'),
+                       'tgl_lhr_ibu'    => (!empty($tgl_lhr_ibu) ? $this->tanggalan->tgl_indo_sys($tgl_lhr_ibu) : '0000-00-00'),
+                       'tgl_lhr_psg'    => (!empty($tgl_lhr_psg) ? $this->tanggalan->tgl_indo_sys($tgl_lhr_psg) : '0000-00-00'),
+                       'nm_ayah'        => (!empty($nm_ayah) ? $nm_ayah : '-'),
+                       'nm_ibu'         => (!empty($nm_ibu) ? $nm_ibu : '-'),
+                       'nm_pasangan'    => (!empty($nm_pasangan) ? $nm_pasangan : '-'),
+                       'nm_anak'        => (!empty($nm_anak) ? $nm_anak : '-'),
+                       'status_kawin'   => (!empty($status_kawin) ? $status_kawin : '0'),
+                       'jns_pasangan'   => (!empty($jns_pasangan) ? $jns_pasangan : '0'),
+                       'file_name'      => $file_name,
+                       'file_type'      => $file_type,
+                       'file_ext'       => $file_ext
+                   ];
+                   
+                   $this->db->insert('tbl_m_karyawan_kel', $data);
+                   $last_id = $this->db->insert_id();
+                   
+                   $this->session->set_flashdata('master_toast', 'success|Data Keluarga berhasil disimpan !');
+                   redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id)));
+               } catch (Exception $e) {
+                   $this->session->set_flashdata('master_toast', 'error|'.$e->getMessage());
+                   redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_kel.php?id='.$id)));
                }
-               
-               # Buat Folder Untuk File KK
-               if (!empty($_FILES['fupload']['name'])) {              
-                    # Buat Folder Untuk File Karyawan
-                    if (!file_exists($path)) {
-                        mkdir($path, 0777, true);
-                    }
-                    
-                    $config['upload_path']      = realpath($path);
-                    $config['allowed_types']    = 'jpg|png|pdf|jpeg';
-                    $config['remove_spaces']    = TRUE;
-                    $config['overwrite']        = TRUE;
-                    $config['file_name']        = 'file_kk_'.$sql_kary->id.sprintf('%05d', rand(1,256));
-                    $this->load->library('upload', $config);
-                    
-                    if (!$this->upload->do_upload('fupload')) {
-                        $this->session->set_flashdata('master_toast', 'toastr.error("Error : <b>'.$this->upload->display_errors().'</b>");');
-//                        redirect((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id));
-                    } else {
-                        $f          = $this->upload->data();
-                        $file_name  = $f['orig_name'];
-                        $file_type  = $f['file_type'];
-                        $file_ext   = $f['file_ext'];
-                    }
-                }
-                
-               $data = array(
-                   'id_karyawan'    => $sql_kary->id,
-                   'id_user'        => $this->ion_auth->user()->row()->id,
-                   'tgl_simpan'     => date('Y-m-d H:i:s'),
-                   'tgl_lhr_ayah'   => (!empty($tgl_lhr_ayah) ? $this->tanggalan->tgl_indo_sys($tgl_lhr_ayah) : '0000-00-00'),
-                   'tgl_lhr_ibu'    => (!empty($tgl_lhr_ibu) ? $this->tanggalan->tgl_indo_sys($tgl_lhr_ibu) : '0000-00-00'),
-                   'tgl_lhr_psg'    => (!empty($tgl_lhr_psg) ? $this->tanggalan->tgl_indo_sys($tgl_lhr_psg) : '0000-00-00'),
-                   'nm_ayah'        => (!empty($nm_ayah) ? $nm_ayah : '-'),
-                   'nm_ibu'         => (!empty($nm_ibu) ? $nm_ibu : '-'),
-                   'nm_pasangan'    => (!empty($nm_pasangan) ? $nm_pasangan : '-'),
-                   'nm_anak'        => (!empty($nm_anak) ? $nm_anak : '-'),
-                   'status_kawin'   => (!empty($status_kawin) ? $status_kawin : '0'),
-                   'jns_pasangan'   => (!empty($jns_pasangan) ? $jns_pasangan : '0'),
-                   'file_name'      => (!empty($file_name) ? $file_name : ''),
-                   'file_type'      => (!empty($file_type) ? $file_type : ''),
-                   'file_ext'       => (!empty($file_ext) ? $file_ext : '')
-               );
-               
-               $this->db->insert('tbl_m_karyawan_kel', $data);
-               $last_id = crud::last_id();
-               
-               $this->session->set_flashdata('master_toast', 'toastr.success("Data Keluarga berhasil disimpan !");');
-               redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id)));
-              
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($f);
-//                echo '</pre>';
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -4816,7 +4651,6 @@ class Master extends CI_Controller {
             $nm_pasangan    = $this->input->post('nm_pasangan');
             $nm_anak        = $this->input->post('nm_anak');
             $tgl_lhr_psg    = $this->input->post('tgl_lhr_psg');
-            $status_kawin   = $this->input->post('status_kawin');
             $rute           = $this->input->post('route');
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
@@ -4826,9 +4660,9 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('id', 'NIK', 'required');
             
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_kel.php?id='.$id)));
@@ -4836,9 +4670,7 @@ class Master extends CI_Controller {
                $sql_kary    = $this->db->where('id', general::dekrip($id))->get('tbl_m_karyawan')->row();
                $sql_kel     = $this->db->where('id', general::dekrip($id_kel))->get('tbl_m_karyawan_kel');
                $path        = 'file/karyawan/'.$sql_kary->id.'/';
-               $tgl_awal    = $this->tanggalan->tgl_indo_sys($tgl_msk);
-               $tgl_akhir   = $this->tanggalan->tgl_indo_sys($tgl_klr);
-                
+               
                # Buat Folder Untuk File KTP
                if (!empty($_FILES['fupload']['name'])) {                   
                     # Buat Folder Untuk File Karyawan
@@ -4846,46 +4678,43 @@ class Master extends CI_Controller {
                         mkdir($path, 0777, true);
                     }
                     
-                    $config_ktp['upload_path']      = realpath($path);
-                    $config_ktp['allowed_types']    = 'jpg|png|pdf|jpeg';
-                    $config_ktp['remove_spaces']    = TRUE;
-                    $config_ktp['overwrite']        = TRUE;
-                    $config_ktp['file_name']        = 'file_ktp_'.$sql_kary->id.sprintf('%05d', rand(1,256));
+                    $config_ktp = [
+                        'upload_path'      => realpath($path),
+                        'allowed_types'    => 'jpg|png|pdf|jpeg',
+                        'remove_spaces'    => TRUE,
+                        'overwrite'        => TRUE,
+                        'file_name'        => 'file_ktp_'.$sql_kary->id.sprintf('%05d', rand(1,256))
+                    ];
+                    
                     $this->load->library('upload', $config_ktp);
                     
                     if (!$this->upload->do_upload('fupload')) {
-                        $this->session->set_flashdata('master_toast', 'toastr.error("Error : <b>'.$this->upload->display_errors().'</b>");');
-//                        redirect((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id));
+                        $this->session->set_flashdata('master_toast', gd_toast('error', 'Error : '.$this->upload->display_errors()));
+                        redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_kel.php?id='.$id)));
                     } else {
                         $f_ktp          = $this->upload->data();
                         $file_name_ktp  = $f_ktp['orig_name'];
                         $file_type      = $f_ktp['file_type'];
                         $file_ext       = $f_ktp['file_ext'];
+                        
+                        $data = [
+                            'file_name_ktp'  => $file_name_ktp,
+                            'file_ext_ktp'   => $file_ext,
+                            'file_type_ktp'  => $file_type,
+                        ];
+                        
+                        $this->db->where('id', general::dekrip($id_kel))->update('tbl_m_karyawan_kel', $data);
+                        
+                        $this->session->set_flashdata('master_toast', gd_toast('success', 'Data Keluarga berhasil disimpan !'));
+                        redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id)));
                     }
+                } else {
+                    $this->session->set_flashdata('master_toast', gd_toast('error', 'Tidak ada file yang diupload'));
+                    redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_kel.php?id='.$id)));
                 }
-                
-               $data = array(
-                   'file_name_ktp'  => $file_name_ktp,
-                   'file_ext_ktp'   => $file_ext,
-                   'file_type_ktp'  => $file_type,
-               );
-               
-               $this->db->where('id', general::dekrip($id_kel))->update('tbl_m_karyawan_kel', $data);
-               $last_id = crud::last_id();
-               
-               $this->session->set_flashdata('master_toast', 'toastr.success("Data Keluarga berhasil disimpan !");');
-               redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id)));
-              
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($f);
-//                echo '</pre>';
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', gd_toast('error', 'Authentifikasi gagal, silahkan login ulang!!'));
             redirect();
         }
     }
@@ -5130,14 +4959,14 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('tgl_masuk', 'Tgl Join', 'required');
             
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'        => form_error('id'),
                     'kode'      => form_error('kode'),
                     'divisi'    => form_error('divisi'),
                     'jabatan'   => form_error('jabatan'),
                     'tipe'      => form_error('tipe'),
                     'tgl_masuk' => form_error('tgl_masuk'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_peg.php?id='.$id)));
@@ -5146,7 +4975,7 @@ class Master extends CI_Controller {
                $tgl_awal    = $this->tanggalan->tgl_indo_sys($tgl_msk);
                $tgl_akhir   = $this->tanggalan->tgl_indo_sys($tgl_klr);
                
-               $data = array(
+               $data = [
                    'id_karyawan'    => $sql_kary->id,
                    'id_dept'        => $div,
                    'id_jabatan'     => $jab,
@@ -5159,23 +4988,15 @@ class Master extends CI_Controller {
                    'no_bpjs_tk'     => $no_tk,
                    'no_ptkp'        => $no_ptkp,
                    'tipe'           => $tipe,
-               );
+               ];
                 
                $this->db->insert('tbl_m_karyawan_peg', $data);
                
-               $this->session->set_flashdata('master_toast', 'toastr.success("Berkas berhasil disimpan !");');
+               $this->session->set_flashdata('master_toast', gd_toast('success', 'Berkas berhasil disimpan !'));
                redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_peg.php?id='.$id)));
-              
-                echo '<pre>';
-                print_r($data);
-                echo '</pre>';
-                echo '<pre>';
-                print_r($f);
-                echo '</pre>';
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', gd_toast('error', 'Authentifikasi gagal, silahkan login ulang!!'));
             redirect();
         }
     }
@@ -5233,13 +5054,6 @@ class Master extends CI_Controller {
                
                $this->session->set_flashdata('master_toast', 'toastr.success("Berkas berhasil disimpan !");');
                redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_peg.php?id='.$id)));
-              
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($f);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -5332,6 +5146,7 @@ class Master extends CI_Controller {
             $pass2        = $this->input->post('pass2');
             $grup         = $this->input->post('grup');
             $rute         = $this->input->post('route');
+            $email        = $this->input->post('email');
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
 
@@ -5346,7 +5161,7 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('alamat_dom', 'Alamat Dom', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'nik'           => form_error('nik'),
                     'nama'          => form_error('nama'),
                     'jns_klm'       => form_error('jns_klm'),
@@ -5354,7 +5169,7 @@ class Master extends CI_Controller {
                     'tgl_lahir'     => form_error('tgl_lahir'),
                     'alamat'        => form_error('alamat'),
                     'alamat_dom'    => form_error('alamat_dom'),
-                );
+                ];
                 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(!empty($rute) ? base_url($rute) : base_url('master/data_karyawan_tambah.php?id='.$id));
@@ -5364,36 +5179,36 @@ class Master extends CI_Controller {
                 $sql_user_ck = $this->db->where('id', general::dekrip($id_user))->get('tbl_ion_users');
                                 
                 if(!empty($pass1)) {
-                    $data_user = array(
+                    $data_user = [
                         'id_app'        => $pengaturan->id_app,
                         'first_name'    => (!empty($nama_dpn) ? $nama_dpn.' ' : '').strtoupper($nama).(!empty($nama_blk) ? ', '.$nama_blk : ''),
                         'username'      => $user,
                         'password'      => $pass2,
                         'address'       => $alamat,
                         'birthdate'     => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                    );
+                    ];
                 } else {
-                    $data_user = array(
+                    $data_user = [
                         'id_app'        => $pengaturan->id_app,
                         'first_name'    => (!empty($nama_dpn) ? $nama_dpn.' ' : '').strtoupper($nama).(!empty($nama_blk) ? ', '.$nama_blk : ''),
                         'username'      => $user,
                         'address'       => $alamat,
                         'birthdate'     => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
-                    );
+                    ];
                 }
                 
                 if($sql_user_ck->num_rows() > 0){                
-                    $this->ion_auth->remove_from_group(array($sql_grup->id), general::dekrip($id_user));
+                    $this->ion_auth->remove_from_group([$sql_grup->id], general::dekrip($id_user));
                     $this->ion_auth->update(general::dekrip($id_user), $data_user);
                     $this->ion_auth->add_to_group($grup, general::dekrip($id_user));
-                    $userid     = general::dekrip($id_user);
-                }else{
-                    $this->ion_auth->register($user, $pass2, $email, $data_user, array($grup));
-                    $sql_user   = $this->db->where('username', $user)->get('tbl_ion_users')->row();
-                    $userid     = $sql_user->id;
+                    $userid = general::dekrip($id_user);
+                } else {
+                    $this->ion_auth->register($user, $pass2, $email, $data_user, [$grup]);
+                    $sql_user = $this->db->where('username', $user)->get('tbl_ion_users')->row();
+                    $userid = $sql_user->id;
                 }
                 
-                $data_penj = array(
+                $data_penj = [
                     'tgl_modif'         => date('Y-m-d H:i:s'),
                     'id_user'           => $userid,
                     'id_user_group'     => $grup,
@@ -5411,20 +5226,12 @@ class Master extends CI_Controller {
                     'jns_klm'           => $jns_klm,
                     'tgl_lahir'         => (!empty($tgl_lahir) ? $this->tanggalan->tgl_indo_sys($tgl_lahir) : '0000-00-00'),
                     'tmp_lahir'         => $tmp_lahir
-                );
+                ];
                 
                 $this->db->where('id', general::dekrip($id))->update('tbl_m_karyawan', $data_penj);
                 
                 $this->session->set_flashdata('master_toast', 'toastr.success("Perubahan berhasil disimpan !");');
                 redirect((!empty($rute) ? base_url($rute) : base_url('master/data_karyawan_tambah.php?id='.$id)));
-
-//                echo general::dekrip($id_user);
-//                echo '<pre>';
-//                print_r($data_penj);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_user);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -5446,7 +5253,6 @@ class Master extends CI_Controller {
             $nm_pasangan    = $this->input->post('nm_pasangan');
             $nm_anak        = $this->input->post('nm_anak');
             $tgl_lhr_psg    = $this->input->post('tgl_lhr_psg');
-            $status_kawin   = $this->input->post('status_kawin');
             $rute           = $this->input->post('route');
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
@@ -5458,11 +5264,11 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('nm_ibu', 'Divisi', 'required');
             
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'        => form_error('id'),
                     'nm_ayah'   => form_error('nm_ayah'),
                     'nm_ibu'    => form_error('nm_ibu'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'master/data_karyawan_kel.php?id='.$id)));
@@ -5470,8 +5276,10 @@ class Master extends CI_Controller {
                $sql_kary    = $this->db->where('id', general::dekrip($id))->get('tbl_m_karyawan')->row();
                $sql_kel     = $this->db->where('id', general::dekrip($id_kel))->get('tbl_m_karyawan_kel');
                $path        = 'file/karyawan/'.$sql_kary->id.'/';
-               $tgl_awal    = $this->tanggalan->tgl_indo_sys($tgl_msk);
-               $tgl_akhir   = $this->tanggalan->tgl_indo_sys($tgl_klr);
+               
+               $file_name = '';
+               $file_type = '';
+               $file_ext = '';
                               
                # Buat Folder Untuk File KK
                if (!empty($_FILES['fupload']['name'])) {              
@@ -5489,7 +5297,6 @@ class Master extends CI_Controller {
                     
                     if (!$this->upload->do_upload('fupload')) {
                         $this->session->set_flashdata('master_toast', 'toastr.error("Error : <b>'.$this->upload->display_errors().'</b>");');
-//                        redirect((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id));
                     } else {
                         $f          = $this->upload->data();
                         $file_name  = $f['orig_name'];
@@ -5498,7 +5305,7 @@ class Master extends CI_Controller {
                     }
                 }
                 
-                $data = array(
+                $data = [
                     'id_karyawan'   => $sql_kary->id,
                     'id_user'       => $this->ion_auth->user()->row()->id,
                     'tgl_simpan'    => date('Y-m-d H:i:s'),
@@ -5514,20 +5321,13 @@ class Master extends CI_Controller {
                     'file_name'     => $file_name,
                     'file_type'     => $file_type,
                     'file_ext'      => $file_ext,
-                );
+                ];
                
                $this->db->insert('tbl_m_karyawan_kel', $data);
-               $last_id = crud::last_id();
+               $last_id = $this->db->insert_id();
                
                $this->session->set_flashdata('master_toast', 'toastr.success("Data Keluarga berhasil disimpan !");');
                redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'master/data_karyawan_kel.php?id='.$id)));
-              
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($f);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -5962,16 +5762,12 @@ class Master extends CI_Controller {
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-//            $this->form_validation->set_rules('id', 'Nama', 'required');
             $this->form_validation->set_rules('nama', 'Nama', 'required');
-//            $this->form_validation->set_rules('jns_klm', 'Jenis Klm', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-//                    'id'            => form_error('id'),
-                    'nama'          => form_error('nama'),
-                );
+                $msg_error = [
+                    'nama' => form_error('nama'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_karyawan_tambah.php'));
@@ -5979,10 +5775,7 @@ class Master extends CI_Controller {
                 $sql_num    = $this->db->get('tbl_m_karyawan')->num_rows() + 1;
                 $kode_no    = sprintf('%05d', $sql_num);
 
-                $get_grup   = $this->ion_auth->get_users_groups(general::dekrip($id_user))->row();
-                $sql_grup   = $this->ion_auth->group($get_grup->id)->row();
-
-                $data_kary = array(
+                $data_kary = [
                     'tgl_modif'         => date('Y-m-d H:i:s'),
                     'nama'              => $nama,
                     'nama_dpn'          => $nama_dpn,
@@ -5991,7 +5784,7 @@ class Master extends CI_Controller {
                     'no_hp'             => $no_hp,
                     'jns_klm'           => $jns_klm,
                     'status_aps'        => '1'
-                );
+                ];
 
                 $this->db->where('id', general::dekrip($id))->update('tbl_m_karyawan', $data_kary);
                 $last_id = general::dekrip($id);
@@ -6895,28 +6688,32 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('platform', 'Platform', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'platform'     => form_error('platform'),
-                );
+                $msg_error = [
+                    'platform' => form_error('platform'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_platform_tambah.php?id='.$id));
+                redirect(base_url('master/data_platform_tambah.php'));
             } else {                
-                $data_penj = array(
-                    'kode'       => $kode,
-                    'akun'       => $akun,
-                    'platform'   => $platform,
-                    'persen'     => $persen,
-                    'keterangan' => $keterangan
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data platform disimpan</div>');
-                crud::simpan('tbl_m_platform',$data_penj);
-                redirect(base_url('master/data_platform_list.php'));
+                try {
+                    $data_penj = [
+                        'kode'       => $kode,
+                        'akun'       => $akun,
+                        'platform'   => $platform,
+                        'persen'     => $persen,
+                        'keterangan' => $keterangan
+                    ];
+                    
+                    $this->db->insert('tbl_m_platform', $data_penj);
+                    $this->session->set_flashdata('master_toast', gd_toast('success', 'Data platform berhasil disimpan'));
+                    redirect(base_url('master/data_platform_list.php'));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', gd_toast('error', $e->getMessage()));
+                    redirect(base_url('master/data_platform_tambah.php'));
+                }
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', gd_toast('error', 'Authentifikasi gagal, silahkan login ulang!!'));
             redirect();
         }
     }
@@ -7093,27 +6890,31 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('platform', 'Platform', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'platform'     => form_error('platform'),
-                );
+                $msg_error = [
+                    'platform' => form_error('platform'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                redirect(base_url('master/data_platform_pjm_tambah.php?id='.$id));
+                redirect(base_url('master/data_platform_pjm_tambah.php'));
             } else {                
-                $data_penj = array(
-                    'tgl_simpan' => date('Y-m-d H:i:s'),
-                    'kode'       => $kode,
-                    'penjamin'   => $platform,
-                    'persen'     => $persen,
-                    'status'     => $status,
-                );
-                
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data platform disimpan</div>');
-                crud::simpan('tbl_m_penjamin',$data_penj);
-                redirect(base_url('master/data_platform_pjm_list.php'));
+                try {
+                    $data_penj = [
+                        'tgl_simpan' => date('Y-m-d H:i:s'),
+                        'kode'       => $kode,
+                        'penjamin'   => $platform,
+                        'persen'     => $persen,
+                        'status'     => $status,
+                    ];
+                    
+                    $this->db->insert('tbl_m_penjamin', $data_penj);
+                    $this->session->set_flashdata('master_toast', 'toastr.success("Data platform berhasil disimpan");');
+                    redirect(base_url('master/data_platform_pjm_list.php'));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('master/data_platform_pjm_tambah.php'));
+                }
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -7600,46 +7401,49 @@ class Master extends CI_Controller {
             $kd = $this->input->get('kode');
             $hl = $this->input->get('halaman');
             
-            if(!empty($id)){
-                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-                $sql_user       = $this->db->where('username', $kd)->get('tbl_ion_users');
-                $sql_pasien     = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
-                $sql_user       = $this->db->select('username')->where('username', $no_rm)->get('tbl_ion_users');
-                $sql_user_rw    = $sql_user->row();
-                $no_rm          = strtolower($pengaturan->kode_pasien).$sql_pasien->kode;
-                $email          = $no_rm.'@'.$pengaturan->website; # Format Email
-                $user           = $no_rm; # Format username pasien menggunakan no rm
-                $pass2          = ($sql_pasien->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
-                
-                if($sql_user->num_rows() == 0){
-                    $data_user = array(
-                        'email'         => $email,
-                        'first_name'    => $sql_pasien->nama,
-                        'nama'          => $sql_pasien->nama_pgl,
-                        'address'       => $sql_pasien->alamat,
-                        'phone'         => $sql_pasien->kontak,
-                        'birthdate'     => $sql_pasien->tgl_lahir,
-                        'file_name'     => $sql_pasien->file_name,
-                        'username'      => $no_rm,
-                        'tipe'          => '2',
-                    );
+            try {
+                if(!empty($id)){
+                    $pengaturan     = $this->db->get('tbl_pengaturan')->row();
+                    $sql_pasien     = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
+                    $no_rm          = strtolower($pengaturan->kode_pasien).$sql_pasien->kode;
+                    $email          = $no_rm.'@'.$pengaturan->website; # Format Email
+                    $user           = $no_rm; # Format username pasien menggunakan no rm
+                    $pass2          = ($sql_pasien->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
                     
-                    # Simpan ke modul user
-                    $this->ion_auth->register($user, $pass2, $email, $data_user, array('15'));
+                    $sql_user       = $this->db->select('username')->where('username', $no_rm)->get('tbl_ion_users');
                     
-                    $sql_user_ck = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
-                    $id_user = $sql_user_ck->id;
-                    
-                    $this->db->where('id', $id_user)->update('tbl_m_pasien', array('id_user'=>$id_user));
-                    
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Pasien ini sudah bisa log in ke aplikasi");');
+                    if($sql_user->num_rows() == 0){
+                        $data_user = [
+                            'email'         => $email,
+                            'first_name'    => $sql_pasien->nama,
+                            'nama'          => $sql_pasien->nama_pgl,
+                            'address'       => $sql_pasien->alamat,
+                            'phone'         => $sql_pasien->kontak,
+                            'birthdate'     => $sql_pasien->tgl_lahir,
+                            'file_name'     => $sql_pasien->file_name,
+                            'username'      => $no_rm,
+                            'tipe'          => '2',
+                        ];
+                        
+                        # Simpan ke modul user
+                        $this->ion_auth->register($user, $pass2, $email, $data_user, ['15']);
+                        
+                        $sql_user_ck = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
+                        $id_user = $sql_user_ck->id;
+                        
+                        $this->db->where('id', $sql_pasien->id)->update('tbl_m_pasien', ['id_user' => $id_user]);
+                        
+                        $this->session->set_flashdata('master_toast', gd_toast('success', 'Pasien ini sudah bisa log in ke aplikasi'));
+                    }
                 }
+                
+                redirect(base_url('master/data_pasien_det.php?id='.general::enkrip($sql_pasien->id)));
+            } catch (Exception $e) {
+                $this->session->set_flashdata('master_toast', gd_toast('error', $e->getMessage()));
+                redirect(base_url('master/data_pasien_det.php?id='.$id));
             }
-            
-            redirect(base_url('master/data_pasien_det.php?id='.general::enkrip($sql_pasien->id)));
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', gd_toast('error', 'Authentifikasi gagal, silahkan login ulang!!'));
             redirect();
         }
     }
@@ -7803,10 +7607,9 @@ class Master extends CI_Controller {
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es1.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/kartu_periksa.png';
             $gambar3            = !empty($sql_pasien->file_name) ? realpath($sql_pasien->file_name) : '';
-            $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
             
             $this->load->library('MedLblPDF');
-            $pdf = new MedLblPDF('L', 'cm', array(7,12));
+            $pdf = new MedLblPDF('L', 'cm', [7, 12]);
             $pdf->SetAutoPageBreak('auto', 0);
             $pdf->header = 0;
             $pdf->addPage('','',false);
@@ -7825,11 +7628,11 @@ class Master extends CI_Controller {
             $pdf->SetTextColor(37, 122, 53); //257a35
             $pdf->SetFont('Arial', 'B', '10');
             $pdf->Ln(2.70);
-            $pdf->Cell(5, .35, $sql_pasien->nama_pgl, '', 0, 'L', $fill);
+            $pdf->Cell(5, .35, $sql_pasien->nama_pgl, '', 0, 'L', false);
             $pdf->Ln(1.05);
-            $pdf->Cell(5, .35, $sql_pasien->kode_dpn.$sql_pasien->kode, '', 0, 'L', $fill);
+            $pdf->Cell(5, .35, $sql_pasien->kode_dpn.$sql_pasien->kode, '', 0, 'L', false);
             $pdf->Ln(1.05);
-            $pdf->Cell(5, .35, $this->tanggalan->tgl_indo($sql_pasien->tgl_lahir), '', 0, 'L', $fill);
+            $pdf->Cell(5, .35, $this->tanggalan->tgl_indo($sql_pasien->tgl_lahir), '', 0, 'L', false);
             $pdf->Ln();
 
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
@@ -7838,8 +7641,7 @@ class Master extends CI_Controller {
             $pdf->Output($sql_pasien->nama_pgl.'_kartu'. '.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('master_toast', gd_toast('error', 'Authentifikasi gagal, silahkan login ulang!!'));
             redirect();
         }
     }
