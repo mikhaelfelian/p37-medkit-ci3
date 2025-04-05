@@ -928,10 +928,10 @@ class Sdm extends CI_Controller {
             $this->form_validation->set_rules('ket', 'Keterangan', 'required');
             
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id_karyawan'   => form_error('id_karyawan'),
                     'ket'           => form_error('ket'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url((!empty($rute) ? $rute.'&id='.$id : 'sdm/data_karyawan_cuti.php?id='.$id)));
@@ -940,11 +940,10 @@ class Sdm extends CI_Controller {
                $sql_kary    = $this->db->where('id', general::dekrip($id))->get('tbl_m_karyawan')->row();
                $sql_cek     = $this->db->where('YEAR(tgl_simpan)', date('Y'))->where('MONTH(tgl_simpan)', date('m'))->get('tbl_sdm_surat_krj');
                $tgl_awal    = $this->tanggalan->tgl_indo_sys($tgl_msk);
-               $tgl_akhir   = $this->tanggalan->tgl_indo_sys($tgl_klr);
                $urut        = $sql_cek->num_rows() + 1;
                $nomor       = sprintf('%02d', $urut).'/'.$pengaturan->kode_surat_krj.'/'.general::format_romawi(date('m')).'/'.date('Y');                
                
-               $data = array(
+               $data = [
                    'id_karyawan'    => $sql_kary->id,
                    'id_user'        => $this->ion_auth->user()->row()->id,
                    'kode'           => $nomor,
@@ -952,7 +951,7 @@ class Sdm extends CI_Controller {
                    'tgl_masuk'      => (!empty($tgl_awal) ? $tgl_awal : '0000-00-00'),
                    'keterangan'     => $ket,
                    'status'         => '0',
-               );
+               ];
                 
                $this->db->insert('tbl_sdm_surat_krj', $data);
                
@@ -960,7 +959,6 @@ class Sdm extends CI_Controller {
                redirect(base_url((!empty($rute) ? $rute.'&id='.general::enkrip($sql_kary->id) : 'sdm/data_surat_krj_tambah.php')));
             }
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -1376,29 +1374,56 @@ class Sdm extends CI_Controller {
 
     public function pdf_cuti() {
         if (akses::aksesLogin() == TRUE) {
-            $setting            = $this->db->get('tbl_pengaturan')->row();
-            $id                 = $this->input->get('id');
-            $id_kary            = $this->input->get('id_karyawan');
-                        
-            $sql_kary           = $this->db
-                                       ->select('tbl_sdm_cuti.id, tbl_sdm_cuti.id_user, tbl_sdm_cuti.id_manajemen, tbl_sdm_cuti.tgl_simpan, tbl_sdm_cuti.tgl_masuk, tbl_sdm_cuti.tgl_keluar, tbl_sdm_cuti.keterangan, tbl_sdm_cuti.catatan, tbl_sdm_cuti.status, tbl_sdm_cuti.ttd, tbl_m_karyawan.nama, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_kategori_cuti.tipe, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
-                                       ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_sdm_cuti.id_karyawan')
-                                       ->join('tbl_m_karyawan_peg', 'tbl_m_karyawan_peg.id_karyawan=tbl_m_karyawan.id', 'left')
-                                       ->join('tbl_m_jabatan', 'tbl_m_jabatan.id=tbl_m_karyawan_peg.id_jabatan', 'left')
-                                       ->join('tbl_m_departemen', 'tbl_m_departemen.id=tbl_m_karyawan_peg.id_dept', 'left')
-                                       ->join('tbl_m_kategori_cuti', 'tbl_m_kategori_cuti.id=tbl_sdm_cuti.id_kategori', 'left')
-                                       ->where('tbl_sdm_cuti.id', general::dekrip($id))
-                                       ->get('tbl_sdm_cuti')->row();
+            $setting = $this->db->get('tbl_pengaturan')->row();
+            $id = $this->input->get('id');
+            
+            $sql_kary = $this->db
+                ->select([
+                    'tbl_sdm_cuti.id', 
+                    'tbl_sdm_cuti.id_user', 
+                    'tbl_sdm_cuti.id_manajemen', 
+                    'tbl_sdm_cuti.tgl_simpan', 
+                    'tbl_sdm_cuti.tgl_masuk', 
+                    'tbl_sdm_cuti.tgl_keluar', 
+                    'tbl_sdm_cuti.keterangan', 
+                    'tbl_sdm_cuti.catatan', 
+                    'tbl_sdm_cuti.status', 
+                    'tbl_sdm_cuti.ttd', 
+                    'tbl_m_karyawan.nama',
+                    'tbl_m_karyawan.kode',
+                    'tbl_m_karyawan.tgl_lahir', 
+                    'tbl_m_karyawan.alamat', 
+                    'tbl_m_karyawan.jns_klm', 
+                    'tbl_m_kategori_cuti.tipe', 
+                    'tbl_m_jabatan.jabatan', 
+                    'tbl_m_departemen.dept as divisi'
+                ])
+                ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_sdm_cuti.id_karyawan')
+                ->join('tbl_m_karyawan_peg', 'tbl_m_karyawan_peg.id_karyawan=tbl_m_karyawan.id', 'left')
+                ->join('tbl_m_jabatan', 'tbl_m_jabatan.id=tbl_m_karyawan_peg.id_jabatan', 'left')
+                ->join('tbl_m_departemen', 'tbl_m_departemen.id=tbl_m_karyawan_peg.id_dept', 'left')
+                ->join('tbl_m_kategori_cuti', 'tbl_m_kategori_cuti.id=tbl_sdm_cuti.id_kategori', 'left')
+                ->where('tbl_sdm_cuti.id', general::dekrip($id))
+                ->get('tbl_sdm_cuti')->row();
 
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
-            $gambar4            = FCPATH.$sql_kary->ttd;
+            if (!$sql_kary) {
+                $this->session->set_flashdata('sdm_toast', 'toastr.error("Data cuti tidak ditemukan!");');
+                redirect('sdm/data_cuti');
+                return;
+            }
 
-            $judul  = "FORM PENGAJUAN ".strtoupper($sql_kary->tipe)." KARYAWAN";
+            $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+            $gambar4 = FCPATH.$sql_kary->ttd;
+
+            $judul = "FORM PENGAJUAN ".strtoupper($sql_kary->tipe)." KARYAWAN";
+            
+            // Initialize fill variable
+            $fill = false;
                         
             $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->addPage();
             $pdf->AddFont('Cambria','','Cambria.php');
@@ -1407,7 +1432,7 @@ class Sdm extends CI_Controller {
             $pdf->AddFont('Cambria','i','Cambriaz.php');
             
             // Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2, 5, 4, 17, 19);
 
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(1.5, .5, 'Kepada Yth,', '0', 0, 'L', $fill);
@@ -1438,7 +1463,7 @@ class Sdm extends CI_Controller {
             $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'Nama', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, (!empty($sql_kary->nama_dpn) ? $sql_kary->nama_dpn.' ' : '').$sql_kary->nama.(!empty($sql_kary->nama_blk) ? ', '.$sql_kary->nama_blk.' ' : ''), '0', 0, 'L', $fill);
+            $pdf->Cell(8, .5, $sql_kary->nama, '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'Jabatan', '0', 0, 'L', $fill);
@@ -1498,23 +1523,24 @@ class Sdm extends CI_Controller {
             }
             
             $qr_validasi = $folder_path.'/qr-validasi-'.$kode_karyawan.'.png';
-            $params['data']     = 'Saya yang bertandatangan dibawah ini:';
-            $params['data']    .= strtoupper($sql_kary->nama);
-            $params['level']    = 'H';
-            $params['size']     = 2;
-            $params['savename'] = $qr_validasi; 
+            $params = [
+                'data' => 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama),
+                'level' => 'H',
+                'size' => 2,
+                'savename' => $qr_validasi
+            ];
             $this->ciqrcode->generate($params);
             
-            $gambar5            = $qr_validasi; 
+            $gambar5 = $qr_validasi; 
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             
             if(!empty($sql_kary->ttd)){
-                $pdf->Image($gambar4,2,$getY,2,2);
+                $pdf->Image($gambar4, 2, $getY, 2, 2);
             }
             
-            $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -1524,13 +1550,13 @@ class Sdm extends CI_Controller {
             $pdf->Cell(4, .5, ($sql_kary->status != '0' ? ($sql_kary->status == '1' ? 'Menyetujui, ' : 'Menolak, ') : ''), '0', 0, 'C', $fill);
             $pdf->Cell(7.5, .5, '', '0', 0, 'C', $fill);
             $pdf->SetFont('Cambria', '', '12');
-            $pdf->Cell(7.5, .5, (!empty($ket) ? $ket : 'Hormat Saya'), '0', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, 'Hormat Saya', '0', 0, 'L', $fill);
             $pdf->Ln(2.5);
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(4, .5, $this->ion_auth->user($sql_kary->id_manajemen)->row()->first_name, '', 0, 'C', $fill);
             $pdf->Cell(7.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(8, .5, (!empty($sql_kary->nama_dpn) ? $sql_kary->nama_dpn.' ' : '').$sql_kary->nama.(!empty($sql_kary->nama_blk) ? ', '.$sql_kary->nama_blk.' ' : ''), '0', 0, 'L', $fill);
+            $pdf->Cell(8, .5, $sql_kary->nama, '0', 0, 'L', $fill);
             $pdf->Ln();
                     
             $pdf->SetFillColor(235, 232, 228);
@@ -1540,11 +1566,10 @@ class Sdm extends CI_Controller {
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();
-            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
+            $pdf->Output($sql_kary->nama . '.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('sdm_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
@@ -1552,29 +1577,32 @@ class Sdm extends CI_Controller {
 
     public function pdf_cuti_bls() {
         if (akses::aksesLogin() == TRUE) {
-            $setting            = $this->db->get('tbl_pengaturan')->row();
-            $id                 = $this->input->get('id');
-            $id_kary            = $this->input->get('id_karyawan');
-                        
-            $sql_kary           = $this->db
-                                       ->select('tbl_sdm_cuti.id, tbl_sdm_cuti.id_user, tbl_sdm_cuti.tgl_simpan, tbl_sdm_cuti.tgl_masuk, tbl_sdm_cuti.tgl_keluar, tbl_sdm_cuti.no_surat, tbl_sdm_cuti.keterangan, tbl_sdm_cuti.catatan, tbl_sdm_cuti.status, tbl_m_karyawan.nama, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_kategori_cuti.tipe, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
-                                       ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_sdm_cuti.id_karyawan')
-                                       ->join('tbl_m_karyawan_peg', 'tbl_m_karyawan_peg.id_karyawan=tbl_m_karyawan.id', 'left')
-                                       ->join('tbl_m_jabatan', 'tbl_m_jabatan.id=tbl_m_karyawan_peg.id_jabatan', 'left')
-                                       ->join('tbl_m_departemen', 'tbl_m_departemen.id=tbl_m_karyawan_peg.id_dept', 'left')
-                                       ->join('tbl_m_kategori_cuti', 'tbl_m_kategori_cuti.id=tbl_sdm_cuti.id_kategori', 'left')
-                                       ->where('tbl_sdm_cuti.id', general::dekrip($id))
-                                       ->get('tbl_sdm_cuti')->row();
-            $sql_pimpinan       = $this->db->where('id', '51')->get('tbl_m_karyawan')->row();
+            $setting = $this->db->get('tbl_pengaturan')->row();
+            $id = $this->input->get('id');
+            $id_kary = $this->input->get('id_karyawan');
+            
+            $sql_kary = $this->db
+                ->select('tbl_sdm_cuti.id, tbl_sdm_cuti.id_user, tbl_sdm_cuti.tgl_simpan, tbl_sdm_cuti.tgl_masuk, tbl_sdm_cuti.tgl_keluar, tbl_sdm_cuti.no_surat, tbl_sdm_cuti.keterangan, tbl_sdm_cuti.catatan, tbl_sdm_cuti.status, tbl_m_karyawan.nama, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_kategori_cuti.tipe, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
+                ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_sdm_cuti.id_karyawan')
+                ->join('tbl_m_karyawan_peg', 'tbl_m_karyawan_peg.id_karyawan=tbl_m_karyawan.id', 'left')
+                ->join('tbl_m_jabatan', 'tbl_m_jabatan.id=tbl_m_karyawan_peg.id_jabatan', 'left')
+                ->join('tbl_m_departemen', 'tbl_m_departemen.id=tbl_m_karyawan_peg.id_dept', 'left')
+                ->join('tbl_m_kategori_cuti', 'tbl_m_kategori_cuti.id=tbl_sdm_cuti.id_kategori', 'left')
+                ->where('tbl_sdm_cuti.id', general::dekrip($id))
+                ->get('tbl_sdm_cuti')->row();
+            $sql_pimpinan = $this->db->where('id', '51')->get('tbl_m_karyawan')->row();
 
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+            $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
-            $judul  = "FORM PENGAJUAN ".strtoupper($sql_kary->tipe)." KARYAWAN";
+            $judul = "FORM PENGAJUAN ".strtoupper($sql_kary->tipe)." KARYAWAN";
+            
+            // Initialize fill variable to fix undefined variable error
+            $fill = false;
                         
             $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->addPage();
             $pdf->AddFont('Cambria','','Cambria.php');
@@ -1583,7 +1611,7 @@ class Sdm extends CI_Controller {
             $pdf->AddFont('Cambria','i','Cambriaz.php');
             
             // Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2, 5, 4, 17, 19);
             
             # Perihal
             $pdf->SetFont('Cambria', '', '12');
@@ -1646,20 +1674,24 @@ class Sdm extends CI_Controller {
             $pdf->Ln(2);                        
 
             // QR GENERATOR VALIDASI
-            $qr_validasi        = FCPATH.'/file/karyawan/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data']     = 'Saya yang bertandatangan dibawah ini:';
-            $params['data']    .= strtoupper($sql_kary->nama);
-            $params['level']    = 'H';
-            $params['size']     = 2;
-            $params['savename'] = $qr_validasi; 
+            $folder_path = FCPATH.'/file/karyawan/'.strtolower($sql_kary->id);
+            if (!file_exists($folder_path)) {
+                mkdir($folder_path, 0777, true);
+            }
+            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->id).'.png';
+            $params = [
+                'data' => 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama),
+                'level' => 'H',
+                'size' => 2,
+                'savename' => $qr_validasi
+            ];
             $this->ciqrcode->generate($params);
             
-            $gambar5            = $qr_validasi; 
+            $gambar5 = $qr_validasi; 
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-//            $pdf->Image($gambar4,2,$getY,2,2);
-            $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -1685,39 +1717,38 @@ class Sdm extends CI_Controller {
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();
-            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
+            $pdf->Output($sql_kary->nama.'.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('sdm_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
 
     public function pdf_surat_krj() {
         if (akses::aksesLogin() == TRUE) {
-            $setting            = $this->db->get('tbl_pengaturan')->row();
-            $id                 = $this->input->get('id');
-            $id_kary            = $this->input->get('id_karyawan');
+            $setting = $this->db->get('tbl_pengaturan')->row();
+            $id = $this->input->get('id');
+            $id_kary = $this->input->get('id_karyawan');
                         
-            $sql_kary           = $this->db
-                                       ->select('tbl_sdm_surat_krj.id, tbl_sdm_surat_krj.id_user, tbl_sdm_surat_krj.tgl_simpan, tbl_sdm_surat_krj.tgl_masuk, tbl_sdm_surat_krj.tgl_keluar, tbl_sdm_surat_krj.kode, tbl_sdm_surat_krj.keterangan, tbl_sdm_surat_krj.catatan, tbl_sdm_surat_krj.status, tbl_m_karyawan.nama, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
-                                       ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_sdm_surat_krj.id_karyawan')
-                                       ->join('tbl_m_karyawan_peg', 'tbl_m_karyawan_peg.id_karyawan=tbl_m_karyawan.id', 'left')
-                                       ->join('tbl_m_jabatan', 'tbl_m_jabatan.id=tbl_m_karyawan_peg.id_jabatan', 'left')
-                                       ->join('tbl_m_departemen', 'tbl_m_departemen.id=tbl_m_karyawan_peg.id_dept', 'left')
-                                       ->where('tbl_sdm_surat_krj.id', general::dekrip($id))
-                                       ->get('tbl_sdm_surat_krj')->row();
-            $sql_pimpinan       = $this->db->where('id', '51')->get('tbl_m_karyawan')->row();
+            $sql_kary = $this->db
+                ->select('tbl_sdm_surat_krj.id, tbl_sdm_surat_krj.id_user, tbl_sdm_surat_krj.tgl_simpan, tbl_sdm_surat_krj.tgl_masuk, tbl_sdm_surat_krj.tgl_keluar, tbl_sdm_surat_krj.kode, tbl_sdm_surat_krj.keterangan, tbl_sdm_surat_krj.catatan, tbl_sdm_surat_krj.status, tbl_m_karyawan.nama, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
+                ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_sdm_surat_krj.id_karyawan')
+                ->join('tbl_m_karyawan_peg', 'tbl_m_karyawan_peg.id_karyawan=tbl_m_karyawan.id', 'left')
+                ->join('tbl_m_jabatan', 'tbl_m_jabatan.id=tbl_m_karyawan_peg.id_jabatan', 'left')
+                ->join('tbl_m_departemen', 'tbl_m_departemen.id=tbl_m_karyawan_peg.id_dept', 'left')
+                ->where('tbl_sdm_surat_krj.id', general::dekrip($id))
+                ->get('tbl_sdm_surat_krj')->row();
+            $sql_pimpinan = $this->db->where('id', '51')->get('tbl_m_karyawan')->row();
 
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+            $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
-            $judul  = "SURAT KETERANGAN KERJA".strtoupper($sql_kary->tipe)."";
+            $judul = "SURAT KETERANGAN KERJA".strtoupper($sql_kary->tipe)."";
                         
             $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->addPage();
             $pdf->AddFont('Cambria','','Cambria.php');
@@ -1726,7 +1757,7 @@ class Sdm extends CI_Controller {
             $pdf->AddFont('Cambria','i','Cambriaz.php');
             
             // Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,17,19);
+            $pdf->Image($gambar2, 5, 4, 17, 19);
 
             $pdf->SetFont('Cambria', 'B', '14');
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
@@ -1736,6 +1767,7 @@ class Sdm extends CI_Controller {
             $pdf->Ln();
             
             # Isi Surat
+            $fill = false;
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(19, .5, 'Saya yang bertanda tangan di bawah ini :', '0', 0, 'L', $fill);
             $pdf->Ln();
@@ -1779,20 +1811,24 @@ class Sdm extends CI_Controller {
             $pdf->Ln(2);                       
 
             // QR GENERATOR VALIDASI
-            $qr_validasi        = FCPATH.'/file/karyawan/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data']     = 'Saya yang bertandatangan dibawah ini:';
-            $params['data']    .= strtoupper($sql_kary->nama);
-            $params['level']    = 'H';
-            $params['size']     = 2;
-            $params['savename'] = $qr_validasi; 
+            $folder_path = FCPATH.'/file/karyawan/'.strtolower($sql_kary->id);
+            if (!file_exists($folder_path)) {
+                mkdir($folder_path, 0777, true);
+            }
+            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->id).'.png';
+            $params = [
+                'data' => 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama),
+                'level' => 'H',
+                'size' => 2,
+                'savename' => $qr_validasi
+            ];
             $this->ciqrcode->generate($params);
             
-            $gambar5            = $qr_validasi; 
+            $gambar5 = $qr_validasi; 
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-//            $pdf->Image($gambar4,2,$getY,2,2);
-            $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(11.5, .5, '', '', 0, 'L', $fill);
@@ -1818,11 +1854,10 @@ class Sdm extends CI_Controller {
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();
-            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
+            $pdf->Output($sql_kary->nama.'.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('sdm_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
@@ -1867,7 +1902,9 @@ class Sdm extends CI_Controller {
             $pdf->AddFont('Cambria','i','Cambriaz.php');
             
             // Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,17,19);
+            if (!empty($gambar2) && file_exists($gambar2)) {
+                $pdf->Image($gambar2,5,4,17,19);
+            }
 
             $pdf->SetFont('Cambria', 'B', '14');
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
@@ -1991,6 +2028,7 @@ class Sdm extends CI_Controller {
             $setting            = $this->db->get('tbl_pengaturan')->row();
             $id                 = $this->input->get('id');
             $id_kary            = $this->input->get('id_karyawan');
+            $fill               = false; // Initialize $fill variable
                         
             $sql_kary           = $this->db
                                        ->select('tbl_m_karyawan_peg.id, tbl_m_karyawan_peg.id_user, tbl_m_karyawan_peg.tgl_simpan, tbl_m_karyawan_peg.tgl_masuk, tbl_m_karyawan_peg.tgl_keluar, tbl_m_karyawan_peg.kode, tbl_m_karyawan.nama, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
@@ -2008,7 +2046,7 @@ class Sdm extends CI_Controller {
             $judul  = "SURAT PENGALAMAN KERJA".strtoupper($sql_kary->tipe)."";
                         
             $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->addPage();
             $pdf->AddFont('Cambria','','Cambria.php');
@@ -2052,7 +2090,6 @@ class Sdm extends CI_Controller {
             $pdf->Cell(4.5, .5, 'Alamat', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->MultiCell(8, .5, $sql_kary->alamat, '0', 'L');
-//            $pdf->Ln();
             $pdf->Cell(1, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'Jabatan', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
@@ -2070,19 +2107,27 @@ class Sdm extends CI_Controller {
             $pdf->Ln(2);                       
 
             // QR GENERATOR VALIDASI
-            $qr_validasi        = FCPATH.'/file/karyawan/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data']     = 'Saya yang bertandatangan dibawah ini:';
-            $params['data']    .= strtoupper($sql_kary->nama);
-            $params['level']    = 'H';
-            $params['size']     = 2;
-            $params['savename'] = $qr_validasi; 
+            $kode_karyawan = strtolower($sql_kary->kode);
+            $folder_path = FCPATH.'/file/karyawan/'.$kode_karyawan;
+            
+            // Check if directory exists, if not create it
+            if (!file_exists($folder_path)) {
+                mkdir($folder_path, 0777, true);
+            }
+            
+            $qr_validasi = $folder_path.'/qr-validasi-'.$kode_karyawan.'.png';
+            $params = [
+                'data' => 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama),
+                'level' => 'H',
+                'size' => 2,
+                'savename' => $qr_validasi
+            ];
             $this->ciqrcode->generate($params);
             
-            $gambar5            = $qr_validasi; 
+            $gambar5 = $qr_validasi; 
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-//            $pdf->Image($gambar4,2,$getY,2,2);
             $pdf->Image($gambar5,12.5,$getY,2,2);
             
             $pdf->SetFont('Cambria', '', '12');
@@ -2112,8 +2157,7 @@ class Sdm extends CI_Controller {
             $pdf->Output('paklaring_'.strtolower($sql_kary->nama).'.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('sdm_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
