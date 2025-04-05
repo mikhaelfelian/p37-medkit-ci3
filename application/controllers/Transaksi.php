@@ -935,7 +935,7 @@ class transaksi extends CI_Controller {
 
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-            $gambar4 = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
+            $gambar4 = FCPATH.'/assets/theme/admin-lte-3/dist/img/es-stempel.png';
             $pdf->Image($gambar4, 1.25, $getY, 6, 3.5);
             
             $pdf->SetFont('Arial', '', '10');
