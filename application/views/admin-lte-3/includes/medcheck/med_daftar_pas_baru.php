@@ -3,7 +3,7 @@
     <section id="pasien_baru1">
         <div class="form-group <?php echo (!empty($hasError['nik']) ? 'text-danger' : '') ?>">
             <label class="control-label">NIK <small><i>(* KTP / Passport / KIA)</i></small></label>
-            <?php echo form_input(array('id' => 'nik', 'name' => 'nik', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->nik) ? $pasien->nik : $this->session->flashdata('nik_baru')), 'placeholder' => 'Nomor Identitas ...', 'value' => uniqid())) ?>
+            <?php echo form_input(array('id' => 'nik', 'name' => 'nik', 'class' => 'form-control rounded-0' . (!empty($hasError['nik']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->nik) ? $pasien->nik : $this->session->flashdata('nik_baru')), 'placeholder' => 'Nomor Identitas ...', 'value' => $this->uuid->v4())) ?>
         </div>
         <div class="row">
             <div class="col-3">
