@@ -934,11 +934,11 @@ class transaksi extends CI_Controller {
             $pdf->Ln(1);
 
             // Gambar VALIDASI
-            // $getY = $pdf->GetY() + 1;
-            // $gambar4 = FCPATH.'/assets/theme/admin-lte-3/dist/img/es-stempel.png';
-            // if (!empty($gambar4) && file_exists($gambar4)) {
-            //     $pdf->Image($gambar4, 1.25, $getY, 6, 3.5);
-            // }
+            $getY = $pdf->GetY() + 1;
+            $gambar4 = FCPATH.'/assets/theme/admin-lte-3/dist/img/es-stempel.png';
+            if (!empty($gambar4) && file_exists($gambar4)) {
+                $pdf->Image($gambar4, 1.25, $getY, 6, 3.5);
+            }
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, 0.5, '', '', 0, 'L', $fill);
@@ -1068,8 +1068,8 @@ class transaksi extends CI_Controller {
 
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-            $gambar4 = base_url('assets/theme/admin-lte-3/dist/img/es-stempel.png');
-            if (file_exists(FCPATH . 'assets/theme/admin-lte-3/dist/img/es-stempel.png')) {
+            $gambar4 = FCPATH . 'assets/theme/admin-lte-3/dist/img/es-stempel.png';
+            if (file_exists($gambar4)) {
                 $pdf->Image($gambar4, 1.25, $getY, 6, 3.5);
             }
             
