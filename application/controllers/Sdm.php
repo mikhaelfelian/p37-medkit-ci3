@@ -1969,23 +1969,27 @@ class Sdm extends CI_Controller {
             $pdf->MultiCell(19, .5, 'Demikian surat tugas ini dibuat. Atas perhatiannya kami ucapkan terimakasih', '0', 'L');
             $pdf->Ln(2);                       
 
-            // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/karyawan/'.strtolower($sql_kary->kode);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->kode).'.png';
+            // // QR GENERATOR VALIDASI
+            // $kode_karyawan  = strtolower($sql_kary->id);
+            // $folder_path    = FCPATH.'/file/pasien/'.$kode_karyawan;
             
-            // Generate QR code using QRlib
-            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
-            $qr_data = 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama);
-            QRcode::png($qr_data, $qr_validasi, QR_ECLEVEL_H, 2);
+            // // Check if directory exists, if not create it
+            // if (!file_exists($folder_path)) {
+            //     mkdir($folder_path, 0777, true);
+            // }
             
-            $gambar5 = $qr_validasi; 
+            // $qr_validasi = $folder_path.'/qr-validasi-'.$kode_karyawan.'.png';
             
-            // Gambar VALIDASI
-            $getY = $pdf->GetY() + 1;
-            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
+            // // Generate QR code using QRlib
+            // require_once APPPATH.'third_party/phpqrcode/qrlib.php';
+            // $qr_content = 'Saya yang bertandatangan dibawah ini:';
+            // \QRcode::png($qr_content, $qr_validasi, QR_ECLEVEL_H, 2, 2);
+            
+            // $gambar5 = $qr_validasi; 
+            
+            // // Gambar VALIDASI
+            // $getY = $pdf->GetY() + 1;
+            // $pdf->Image($gambar5, 12.5, $getY, 2, 2);
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -2001,8 +2005,7 @@ class Sdm extends CI_Controller {
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(4, .5, '', '', 0, 'C', $fill);
             $pdf->Cell(6.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(8, .5, (!empty($sql_pimpinan->nama_dpn) ? $sql_pimpinan->nama_dpn.' ' : '').$sql_pimpinan->nama.(!empty($sql_pimpinan->nama_blk) ? ', '.$sql_pimpinan->nama_blk.' ' : ''), '0', 0, 'L', $fill);
-            $pdf->Ln();
+            $pdf->MultiCell(8, .5, (!empty($sql_pimpinan->nama_dpn) ? $sql_pimpinan->nama_dpn.' ' : '').$sql_pimpinan->nama.(!empty($sql_pimpinan->nama_blk) ? ', '.$sql_pimpinan->nama_blk.' ' : ''), '0', 'L', $fill);
                     
             $pdf->SetFillColor(235, 232, 228);
             $pdf->SetTextColor(0);
