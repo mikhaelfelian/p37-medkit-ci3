@@ -1533,7 +1533,7 @@ class Sdm extends CI_Controller {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             
-            if(!empty($sql_kary->ttd)){
+            if(file_exists($sql_kary->ttd)){
                 $pdf->Image($gambar4, 2, $getY, 2, 2);
             }
             
