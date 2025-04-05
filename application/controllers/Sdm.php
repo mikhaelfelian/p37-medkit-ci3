@@ -1523,13 +1523,10 @@ class Sdm extends CI_Controller {
             }
             
             $qr_validasi = $folder_path.'/qr-validasi-'.$kode_karyawan.'.png';
-            $params = [
-                'data' => 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama),
-                'level' => 'H',
-                'size' => 2,
-                'savename' => $qr_validasi
-            ];
-            $this->ciqrcode->generate($params);
+            
+            // Generate QR code using QRlib
+            $qr_content = 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama);
+            QRcode::png($qr_content, $qr_validasi, 'H', 2, 2);
             
             $gambar5 = $qr_validasi; 
             
