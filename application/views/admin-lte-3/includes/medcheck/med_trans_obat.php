@@ -139,39 +139,51 @@
                 foto: signature
             };
 
-            $.ajax({
-                url: "<?php echo base_url('medcheck/set_medcheck_resep_upd_ttd.php') ?>",
-                type: "POST",
-                data: postData,
-                dataType: 'json',
-                beforeSend: function() {
-                    $('#btn-submit').prop('disabled', true).html(
-                        '<i class="fas fa-spinner fa-spin"></i> Memproses...'
-                    );
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
-                        setTimeout(function() {
-                            window.location.href = '<?php echo base_url('medcheck/tambah.php?id='.$this->input->get('id').'&status='.$this->input->get('status')) ?>';
-                        }, 1500);
-                    } else {
-                        toastr.error(response.message || "Terjadi kesalahan");
+            // Add signature data to the form
+            $('#signature-form input[name="foto"]').val(signature);
+            
+            // Submit the form
+            $('#signature-form').submit();
+            
+            // Disable the button and show loading state
+            $('#btn-submit').prop('disabled', true).html(
+                '<i class="fas fa-spinner fa-spin"></i> Memproses...'
+            );
+            
+            // Handle form submission via AJAX
+            $('#signature-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: "<?php echo base_url('medcheck/set_medcheck_resep_upd_ttd.php') ?>",
+                    type: "POST",
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
+                            setTimeout(function() {
+                                window.location.href = response.redirect || '<?php echo base_url('medcheck/tambah.php?id='.$this->input->get('id').'&status='.$this->input->get('status')) ?>';
+                            }, 1500);
+                        } else {
+                            toastr.error(response.message || "Terjadi kesalahan");
+                            $('#btn-submit').prop('disabled', false).html(
+                                '<i class="fa fa-save"></i> Simpan'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error("Terjadi kesalahan: " + error);
+                        console.error("Error details:", {
+                            status: status,
+                            error: error,
+                            response: xhr.responseText
+                        });
+                        $('#btn-submit').prop('disabled', false).html(
+                            '<i class="fa fa-save"></i> Simpan'
+                        );
                     }
-                },
-                error: function(xhr, status, error) {
-                    toastr.error("Terjadi kesalahan: " + error);
-                    console.error("Error details:", {
-                        status: status,
-                        error: error,
-                        response: xhr.responseText
-                    });
-                },
-                complete: function() {
-                    $('#btn-submit').prop('disabled', false).html(
-                        '<i class="fa fa-save"></i> Simpan'
-                    );
-                }
+                });
             });
         });
 <?php } ?>

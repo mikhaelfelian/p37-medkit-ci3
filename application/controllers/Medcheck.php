@@ -8063,52 +8063,63 @@ public function set_medcheck_lab_adm_save() {
             $foto       = $this->input->post('foto');
             $status     = $this->input->post('status_res');
             
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
+            $this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                );
-
-                $this->session->set_flashdata('id', $msg_error);
-
-                redirect(base_url('medcheck/tambah.php?id='.$id.'status='.$status));
+                $response = [
+                    'success' => false,
+                    'message' => form_error('id')
+                ];
+                echo json_encode($response);
+                return;
             } else {
-                $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row(); 
-                $sql_pas        = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
-                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-                
-                # Config File Foto Pasien
-                $kode               = sprintf('%05d', $sql_pas->kode);
-                $no_rm              = strtolower($sql_pas->kode_dpn.$sql_pas->kode);
-                $path               = 'file/pasien/'.$no_rm.'/';
-                
-                # Simpan foto dari kamera ke dalam format file *.png dari base64
-                if (!empty($foto)) {
-                    $filename           = $path.'ttd_resep_'.$kode.'.png';
-                    general::base64_to_jpeg($foto, $filename);
+                try {
+                    $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row(); 
+                    $sql_pas    = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
+                    
+                    # Config File Foto Pasien
+                    $kode       = sprintf('%05d', $sql_pas->kode);
+                    $no_rm      = strtolower($sql_pas->kode_dpn.$sql_pas->kode);
+                    $path       = 'file/pasien/'.$no_rm.'/';
+                    $filename   = '';
+                    
+                    # Simpan foto dari kamera ke dalam format file *.png dari base64
+                    if (!empty($foto)) {
+                        $filename = $path.'ttd_resep_'.$kode.'.png';
+                        general::base64_to_jpeg($foto, $filename);
+                    }
+                    
+                    $data = [
+                        'tgl_ttd'       => date('Y-m-d H:i:s'),
+                        'tgl_resep_trm' => date('Y-m-d H:i:s'),
+                        'id_farmasi'    => $petugas,
+                        'ttd_obat'      => $filename,
+                        'status_resep'  => $status
+                    ];
+                    
+                    # Simpan data ke dalam database
+                    $this->db->where('id', $sql_medc->id)->update('tbl_trans_medcheck', $data);
+                    
+                    $response = [
+                        'success' => true,
+                        'message' => 'Tanda tangan resep berhasil disimpan'
+                    ];
+                    echo json_encode($response);
+                } catch (Exception $e) {
+                    $response = [
+                        'success' => false,
+                        'message' => 'Terjadi kesalahan: '.$e->getMessage()
+                    ];
+                    echo json_encode($response);
                 }
-                
-                $data = array(
-                    'tgl_ttd'       => date('Y-m-d H:i:s'),
-                    'tgl_resep_trm' => date('Y-m-d H:i:s'),
-                    'id_farmasi'    => $petugas,
-                    'ttd_obat'      => $filename,
-                    'status_resep'  => $status
-                );
-                
-                # Simpan data ke dalam database
-                $this->db->where('id', $sql_medc->id)->update('tbl_trans_medcheck', $data);
-                
-                # Balikin ke halaman semula
-                redirect(base_url('medcheck/resep/konfirm.php?id='.general::enkrip($sql_medc->id))); 
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
+            $response = [
+                'success' => false,
+                'message' => 'Authentifikasi gagal, silahkan login ulang!'
+            ];
+            echo json_encode($response);
         }
     }
 
@@ -16568,7 +16579,7 @@ public function set_medcheck_lab_adm_save() {
             $status_ctk         = $this->input->get('status_ctk');
             
             $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
-            $sql_medc_srt       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck_surat')->row(); 
+            $sql_medc_srt       = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck_surat')->row(); 
             $sql_medc_lab       = $this->db->where('id', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab_spiro')->row(); 
             $sql_medc_lab_det   = $this->db->where('id_lab_spiro', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab_spiro_hsl')->result(); 
             $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
@@ -16762,7 +16773,7 @@ public function set_medcheck_lab_adm_save() {
             ob_end_flush();
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
@@ -16811,7 +16822,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
             $pdf->Ln(0);
             $pdf->SetFont('Arial', 'Bi', '13');
-            $pdf->Cell(19, .5, $judul2, 'B', 1, 'C');
+            $pdf->Cell(19, .5, '', 'B', 1, 'C');
             $pdf->Ln(0);
             
             # Blok ID PASIEN
@@ -16839,7 +16850,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $sql_pasien->no_hp.(!empty($penj->no_telp) ? ' / '.$penj->no_telp : ''), '0', 0, 'L', $fill);
+            $pdf->Cell(4.5, .5, $sql_pasien->no_hp.(!empty($sql_pasien->no_telp) ? ' / '.$sql_pasien->no_telp : ''), '0', 0, 'L', $fill);
             $pdf->Cell(2.5, .5, 'Tgl Lahir', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), '0', 0, 'L', $fill);
@@ -16853,7 +16864,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln(2);
                   
             # Content Here
-            // Add audiometri image if exists
+            // Add EKG image if exists
             if (!empty($file_ekg)) {
                 $pdf->Ln(0.5);
                 $image_path = $file_ekg;
@@ -16985,7 +16996,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(7.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(7.5, .5, $sql_dokter2->nik, '', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, $sql_dokter->nik, '', 0, 'L', $fill);
             $pdf->Ln();
             
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');

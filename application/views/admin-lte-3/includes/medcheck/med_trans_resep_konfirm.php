@@ -149,19 +149,39 @@
             var signature   = signaturePad.toDataURL();
             var petugas     = $('select[name=petugas]').find(":selected").val();
             var status      = $('select[name=status_res]').find(":selected").val();
+            var csrfName    = '<?php echo $this->security->get_csrf_token_name(); ?>';
+            var csrfHash    = '<?php echo $this->security->get_csrf_hash(); ?>';
+
+            // Check if signature pad is empty
+            if (signaturePad.isEmpty()) {
+                toastr.error("Belum di tanda tangani");
+                return false;
+            }
+
+            var data = {
+                id: "<?php echo $this->input->get('id') ?>",
+                status_res: status,
+                petugas: petugas,
+                foto: signature
+            };
+            
+            // Add CSRF token to data
+            data[csrfName] = csrfHash;
 
             $.ajax({
                 url: "<?php echo base_url('medcheck/set_medcheck_resep_upd_ttd.php') ?>",
-                data: {
-                    id: "<?php echo $this->input->get('id') ?>",
-                    status_res: status,
-                    petugas: petugas,
-                    foto: signature
-                },
+                data: data,
                 method: "POST",
-                success: function () {
-                    toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
-                    window.location.href = '<?php echo base_url('medcheck/index.php?tipe=' . $this->input->get('tipe') . '&filter_bayar=' . $this->input->get('filter_bayar')) ?>';
+                dataType: "json",
+                success: function (response) {
+                    if(response.success === true) {
+                        toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
+                    } else {
+                        toastr.error(response.message || "Terjadi kesalahan saat menyimpan data");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error("Terjadi kesalahan: " + error);
                 }
             });
         });

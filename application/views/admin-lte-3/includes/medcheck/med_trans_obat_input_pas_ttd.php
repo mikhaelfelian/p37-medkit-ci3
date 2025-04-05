@@ -16,6 +16,10 @@
     <div class="card-header">
         <h3 class="card-title">KONFIRMASI PENGAMBILAN OBAT - <?php echo $sql_pasien->nama_pgl; ?> <small><i>(<?php echo $this->tanggalan->usia($sql_pasien->tgl_lahir) ?>)</i></small></h3>
     </div>
+    
+    <?php echo form_open('', ['id' => 'signature-form', 'class' => 'form-horizontal']); ?>
+    <?php echo add_form_protection(); ?>
+    
     <div class="card-body">        
         <div id="inputTTD" class="form-group row <?php echo (!empty($hasError['ttd']) ? 'text-danger' : '') ?>">
             <label for="inputJnsKlm" class="col-sm-3 col-form-label">TTD Pasien<br/><small><i>Konfirmasi Pengambilan Obat</i></small></label>
@@ -46,7 +50,6 @@
             </div>
         </div>
     </div>
+    <?php echo form_close(); ?>
 </div>
 <!-- /.card -->
-<?php
-// echo form_close() ?>
