@@ -991,7 +991,9 @@ class transaksi extends CI_Controller {
             $pdf->addPage('','',false);
             
             # Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,15,19);
+            if (isset($gambar2) && !empty($gambar2)) {
+                $pdf->Image($gambar2,5,4,15,19);
+            }
             
             # Line Cell
             $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
