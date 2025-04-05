@@ -1679,13 +1679,10 @@ class Sdm extends CI_Controller {
                 mkdir($folder_path, 0777, true);
             }
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->id).'.png';
-            $params = [
-                'data' => 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama),
-                'level' => 'H',
-                'size' => 2,
-                'savename' => $qr_validasi
-            ];
-            $this->ciqrcode->generate($params);
+            
+            // Generate QR code using QRlib
+            $qr_content = 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama);
+            QRcode::png($qr_content, $qr_validasi, 'H', 2, 2);
             
             $gambar5 = $qr_validasi; 
             
@@ -1816,13 +1813,11 @@ class Sdm extends CI_Controller {
                 mkdir($folder_path, 0777, true);
             }
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->id).'.png';
-            $params = [
-                'data' => 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama),
-                'level' => 'H',
-                'size' => 2,
-                'savename' => $qr_validasi
-            ];
-            $this->ciqrcode->generate($params);
+            
+            // Generate QR code using QRlib
+            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
+            $qr_data = 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama);
+            QRcode::png($qr_data, $qr_validasi, QR_ECLEVEL_H, 2);
             
             $gambar5 = $qr_validasi; 
             
@@ -1867,6 +1862,7 @@ class Sdm extends CI_Controller {
             $setting            = $this->db->get('tbl_pengaturan')->row();
             $id                 = $this->input->get('id');
             $id_kary            = $this->input->get('id_karyawan');
+            $fill               = false; // Initialize $fill variable
                         
             $sql_kary           = $this->db
                                        ->select('tbl_sdm_surat_tgs.id, tbl_sdm_surat_tgs.id_user, tbl_sdm_surat_tgs.tgl_simpan, tbl_sdm_surat_tgs.tgl_masuk, tbl_sdm_surat_tgs.tgl_keluar, tbl_sdm_surat_tgs.kode, tbl_sdm_surat_tgs.judul, tbl_sdm_surat_tgs.keterangan, tbl_sdm_surat_tgs.catatan, tbl_sdm_surat_tgs.status, tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, tbl_m_karyawan.tgl_lahir, tbl_m_karyawan.alamat, tbl_m_karyawan.jns_klm, tbl_m_jabatan.jabatan, tbl_m_departemen.dept as divisi')
@@ -1975,20 +1971,22 @@ class Sdm extends CI_Controller {
             $pdf->Ln(2);                       
 
             // QR GENERATOR VALIDASI
-            $qr_validasi        = FCPATH.'/file/karyawan/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data']     = 'Saya yang bertandatangan dibawah ini:';
-            $params['data']    .= strtoupper($sql_kary->nama);
-            $params['level']    = 'H';
-            $params['size']     = 2;
-            $params['savename'] = $qr_validasi; 
-            $this->ciqrcode->generate($params);
+            $folder_path = FCPATH.'/file/karyawan/'.strtolower($sql_kary->kode);
+            if (!file_exists($folder_path)) {
+                mkdir($folder_path, 0777, true);
+            }
+            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->kode).'.png';
             
-            $gambar5            = $qr_validasi; 
+            // Generate QR code using QRlib
+            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
+            $qr_data = 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama);
+            QRcode::png($qr_data, $qr_validasi, QR_ECLEVEL_H, 2);
+            
+            $gambar5 = $qr_validasi; 
             
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
-//            $pdf->Image($gambar4,2,$getY,2,2);
-            $pdf->Image($gambar5,12.5,$getY,2,2);
+            $pdf->Image($gambar5, 12.5, $getY, 2, 2);
             
             $pdf->SetFont('Cambria', '', '12');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -2014,11 +2012,10 @@ class Sdm extends CI_Controller {
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
             
             ob_start();
-            $pdf->Output('urat_tugas_'.$sql_kary->nama. '.pdf', $type);
+            $pdf->Output('Surat_tugas_'.$sql_kary->nama.'.pdf', $type);
             ob_end_flush();
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('sdm_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
@@ -2116,13 +2113,15 @@ class Sdm extends CI_Controller {
             }
             
             $qr_validasi = $folder_path.'/qr-validasi-'.$kode_karyawan.'.png';
-            $params = [
-                'data' => 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama),
-                'level' => 'H',
-                'size' => 2,
-                'savename' => $qr_validasi
-            ];
-            $this->ciqrcode->generate($params);
+            
+            // Generate QR code using QRlib
+            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
+            
+            // QR code content
+            $qr_content = 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama);
+            
+            // Generate QR code with QRlib
+            QRcode::png($qr_content, $qr_validasi, 'H', 2, 2);
             
             $gambar5 = $qr_validasi; 
             
