@@ -5116,10 +5116,9 @@ class Medcheck extends CI_Controller {
                     }
 
                     if(empty($sql_medc_det->subtotal)){
-                        throw new Exception('Tidak ada item yang di posting !!');
+                        throw new Exception('Tidak ada item yang di posting');
                     }
 
-                
                     # Kueri MySQL tulis disini
                     if($sql_medc->status < 5){
                         # Update data nota dll

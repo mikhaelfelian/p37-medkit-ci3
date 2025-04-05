@@ -70,14 +70,7 @@
                                             .html('<i class="fa-solid fa-arrows-rotate"></i><br/>Posting');
                                     }
                                 },
-                                error: function(xhr, status, error) {
-                                    // Log error details for debugging
-                                    console.error('AJAX Error:', {
-                                        status: status,
-                                        error: error,
-                                        response: xhr.responseText
-                                    });
-                                    
+                                error: function(xhr, status, error) {                                    
                                     // Show error message using existing toastr setup
                                     toastr.error(xhr.responseText);
                                     

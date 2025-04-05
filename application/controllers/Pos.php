@@ -604,20 +604,24 @@ class Pos extends CI_Controller {
                     $this->cache->save($lock_key, true, 300); // Lock for 5 minutes max
                     
                     # Hitung ulang data poin
-                    $poin           = $jml_total / $pengaturan->jml_poin_nom;
-                    $poin_sisa      = $sql_poin->jml_poin - floor($poin);
-                    $poin_sisa_tot  = $poin_sisa * $pengaturan->jml_poin;
+                    if ($sql_poin) {
+                        $poin           = $jml_total / $pengaturan->jml_poin_nom;
+                        $poin_sisa      = $sql_poin->jml_poin - floor($poin);
+                        $poin_sisa_tot  = $poin_sisa * $pengaturan->jml_poin;
 
-                    $data_poin = [
-                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                        'jml_poin'      => floor($poin_sisa),
-                        'jml_poin_nom'  => (float) $poin_sisa_tot,
-                    ];
+                        $data_poin = [
+                            'tgl_modif'     => date('Y-m-d H:i:s'),
+                            'jml_poin'      => floor($poin_sisa),
+                            'jml_poin_nom'  => (float) $poin_sisa_tot,
+                        ];
+                    }
 
                     # Start transaction
                     $this->db->trans_begin();
 
-                    $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
+                    if ($sql_poin) {
+                        $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
+                    }
 
                     $data = [
                         'tgl_modif'         => date('Y-m-d H:i:s'),
