@@ -15,32 +15,26 @@ class Pasien extends CI_Controller {
     }
     
     public function index() {
-//        if (akses::aksesLoginP() == TRUE) {
         $pengaturan = $this->db->get('tbl_pengaturan')->row();
-
-        $data['pengaturan'] = $pengaturan;
-        $data['recaptcha']  = $this->recaptcha->create_box();
+        $data       = [
+            'pengaturan' => $pengaturan,
+            'recaptcha'  => $this->recaptcha->create_box()
+        ];
 
         $this->load->view('admin-lte-2/1_atas', $data);
         $this->load->view('admin-lte-2/2_header', $data);
-//        $this->load->view('admin-lte-2/3_navbar', $data);
         $this->load->view('admin-lte-2/content', $data);
         $this->load->view('admin-lte-2/5_footer', $data);
         $this->load->view('admin-lte-2/6_bawah', $data);
-//        } else {
-//            $errors = $this->ion_auth->messages();
-//            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-//            redirect('pasien');
-//        }
     }
     
     public function dashboard() {
         if (akses::aksesLoginP() == TRUE) {
-            $data['sql_kary_jdwl']  = $this->db->select('tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, tbl_m_poli.lokasi, tbl_m_karyawan_jadwal.hari_1, tbl_m_karyawan_jadwal.hari_2, tbl_m_karyawan_jadwal.hari_3, tbl_m_karyawan_jadwal.hari_4, tbl_m_karyawan_jadwal.hari_5, tbl_m_karyawan_jadwal.hari_6, tbl_m_karyawan_jadwal.hari_7, tbl_m_karyawan_jadwal.waktu')
-                                               ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_m_karyawan_jadwal.id_karyawan')
-                                               ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_m_karyawan_jadwal.id_poli')
-                                               ->get('tbl_m_karyawan_jadwal')->result();
-            $data['pengaturan'] = $this->db->get('tbl_pengaturan')->row();
+            $data['sql_kary_jdwl'] = $this->db->select('tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, tbl_m_poli.lokasi, tbl_m_karyawan_jadwal.hari_1, tbl_m_karyawan_jadwal.hari_2, tbl_m_karyawan_jadwal.hari_3, tbl_m_karyawan_jadwal.hari_4, tbl_m_karyawan_jadwal.hari_5, tbl_m_karyawan_jadwal.hari_6, tbl_m_karyawan_jadwal.hari_7, tbl_m_karyawan_jadwal.waktu')
+                                   ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_m_karyawan_jadwal.id_karyawan')
+                                   ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_m_karyawan_jadwal.id_poli')
+                                   ->get('tbl_m_karyawan_jadwal')->result();
+            $data['pengaturan']    = $this->db->get('tbl_pengaturan')->row();
 
             $this->load->view('admin-lte-2/1_atas', $data);
             $this->load->view('admin-lte-2/2_header', $data);
@@ -49,83 +43,63 @@ class Pasien extends CI_Controller {
             $this->load->view('admin-lte-2/5_footer', $data);
             $this->load->view('admin-lte-2/6_bawah', $data);
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-//            redirect('pasien');
-            echo 'baaa';
+            redirect('pasien');
         }
     }
 
-    
     public function login() {
-        $data['recaptcha'] = $this->recaptcha->create_box();
-        
-        if ($this->ion_auth->logged_in() == TRUE):
+        if ($this->ion_auth->logged_in() == TRUE) {
             redirect(base_url('dashboard2.php'));
-        else:            
-            $data['login'] = 'TRUE';
-
+        } else {            
+            $data = [
+                'login'     => 'TRUE',
+                'recaptcha' => $this->recaptcha->create_box()
+            ];
             $this->load->view('admin-lte-2/includes/user/login', $data);
-        endif;
+        }
     }
     
     public function cek_login() {
-        $user   = $this->input->post('user');
-        $pass   = $this->input->post('pass');
-        $inga   = $this->input->post('ingat');
+        $user = $this->input->post('user');
+        $pass = $this->input->post('pass');
+        $inga = $this->input->post('ingat');
 
-//        $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
         $this->form_validation->set_rules('user', 'Username', 'required');
         $this->form_validation->set_rules('pass', 'Password', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $msg_error = array(
+            $msg_error = [
                 'user' => form_error('user'),
                 'pass' => form_error('pass')
-            );
+            ];
 
             $this->session->set_flashdata('form_error', $msg_error);
             redirect(base_url('pasien'));
         } else {            
-            if($this->input->post('login') === 'login_aksi'){
-                /*
-                  Check if the reCAPTCHA was solved
-                  You can pass arguments to the `is_valid` method,
-                  but it should work fine without any.
-                  Check the "Validating the reCAPTCHA" section for more details
-                 */
-                
+            if($this->input->post('login') === 'login_aksi') {
                 $is_valid = $this->recaptcha->is_valid();
                 
-                if($is_valid['success']){
+                if($is_valid['success']) {
                     $inget_ya = ($inga == 'ya' ? 'TRUE' : 'FALSE');
-                    $login    = $this->ion_auth->login($user,$pass,$inget_ya);
+                    $login    = $this->ion_auth->login($user, $pass, $inget_ya);
                     $user     = $this->ion_auth->user()->row();
                     
-                    # Cek passwot bener atau tidak
-                    if($login == FALSE){
+                    if($login == FALSE) {
                         $this->session->set_flashdata('login', '<p class="login-box-msg text-bold text-danger">Username atau Kata sandi salah !!</p>');
                         redirect(base_url('pasien'));                        
-                    }else{
-                        # cek status user pasien atau manajemen
-                        if($user->tipe == '2'){
+                    } else {
+                        if($user->tipe == '2') {
                             redirect(base_url('pasien/dashboard.php'));
-                        }else{
+                        } else {
                             redirect(base_url('dashboard2.php'));
                         }
                     }
-                }else{
+                } else {
                     $this->session->set_flashdata('login', '<p class="login-box-msg text-bold text-danger">Captcha tidak valid !!</p>');
                     redirect(base_url('pasien'));
                 }
             }
-
-//            if($login == FALSE){
-//                $this->session->set_flashdata('login', '<p class="login-box-msg text-bold text-danger">Username atau Kata sandi salah !!</p>');
-//                redirect('pasien');                
-//            }else{
-//                redirect(base_url('dashboard2.php'));
-//            }
         }
     }
     
