@@ -459,14 +459,21 @@ class Gudang extends CI_Controller {
             $setting  = $this->db->get('tbl_pengaturan')->row();
             $id       = $this->input->get('id');
             $userid   = $this->ion_auth->user()->row()->id;
-
+            $id_produk = $this->input->get('id_produk'); // Added missing variable
             
             
             if(!empty($id)){
                 $data['sql_beli']       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
                 $data['sql_beli_det']   = $this->db->where('id_pembelian', general::dekrip($id))->get('tbl_trans_beli_det')->result();
                 $data['sql_supplier']   = $this->db->where('id', $data['sql_beli']->id_supplier)->get('tbl_m_supplier')->row();
-                $data['sql_item']       = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
+                
+                // Only query product if id_produk is provided
+                if(!empty($id_produk)) {
+                    $data['sql_item'] = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
+                } else {
+                    $data['sql_item'] = null;
+                }
+                
                 $data['sql_satuan']     = $this->db->get('tbl_m_satuan')->result();
                 $data['sql_gudang']     = $this->db->get('tbl_m_gudang')->result();
             }
@@ -474,10 +481,6 @@ class Gudang extends CI_Controller {
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/gudang/sidebar_gudang';
             /* --- Sidebar Menu --- */
-//            
-//            echo '<pre>';
-//            print_r($data['sql_beli']);
-//            echo '</pre>';
 
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
@@ -507,10 +510,10 @@ class Gudang extends CI_Controller {
             $this->form_validation->set_rules('gudang', 'Gudang', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'id'     => form_error('id'),
                     'gd'     => form_error('gudang'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('gudang/trans_po_terima.php?id='.$nota));
@@ -528,21 +531,21 @@ class Gudang extends CI_Controller {
                 $hrg_pcs_akhir  = $hrg_pcs + $hrg_ppn;
                       
                 # Simpan stok barang
-                $data_brg = array(
+                $data_brg = [
                     'tgl_modif'      => date('Y-m-d H:i:s'),
                     'jml'            => $jml_stok,
                     'harga_beli'     => $hrg_pcs_akhir,
                     'harga_beli_ppn' => $hrg_ppn,
-                );
+                ];
                 
                 # Pembelian
-                $data_pemb = array(
+                $data_pemb = [
                     'tgl_terima'   => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm).' '.date('H:i:s') : date('Y-m-d H:i:s')),
                     'jml_diterima' => ($jml_kurang < 0 ? 0 : (int)$jml_terima),
-                );
+                ];
                 
                 # History Pembelian
-                $data_brg_hist = array(
+                $data_brg_hist = [
                     'tgl_simpan'        => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')).' '.date('H:i:s'),
                     'tgl_masuk'         => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')),
                     'tgl_ed'            => $sql_cek->tgl_ed,
@@ -562,11 +565,7 @@ class Gudang extends CI_Controller {
                     'nominal'           => $hrg_pcs_akhir,
                     'keterangan'        => 'Pembelian '.$sql_bli->no_nota,
                     'status'            => '1',
-                );
-                
-                /* Transaksi Database */
-//                $this->db->query('SET autocommit = 0;');
-//                $this->db->trans_start();
+                ];
                 
                 # Jika jumlah kurang > 0, maka update
                 if($jml_kurang >= 0){
@@ -579,7 +578,7 @@ class Gudang extends CI_Controller {
                         $stok2      = $jml_trm + $stoknya2->jml;
                         
                        # Simpan stok ke tabel stok
-                       $data_gudang_stok = array(
+                       $data_gudang_stok = [
                            'tgl_modif' => date('Y-m-d H:i:s'),
                            'id_user'    => $this->ion_auth->user()->row()->id,
                            'id_gudang'  => $gudang,
@@ -588,7 +587,7 @@ class Gudang extends CI_Controller {
                            'jml_satuan' => 1,
                            'satuanKecil'=> (!empty($sql_cek_sat->satuanTerkecil) ? $sql_cek_sat->satuanTerkecil : 'PCS'),
                            'status'     => $sql_gdg->status
-                       );
+                       ];
                        
                        $this->db->where('id', $stoknya2->id)->update('tbl_m_produk_stok', $data_gudang_stok);
                     } else {
@@ -596,7 +595,7 @@ class Gudang extends CI_Controller {
                         $stok       = $jml_trm;
                        
                        # Simpan stok gudang
-                       $data_gudang_stok = array(
+                       $data_gudang_stok = [
                            'tgl_simpan' => date('Y-m-d H:i:s'),
                            'id_user'    => $this->ion_auth->user()->row()->id,
                            'id_gudang'  => $gudang,
@@ -605,7 +604,7 @@ class Gudang extends CI_Controller {
                            'jml_satuan' => 1,
                            'satuanKecil'=> (!empty($sql_cek_sat->satuanTerkecil) ? $sql_cek_sat->satuanTerkecil : 'PCS'),
                            'status'     => $sql_gdg->status
-                       );
+                       ];
                        
                        $this->db->insert('tbl_m_produk_stok', $data_gudang_stok);                        
                     }
@@ -619,31 +618,12 @@ class Gudang extends CI_Controller {
                     # Simpan pemberiatuan bahwa barang sudah diterima
                     $this->db->where('id', $sql_cek->id)->update('tbl_trans_beli_det', $data_pemb);
                     
-                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Data stok disimpan !");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Data stok disimpan !");');
                 } else {
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Data stok tidak sesuai !");');
-//                    $this->session->set_flashdata('gudang', '<div class="alert alert-danger"></div>');
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("Data stok tidak sesuai !");');
                 }
                 
-//                $this->db->trans_complete();
-                
                 redirect(base_url('gudang/trans_beli_terima.php?id='.$nota));
-                
-//                echo '<pre>';
-//                print_r($data_gudang_stok);
-//                echo '</pre>';                
-//                echo '<pre>';
-//                print_r($sql_gdg);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_brg);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_brg_hist);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_pemb);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -1163,6 +1143,9 @@ class Gudang extends CI_Controller {
                 $sql_gudang_ck = $this->db->where('id_produk', $sql_mut_det->id_item)
                                           ->where('id_gudang', $sql_mut_det->id_gd_tujuan)
                                           ->get('tbl_m_produk_stok');
+                if($jml_akhir_stk < 0){
+                    throw new Exception("Stok tidak mencukupi, hanya tersedia ".$sql_gudang_asl->jml." ".$sql_mut_det->satuan);                    
+                }
 
                 # Kurangi stok daripada gudang asal
                 $this->db->where('id', $sql_gudang_asl->id)
@@ -1243,79 +1226,90 @@ class Gudang extends CI_Controller {
             $uid = $this->input->get('uid');
             $rut = $this->input->get('route');
             
-            if(!empty($id)){
-                $sql_prod = $this->db->where('id', general::dekrip($uid))->get('tbl_m_produk')->row();
-                $sql_hist = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk_hist')->row();
-                $sql_stok = $this->db->where('id_gudang', $sql_hist->id_gudang)->where('id_produk', $sql_hist->id_produk)->get('tbl_m_produk_stok')->row();
-                $sql_det  = $this->db->where('id', $sql_hist->id_pembelian_det)->where('id_produk', $sql_hist->id_produk)->get('tbl_trans_beli_det')->row();
-                $sql_mts  = $this->db->select('tbl_trans_mutasi.id, tbl_trans_mutasi.id_gd_asal, tbl_trans_mutasi.id_gd_tujuan')->join('tbl_trans_mutasi', 'tbl_trans_mutasi.id=tbl_trans_mutasi_det.id_mutasi')->where('tbl_trans_mutasi_det.kode', $sql_prod->kode)->get('tbl_trans_mutasi_det')->row();
+            try {
+                if(!empty($id)){
+                    $sql_prod = $this->db->where('id', general::dekrip($uid))->get('tbl_m_produk')->row();
+                    $sql_hist = $this->db->where('id', general::dekrip($id))->get('tbl_m_produk_hist')->row();
+                    $sql_stok = $this->db->where('id_gudang', $sql_hist->id_gudang)->where('id_produk', $sql_hist->id_produk)->get('tbl_m_produk_stok')->row();
+                    $sql_det  = $this->db->where('id', $sql_hist->id_pembelian_det)->where('id_produk', $sql_hist->id_produk)->get('tbl_trans_beli_det')->row();
+                    $sql_mts  = $this->db->select('tbl_trans_mutasi.id, tbl_trans_mutasi.id_gd_asal, tbl_trans_mutasi.id_gd_tujuan')->join('tbl_trans_mutasi', 'tbl_trans_mutasi.id=tbl_trans_mutasi_det.id_mutasi')->where('tbl_trans_mutasi_det.kode', $sql_prod->kode)->get('tbl_trans_mutasi_det')->row();
 
-                switch ($sql_hist->status){
-                    case '1':
-                        $stok = $sql_stok->jml - $sql_hist->jml;
-                        break;
+                    switch ($sql_hist->status){
+                        case '1':
+                            $stok = $sql_stok->jml - $sql_hist->jml;
+                            break;
+                        
+                        case '2':
+                            $stok = $sql_stok->jml - $sql_hist->jml;
+                            break;
+                        
+                        case '3':
+                            $stok = $sql_stok->jml - $sql_hist->jml;
+                            break;
+                        
+                        case '4':
+                            $stok = $sql_stok->jml + $sql_hist->jml;
+                            break;
+                        
+                        case '5':
+                            $stok = $sql_stok->jml + $sql_hist->jml;
+                            break;
+                        
+                        case '6':
+                            $stok = $sql_stok->jml + $sql_hist->jml;
+                            break;
+                        
+                        case '7':
+                            $stok = $sql_stok->jml + $sql_hist->jml;
+                            break;
+                        
+                        case '8':
+                            $stok_asal = $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_mts->id_gd_asal)->get('tbl_m_produk_stok')->row()->jml + $sql_hist->jml;
+    //                        $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_mts->id_gd_asal)->update('tbl_m_produk_stok', array('tgl_modif'=>date('Y-m-d H:i:s'),'jml'=>$stok_asal));
+                            $stok = $sql_stok->jml - $sql_hist->jml;
+                            break;
+                    }
                     
-                    case '2':
-                        $stok = $sql_stok->jml - $sql_hist->jml;
-                        break;
+                    $jml_trm        = $sql_det->jml_diterima - ($sql_hist->jml * $sql_hist->jml_satuan);
+                    $jml_diterima   = ($jml_trm < 0 ? 0 : $jml_trm);
                     
-                    case '3':
-                        $stok = $sql_stok->jml - $sql_hist->jml;
-                        break;
+                    # Start transaction
+                    $this->db->trans_begin();
                     
-                    case '4':
-                        $stok = $sql_stok->jml + $sql_hist->jml;
-                        break;
+                    # Ubah status penerimaan menjadi 0
+                    $this->db->where('id', $sql_hist->id_pembelian)->update('tbl_trans_beli', array('status_penerimaan'=>'0'));
                     
-                    case '5':
-                        $stok = $sql_stok->jml + $sql_hist->jml;
-                        break;
+                    # Ubah jml diterima sesuai data semula
+                    $this->db->where('id', $sql_det->id)->update('tbl_trans_beli_det', array('jml_diterima'=>$jml_diterima)); 
                     
-                    case '6':
-                        $stok = $sql_stok->jml + $sql_hist->jml;
-                        break;
+                    # Ubah jumlah stok nya yang sesuai penerimaan pada gudang
+                    $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_hist->id_gudang)->update('tbl_m_produk_stok', array('jml'=>$stok));
                     
-                    case '7':
-                        $stok = $sql_stok->jml + $sql_hist->jml;
-                        break;
+                    # Hapus riwayat penerimaan barang
+                    $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_hist->id_gudang)->delete('tbl_m_produk_hist');
                     
-                    case '8':
-                        $stok_asal = $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_mts->id_gd_asal)->get('tbl_m_produk_stok')->row()->jml + $sql_hist->jml;
-//                        $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_mts->id_gd_asal)->update('tbl_m_produk_stok', array('tgl_modif'=>date('Y-m-d H:i:s'),'jml'=>$stok_asal));
-                        $stok = $sql_stok->jml - $sql_hist->jml;
-                        break;
+                    # Hitung ulang total stok terkait kemudian update ke tabel utama
+                    $sql_sum = $this->db->select_sum('jml')->where('id_produk', $sql_hist->id_produk)->get('tbl_m_produk_stok')->row();
+                    $stk_sum = $sql_sum->jml;
+                    
+                    $this->db->where('id', $sql_hist->id_produk)->update('tbl_m_produk', array('tgl_modif'=>date('Y-m-d H:i:s'), 'jml'=>$stk_sum));
+                    
+                    # Check if transaction successful
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        throw new Exception("Terjadi kesalahan dalam transaksi database");
+                    } else {
+                        $this->db->trans_commit();
+                        redirect(base_url((!empty($rut) ? $rut.'?id='.general::enkrip($sql_hist->id_pembelian) : 'gudang/trans_beli_terima.php?id='.$uid)));
+                    }
                 }
+            } catch (Exception $e) {
+                # Rollback if error
+                $this->db->trans_rollback();
                 
-                $jml_trm        = $sql_det->jml_diterima - ($sql_hist->jml * $sql_hist->jml_satuan);
-                $jml_diterima   = ($jml_trm < 0 ? 0 : $jml_trm);
-                
-                # Start mysql transact
-                $this->db->query("SET AUTOCOMMIT=0;");
-                $this->db->query("START TRANSACTION;");
-                
-                # Ubah status penerimaan menjadi 0
-                $this->db->where('id', $sql_hist->id_pembelian)->update('tbl_trans_beli', array('status_penerimaan'=>'0'));
-                
-                # Ubah jml diterima sesuai data semula
-                $this->db->where('id', $sql_det->id)->update('tbl_trans_beli_det', array('jml_diterima'=>$jml_diterima)); 
-                
-                # Ubah jumlah stok nya yang sesuai penerimaan pada gudang
-                $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_hist->id_gudang)->update('tbl_m_produk_stok', array('jml'=>$stok));
-                
-                # Hapus riwayat penerimaan barang
-                $this->db->where('id_produk', $sql_hist->id_produk)->where('id_gudang', $sql_hist->id_gudang)->delete('tbl_m_produk_hist');
-                
-                # Hitung ulang total stok terkait kemudian update ke tabel utama
-                $sql_sum = $this->db->select_sum('jml')->where('id_produk', $sql_hist->id_produk)->get('tbl_m_produk_stok')->row();
-                $stk_sum = $sql_sum->jml;
-                
-                $this->db->where('id', $sql_hist->id_produk)->update('tbl_m_produk', array('tgl_modif'=>date('Y-m-d H:i:s'), 'jml'=>$stk_sum));
-                
-                # COMMIT
-                $this->db->query("COMMIT;");
+                $this->session->set_flashdata('gd_toast', 'toastr.error("Error: '.$e->getMessage().'");');
+                redirect(base_url('gudang/trans_beli_terima.php'));
             }
-            
-            redirect(base_url((!empty($rut) ? $rut.'?id='.general::enkrip($sql_hist->id_pembelian) : 'gudang/trans_beli_terima.php?id='.$uid)));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -1702,12 +1696,12 @@ class Gudang extends CI_Controller {
             
             // Jika jumlah kurang lebih dari 0, update
             if($sql_cek->num_rows() > 0){
-                $data = array(
+                $data = [
                     'tgl_keluar'        => date('Y-m-d'),
                     'id_user_terima'    => $this->ion_auth->users()->row()->id,
                     'status_nota'       => '2',
                     'status_terima'     => '1'
-                );
+                ];
                 
                 # Set penerimaan pada tabel mutasi nota
                 $this->db->where('id', $sql_cek->row()->id)->update('tbl_trans_mutasi', $data);
@@ -1765,9 +1759,9 @@ class Gudang extends CI_Controller {
             $this->form_validation->set_rules('kode', 'Kode', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
+                $msg_error = [
                     'kode' => form_error('kode'),
-                );
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 
@@ -1805,8 +1799,10 @@ class Gudang extends CI_Controller {
                     $sat_jual   = (!empty($satuan) ? $sql_satuan->jml : 1); // (!empty($hrg_ds) ? $sql_satuan2->row()->jml : );
                 }
                         
-                $jml         = $qty;
-                $subtotal    = $harga_j * $jml;
+                $jml = $qty;
+                // Initialize harga_jual to prevent undefined variable
+                $harga_j = $harga_jual ?? 0;
+                $subtotal = $harga_j * $jml;
                 
                 
                 // Cek di keranjang
@@ -1820,7 +1816,7 @@ class Gudang extends CI_Controller {
                             $this->session->set_flashdata('transaksi', '<div class="alert alert-danger">Jumlah barang, tidak tersedia</div>');
                             redirect(base_url('transaksi/trans_jual.php?id='.$no_nota));
                         }else{
-                            $this->cart->update(array('rowid'=>$cart['rowid'], 'qty'=>0));
+                            $this->cart->update(['rowid'=>$cart['rowid'], 'qty'=>0]);
                         }
                     }
                 }
@@ -1831,12 +1827,12 @@ class Gudang extends CI_Controller {
                 if($sql_stok->jml < $jml_unit AND $sess_jual['tipe'] != '2'){
                     $this->session->set_flashdata('transaksi', '<div class="alert alert-danger">Jumlah barang, tidak tersedia</div>');
                 }else{
-                    $keranjang = array(
+                    $keranjang = [
                         'id'      => rand(1,1024).$sql_brg->id,
                         'qty'     => (!empty($jml_qty) ? $jml_qty : $qty),
                         'price'   => '1', // $disk3 => Ambil dari variable harga
-                        'name'    => ($sql_brg->status_brg_dep == 1 ? str_replace(array('\'','\\','/'), ' ', $sql_brg->produk.'-['.$nomor.']') : str_replace(array('\'','\\','/'), ' ', $sql_brg->produk)),
-                        'options' => array(
+                        'name'    => ($sql_brg->status_brg_dep == 1 ? str_replace(['\'','\\','/'], ' ', $sql_brg->produk.'-['.$nomor.']') : str_replace(['\'','\\','/'], ' ', $sql_brg->produk)),
+                        'options' => [
                             'no_nota'   => general::dekrip($no_nota),
                             'id_barang' => $sql_brg->id,
                             'id_satuan' => $sql_brg->id_satuan,
@@ -1851,8 +1847,8 @@ class Gudang extends CI_Controller {
                             'disk2'     => (float)$diskon2,
                             'disk3'     => (float)$diskon3,
                             'potongan'  => (float)$potongan,
-                        )
-                    );
+                        ]
+                    ];
                     
                     $this->cart->insert($keranjang);
                 }
@@ -1873,10 +1869,10 @@ class Gudang extends CI_Controller {
             $rute  = $this->input->get('route');
             
             if(!empty($id)){
-                $cart = array(
+                $cart = [
                     'rowid' => general::dekrip($id),
                     'qty'   => 0
-                );
+                ];
                 $this->cart->update($cart);
             }
             
@@ -2096,6 +2092,7 @@ class Gudang extends CI_Controller {
                 
                 # Transactional Database
                 $this->db->trans_begin();
+                $last_id = 0; // Initialize last_id to prevent undefined variable error
                 
                 try {
                     // Get form ID and check for double submission
@@ -2190,7 +2187,7 @@ class Gudang extends CI_Controller {
                     $this->db->trans_rollback();
                     
                     $this->session->set_flashdata('gd_toast', 'toastr.error("Transaksi gagal disimpan: '.$e->getMessage().'");');
-                    redirect(base_url('gudang/data_opname_item_list.php?id='.general::enkrip($last_id)));
+                    redirect(base_url('gudang/data_opname_item_list.php?nota='.general::enkrip($sess_opn['uuid'])));
                 }
             }
         } else {
@@ -2653,22 +2650,19 @@ class Gudang extends CI_Controller {
             $id = $this->input->post('id_produk');
             $gd = $this->input->post('gudang');
             
-            $where = "MATCH(tbl_m_produk.produk) AGAINST('".$prod."')";
-            
             $jml = $this->db
-                            ->where('id_produk', general::dekrip($id))
-                            ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
-                            ->get('tbl_m_produk_hist')->num_rows();
-echo $jml;
+                    ->where('id_produk', general::dekrip($id))
+                    ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                    ->get('tbl_m_produk_hist')->num_rows();
 
             if($jml > 0){
                 redirect(base_url('gudang/data_stok_tambah.php?id='.$id.(!empty($gd) ? '&filter_gd='.$gd : '').'&jml='.$jml));
             }else{
+                $this->session->set_flashdata('gd_toast', 'toastr.info("Tidak ada riwayat stok ditemukan")');
                 redirect(base_url('gudang/data_stok_tambah.php?id='.$id));
             }
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!")');
             redirect();
         }
     }
