@@ -9,7 +9,8 @@
             <div class="col-3">
                 <div class="form-group <?php echo (!empty($hasError['gelar']) ? 'text-danger' : '') ?>">
                     <label class="control-label">Gelar*</label>
-                    <select name="gelar" class="form-control rounded-0 <?php echo (!empty($hasError['gelar']) ? 'is-invalid' : '') ?>">
+                    <select name="gelar"
+                        class="form-control rounded-0 <?php echo (!empty($hasError['gelar']) ? 'is-invalid' : '') ?>">
                         <option value="">- Pilih -</option>
                         <?php foreach ($gelar as $gelar) { ?>
                             <option value="<?php echo $gelar->id ?>" <?php echo ($gelar->id == $pasien->id_gelar ? 'selected' : '') ?>><?php echo $gelar->gelar ?></option>
@@ -26,7 +27,8 @@
         </div>
         <div class="form-group <?php echo (!empty($hasError['jns_klm']) ? 'text-danger' : '') ?>">
             <label class="control-label">Jenis Kelamin*</label>
-            <select name="jns_klm" class="form-control rounded-0 <?php echo (!empty($hasError['jns_klm']) ? 'is-invalid' : '') ?>">
+            <select name="jns_klm"
+                class="form-control rounded-0 <?php echo (!empty($hasError['jns_klm']) ? 'is-invalid' : '') ?>">
                 <option value="">- Pilih -</option>
                 <option value="L" <?php echo (!empty($pasien->jns_klm) ? ('L' == $pasien->jns_klm ? 'selected' : '') : ('L' == $this->session->flashdata('jns_klm') ? 'selected' : '')) ?>>Laki - laki</option>
                 <option value="P" <?php echo (!empty($pasien->jns_klm) ? ('P' == $pasien->jns_klm ? 'selected' : '') : ('P' == $this->session->flashdata('jns_klm') ? 'selected' : '')) ?>>Perempuan</option>
@@ -42,11 +44,12 @@
                 <div class="input-group-append">
                     <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                 </div>
-                <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control rounded-0' . (!empty($hasError['tgl_lahir']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->tgl_lahir) ? $pasien->tgl_lahir : $this->session->flashdata('tgl_lahir')), 'placeholder' => 'Isi dengan format berikut : 17-08-1945 ...', 'readonly'=>'TRUE')) ?>
-            </div>                                        
+                <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control rounded-0' . (!empty($hasError['tgl_lahir']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->tgl_lahir) ? $pasien->tgl_lahir : $this->session->flashdata('tgl_lahir')), 'placeholder' => 'Isi dengan format berikut : 17-08-1945 ...', 'readonly' => 'TRUE')) ?>
+            </div>
         </div>
         <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
-            <label class="control-label">No. HP / WA <i><small class="text-danger">* Inputkan Angka saja (cth: 085741220455)</small></i></label>
+            <label class="control-label">No. HP / WA <i><small class="text-danger">* Inputkan Angka saja (cth:
+                        085741220455)</small></i></label>
             <?php echo form_input(array('id' => 'no_hp', 'name' => 'no_hp', 'class' => 'form-control rounded-0', 'value' => (!empty($pasien->no_hp) ? $pasien->no_hp : $this->session->flashdata('no_hp')), 'placeholder' => 'Nomor kontak WA pasien / keluarga pasien ...')) ?>
         </div>
     </section>
@@ -55,23 +58,25 @@
     <section id="pasien_baru2">
         <div class="form-group <?php echo (!empty($hasError['alamat']) ? 'text-danger' : '') ?>">
             <label class="control-label">Alamat KTP<small><i>* Sesuai Identitas</i></small></label>
-            <?php echo form_textarea(array('id' => 'alamat', 'name' => 'alamat', 'class' => 'form-control rounded-0'.(!empty($hasError['alamat']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->alamat) ? $pasien->alamat : $this->session->flashdata('alamat')), 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat sesuai pada identitas ...')) ?>
+            <?php echo form_textarea(array('id' => 'alamat', 'name' => 'alamat', 'class' => 'form-control rounded-0' . (!empty($hasError['alamat']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->alamat) ? $pasien->alamat : $this->session->flashdata('alamat')), 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat sesuai pada identitas ...')) ?>
         </div>
         <div class="form-group <?php echo (!empty($hasError['alamat_dom']) ? 'text-danger' : '') ?>">
             <label class="control-label">Alamat Domisili<small><i>* Sesuai Domisili</i></small></label>
-            <?php echo form_textarea(array('id' => 'alamat_dom', 'name' => 'alamat_dom', 'class' => 'form-control rounded-0'.(!empty($hasError['alamat_dom']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->alamat) ? $pasien->alamat : $this->session->flashdata('alamat')), 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat sesuai domisili ...')) ?>
+            <?php echo form_textarea(array('id' => 'alamat_dom', 'name' => 'alamat_dom', 'class' => 'form-control rounded-0' . (!empty($hasError['alamat_dom']) ? ' is-invalid' : ''), 'value' => (!empty($pasien->alamat) ? $pasien->alamat : $this->session->flashdata('alamat')), 'style' => 'height: 124px;', 'placeholder' => 'Mohon diisi alamat sesuai domisili ...')) ?>
         </div>
         <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
             <label class="control-label">Pekerjaan</label>
             <select name="pekerjaan" class="form-control rounded-0 select2bs4">
                 <option value="">- Pilih -</option>
                 <?php foreach ($kerja as $kerja) { ?>
-                    <option value="<?php echo $kerja->id ?>" <?php echo (!empty($pasien->id_pekerjaan) ? ($kerja->id == $pasien->id_pekerjaan ? 'selected' : '') : (($kerja->id == $this->session->flashdata('pekerjaan') ? 'selected' : ''))) ?>><?php echo $kerja->jenis ?></option>
+                    <option value="<?php echo $kerja->id ?>" <?php echo (!empty($pasien->id_pekerjaan) ? ($kerja->id == $pasien->id_pekerjaan ? 'selected' : '') : (($kerja->id == $this->session->flashdata('pekerjaan') ? 'selected' : ''))) ?>>
+                        <?php echo $kerja->jenis ?></option>
                 <?php } ?>
             </select>
         </div>
         <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
-            <label class="control-label">No. Rmh <i><small class="text-danger">* Inputkan No. Tlp dgn kode area (cth: 0248509988)</small></i></label>
+            <label class="control-label">No. Rmh <i><small class="text-danger">* Inputkan No. Tlp dgn kode area (cth:
+                        0248509988)</small></i></label>
             <?php echo form_input(array('id' => 'no_rmh', 'name' => 'no_rmh', 'class' => 'form-control rounded-0', 'value' => (!empty($pasien->no_hp) ? $pasien->no_rmh : $this->session->flashdata('no_rmh')), 'placeholder' => 'Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...')) ?>
         </div>
     </section>
@@ -83,7 +88,8 @@
             <select name="instansi" class="form-control rounded-0 select2bs4">
                 <option value="">- Pilih -</option>
                 <?php foreach ($this->db->get('tbl_m_pelanggan')->result() as $instansi) { ?>
-                    <option value="<?php echo $instansi->id ?>" <?php echo (!empty($pasien->id_pekerjaan) ? ($instansi->nama == $pasien->instansi ? 'selected' : '') : (($kerja->id == $this->session->flashdata('pekerjaan') ? 'selected' : ''))) ?>><?php echo $instansi->nama ?></option>
+                    <option value="<?php echo $instansi->id ?>" <?php echo (!empty($pasien->id_pekerjaan) ? ($instansi->nama == $pasien->instansi ? 'selected' : '') : (($kerja->id == $this->session->flashdata('pekerjaan') ? 'selected' : ''))) ?>>
+                        <?php echo $instansi->nama ?></option>
                 <?php } ?>
             </select>
         </div>
@@ -92,12 +98,11 @@
 <div class="col-md-6">
     <section id="pasien_baru2">
         <div class="form-group">
-            <label class="control-label">&nbsp;</label><br/>
-            <a href="<?php echo base_url('master/data_mcu_perusahaan_tambah.php?tipe_pas='.$this->input->get('tipe_pas').'&route=medcheck/daftar.php') ?>" class="btn btn-primary btn-flat">
+            <label class="control-label">&nbsp;</label><br />
+            <button type="button" class="btn btn-primary btn-flat rounded-0" data-toggle="modal"
+                data-target="#modalTambahKlinik">
                 <i class="fa fa-plus-circle"></i> Tambah
-            </a>
-            <!--<label class="control-label">Alamat Instansi</label>-->
-            <?php // echo form_input(array('id' => 'instansi_almt', 'name' => 'instansi_almt', 'class' => 'form-control rounded-0', 'value' => (!empty($pasien->instansi_alamat) ? $pasien->instansi_alamat : $this->session->flashdata('instansi_alamat')), 'placeholder' => 'Isikan alamat lengkapnya ...')) ?>
+            </button>
         </div>
     </section>
 </div>
