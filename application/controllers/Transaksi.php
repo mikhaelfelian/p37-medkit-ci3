@@ -797,11 +797,9 @@ class transaksi extends CI_Controller {
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
 
             $this->load->library('MedBeliPDF');
-            $pdf = new MedBeliPDF('P', 'cm', [21.5, 33]);
-            // Use public property or setter method instead of direct property access
-            $pdf->setJudul('FAKTUR BELI');
-            $pdf->SetAutoPageBreak(true, 8.5);            
-            $pdf->addPage('', '', false);
+            $pdf = new MedBeliPDF('P', 'cm', array(21.5,33));
+            $pdf->SetAutoPageBreak('auto', 8.5);            
+            $pdf->addPage('','',false);
             
             # Gambar Watermark Tengah
             if (file_exists(str_replace(base_url(), FCPATH, $gambar2))) {
