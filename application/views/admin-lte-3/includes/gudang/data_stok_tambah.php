@@ -28,7 +28,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Data Item</h3>
                             <div class="card-tools">
-
+                                
                             </div>
                         </div>
                         <div class="card-body table-responsive">
@@ -60,7 +60,7 @@
                                                 </option>
                                             <?php } ?>
                                         </select>
-                                    </div>
+                                    </div> 
                                 </div>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                                 <div class="col-lg-6 text-right">
 
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                     <?php echo form_close() ?>
@@ -155,7 +155,7 @@
                                 <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE) { ?>
                                     <?php echo form_open(base_url('gudang/set_cari_stok_tambah.php'), 'autocomplete="off"') ?>
                                     <?php echo form_hidden('id_produk', general::enkrip($barang->id)) ?>
-
+                                
                                     <tbody>
                                         <tr>
                                             <td>
@@ -247,11 +247,11 @@
                                                 <?php echo $hist->jml * $hist->jml_satuan; //($hist->status == '3' ? $hist->jml * $hist->jml_satuan : $hist->jml)  ?>
                                             </td>
                                             <td style="width: 150px;">
-                                                <?php echo $sql_satuan->satuanTerkecil; // $hist->satuan.' ('.$hist->jml * $hist->jml_satuan.' '.$sql_satuan->satuanTerkecil.')'  ?>
+                                            <?php echo $sql_satuan->satuanTerkecil; // $hist->satuan.' ('.$hist->jml * $hist->jml_satuan.' '.$sql_satuan->satuanTerkecil.')'  ?>
                                             </td>
                                             <?php if (akses::hakSA() == TRUE) { ?>
                                                 <td class="text-right"><?php echo general::format_angka($hist->nominal) ?></td>
-                                            <?php } ?>
+                                                <?php } ?>
                                             <td style="width: 600px;">
                                                 <?php if (akses::hakAdmin() == TRUE || akses::hakAdminM() == TRUE || akses::hakGudang() == TRUE && $hist->status != '3' && $hist->status != '2') { ?>
                                                     <?php $nota_beli = $this->db->where('id', $hist->id_pembelian)->get('tbl_trans_beli')->row(); ?>
@@ -402,7 +402,7 @@
                                                         <?php echo nbs() ?>
                                                     <?php } ?>
                                                 <?php } else { ?>
-                                                    <!--<label class="label label-default" ><i class="fa fa-remove"></i> Hapus</label>-->
+                                                        <!--<label class="label label-default" ><i class="fa fa-remove"></i> Hapus</label>-->
                                                     <?php // echo nbs() ?>
                                                 <?php } ?>
                                             </td>
@@ -552,7 +552,7 @@
                                 <div class="col-lg-6 text-right">
 
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -574,7 +574,7 @@
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
 
 <script type="text/javascript">
-    $(function () {
+    $(function () {        
         $("input[id=jml]").keydown(function (e) {
             // kibot: backspace, delete, tab, escape, enter .
             if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
@@ -585,13 +585,13 @@
                 // Biarin wae, ga ngapa2in return false
                 return;
             }
-
+                                                
             // Cuman nomor
             if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
                 e.preventDefault();
             }
         });
-
+        
         <?php echo $this->session->flashdata('gudang_toast'); ?>
     });
 </script>
