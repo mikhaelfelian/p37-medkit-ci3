@@ -1371,6 +1371,13 @@ class Gudang extends CI_Controller {
                                                ->where('id_gudang', $sess_mut['id_gd_tujuan'])
                                                ->get('tbl_m_produk_stok')->row();
                     $sql_satuan = $this->db->where('id', $satuan)->get('tbl_m_satuan')->row();
+
+                    $stok_asal      = $sql_brg_stk_asl->jml - $jml;
+                    $stok_tujuan    = $sql_brg_stk_7an->jml + $jml;
+
+                    if ($stok_asal < 0) {
+                        throw new Exception('Stok tidak cukup.<br/><b>Stok tersedia: </b>' . $sql_brg_stk_asl->jml . '<br/><b>Permintaan: </b>' . $jml);
+                    }
                 
                     // Data yang akan dimasukkan ke tabel mutasi detail
                     $data_mut_det = [
