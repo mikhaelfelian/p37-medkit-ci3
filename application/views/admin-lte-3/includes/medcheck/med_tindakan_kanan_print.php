@@ -8,8 +8,7 @@
                     echo form_open(base_url('medcheck/set_medcheck_proses.php'), [
                         'id' => $form_id, 
                         'autocomplete' => 'off', 
-                        'class' => 'posting-form',
-                        'onsubmit' => 'return confirm("Apakah Anda yakin ingin melakukan posting transaksi ini?");'
+                        'class' => 'posting-form'
                     ]); 
                     ?>
                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
