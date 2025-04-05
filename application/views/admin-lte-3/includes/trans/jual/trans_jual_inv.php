@@ -181,9 +181,10 @@
                                             <th>Jml Kembali:</th>
                                             <td><?php echo general::format_angka($sql_medc->jml_kembali) ?></td>
                                         </tr>
-                                    </table>
+                                    </table> 
 
-                                    <?php echo form_open_multipart(base_url('pos/set_trans_jual_batal_post.php'), 'autocomplete="off"') ?>
+                                    <?php echo form_open(base_url('pos/set_trans_jual_batal_post.php'), 'id="batal_form" autocomplete="off"') ?>
+                                    <?php echo add_form_protection(); ?>
                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                     <?php echo form_hidden('status', $sql_medc->status); ?>
                                     <?php echo form_hidden('jml_total', $gtotal); ?>
@@ -195,12 +196,9 @@
                                         <i class="fa-solid fa-print"></i><br/>
                                         Buat Kwitansi
                                     </button>
+                                    <?php echo add_double_submit_protection('batal_form'); ?>
                                     <?php echo form_close(); ?>
                                     <br/>
-                                    
-<!--                                    <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
-                                        <i class="fa fa-print"></i> Nota PDF
-                                    </button>-->
                                     <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_dm_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
                                         <i class="fa fa-print"></i> Nota PDF
                                     </button>
@@ -216,11 +214,6 @@
                         <!-- this row will not appear when printing -->
                         <div class="row no-print">
                             <div class="col-12">
-                                <!--<a href="<?php // echo base_url('medcheck/invoice-print.html');      ?>" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Cetak</a>-->
-<!--                                <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Bayar</button>
-                                <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-                                    <i class="fas fa-download"></i> Unduh PDF
-                                </button>-->
                             </div>
                         </div>
                     </div>

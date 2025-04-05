@@ -817,8 +817,7 @@ class Pos extends CI_Controller {
                         $this->session->set_flashdata('apt_toast', 'toastr.success("Transaksi berhasil di batalkan dan dihapus!!");');
                     }
                                         
-                    redirect(base_url('pos/trans_jual_list.php'));
-                    
+                    redirect(base_url('pos/trans_jual_list.php'));                    
                 } catch (Exception $e) {
                     // Rollback transaction if active
                     if ($this->db->trans_status() !== FALSE) {
