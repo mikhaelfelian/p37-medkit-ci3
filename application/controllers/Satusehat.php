@@ -4,19 +4,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Satusehat extends CI_Controller {
 
     /**
-     * Index Page for this controller.
+     * Satusehat controller.
      *
-     * Maps to the following URL
-     * 		http://example.com/index.php/welcome
-     * 	- or -
-     * 		http://example.com/index.php/welcome/index
-     * 	- or -
-     * Since this controller is set as the default controller in
-     * config/routes.php, it's displayed at http://example.com/
+     * This controller handles integration with SATUSEHAT API from Kemenkes RI
+     * for healthcare data exchange and interoperability.
      *
-     * So any other public methods not prefixed with an underscore will
-     * map to /index.php/welcome/<method_name>
-     * @see https://codeigniter.com/userguide3/general/urls.html
+     * @author     Mikhael Felian Waskito <mikhaelfelian@gmail.com>
+     * @copyright  2025-04-05
+     * @github     mikhaelfelian
      */
     private string $url = 'https://api-satusehat.kemkes.go.id';
     private string $org_id = '100018572';
@@ -64,9 +59,9 @@ class Satusehat extends CI_Controller {
         if ($err) {
             echo "cURL Error #:" . $err;
         } else {
-            //echo "<pre>"; print_r($resArr); echo "</pre>";
+            echo "<pre>"; print_r($resArr); echo "</pre>";
             $data['token'] = $resArr->access_token;
-            //echo $token;
+            echo $token;
         }
 
         return $data['token'];
