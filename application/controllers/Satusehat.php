@@ -59,9 +59,9 @@ class Satusehat extends CI_Controller {
         if ($err) {
             echo "cURL Error #:" . $err;
         } else {
-            echo "<pre>"; print_r($resArr); echo "</pre>";
+            // echo "<pre>"; print_r($resArr); echo "</pre>";
             $data['token'] = $resArr->access_token;
-            echo $token;
+            // echo $token;
         }
 
         return $data['token'];
