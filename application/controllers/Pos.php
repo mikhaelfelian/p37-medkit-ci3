@@ -574,9 +574,19 @@ class Pos extends CI_Controller {
                 redirect(base_url('medcheck/tambah.php?id='.$id));
             } else {
                 $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                if (!$sql_medc) {
+                    throw new Exception("Data transaksi tidak ditemukan");
+                }
+                
                 $sql_medc_det   = $this->db->select('SUM(potongan) AS potongan, SUM(diskon) AS diskon, SUM(subtotal) AS subtotal')->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->row();   
                 $sql_medc_det2  = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->result();
-                $sql_poin       = $this->db->where('id_pasien', $sql_medc->id_pasien)->get('tbl_m_pasien_poin')->row();
+                
+                // Check if sql_medc->id_pasien exists before querying
+                $sql_poin = null;
+                if (!empty($sql_medc->id_pasien)) {
+                    $sql_poin = $this->db->where('id_pasien', $sql_medc->id_pasien)->get('tbl_m_pasien_poin')->row();
+                }
+                
                 $pengaturan     = $this->db->get('tbl_pengaturan')->row();
                 
                 $jml_total      = $sql_medc_det->subtotal + $sql_medc_det->potongan + $sql_medc_det->diskon;
@@ -590,21 +600,21 @@ class Pos extends CI_Controller {
                     //     return;
                     // }
                     
-                    // Create a lock key for this transaction
-                    $lock_key = 'trans_batal_' . general::dekrip($id);
+                    // // Create a lock key for this transaction
+                    // $lock_key = 'trans_batal_' . general::dekrip($id);
                     
-                    // Check if there's already a transaction in progress
-                    if ($this->cache->get($lock_key)) {
-                        $this->session->set_flashdata('apt_toast', 'toastr.warning("Transaksi sedang diproses, mohon tunggu!");');
-                        redirect(base_url('pos/trans_jual_list.php'));
-                        return;
-                    }
+                    // // Check if there's already a transaction in progress
+                    // if ($this->cache->get($lock_key)) {
+                    //     $this->session->set_flashdata('apt_toast', 'toastr.warning("Transaksi sedang diproses, mohon tunggu!");');
+                    //     redirect(base_url('pos/trans_jual_list.php'));
+                    //     return;
+                    // }
                     
-                    // Set lock
-                    $this->cache->save($lock_key, true, 300); // Lock for 5 minutes max
+                    // // Set lock
+                    // $this->cache->save($lock_key, true, 300); // Lock for 5 minutes max
                     
                     # Hitung ulang data poin
-                    if ($sql_poin) {
+                    if ($sql_poin && $pengaturan && $pengaturan->jml_poin_nom > 0) {
                         $poin           = $jml_total / $pengaturan->jml_poin_nom;
                         $poin_sisa      = $sql_poin->jml_poin - floor($poin);
                         $poin_sisa_tot  = $poin_sisa * $pengaturan->jml_poin;
@@ -619,7 +629,7 @@ class Pos extends CI_Controller {
                     # Start transaction
                     $this->db->trans_begin();
 
-                    if ($sql_poin) {
+                    if (isset($data_poin) && $sql_poin) {
                         $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
                     }
 
@@ -639,22 +649,42 @@ class Pos extends CI_Controller {
                     $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', $data);           
                       
                     foreach ($sql_medc_det2 as $medc_det){
-                          $sql_item        = $this->db->where('id', $medc_det->id_item)->get('tbl_m_produk')->row();
-                          $sql_item_ref    = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref');   
-                          $sql_satuan      = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                          $sql_gudang      = $this->db->where('status', '1')->get('tbl_m_gudang')->row();    // Cek gudang aktif dari gudang utama
-
+                          $sql_item = $this->db->where('id', $medc_det->id_item)->get('tbl_m_produk')->row();
+                          if (!$sql_item) {
+                              continue; // Skip if item not found
+                          }
                           
+                          $sql_item_ref = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref');   
+                          $sql_satuan = null;
+                          if (!empty($sql_item->id_satuan)) {
+                              $sql_satuan = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
+                          }
+                          
+                          $sql_gudang = $this->db->where('status', '1')->get('tbl_m_gudang')->row();    // Cek gudang aktif dari gudang utama
+                          if (!$sql_gudang) {
+                              throw new Exception("Gudang aktif tidak ditemukan");
+                          }
+
                           # Item racikan kumpulkan dahulu disini
                           if(!empty($medc_det->resep)){                     
                               foreach (json_decode($medc_det->resep) as $rc){
-                                  $sql_item_rc          = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
-                                  $sql_gudang_stok_rc   = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rc->id)->get('tbl_m_produk_stok')->row();
+                                  $sql_item_rc = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
+                                  if (!$sql_item_rc) {
+                                      continue; // Skip if racikan item not found
+                                  }
+                                  
+                                  $sql_gudang_stok_rc = $this->db->where('id_gudang', $sql_gudang->id)
+                                                               ->where('id_produk', $sql_item_rc->id)
+                                                               ->get('tbl_m_produk_stok')->row();
+                                  
+                                  if (!$sql_gudang_stok_rc) {
+                                      continue; // Skip if stock not found
+                                  }
                                   
                                   # Cek resep Item stockable atau tidak ? 
                                   if($sql_item_rc->status_subt == '1'){
-                                      $jml_akhir_rc         = $sql_item_rc->jml + $rc->jml;
-                                      $jml_akhir_stk        = $sql_gudang_stok_rc->jml + $rc->jml;
+                                      $jml_akhir_rc = $sql_item_rc->jml + $rc->jml;
+                                      $jml_akhir_stk = $sql_gudang_stok_rc->jml + $rc->jml;
                                       
                                       $data_item_rc = [
                                           'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -665,8 +695,9 @@ class Pos extends CI_Controller {
     //                                  $this->db->where('id', $rc->id_item)->update('tbl_m_produk', $data_item_rc);
                                       
                                       # Hapus ke tabel riwayat produk
-                                      $this->db->where('id_penjualan', $sql_medc->id)->where('id_produk', $sql_item_rc->id)->delete('tbl_m_produk_hist');
-                                      
+                                      $this->db->where('id_penjualan', $sql_medc->id)
+                                               ->where('id_produk', $sql_item_rc->id)
+                                               ->delete('tbl_m_produk_hist');
                                   }
                               }
                           }                      
@@ -674,34 +705,49 @@ class Pos extends CI_Controller {
                           
                           # Cek Item Produk non resep stockable
                           if($sql_item->status_subt == '1'){
-                                $sql_gudang_stok = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
-                                $jml_akhir       = $sql_item->jml + $medc_det->jml;
-                                $jml_akhir_stk   = $sql_gudang_stok->jml + $medc_det->jml;
+                                $sql_gudang_stok = $this->db->where('id_gudang', $sql_gudang->id)
+                                                          ->where('id_produk', $sql_item->id)
+                                                          ->get('tbl_m_produk_stok')->row();
+                                
+                                if (!$sql_gudang_stok) {
+                                    continue; // Skip if stock not found
+                                }
+                                
+                                $jml_akhir = $sql_item->jml + $medc_det->jml;
+                                $jml_akhir_stk = $sql_gudang_stok->jml + $medc_det->jml;
                                                     
                                 $data_item = [
                                     'tgl_modif'  => date('Y-m-d H:i'),
                                     'jml'        => ($jml_akhir < 0 ? 0 : (int) $jml_akhir)
                                 ];
                                                     
-                                $data_item_stk  = [
+                                $data_item_stk = [
                                     'tgl_modif'  => date('Y-m-d H:i'),
                                     'jml'        => ($jml_akhir_stk < 0 ? 0 : (int) $jml_akhir_stk)
                                 ];                            
 
                                 # Hapus ke tabel riwayat produk
-                                $this->db->where('id_penjualan', $sql_medc->id)->where('id_produk', $sql_item->id)->delete('tbl_m_produk_hist');
+                                $this->db->where('id_penjualan', $sql_medc->id)
+                                         ->where('id_produk', $sql_item->id)
+                                         ->delete('tbl_m_produk_hist');
                           }                      
                           # -- END OF ITEM
                           
                           # Jika punya refrensi item, maka jabarkan dulu
-                            if($sql_item_ref->num_rows() > 0){
+                            if($sql_item_ref && $sql_item_ref->num_rows() > 0){
                                 foreach ($sql_item_ref->result() as $reff){
-                                    $sql_item_rf      = $this->db->where('id', $reff->id_produk_item)->get('tbl_m_produk')->row();
-                                    $sql_gudang_stok  = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item_rf->id)->get('tbl_m_produk_stok')->row();
+                                    $sql_item_rf = $this->db->where('id', $reff->id_produk_item)->get('tbl_m_produk')->row();
+                                    if (!$sql_item_rf) {
+                                        continue; // Skip if reference item not found
+                                    }
+                                    
+                                    $sql_gudang_stok = $this->db->where('id_gudang', $sql_gudang->id)
+                                                              ->where('id_produk', $sql_item_rf->id)
+                                                              ->get('tbl_m_produk_stok')->row();
                                   
                                     # Cek apakah stockable
                                     if($sql_item_rf->status_subt == '1'){
-                                        $jml_akhir_reff   = $sql_item_rf->jml + ($reff->jml * $medc_det->jml);
+                                        $jml_akhir_reff = $sql_item_rf->jml + ($reff->jml * $medc_det->jml);
                                   
                                         $data_item_reff = [
                                             'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -712,7 +758,9 @@ class Pos extends CI_Controller {
                                         $this->db->where('id', $reff->id_produk_item)->update('tbl_m_produk', $data_item_reff);
                                         
                                         # Hapus te tabel riwayat produk
-                                        $this->db->where('id_penjualan', $sql_medc->id)->where('id_produk', $sql_item_rf->id)->delete('tbl_m_produk_hist');
+                                        $this->db->where('id_penjualan', $sql_medc->id)
+                                                 ->where('id_produk', $sql_item_rf->id)
+                                                 ->delete('tbl_m_produk_hist');
                                     }
                                 }
                             }
@@ -722,8 +770,15 @@ class Pos extends CI_Controller {
                     $sql_medc_stok = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_stok')->result();
                     
                     foreach ($sql_medc_stok as $stok){
-                        $sql_gudang_stok    = $this->db->where('id_gudang', $stok->id_gudang)->where('id_produk', $stok->id_item)->get('tbl_m_produk_stok')->row();
-                        $stok_akhir         = $sql_gudang_stok->jml + $stok->jml;
+                        $sql_gudang_stok = $this->db->where('id_gudang', $stok->id_gudang)
+                                                  ->where('id_produk', $stok->id_item)
+                                                  ->get('tbl_m_produk_stok')->row();
+                        
+                        if (!$sql_gudang_stok) {
+                            continue; // Skip if stock not found
+                        }
+                        
+                        $stok_akhir = $sql_gudang_stok->jml + $stok->jml;
                         
                         $data_stok = [
                             'tgl_modif' => date('Y-m-d H:i:s'),
@@ -750,7 +805,7 @@ class Pos extends CI_Controller {
                     $this->db->where('id_medcheck', $sql_medc->id)->delete('tbl_trans_medcheck_stok');
                     
                     # Hapus Nota penjualan
-                    $this->db->where('id', $sql_medc->id)->delete('tbl_trans_medcheck', $data);
+                    $this->db->where('id', $sql_medc->id)->delete('tbl_trans_medcheck');
                     
                     # Check transaction status
                     if ($this->db->trans_status() === FALSE) {
