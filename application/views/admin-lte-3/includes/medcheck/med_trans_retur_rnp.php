@@ -24,7 +24,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-8">
-                    <?php echo form_open_multipart(base_url('medcheck/cart_medcheck_ret_rnp.php'), 'autocomplete="off"') ?>
+                <?php if (!empty($sql_produk)) { ?>
+                    <?php echo form_open(base_url('medcheck/cart_medcheck_ret_rnp.php'), 'id="retur_form" autocomplete="off"') ?>
                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                     <?php echo form_hidden('id_item', $this->input->get('item_id')); ?>
                     <?php echo form_hidden('id_produk', $this->input->get('id_produk')); ?>
@@ -32,6 +33,7 @@
                     <?php echo form_hidden('status', $this->input->get('status')); ?>
                     <?php echo form_hidden('status_itm', $this->input->get('status')); ?>
                     <?php echo form_hidden('route', $this->input->get('route')); ?>
+                    <?php echo add_form_protection(); ?>
 
                     <!-- INPUT RETUR MEDICINE -->
                     <div class="card">
@@ -39,7 +41,6 @@
                             <h3 class="card-title">RETUR RAWAT INAP - <?php echo $sql_pasien->nama_pgl; ?> <small><i>(<?php echo $this->tanggalan->usia($sql_pasien->tgl_lahir) ?>)</i></small></h3>
                         </div>
                         <div class="card-body">
-                            <?php echo $this->session->flashdata('medcheck'); ?>
                             <?php if ($sql_medc->status >= 5 OR $sql_medc->status_bayar != '0') { ?>
                                 <div class="alert alert-danger alert-dismissible">
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -92,7 +93,9 @@
                         </div>
                     </div>
                     <!-- /.card -->
-                    <?php echo form_close() ?>                    
+                    <?php echo add_double_submit_protection('retur_form') ?>
+                    <?php echo form_close() ?>
+                    <?php } ?>
 
                     <?php if ($sql_medc->status < 5) { ?>
                         <!-- DATA ENTRY ITEM RETUR -->

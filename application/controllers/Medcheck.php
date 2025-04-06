@@ -4635,6 +4635,7 @@ class Medcheck extends CI_Controller {
                             foreach ($sql_res_det_rc as $racikan) {
                                 $sql_item_rc  = $this->db->where('id', $racikan->id_item)->get('tbl_m_produk')->row();
                                 $harga_rc     = $sql_item_rc->harga_jual;
+                                $percent_rc   = ($sql_pnjm->persen > 0) ? ($sql_pnjm->persen / 100) : 0;
                                 $ass_rc       = $harga_rc * $sql_pnjm->persen;
                                 $harga_tot_rc = ($sql_pnjm->persen != 0 ? $ass_rc : $harga_rc);
                             
@@ -12300,11 +12301,11 @@ public function set_medcheck_lab_adm_save() {
                     $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                     $jml_akhir      = (int)$sql_medc_det->jml - $jml;
                     
-                    $disk1          = $sql_medc_det->harga - (($sql_medc_det->disk1 / 100) * $sql_medc_det->harga);
-                    $disk2          = $disk1 - (($sql_medc_det->disk2 / 100) * $disk1);
-                    $disk3          = $disk2 - (($sql_medc_det->disk3 / 100) * $disk2);
+                    $disk1          = $sql_medc_det->harga - ((isset($sql_medc_det->disk1) && $sql_medc_det->disk1 > 0) ? (($sql_medc_det->disk1 / 100) * $sql_medc_det->harga) : 0);
+                    $disk2          = $disk1 - ((isset($sql_medc_det->disk2) && $sql_medc_det->disk2 > 0) ? (($sql_medc_det->disk2 / 100) * $disk1) : 0);
+                    $disk3          = $disk2 - ((isset($sql_medc_det->disk3) && $sql_medc_det->disk3 > 0) ? (($sql_medc_det->disk3 / 100) * $disk2) : 0);
                     $diskon         = $sql_medc_det->harga - $disk3;
-                    $subtotal       = ($disk3 - $sql_medc_det->potongan) * $jml_akhir;
+                    $subtotal       = ($disk3 - (isset($sql_medc_det->potongan) ? $sql_medc_det->potongan : 0)) * $jml_akhir;
                     
                     $data = [
                         'tgl_simpan'        => date('Y-m-d H:i:s'),
@@ -12326,7 +12327,7 @@ public function set_medcheck_lab_adm_save() {
                     ];
 
                     if($jml_akhir < 0){
-                        throw new Exception("Item <b>{$sql_item->produk}</b> pada no {$no_urut}, maksimal retur hanya <b>{$sql_medc_det->jml}</b> !!");
+                        throw new Exception("Item <b>{$sql_item->produk}</b> pada no {$no_urut}, maksimal retur hanya <b>".(float)$sql_medc_det->jml."</b> !!");
                     }
                     
                     # Start Transaction
@@ -12346,8 +12347,7 @@ public function set_medcheck_lab_adm_save() {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data retur berhasil disimpan!");');
                     }
                     
-                    redirect(base_url('medcheck/retur.php?id='.$id));
-                    
+                    redirect(base_url('medcheck/retur.php?id='.$id));                    
                 } catch (Exception $e) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('medcheck/retur.php?id='.$id));
