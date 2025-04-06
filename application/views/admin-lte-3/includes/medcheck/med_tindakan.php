@@ -40,7 +40,6 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <?php echo $this->session->flashdata('master'); ?>
                                             <h4>Detail Item</h4>
                                             <!--<div class="post">-->
                                             <table class="table table-striped">
