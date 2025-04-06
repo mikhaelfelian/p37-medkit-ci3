@@ -153,24 +153,25 @@ $(document).ready(function() {
     var param = $('#param').val();
     
     if (!param) {
-      $('#paramAlert').html('<div class="alert alert-danger">Parameter tidak boleh kosong!</div>');
+      toastr.error('Parameter tidak boleh kosong!');
       return false;
     }
     
     $.ajax({
-      url: '<?php echo base_url('medcheck/add_param.php') ?>',
+      url: '<?php echo base_url('medcheck/add_param') ?>',
       type: 'POST',
       data: { 
         param: param,
-        table: 'tbl_m_mcu_header'
+        debug: false,
+        <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
       },
       dataType: 'json',
-      beforeSend: function() {
-        $('#paramAlert').html('<div class="alert alert-info">Menyimpan parameter...</div>');
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       },
       success: function(response) {
         if (response.status) {
-            $('#paramAlert').html('<div class="alert alert-success">' + response.message + '</div>');
+            toastr.success(response.message);
             
             // Refresh the dropdown with the new parameter
             var newOption = new Option(param, response.data.id, true, true);
@@ -184,11 +185,12 @@ $(document).ready(function() {
               $('#paramModal').modal('hide');
             }, 2000);
         } else {
-          $('#paramAlert').html('<div class="alert alert-danger">' + response.message + '</div>');
+          toastr.error(response.message || 'Terjadi kesalahan saat menambahkan parameter');
         }
       },
       error: function(xhr, status, error) {
-        $('#paramAlert').html('<div class="alert alert-danger">Terjadi kesalahan: ' + error + '</div>');
+        console.error('AJAX Error:', status, error);
+        toastr.error('Terjadi kesalahan: ' + error);
       }
     });
     

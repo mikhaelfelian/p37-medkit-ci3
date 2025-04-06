@@ -21464,80 +21464,54 @@ public function set_medcheck_lab_adm_save() {
         if (akses::aksesLogin() == TRUE) {
             // Check if request is AJAX/JSON
             $is_ajax = $this->input->is_ajax_request();
-            $param = $this->input->post('param');
-            $debug = $this->input->post('debug');
             
-            $response = array(
-                'status' => false,
-                'message' => '',
-                'data' => null
-            );
-
-            // Add debug information if requested
-            if ($debug) {
-                $response['debug'] = array(
-                    'is_ajax' => $is_ajax,
-                    'post_data' => $_POST,
-                    'time' => date('Y-m-d H:i:s')
-                );
+            // Forbid direct access if not an AJAX request
+            if (!$is_ajax) {
+                show_error('No direct script access allowed', 403, 'Access Forbidden');
+                return;
             }
+            
+            $param = $this->input->post('param');
+            
+            $response = [
+                'status'  => false,
+                'message' => '',
+                'data'    => null
+            ];
 
             if (empty($param)) {
-                $message = '<div class="alert alert-danger">Parameter tidak boleh kosong!</div>';
-                if ($is_ajax) {
-                    $response['message'] = 'Parameter tidak boleh kosong!';
-                    echo json_encode($response);
-                    return;
-                } else {
-                    $this->session->set_flashdata('medcheck', $message);
-                }
+                $response['message'] = 'Parameter tidak boleh kosong!';
+                echo json_encode($response);
+                return;
             } else {
                 // Check if parameter already exists
                 $existing = $this->db->where('param', $param)->get('tbl_m_mcu_header')->num_rows();
 
                 if ($existing > 0) {
-                    $message = '<div class="alert alert-warning">Parameter sudah ada dalam database!</div>';
-                    if ($is_ajax) {
-                        $response['message'] = 'Parameter sudah ada dalam database!';
-                        echo json_encode($response);
-                        return;
-                    } else {
-                        $this->session->set_flashdata('medcheck', $message);
-                    }
+                    $response['message'] = 'Parameter sudah ada dalam database!';
+                    echo json_encode($response);
+                    return;
                 } else {
-                    $data = array(
-                        'param' => $param,
+                    $data = [
+                        'param'      => $param,
                         'tgl_simpan' => date('Y-m-d H:i:s'),
-                        'id_user' => $this->ion_auth->user()->row()->id
-                    );
-
-                    // Debug: Print data before inserting
-                    if ($debug) {
-                        $response['pre_insert_data'] = $data;
-                    }
+                        'id_user'    => $this->ion_auth->user()->row()->id
+                    ];
 
                     $this->db->insert('tbl_m_mcu_header', $data);
                     $inserted_id = $this->db->insert_id();
                     
-                    $message = '<div class="alert alert-success">Parameter berhasil ditambahkan!</div>';
-                    if ($is_ajax) {
-                        $response['status'] = true;
-                        $response['message'] = 'Parameter berhasil ditambahkan!';
-                        $response['data'] = array(
-                            'id' => $inserted_id,
-                            'param' => $param
-                        );
-                        echo json_encode($response);
-                        return;
-                    } else {
-                        $this->session->set_flashdata('medcheck', $message);
-                    }
+                    $response['status'] = true;
+                    $response['message'] = 'Parameter berhasil ditambahkan!';
+                    $response['data'] = [
+                        'id'    => $inserted_id,
+                        'param' => $param
+                    ];
+                    
+                    header('Content-Type: application/json');
+                    echo json_encode($response);
+                    return;
                 }
-            }
-
-            // Only redirect for non-AJAX requests
-            if (!$is_ajax) {
-                redirect($_SERVER['HTTP_REFERER']);
             }
         } else {
             $errors = $this->ion_auth->messages();
