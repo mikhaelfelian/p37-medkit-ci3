@@ -8,6 +8,7 @@
                 <?php echo $this->session->flashdata('gd_toast'); ?>
                 <?php echo $this->session->flashdata('lap_toast'); ?>
                 <?php echo $this->session->flashdata('sett_toast'); ?>
+                <?php echo $this->session->flashdata('login_toast'); ?>
             });
 
 
