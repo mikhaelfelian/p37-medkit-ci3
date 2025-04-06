@@ -61,58 +61,12 @@ class home extends CI_Controller {
     }
 
     /**
-     * Main dashboard view
-     * 
-     * Displays the main dashboard with various statistics and information
-     * including sales, purchases, and product data
-     */
-    public function index() {
-//        if (akses::aksesLogin() == TRUE) {
-        $pengaturan = $this->db->get('tbl_pengaturan')->row();
-        $userid = $this->ion_auth->user()->row()->id;
-        $id_grup = $this->ion_auth->get_users_groups()->row();
-        $id_user = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' ? '' : $userid);
-        $sql_penj = $this->db->select('SUM(jml_gtotal) as nominal')->like('id_user', $id_user)->get('tbl_trans_jual')->row();
-        $sql_pemb = $this->db->select('SUM(jml_gtotal) as nominal')->get('tbl_trans_beli')->row();
-
-        $data['tgl_tempo'] = date('Y-m-d', mktime(0, 0, 0, date("n"), date("j") + 1, date("Y")));
-
-        $data['prod_new'] = $this->db->select('id, id_satuan, kode, produk, SUM((jml * jml_satuan)) AS jml')->limit(5)->group_by('produk')->order_by('jml', 'desc')->get('tbl_trans_jual_det')->result();
-        $data['trans_new'] = $this->db->select('DATE(tgl_simpan) as tgl_simpan, id, id_sales, id_pelanggan, kode_nota_dpn, no_nota, kode_nota_blk, jml_gtotal')->like('id_user', $id_user)->limit(10)->order_by('no_nota', 'desc')->get('tbl_trans_jual')->result();
-        $data['trans_jml'] = $this->db->like('id_user', $id_user)->get('tbl_trans_jual')->num_rows();
-        $data['trans_jual_tmp'] = $this->db->query("SELECT id, no_nota, tgl_keluar FROM tbl_trans_jual WHERE DATEDIFF(tgl_keluar, CURDATE()) >= 0 AND DATEDIFF(tgl_keluar, CURDATE()) <= '" . $pengaturan->jml_limit_tempo . "' AND `tgl_masuk` != `tgl_keluar`");
-        $data['trans_beli_new'] = $this->db->select('DATE(tgl_simpan) as tgl_simpan, id, id_supplier, id_user, no_nota, jml_gtotal')->like('id_user', $id_user)->limit(10)->order_by('id', 'desc')->get('tbl_trans_beli')->result();
-        $data['trans_beli_jml'] = $this->db->like('id_user', $id_user)->get('tbl_trans_beli')->num_rows();
-        $data['trans_beli_tmp'] = $this->db->query("SELECT id, no_nota, tgl_keluar FROM tbl_trans_beli WHERE status_bayar != '1' AND DATEDIFF(tgl_keluar, CURDATE()) >= 0 AND DATEDIFF(tgl_keluar, CURDATE()) <= '" . $pengaturan->jml_limit_tempo . "' AND `tgl_masuk` != `tgl_keluar`");
-        $data['prod_jml'] = $this->db->select('jml')->where('jml <', $pengaturan->jml_limit_stok)->get('tbl_m_produk')->num_rows();
-        $data['pem_jml'] = $this->db->select('SUM(jml_gtotal) as nominal')->where('MONTH(tgl_masuk)', date('m'))->where('YEAR(tgl_masuk)', date('Y'))->like('id_user', $id_user)->get('tbl_trans_jual')->row();
-        $data['pem_jml_thn'] = $this->db->select('SUM(jml_gtotal) as nominal')->where('YEAR(tgl_masuk)', date('Y'))->like('id_user', $id_user)->get('tbl_trans_jual')->row();
-        $data['pemb_jml'] = $this->db->select('SUM(jml_gtotal) as nominal')->like('id_user', $id_user)->get('tbl_trans_beli')->row();
-        $data['pemb_jml_thn'] = $this->db->select('SUM(jml_gtotal) as nominal')->where('YEAR(tgl_masuk)', date('Y'))->like('id_user', $id_user)->get('tbl_trans_beli')->row();
-        $data['tot_laba'] = $sql_penj->nominal - $sql_pemb->nominal;
-        $data['user_id'] = $id_user;
-        $data['pengaturan'] = $this->db->get('tbl_pengaturan')->row();
-
-        $this->load->view('admin-lte-2/1_atas', $data);
-        $this->load->view('admin-lte-2/2_header', $data);
-        $this->load->view('admin-lte-2/3_navbar', $data);
-        $this->load->view('admin-lte-2/content', $data);
-        $this->load->view('admin-lte-2/5_footer', $data);
-        $this->load->view('admin-lte-2/6_bawah', $data);
-//        } else {
-//            $errors = $this->ion_auth->messages(); 
-//            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-//            redirect();
-//        }
-    }
-
-    /**
      * Secondary dashboard view
      * 
      * Displays an alternative dashboard view with room labels,
      * capacity information, and staff schedules
      */
-    public function index2() {
+    public function index() {
         if (akses::aksesLogin() == TRUE) {
             $data['kmr_label']      = $this->crud->kmr_label();
             $data['kmr_kaps']       = $this->crud->kmr_kapasitas();

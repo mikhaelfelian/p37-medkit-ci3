@@ -423,53 +423,54 @@ class Akses extends CI_Model {
         }
     }
     
-    public function contentAkses() {
-        $user = $this->ion_auth->user()->row();
-        $grup = $this->ion_auth->get_users_groups($user->id)->row();
+    public static function contentAkses() {
+        $CI = &get_instance();
+        $user = $CI->ion_auth->user()->row();
+        $grup = $CI->ion_auth->get_users_groups($user->id)->row();
         
         switch ($grup->name){
             case 'superadmin':
-                $this->load->view('admin-lte-2/includes/menu/content_sadmin');
+                $CI->load->view('admin-lte-2/includes/menu/content_sadmin');
                 break;
             
             case 'owner':
-                $this->load->view('admin-lte-2/includes/menu/content_owner');
+                $CI->load->view('admin-lte-2/includes/menu/content_owner');
                 break;
             
             case 'owner2':
-                $this->load->view('admin-lte-2/includes/menu/content_owner2');
+                $CI->load->view('admin-lte-2/includes/menu/content_owner2');
                 break;
             
             case 'adminm':
-                $this->load->view('admin-lte-2/includes/menu/content_admin');
+                $CI->load->view('admin-lte-2/includes/menu/content_admin');
                 break;
             
             case 'admin':
-                $this->load->view('admin-lte-2/includes/menu/content_admin');
+                $CI->load->view('admin-lte-2/includes/menu/content_admin');
                 break;
             
             case 'sales':
-                $this->load->view('admin-lte-2/includes/menu/content_sales');
+                $CI->load->view('admin-lte-2/includes/menu/content_sales');
                 break;
             
             case 'purchasing':
-                $this->load->view('admin-lte-2/includes/menu/content_purchasing');
+                $CI->load->view('admin-lte-2/includes/menu/content_purchasing');
                 break;
             
             case 'gudang':
-                $this->load->view('admin-lte-2/includes/menu/content_gudang');
+                $CI->load->view('admin-lte-2/includes/menu/content_gudang');
                 break;
             
             case 'kasir':
-                $this->load->view('admin-lte-2/includes/menu/content_kasir');
+                $CI->load->view('admin-lte-2/includes/menu/content_kasir');
                 break;
             
             case 'pasien':
-                $this->load->view('admin-lte-2/includes/menu/content_pasien');
+                $CI->load->view('admin-lte-2/includes/menu/content_pasien');
                 break;
             
             default:
-                $this->load->view('admin-lte-2/includes/menu/content');
+                $CI->load->view('admin-lte-2/includes/menu/content');
                 break;
         }
     }
