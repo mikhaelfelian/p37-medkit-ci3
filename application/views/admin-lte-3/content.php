@@ -103,7 +103,7 @@
                                     dataType: 'json',
                                     success: function(response) {
                                         // Update the total visits and percentage change
-                                        $('#total-visits').text(response.total_visits);
+                                        $('#total-visits').text(new Intl.NumberFormat('id-ID').format(response.total_visits));
                                         
                                         var percentageChange = response.percentage_change;
                                         $('#percentage-change').text(percentageChange + '%');
