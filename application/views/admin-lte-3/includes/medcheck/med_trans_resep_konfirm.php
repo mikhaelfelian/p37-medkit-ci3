@@ -168,12 +168,14 @@
             // Add CSRF token to data
             data[csrfName] = csrfHash;
 
+            console.log('Sending data:', data);
             $.ajax({
                 url: "<?php echo base_url('medcheck/set_medcheck_resep_upd_ttd.php') ?>",
                 data: data,
                 method: "POST",
                 dataType: "json",
                 success: function (response) {
+                    console.log('Response received:', response);
                     if(response.success === true) {
                         toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
                     } else {
@@ -181,6 +183,7 @@
                     }
                 },
                 error: function(xhr, status, error) {
+                    console.log('Ajax error:', {xhr: xhr, status: status, error: error});
                     toastr.error("Terjadi kesalahan: " + error);
                 }
             });

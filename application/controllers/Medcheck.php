@@ -8084,8 +8084,14 @@ public function set_medcheck_lab_adm_save() {
                     $path       = 'file/pasien/'.$no_rm.'/';
                     $filename   = '';
                     
-                    # Simpan foto dari kamera ke dalam format file *.png dari base64
+                    # Buat Folder Untuk Foto Pasien jika belum ada
                     if (!empty($foto)) {
+                        $dir_pasien = FCPATH.'/';
+                        if(!file_exists($dir_pasien.$path)){
+                            mkdir($dir_pasien.$path, 0777, true);
+                        }
+                        
+                        # Simpan foto dari kamera ke dalam format file *.png dari base64
                         $filename = $path.'ttd_resep_'.$kode.'.png';
                         general::base64_to_jpeg($foto, $filename);
                     }
@@ -8105,14 +8111,17 @@ public function set_medcheck_lab_adm_save() {
                         'success' => true,
                         'message' => 'Tanda tangan resep berhasil disimpan'
                     ];
-                    echo json_encode($response);
                 } catch (Exception $e) {
+                    log_message('error', 'Error in set_medcheck_resep_upd_ttd: '.$e->getMessage());
                     $response = [
                         'success' => false,
                         'message' => 'Terjadi kesalahan: '.$e->getMessage()
                     ];
-                    echo json_encode($response);
                 }
+                
+                // Set content type header before sending response
+                header('Content-Type: application/json');
+                echo json_encode($response);
             }
         } else {
             $response = [
