@@ -41,12 +41,12 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">No</th>
-                                        <th class="text-left">Kode</th>
-                                        <th class="text-left">Produk</th>
-                                        <th class="text-right">Jml</th>
+                                    <th class="text-left">Kode</th>
+                                    <th class="text-left">Produk</th>
+                                    <th class="text-right">Jml</th>
                                         <th class="text-center">Jml Diterima</th>
                                         <th class="text-center">Jml Kurang</th>
-                                    </tr>
+                                </tr>                               
                                 </thead>
                                 <tbody>
                                     <?php
@@ -67,7 +67,7 @@
                                             <td class="text-left"><?php echo ucwords($items->produk); ?></td>
                                             <td class="text-right">
                                                 <?php echo $items->jml . ' ' . $items->satuan; ?>
-                                            </td>
+                                        </td>
                                             <td class="text-center">
                                                 <?php if ($remaining_stock > 0): ?>
                                                     <div class="form-group mb-0">
@@ -87,9 +87,9 @@
                                                             <div class="input-group-append">
                                                                 <span
                                                                     class="input-group-text"><?php echo $items->satuan; ?></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
                                                 <?php else: ?>
                                                     <span class="badge badge-success">Selesai</span>
                                                     <?php echo form_input([
@@ -98,11 +98,11 @@
                                                         'disabled' => 'true'
                                                     ]); ?>
                                                 <?php endif; ?>
-                                            </td>
+                                        </td>
                                             <td class="text-center">
                                                 <?php echo $remaining_stock; ?>
-                                            </td>
-                                        </tr>
+                                        </td>
+                                    </tr>
                                     <?php endforeach; ?>
 
                                     <?php if (empty($sql_penj_det)): ?>
