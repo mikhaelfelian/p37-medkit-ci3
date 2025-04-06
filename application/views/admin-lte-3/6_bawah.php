@@ -49,12 +49,6 @@
                 setInterval(checkMutasiNotifications, 30000);
             <?php } ?>
 
-            
-            // Update date and time every second (1000 ms)
-            setInterval(updateDateTime, 1000);
-
-
-
             function updateDateTime() {
                 fetch('<?= base_url("home/tanggal") ?>')
                     .then(response => response.json())
