@@ -10280,8 +10280,8 @@ public function set_medcheck_lab_adm_save() {
             $rute       = $this->input->get('route');
             
             if(!empty($id)){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Item berhasil di hapus</div>');
-                crud::delete('tbl_trans_medcheck_kwi', 'id', general::dekrip($id_kwi));
+                $this->db->where('id', general::dekrip($id_kwi))->delete('tbl_trans_medcheck_kwi');
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Item berhasil di hapus");');
             }
             
             redirect(base_url((!empty($rute) ? $rute : 'medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.(!empty($id_kwi) ? '&id_kwi='.$id_kwi.'&' : '').'&status='.$status)));

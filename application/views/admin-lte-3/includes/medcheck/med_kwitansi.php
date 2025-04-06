@@ -26,7 +26,8 @@
                 <div class="col-lg-8">
                     <?php $hasError = $this->session->flashdata('form_error'); ?>
                     <?php $jml = $this->session->flashdata('jml'); ?>
-                    <?php echo form_open_multipart(base_url('medcheck/set_kwitansi_simpan.php'), 'autocomplete="off"') ?>                    
+                    <?php echo form_open(base_url('medcheck/set_kwitansi_simpan.php'), 'id="kwitansi_form" autocomplete="off"') ?> 
+                    <?php echo add_form_protection(); ?>                   
                     <!-- Default box -->
                     <div class="card">
                         <div class="card-header">
@@ -102,6 +103,7 @@
                             </div>                            
                         </div>
                     </div>
+                    <?php echo add_double_submit_protection('kwitansi_form') ?>
                     <?php echo form_close() ?>
                     <!-- /.card -->
 
