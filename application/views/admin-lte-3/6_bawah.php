@@ -48,6 +48,28 @@
                     // Set interval to check for notifications every 30 seconds (30000 ms)
                 setInterval(checkMutasiNotifications, 30000);
             <?php } ?>
+
+            
+            // Update date and time every second (1000 ms)
+            setInterval(updateDateTime, 1000);
+
+
+
+            function updateDateTime() {
+                fetch('<?= base_url("home/tanggal") ?>')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('tanggal-waktu').innerHTML = '<i class="far fa-calendar-alt mr-1"></i> ' + data.datetime;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching date time:', error);
+                    });
+            }
+
+            setInterval(updateDateTime, 1000);
+            updateDateTime(); // muat awal
         </script>
     </body>
 </html>

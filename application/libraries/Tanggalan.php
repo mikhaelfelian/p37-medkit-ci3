@@ -115,6 +115,31 @@ class tanggalan {
     }
 
     /**
+     * Format date to Indonesian format with abbreviated month name (dd MMM yyyy HH:mm:ss)
+     * Example: 10 Apr 2025 15:45:08
+     */
+    public static function tgl_indo9($tglan) {
+        $str_tgl = $tglan;
+        $dta_tgl = ($str_tgl != '0000-00-00 00:00:00' ? $str_tgl : '');
+        
+        if (empty($dta_tgl)) {
+            return '';
+        }
+        
+        $timestamp = strtotime($dta_tgl);
+        $day = date('d', $timestamp);
+        $month = date('M', $timestamp); // Abbreviated month name
+        $year = date('Y', $timestamp);
+        $time = date('H:i:s', $timestamp);
+        
+        // Get day name using hari_ke method
+        $day_name = self::hari_ke($dta_tgl);
+        
+        // Format: Selasa, 09 Apr 2025 12:23:55
+        return $day_name . ', ' . $day . ' ' . $month . ' ' . $year . ' ' . $time;
+    }
+
+    /**
      * Get month number (mm)
      */
     public static function bln_indo($tglan) {

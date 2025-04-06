@@ -30,6 +30,11 @@
         <nav class="mt-2">
             <img src="<?php echo base_url('assets/theme/admin-lte-3/dist/img/'.(!empty($pengaturan->logo) ? $pengaturan->logo : 'AdminLTELogo.png')); ?>" alt="<?php echo $pengaturan->judul.' Logo'; ?>" class="brand-image img-rounded elevation-0" style="width: 209px; height: 85px; background-color: transparent;">
             <hr/>
+            <div class="text-left">
+                <p class="text-muted" id="tanggal-waktu">
+                    <i class="far fa-calendar-alt mr-1"></i> 
+                </p>
+            </div>
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <?php
                 if (!empty($sidebar)) {

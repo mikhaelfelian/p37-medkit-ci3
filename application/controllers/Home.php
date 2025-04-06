@@ -196,4 +196,34 @@ class home extends CI_Controller {
             pre($data);
         }
     }
+
+    /**
+     * Function to update date and time display
+     * 
+     * This function is used to update the date and time display in the UI
+     * It uses the Tanggalan library to format the current date and time
+     * 
+     * @return void
+     */
+    public function tanggal() {
+        try {
+            // Get current date and time
+            $current_datetime = date('Y-m-d H:i:s');
+            
+            // Format using Tanggalan library
+            $formatted_datetime = $this->tanggalan->tgl_indo9($current_datetime);
+            
+            // Return formatted date and time as JSON
+            echo json_encode([
+                'success' => true,
+                'datetime' => $formatted_datetime
+            ]);
+        } catch (Exception $e) {
+            log_message('error', 'Error in update_datetime: ' . $e->getMessage());
+            echo json_encode([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
