@@ -68,16 +68,125 @@
                         <div class="card-body">
                             <div class="d-flex">
                                 <p class="d-flex flex-column">
-                                    <span>Grafik Kunjungan</span>
+                                    <span class="text-bold text-lg" id="total-visits">0</span>
+                                    <span>Grafik Kunjungan Pasien</span>
                                 </p>
                                 <p class="ml-auto d-flex flex-column text-right">
+                                    <span class="text-success">
+                                        <i class="fas fa-user-injured"></i> <span id="percentage-change">0%</span>
+                                    </span>
+                                    <span class="text-muted">Dibandingkan tahun lalu</span>
                                 </p>
                             </div>
                             <!-- /.d-flex -->
 
-                            <div class="position-relative mb-4">
+                            <div class="position-relative mb-4" style="min-height: 300px;">
                                 <canvas id="visitors-chart" height="300"></canvas>
                             </div>
+
+                            <script>
+                            $(function() {
+                                'use strict'
+                                
+                                var ticksStyle = {
+                                    fontColor: '#495057',
+                                    fontStyle: 'bold'
+                                }
+
+                                var mode = 'index';
+                                var intersect = true;
+                                
+                                // Fetch patient visit data from the server
+                                $.ajax({
+                                    url: '<?php echo base_url('home/get_patient_visits'); ?>',
+                                    method: 'GET',
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        // Update the total visits and percentage change
+                                        $('#total-visits').text(response.total_visits);
+                                        
+                                        var percentageChange = response.percentage_change;
+                                        $('#percentage-change').text(percentageChange + '%');
+                                        
+                                        // Set the appropriate color based on percentage change
+                                        if (percentageChange >= 0) {
+                                            $('#percentage-change').parent().removeClass('text-danger').addClass('text-success');
+                                            $('#percentage-change').parent().find('i').removeClass('fa-arrow-down').addClass('fa-arrow-up');
+                                        } else {
+                                            $('#percentage-change').parent().removeClass('text-success').addClass('text-danger');
+                                            $('#percentage-change').parent().find('i').removeClass('fa-arrow-up').addClass('fa-arrow-down');
+                                        }
+                                        
+                                        // Initialize the chart with the data from the server
+                                        var $visitorsChart = $('#visitors-chart');
+                                        var visitorsChart = new Chart($visitorsChart, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: response.labels,
+                                                datasets: [{
+                                                    data: response.visit_data,
+                                                    backgroundColor: '#007bff',
+                                                    borderColor: '#007bff',
+                                                    pointRadius: 3,
+                                                    pointBackgroundColor: '#007bff',
+                                                    pointBorderColor: '#007bff',
+                                                    pointHoverBackgroundColor: '#007bff',
+                                                    pointHoverBorderColor: '#007bff',
+                                                    fill: false,
+                                                    label: 'Kunjungan'
+                                                }]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                tooltips: {
+                                                    mode: mode,
+                                                    intersect: intersect
+                                                },
+                                                hover: {
+                                                    mode: mode,
+                                                    intersect: intersect
+                                                },
+                                                legend: {
+                                                    display: false
+                                                },
+                                                scales: {
+                                                    yAxes: [{
+                                                        display: true,
+                                                        gridLines: {
+                                                            display: true,
+                                                            lineWidth: '4px',
+                                                            color: 'rgba(0, 0, 0, .2)',
+                                                            zeroLineColor: 'transparent'
+                                                        },
+                                                        ticks: $.extend({
+                                                            beginAtZero: true,
+                                                            callback: function(value) {
+                                                                if (value >= 1000) {
+                                                                    value /= 1000
+                                                                    value += 'k'
+                                                                }
+                                                                return value
+                                                            }
+                                                        }, ticksStyle)
+                                                    }],
+                                                    xAxes: [{
+                                                        display: true,
+                                                        gridLines: {
+                                                            display: false
+                                                        },
+                                                        ticks: ticksStyle
+                                                    }]
+                                                }
+                                            }
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error fetching patient visit data:', error);
+                                    }
+                                });
+                            });
+                            </script>
                         </div>
                     </div>
                     <!-- /.card -->                    

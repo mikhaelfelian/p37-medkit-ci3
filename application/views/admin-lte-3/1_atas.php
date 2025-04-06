@@ -40,6 +40,10 @@
         <!-- Toastr -->
         <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
         <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.js') ?>"></script>
+
+        <!-- Chart.js -->
+        <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/chart.js/Chart.min.js') ?>"></script>
+
 </head>
 
     <body class="hold-transition <?php echo (!empty($layout) ? $layout : 'sidebar-mini') ?> layout-navbar-fixed">

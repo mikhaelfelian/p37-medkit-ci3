@@ -91,6 +91,87 @@ class home extends CI_Controller {
     }
 
     /**
+     * Get patient visits data for dashboard chart
+     * 
+     * Retrieves patient visit data from the database and formats it
+     * for display in the dashboard chart
+     * 
+     * @return json JSON-encoded data for the chart
+     */
+    public function get_patient_visits() {
+        header('Content-Type: application/json');
+        try {
+            // Get current year
+            $current_year = date('Y');
+            
+            // Get monthly visit data for the current year
+            $this->db->select('DATE_FORMAT(tgl_simpan, "%Y-%m") as month, COUNT(*) as visit_count');
+            $this->db->from('tbl_trans_medcheck');
+            $this->db->where('YEAR(tgl_simpan)', $current_year);
+            $this->db->where('status_hps', '0');
+            $this->db->group_by('DATE_FORMAT(tgl_simpan, "%Y-%m")');
+            $this->db->order_by('month', 'ASC');
+            $monthly_visits = $this->db->get()->result();
+            
+            // Get total visits for current year
+            $this->db->select('COUNT(*) as total');
+            $this->db->from('tbl_trans_medcheck');
+            $this->db->where('YEAR(tgl_simpan)', $current_year);
+            $this->db->where('status_hps', '0');
+            $current_year_total = $this->db->get()->row()->total;
+            
+            // Get total visits for previous year
+            $this->db->select('COUNT(*) as total');
+            $this->db->from('tbl_trans_medcheck');
+            $this->db->where('YEAR(tgl_simpan)', $current_year - 1);
+            $this->db->where('status_hps', '0');
+            $previous_year_total = $this->db->get()->row()->total;
+            
+            // Calculate percentage change
+            $percentage_change = 0;
+            if ($previous_year_total > 0) {
+                $percentage_change = round((($current_year_total - $previous_year_total) / $previous_year_total) * 100, 2);
+            }
+            
+            // Create month labels
+            $labels = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+            
+            // Initialize visit data array with zeros
+            $visit_data = array_fill(0, 12, 0);
+            
+            // Fill in actual visit data
+            foreach ($monthly_visits as $visit) {
+                $month = (int)substr($visit->month, 5, 2) - 1; // Extract month part (MM) from YYYY-MM and convert to 0-based index
+                $visit_data[$month] = (int)$visit->visit_count;
+            }
+            
+            // Debug: Log the query and results
+            $last_query = $this->db->last_query();
+            log_message('debug', 'Patient visits query: ' . $last_query);
+            log_message('debug', 'Monthly visits: ' . json_encode($monthly_visits));
+            log_message('debug', 'Current year total: ' . $current_year_total);
+            
+            // Prepare response data
+            $data = [
+                'total_visits' => $current_year_total,
+                'percentage_change' => $percentage_change,
+                'labels' => $labels,
+                'visit_data' => $visit_data
+            ];
+            echo json_encode($data);
+        } catch (Exception $e) {
+            log_message('error', 'Error in get_patient_visits: ' . $e->getMessage());
+            echo json_encode([
+                'error' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Test function to load data from tbl_util_so
      * 
      * Retrieves and returns data from the tbl_util_so table
