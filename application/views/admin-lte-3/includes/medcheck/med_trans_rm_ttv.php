@@ -107,9 +107,6 @@
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/moment/moment.min.js') ?>"></script>
 <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">
 
-<!-- OPTIONAL SCRIPTS -->
-<script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/chart.js/Chart.min.js') ?>"></script>
-
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
