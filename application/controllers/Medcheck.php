@@ -9787,58 +9787,33 @@ public function set_medcheck_lab_adm_save() {
             $id         = $this->input->get('id');
             $id_rsm     = $this->input->get('id_resm');
             $status     = $this->input->post('status');
-            $periksa    = $this->input->post('pemeriksaan');
-            $hasil1     = $this->input->post('hasil1');
-            $hasil2     = $this->input->post('hasil2');
-            $hasil3     = $this->input->post('hasil3');
-            $route      = $this->input->post('route');
-            $act        = $this->input->post('act');
             
-//            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-//
-//            $this->form_validation->set_rules('id', 'ID', 'required');
-//
-//            if ($this->form_validation->run() == FALSE) {
-//                $msg_error = array(
-//                    'id'            => form_error('id'),
-//                );
-//
-//                $this->session->set_flashdata('form_error', $msg_error);
-//
-//                redirect(base_url('medcheck/tambah.php?act=resm_surat&id='.$id.'&id_resm='.$id_rsm.'&status='.$status));
-//            } else {
-                $sql_medc      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_medc_resm = $this->db->where('id', general::dekrip($id_rsm))->get('tbl_trans_medcheck_resume')->row();
-                $sql_medc_file = $this->db->where('id_medcheck_rsm', $sql_medc_resm->id)->get('tbl_trans_medcheck_file');
+            $sql_medc      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+            $sql_medc_resm = $this->db->where('id', general::dekrip($id_rsm))->get('tbl_trans_medcheck_resume')->row();
+            $sql_medc_file = $this->db->where('id_medcheck_rsm', $sql_medc_resm->id)->get('tbl_trans_medcheck_file');
 
-                $data_file = array(
-                    'id_medcheck'       => $sql_medc->id,
-                    'id_medcheck_rsm'   => $sql_medc_resm->id,
-                    'id_pasien'         => $sql_medc->id_pasien,
-                    'id_user'           => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'tgl_masuk'         => date('Y-m-d H:i'),
-                    'judul'             => 'RESUME MEDIS RAWAT INAP '.$sql_medc_resm->no_surat,
-                    'file_name'         => '/medcheck/surat/cetak_pdf_rsm_rnp.php?id='.$id.'&id_resm='.$id_rsm,
-                    'file_ext'          => '.pdf',
-                    'file_type'         => 'application/pdf',
-                    'status'            => '2',
-                );
-                
-                if($sql_medc_file->num_rows() == 0){
-                    crud::simpan('tbl_trans_medcheck_file', $data_file);
-                }else{
-                    crud::update('tbl_trans_medcheck_file', 'id', $sql_medc_resm->id, $data_file);
-                }
-                
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data pemeriksaan resume berhasil disimpan</div>');
-  
-                redirect(base_url('medcheck/surat/cetak_pdf_rsm_rnp.php?id='.$id.'&id_resm='.$id_rsm));  
-                
-//                echo '<pre>';
-//                print_r($data_file);
-//                echo '</pre>';              
-//            }
+            $data_file = [
+                'id_medcheck'       => $sql_medc->id,
+                'id_medcheck_rsm'   => $sql_medc_resm->id,
+                'id_pasien'         => $sql_medc->id_pasien,
+                'id_user'           => $this->ion_auth->user()->row()->id,
+                'tgl_simpan'        => date('Y-m-d H:i:s'),
+                'tgl_masuk'         => date('Y-m-d H:i'),
+                'judul'             => 'RESUME MEDIS RAWAT INAP '.$sql_medc_resm->no_surat,
+                'file_name'         => '/medcheck/surat/cetak_pdf_rsm_rnp.php?id='.$id.'&id_resm='.$id_rsm,
+                'file_ext'          => '.pdf',
+                'file_type'         => 'application/pdf',
+                'status'            => '2',
+            ];
+            
+            if($sql_medc_file->num_rows() == 0){
+                crud::simpan('tbl_trans_medcheck_file', $data_file);
+            }else{
+                crud::update('tbl_trans_medcheck_file', 'id', $sql_medc_resm->id, $data_file);
+            }
+            
+            $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pemeriksaan resume berhasil disimpan");');
+            redirect(base_url('medcheck/surat/cetak_pdf_rsm_rnp.php?id='.$id.'&id_resm='.$id_rsm));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -9856,26 +9831,30 @@ public function set_medcheck_lab_adm_save() {
             $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
             
             if($sql_medc->num_rows() > 0){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil dihapus</div>');
-                
-                /* Transaksi Database */
-                $this->db->trans_begin();
-                
-                # Hapus ke tabel medcheck lab
-                $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_resume');
-
-                # Cek status transact MySQL
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback jika gagal
+                try {
+                    /* Transaksi Database */
+                    $this->db->trans_begin();
+                    
+                    # Hapus ke tabel medcheck lab
+                    $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_resume');
+    
+                    # Cek status transact MySQL
+                    if ($this->db->trans_status() === FALSE) {
+                        # Rollback jika gagal
+                        $this->db->trans_rollback();
+    
+                        # Tampilkan pesan error
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data resume medis gagal dihapus!!");');
+                    } else {
+                        $this->db->trans_commit();
+    
+                        # Tampilkan pesan sukses jika sudah berhasil commit
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data resume medis berhasil dihapus");');
+                    }
+                } catch (Exception $e) {
                     $this->db->trans_rollback();
-
-                    # Tampilkan pesan error
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Data resume medis gagal dihapus !!</div>');
-                } else {
-                    $this->db->trans_commit();
-
-                    # Tampilkan pesan sukses jika sudah berhasil commit
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data resume medis berhasil dihapus !!</div>');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    log_message('error', 'Medcheck resume delete error: ' . $e->getMessage());
                 }
             }
 
@@ -9899,26 +9878,30 @@ public function set_medcheck_lab_adm_save() {
             $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck');
             
             if($sql_medc->num_rows() > 0){
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Transaksi berhasil dihapus</div>');
-                
-                /* Transaksi Database */
-                $this->db->trans_begin();
-                
-                # Hapus ke tabel medcheck lab
-                $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_resume_det');
-
-                # Cek status transact MySQL
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback jika gagal
+                try {
+                    /* Transaksi Database */
+                    $this->db->trans_begin();
+                    
+                    # Hapus ke tabel medcheck lab
+                    $this->db->where('id', general::dekrip($item_id))->delete('tbl_trans_medcheck_resume_det');
+    
+                    # Cek status transact MySQL
+                    if ($this->db->trans_status() === FALSE) {
+                        # Rollback jika gagal
+                        $this->db->trans_rollback();
+    
+                        # Tampilkan pesan error
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data resume medis gagal dihapus!!");');
+                    } else {
+                        $this->db->trans_commit();
+    
+                        # Tampilkan pesan sukses jika sudah berhasil commit
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data resume medis berhasil dihapus");');
+                    }
+                } catch (Exception $e) {
                     $this->db->trans_rollback();
-
-                    # Tampilkan pesan error
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Data resume medis gagal dihapus !!</div>');
-                } else {
-                    $this->db->trans_commit();
-
-                    # Tampilkan pesan sukses jika sudah berhasil commit
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data resume medis berhasil dihapus !!</div>');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    log_message('error', 'Medcheck resume delete error: ' . $e->getMessage());
                 }
             }
 
@@ -9944,21 +9927,27 @@ public function set_medcheck_lab_adm_save() {
                 /* Transaksi Database */
                 $this->db->trans_begin();
                 
-                # Hapus ke tabel medcheck lab
-                $this->db->where('id_resume', general::dekrip($id_resm))->delete('tbl_trans_medcheck_resume_det');
-
-                # Cek status transact MySQL
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback jika gagal
+                try {
+                    # Hapus ke tabel medcheck lab
+                    $this->db->where('id_resume', general::dekrip($id_resm))->delete('tbl_trans_medcheck_resume_det');
+    
+                    # Cek status transact MySQL
+                    if ($this->db->trans_status() === FALSE) {
+                        # Rollback jika gagal
+                        $this->db->trans_rollback();
+    
+                        # Tampilkan pesan error
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data resume medis gagal dihapus!!");');
+                    } else {
+                        $this->db->trans_commit();
+    
+                        # Tampilkan pesan sukses jika sudah berhasil commit
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data resume medis berhasil dihapus");');
+                    }
+                } catch (Exception $e) {
                     $this->db->trans_rollback();
-
-                    # Tampilkan pesan error
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Data resume medis gagal dihapus !!</div>');
-                } else {
-                    $this->db->trans_commit();
-
-                    # Tampilkan pesan sukses jika sudah berhasil commit
-                    $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data resume medis berhasil dihapus !!</div>');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    log_message('error', 'Medcheck resume delete error: ' . $e->getMessage());
                 }
             }
 
@@ -17944,7 +17933,7 @@ public function set_medcheck_lab_adm_save() {
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $foto_file          = realpath($sql_pasien->file_name);
-            $ck_foto            = (!empty($sql_pasien->file_name) ? FCPATH.'/'.$sql_pasien->file_name : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
+            $ck_foto            = (!empty($sql_pasien->file_name) && file_exists(FCPATH.'/'.$sql_pasien->file_name) ? FCPATH.'/'.$sql_pasien->file_name : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
             $foto_pasien        = $ck_foto;
 
             // Create directory if it doesn't exist
@@ -17965,7 +17954,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,15,19);
+                $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
@@ -17977,7 +17966,9 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             
             # Blok ID PASIEN
-            $pdf->Image($foto_pasien,1,4,2.5,3);
+            if (file_exists($foto_pasien)) {
+                $pdf->Image($foto_pasien,1,4,2.5,3);
+            }
             
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(2.5, .5, '', '0', 0, 'L', $fill);
@@ -18797,9 +18788,17 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             
             foreach ($sql_medc_ass3L as $ass3L) {
-                $bb  = $this->db->where('id_medcheck_ass', $ass3L->id_medcheck_ass)->where('id_item', '36')->get('tbl_trans_medcheck_ass_fisik_hsl')->row()->item_value2;
-                $tb  = $this->db->where('id_medcheck_ass', $ass3L->id_medcheck_ass)->where('id_item', '35')->get('tbl_trans_medcheck_ass_fisik_hsl')->row()->item_value2 / 100;
-                $imt = $bb / ($tb * $tb);
+                $bb_row = $this->db->where('id_medcheck_ass', $ass3L->id_medcheck_ass)->where('id_item', '36')->get('tbl_trans_medcheck_ass_fisik_hsl')->row();
+                $tb_row = $this->db->where('id_medcheck_ass', $ass3L->id_medcheck_ass)->where('id_item', '35')->get('tbl_trans_medcheck_ass_fisik_hsl')->row();
+                
+                $bb = isset($bb_row->item_value2) ? $bb_row->item_value2 : 0;
+                $tb = isset($tb_row->item_value2) ? $tb_row->item_value2 / 100 : 0;
+                
+                // Prevent division by zero
+                $imt = 0;
+                if ($tb > 0) {
+                    $imt = $bb / ($tb * $tb);
+                }
                         
                 $pdf->SetFont('Arial', 'B', '9');
                 $pdf->Cell(4, .5, $ass3L->item_name, '0', 0, 'L', $fill);

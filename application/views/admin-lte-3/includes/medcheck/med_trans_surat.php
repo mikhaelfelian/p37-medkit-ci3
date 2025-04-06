@@ -848,7 +848,5 @@
             $("div.divSurat").hide();
             $("#" + tipe_surat).show().find('input').prop('disabled', false);
         });
-
-<?php echo $this->session->flashdata('medcheck_toast'); ?>
     });
 </script>
