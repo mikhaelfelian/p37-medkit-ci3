@@ -114,7 +114,6 @@ class Satusehat extends CI_Controller {
             //echo $idpractitioner;
         }
         return $data['ihsnumber'];
-        //$this->load->view('index', $data);
     }
 
     public function get_idpractitioner(string $nik): string {
