@@ -6499,43 +6499,41 @@ class Medcheck extends CI_Controller {
             $act        = $this->input->post('act');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('anamnesa', $msg_error);
-
-                redirect(base_url('medcheck/tambah.php?id='.$id.'status='.$status));
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
             } else {
-                $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row(); 
-                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
+                $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row(); 
                 
-                $this->db->where('status', '3')->where('id_medcheck', $sql_medc->id)->update('tbl_trans_medcheck_det', array('status_ctk' => '0'));
+                // Reset status cetak untuk semua item lab pada medcheck ini
+                $this->db->where('status', '3')
+                         ->where('id_medcheck', $sql_medc->id)
+                         ->update('tbl_trans_medcheck_det', ['status_ctk' => '0']);
+                
                 $this->session->unset_userdata('lab_print');
                 
-                foreach ($_POST['print'] as $key => $print){
-                    $cetak[] = array(
+                $cetak = [];
+                foreach ($_POST['print'] as $key => $print) {
+                    $cetak[] = [
                         'id'            => $key,
                         'id_lab'        => $_POST['print_lab'][$key],
                         'id_lab_hsl'    => $_POST['print_lab_hsl'][$key],
                         'id_kat'        => $_POST['print_kat'][$key],
                         'value'         => $_POST['print'][$key],
-                    );
+                    ];
                     
-                    $this->db->where('id', $key)->update('tbl_trans_medcheck_det', array('status_ctk' => $_POST['print'][$key]));
+                    $this->db->where('id', $key)
+                             ->update('tbl_trans_medcheck_det', ['status_ctk' => $_POST['print'][$key]]);
                 }
                 
-//                echo '<pre>';
-//                print_r($cetak);
-//                echo '</pre>';
-                
                 $this->session->set_userdata('lab_print', $cetak);
-
-                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Hasil lab berhasil di simpan</div>');
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Hasil lab berhasil disimpan");');
                 redirect(base_url('medcheck/surat/cetak_pdf_lab.php?id='.$id.'&id_lab='.$id_lab));
             }
         } else {
@@ -16068,13 +16066,7 @@ public function set_medcheck_lab_adm_save() {
             $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
             $sql_medc_srt       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck_surat')->row(); 
             $sql_medc_lab       = $this->db->where('id', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab')->row(); 
-            $sql_medc_lab_det   = $this->db->where('id_medcheck', general::dekrip($id_medcheck))
-                                          ->where('id_lab', general::dekrip($id_lab))
-                                          ->where('status', '3')
-                                          ->where('status_hsl', '1')
-                                          ->group_by('id_lab_kat')
-                                          ->get('tbl_trans_medcheck_det')
-                                          ->result(); 
+            $sql_medc_lab_det   = $this->db->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->where('status', '3')->where('status_hsl', '1')->group_by('id_lab_kat')->get('tbl_trans_medcheck_det')->result(); 
             $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
             $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
             $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
@@ -16082,25 +16074,23 @@ public function set_medcheck_lab_adm_save() {
             $sql_dokter2        = $this->db->where('id_user', '221')->get('tbl_m_karyawan')->row();
             $sql_dokter3        = $this->db->where('id_user', '48167')->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
             $sess_print         = $this->session->userdata('lab_print');
             
             $judul              = "HASIL PEMERIKSAAN LABORATORIUM";
             $judul2             = "Laboratory Result";
 
             $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', [21.5, 33]);
+            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 6.5);
-            $pdf->SetMargins(1, 0.35, 1);
+            $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
-            $pdf->addPage('', '', false);
+            $pdf->addPage('','',false);
             
             # Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2, 5, 4, 15, 19);  
-            }
+            $pdf->Image($gambar2,5,4,15,19);  
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -16143,6 +16133,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill);
+//            $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5(date('Y-m-d H:i')), '0', 0, 'L', $fill);
             $pdf->Cell(2.5, .5, 'NIK', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $sql_pasien->nik, '0', 0, 'L', $fill);
@@ -16159,7 +16150,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->MultiCell(15.5, .5, (!empty($sql_pasien->alamat) ? general::bersih($sql_pasien->alamat) : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
             $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->MultiCell(15.5, .5, $sql_pasien->no_hp.(isset($penj->no_telp) && !empty($penj->no_telp) ? ' / '.$penj->no_telp : ''), '0', 'L');
+            $pdf->MultiCell(15.5, .5, $sql_pasien->no_hp.(!empty($penj->no_telp) ? ' / '.$penj->no_telp : ''), '0', 'L');
             $pdf->Cell(3, .5, 'Dokter Pengirim', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->MultiCell(15.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '0', 'L');
@@ -16185,34 +16176,22 @@ public function set_medcheck_lab_adm_save() {
             if ($status_ctk == '1') {
                 foreach ($sql_medc_lab_det as $det) {
                     $sql_kat = $this->db->where('id', $det->id_lab_kat)->get('tbl_m_kategori')->row();
-                    $sql_det = $this->db->where('status_hsl', '1')
-                                       ->where('id_medcheck', $det->id_medcheck)
-                                       ->where('id_lab', $det->id_lab)
-                                       ->where('id_lab_kat', $det->id_lab_kat)
-                                       ->get('tbl_trans_medcheck_det')
-                                       ->result();
+                    $sql_det = $this->db->where('status_hsl', '1')->where('id_medcheck', $det->id_medcheck)->where('id_lab', $det->id_lab)->where('id_lab_kat', $det->id_lab_kat)->get('tbl_trans_medcheck_det')->result();
 
                     if (!empty($det->id_lab_kat)) {
                         $pdf->SetFont('Arial', 'Bi', '9');
                         $pdf->Cell(19, .5, $sql_kat->keterangan, '', 0, 'L', $fill);
                         $pdf->Ln();
-                    } else {
+                    }else{
                         $pdf->Ln(0);
                     }
 
                     foreach ($sql_det as $medc) {
                         $sql_lab_rws = $this->db->where('id_medcheck', $medc->id_medcheck)->get('tbl_trans_medcheck_lab');
                         if ($sql_lab_rws->num_rows() > 1) {
-                            $sql_lab = $this->db->where('id_medcheck', $medc->id_medcheck)
-                                              ->where('id_lab', general::dekrip($id_lab))
-                                              ->where('id_item', $medc->id_item)
-                                              ->get('tbl_trans_medcheck_lab_hsl')
-                                              ->result();
+                            $sql_lab = $this->db->where('id_medcheck', $medc->id_medcheck)->where('id_lab', general::dekrip($this->input->get('id_lab')))->where('id_item', $medc->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
                         } else {
-                            $sql_lab = $this->db->where('id_medcheck', $medc->id_medcheck)
-                                              ->where('id_item', $medc->id_item)
-                                              ->get('tbl_trans_medcheck_lab_hsl')
-                                              ->result();
+                            $sql_lab = $this->db->where('id_medcheck', $medc->id_medcheck)->where('id_item', $medc->id_item)->get('tbl_trans_medcheck_lab_hsl')->result();
                         }
 
                         $pdf->SetFont('Arial', '', '8');
@@ -16232,42 +16211,33 @@ public function set_medcheck_lab_adm_save() {
 
                             $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
                             $pdf->Cell(6, .5, ' - ' . html_entity_decode($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-                            $pdf->Cell(4.5, .5, html_entity_decode($lab->item_hasil, ENT_NOQUOTES, 'utf-8') . (isset($lab_det) && $lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+//                            $pdf->Cell(7, .5, '', 'B', 0, 'L', $fill);
+                            $pdf->Cell(4.5, .5, html_entity_decode($lab->item_hasil, ENT_NOQUOTES, 'utf-8') . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
                             
                             $x = $pdf->GetX();
                             $y = $pdf->GetY();                           
                             $pdf->MultiCell(4.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
                             $pdf->SetXY($x + 5, $y);                            
                             $pdf->Cell(3.5, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+//                            $pdf->Cell(5.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+//                            $pdf->Cell(2, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
                             $pdf->Ln();
                             
                             # Jika warna hasil di tandai merah
                             if ($lab->status_hsl_wrn == 1) {
-                                $pdf->SetTextColor(0, 0, 0);
+                                $pdf->SetTextColor(0,0,0);
                             }
                         }
                     }
                 }
             } else {
                 # Untuk Mencetak dengan pilihan                
-                $sql_medc_lab_det2 = $this->db->where('status', '3')
-                                             ->where('status_ctk', '1')
-                                             ->where('status_hsl', '1')
-                                             ->group_by('id_lab_kat')
-                                             ->where('id_medcheck', general::dekrip($id_medcheck))
-                                             ->where('id_lab', general::dekrip($id_lab))
-                                             ->get('tbl_trans_medcheck_det')
-                                             ->result();
+                $sql_medc_lab_det2   = $this->db->where('status', '3')->where('status_ctk', '1')->where('status_hsl', '1')->group_by('id_lab_kat')->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->get('tbl_trans_medcheck_det')->result();
                 
+                $i = 0;
                 foreach ($sql_medc_lab_det2 as $det2) {
                     $sql_kat2 = $this->db->where('id', $det2->id_lab_kat)->get('tbl_m_kategori')->row();
-                    $sql_det2 = $this->db->where('status_ctk', '1')
-                                        ->where('status_hsl', '1')
-                                        ->where('id_medcheck', $det2->id_medcheck)
-                                        ->where('id_lab', $det2->id_lab)
-                                        ->where('id_lab_kat', $det2->id_lab_kat)
-                                        ->get('tbl_trans_medcheck_det')
-                                        ->result();                        
+                    $sql_det2 = $this->db->where('status_ctk', '1')->where('status_hsl', '1')->where('id_medcheck', $det2->id_medcheck)->where('id_lab', $det2->id_lab)->where('id_lab_kat', $det2->id_lab_kat)->get('tbl_trans_medcheck_det')->result();                        
                     
                     if (!empty($det2->id_lab_kat)) {
                         $pdf->SetFont('Arial', 'Bi', '9');
@@ -16278,66 +16248,69 @@ public function set_medcheck_lab_adm_save() {
                     foreach ($sql_det2 as $medc2) {
                         $sql_lab_rws2 = $this->db->where('id_medcheck', $medc2->id_medcheck)->get('tbl_trans_medcheck_lab');
                         if ($sql_lab_rws2->num_rows() > 1) {
-                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)
-                                               ->where('id_lab', $medc2->id_lab)
-                                               ->where('id_item', $medc2->id_item)
-                                               ->get('tbl_trans_medcheck_lab_hsl');
+                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)->where('id_lab', $medc2->id_lab)->where('id_item', $medc2->id_item)->get('tbl_trans_medcheck_lab_hsl');
                         } else {
-                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)
-                                               ->where('id_item', $medc2->id_item)
-                                               ->get('tbl_trans_medcheck_lab_hsl');
+                            $sql_lab2 = $this->db->where('id_medcheck', $medc2->id_medcheck)->where('id_item', $medc2->id_item)->get('tbl_trans_medcheck_lab_hsl');
                         }
 
                         $pdf->SetFont('Arial', '', '8');
 
                         if (!empty($det2->id_lab_kat)) {
-                            $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+//                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_kat'] == $det->id_lab_kat) {
+                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+//                            }
                         }
                         
-                        if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                            $pdf->Cell(18.75, .5, $medc2->item, '', 0, 'L', $fill);
+                        if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
+                            $pdf->Cell(18.75, .5, $medc2->item.'' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+//                            $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
                             $pdf->Ln();
                         }
 
                         foreach ($sql_lab2->result() as $lab2) {
-                            $x = $pdf->GetX();
-                            $y = $pdf->GetY();
-                            
-                            if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
-                            }
-                            
-                            # Jika warna hasil di tandai merah
-                            if($lab2->status_hsl_wrn == 1) {
-                                $pdf->SetTextColor(249, 11, 11);
-                            }
-                            
-                            $itm_tg     = 0.5; # tinggi cell
-                            $itm_lbr    = 4;
-                            $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
-                            $len        = strlen($lab2->item_hasil);
-                            $itm_spasi  = ($len > 35 ? 0.25 : 0);
-                            $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
-                                                        
-                            if($sql_lab2->num_rows() > 0 && strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                                $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                            } else {
-                                $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                            }
-                            
-                            $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-                            $pdf->SetXY($x + 11, $y);
-                            $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                            $pdf->SetXY($x + 15, $y);
-                            $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                            $pdf->Ln(0.35);
-                            
-                            # Jika warna hasil di tandai merah
-                            if($lab2->status_hsl_wrn == 1) {
-                                $pdf->SetTextColor(0, 0, 0);
-                            }
+                                $x = $pdf->GetX();
+                                $y = $pdf->GetY();
+                                
+//                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_lab_hsl'] == $lab->id) {
+                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
+                                    $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+                                }
+                                
+                                # Jika warna hasil di tandai merah
+                                if($lab2->status_hsl_wrn == 1){
+                                    $pdf->SetTextColor(249,11,11);
+                                }
+                                
+                                $itm_tg     = 0.5; # tinggi cell
+                                $itm_lbr    = 4;
+                                $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
+                                $len        = strlen($lab2->item_hasil);
+                                $itm_spasi  = ($len > 35 ? 0.25 : 0);
+                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
+                                                            
+                                
+                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
+                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                }else{
+//                                    $pdf->Cell(.5, .5, '', '1', 0, 'L', $fill);
+                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                }
+                                
+                                $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
+                                $pdf->SetXY($x + 11, $y);
+                                $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                $pdf->SetXY($x + 15, $y);
+                                $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                $pdf->Ln(0);
+                                
+                                # Jika warna hasil di tandai merah
+                                if($lab2->status_hsl_wrn == 1){
+                                    $pdf->SetTextColor(0,0,0);
+                                }
                         }
                     }
+                    
+                    $i++;
                 }                
             }
             
@@ -16347,13 +16320,13 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             
             // Keterangan Hasil Lab selain template covid
-            if ($sql_medc_lab->status_cvd == '0' && !empty($sql_medc_lab->ket)) {
+            if ($sql_medc_lab->status_cvd == '0' AND !empty($sql_medc_lab->ket)) {
                 $pdf->SetFont('Arial', 'B', '10');
                 $pdf->Cell(19, .5, 'Catatan / Note', '', 0, 'L', $fill);
                 $pdf->Ln();
                 $pdf->SetFont('Arial', '', '9');
                 $pdf->MultiCell(6, .5, $sql_medc_lab->ket, '0', 'L');
-            } elseif($sql_medc_lab->status_cvd != '0') {
+            }elseif($sql_medc_lab->status_cvd != '0'){
                 $pdf->SetFont('Arial', 'B', '10');
                 $pdf->Cell(19, .5, 'Catatan / Note', '', 0, 'L', $fill);
                 $pdf->Ln();
@@ -16422,29 +16395,38 @@ public function set_medcheck_lab_adm_save() {
                 $pdf->Cell(18, .5, 'periodic examinations need to be carried out.', '', 0, 'L', $fill);
                 $pdf->Ln();
             }
-            
+           
             // QR GENERATOR VALIDASI
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
-            $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
-            $params['level'] = 'H';
-            $params['size'] = 2;
+            // Load QR library
+            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
             
-            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
-            \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
-
-            $gambar4 = $qr_validasi;
+            $qr_validasi = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $validasi_text = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            
+            // Create directory if it doesn't exist
+            $dir = dirname($qr_validasi);
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            
+            // Generate QR code using QRlib
+            \QRcode::png($validasi_text, $qr_validasi, QR_ECLEVEL_H, 2);
+            
+            $gambar4 = $qr_validasi;         
                         
             // QR GENERATOR DOKTER
-            $qr_dokter = $folder_path.'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $qr_dokter = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $dokter_text = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
             
-            \QRcode::png($params['data'], $qr_dokter, QR_ECLEVEL_H, 2, 2);
-
+            // Create directory if it doesn't exist
+            $dir = dirname($qr_dokter);
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            
+            // Generate QR code using QRlib
+            \QRcode::png($dokter_text, $qr_dokter, QR_ECLEVEL_H, 2);
+            
             $gambar5 = $qr_dokter;
             
             # Gambar VALIDASI
@@ -16572,7 +16554,7 @@ public function set_medcheck_lab_adm_save() {
             ob_end_flush();
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
             redirect();
         }
     }
