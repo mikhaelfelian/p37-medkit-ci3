@@ -47,7 +47,7 @@ $route['home.php']                                      = "home/index";
 
 /* FrontEnd */
 $route['cek_login.php']                                 = "login/cek_login";
-$route['dashboard2.php']                                = "home/index2";
+$route['dashboard.php']                                 = "home/index";
 
 $route['home/register.php']                             = "home/register";
 

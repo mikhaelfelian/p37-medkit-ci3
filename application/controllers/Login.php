@@ -50,12 +50,9 @@ class Login extends CI_Controller {
                     }else{
                         $this->db->where('id', $user->id)->update('tbl_ion_users', ['pss' => $pass]);
                         
-                        # cek status user pasien atau manajemen
-                        if($user->tipe == '2'){
-                            redirect(base_url('dashboard.php'));
-                        }else{
-                            redirect(base_url('dashboard2.php'));
-                        }
+                        // Set success toast message for successful login
+                        $this->session->set_flashdata('login_toast', 'toastr.success("Anda berhasil login!!");');
+                        redirect(base_url('dashboard.php'));
                     }
                 }else{
                     $this->session->set_flashdata('login_toast', 'toastr.error("Captcha tidak valid!!");');
