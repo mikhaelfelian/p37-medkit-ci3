@@ -297,6 +297,7 @@ $route['gudang/set_trans_mutasi_update.php']            = "gudang/set_trans_muta
 $route['gudang/set_trans_mutasi_proses.php']            = "gudang/set_trans_mutasi_proses";
 $route['gudang/set_trans_mutasi_batal.php']             = "gudang/set_trans_mutasi_batal";
 $route['gudang/set_trans_mutasi_finish.php']            = "gudang/set_trans_mutasi_finish";
+$route['gudang/set_trans_mutasi_tolak.php']             = "gudang/set_trans_mutasi_tolak";
 $route['gudang/cart_mutasi_simpan.php']                 = "gudang/cart_mutasi_simpan";
 $route['gudang/cart_mutasi_hapus.php']                  = "gudang/cart_mutasi_hapus";
 $route['gudang/cetak_nota.php']                         = "gudang/trans_mutasi_print_ex_do";

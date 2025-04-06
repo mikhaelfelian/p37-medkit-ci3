@@ -1475,7 +1475,7 @@ class Gudang extends CI_Controller {
                 ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                $this->session->set_flashdata('gudang_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
+                $this->session->set_flashdata('gd_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 
                 redirect(base_url('gudang/trans_mutasi.php'));
             } else {
@@ -1508,18 +1508,18 @@ class Gudang extends CI_Controller {
                     
                         if ($this->db->trans_status() === FALSE) {
                             $this->db->trans_rollback();
-                            $this->session->set_flashdata('gudang_toast', 'toastr.error("Gagal menyimpan data mutasi!");');
+                            $this->session->set_flashdata('gd_toast', 'toastr.error("Gagal menyimpan data mutasi!");');
                             redirect(base_url('gudang/trans_mutasi.php'));
                         } else {
                             $this->db->trans_commit();
                     $this->session->set_userdata('trans_mutasi', $data);
-                            $this->session->set_flashdata('gudang_toast', 'toastr.success("Data mutasi berhasil disimpan");');
+                            $this->session->set_flashdata('gd_toast', 'toastr.success("Data mutasi berhasil disimpan");');
                     redirect(base_url('gudang/trans_mutasi.php?id=' . general::enkrip($last_id)));
                         }
                     }
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('gudang/trans_mutasi.php'));
                 }
             }
@@ -1624,7 +1624,7 @@ class Gudang extends CI_Controller {
                 ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                $this->session->set_flashdata('gudang_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
+                $this->session->set_flashdata('gd_toast', 'toastr.error("Validasi form gagal, silahkan periksa kembali.");');
                 redirect(base_url('gudang/trans_mutasi.php?id='.$id));
             } else {
             $trans_mut      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi');
@@ -1664,11 +1664,11 @@ class Gudang extends CI_Controller {
                 $this->session->unset_userdata('trans_mutasi');
                 $this->cart->destroy();
                 
-                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Transaksi mutasi berhasil diproses");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Transaksi mutasi berhasil diproses");');
                     redirect(base_url('gudang/trans_mutasi_det.php?id='.$id));                    
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('gudang/trans_mutasi.php?id='.$id));
                 }
             }               
@@ -1711,11 +1711,42 @@ class Gudang extends CI_Controller {
                 $this->db->where('id', $sql_cek->row()->id)->update('tbl_trans_mutasi', $data);
                 
                 if ($this->db->affected_rows() > 0) {
-                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Mutasi sudah di selesaikan !");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Mutasi sudah di selesaikan !");');
                 }
             }
             
             redirect(base_url('gudang/trans_mutasi_det.php?id='.$id));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+    public function set_trans_mutasi_tolak() {
+        if (akses::aksesLogin() == TRUE) {
+            $id         = $this->input->get('id');
+            $sql_cek    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi');
+            
+            // Jika data ditemukan, update status
+            if($sql_cek->num_rows() > 0){
+                $data = [
+                    'tgl_keluar'        => date('Y-m-d'),
+                    'tgl_modif'         => date('Y-m-d H:i:s'),
+                    'id_user_terima'    => $this->ion_auth->users()->row()->id,
+                    'status_nota'       => '3', // Status ditolak
+                    'status_terima'     => '2'  // Status ditolak
+                ];
+
+                # Set penolakan pada tabel mutasi nota
+                $this->db->where('id', $sql_cek->row()->id)->update('tbl_trans_mutasi', $data);
+                
+                if ($this->db->affected_rows() > 0) {
+                    $this->session->set_flashdata('gd_toast', 'toastr.warning("Permintaan mutasi telah ditolak!");');
+                }
+            }
+            
+            redirect(base_url('gudang/trans_mutasi_terima.php?id='.$id));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -2493,9 +2524,9 @@ class Gudang extends CI_Controller {
                 $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', $data_stok);
                 
                 if ($this->db->affected_rows() > 0) {
-                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Update stok berhasil disimpan !");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Update stok berhasil disimpan !");');
                 } else {
-                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Update stok gagal disimpan !");');
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("Update stok gagal disimpan !");');
                 }
                 
                 if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE){

@@ -18609,6 +18609,7 @@ public function set_medcheck_lab_adm_save() {
             $sql_medc_ass14R     = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('status_posisi', 'R')->where('tipe', '14')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             $sql_medc_ass15      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '15')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             $sql_medc_ass16      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '16')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
+            $sql_medc_ass17      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '17')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             # --- END --
             
             $sql_poli            = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row();
@@ -18617,9 +18618,9 @@ public function set_medcheck_lab_adm_save() {
             $sql_dokter          = $this->db->where('id_user', (!empty($sql_medc_lab->id_dokter) ? $sql_medc_lab->id_dokter : $sql_medc->id_dokter))->get('tbl_m_karyawan')->row();
             $sql_dokter2         = $this->db->where('id_user', '221')->get('tbl_m_karyawan')->row();
             $kode_pasien         = $sql_pasien->kode_dpn.$sql_pasien->kode;
-            $gambar1             = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
-            $gambar2             = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
-            $gambar3             = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $gambar1             = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2             = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3             = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $sess_print          = $this->session->userdata('lab_print');
 
             // Create directory if it doesn't exist
@@ -18640,7 +18641,7 @@ public function set_medcheck_lab_adm_save() {
             
             # Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,15,19);  
+                $pdf->Image($gambar2,5,4,15,19);  
             }
             
             # Blok Judul
@@ -18650,54 +18651,54 @@ public function set_medcheck_lab_adm_save() {
             
             # Blok ID PASIEN
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(3, .5, 'No. Pemeriksaan', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $sql_medc_lab->no_lab, '0', 0, 'L', $fill);
-            $pdf->Cell(2.5, .5, 'No. RM', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, '0', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'No. Pemeriksaan', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(4.5, .5, $sql_medc_lab->no_lab, '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(2.5, .5, 'No. RM', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'No. Sampel', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $sql_medc_lab->no_sample, '0', 0, 'L', $fill);
-            $pdf->Cell(2.5, .5, 'Nama', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, general::bersih($sql_pasien->nama_pgl).' ('.$sql_pasien->jns_klm.')', '0', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'No. Sampel', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(4.5, .5, $sql_medc_lab->no_sample, '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(2.5, .5, 'Nama', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, general::bersih($sql_pasien->nama_pgl).' ('.$sql_pasien->jns_klm.')', '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill);
-            $pdf->Cell(2.5, .5, 'NIK', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, $sql_pasien->nik, '0', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(2.5, .5, 'NIK', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, $sql_pasien->nik, '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'Poli', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $sql_poli->lokasi, '0', 0, 'L', $fill);
-            $pdf->Cell(2.5, .5, 'Tgl Lahir', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(8, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), '0', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Poli', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(4.5, .5, $sql_poli->lokasi, '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(2.5, .5, 'Tgl Lahir', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->Cell(8, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'Alamat', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(3, .5, 'Alamat', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
             $pdf->MultiCell(15.5, .5, (!empty($sql_pasien->alamat) ? general::bersih($sql_pasien->alamat) : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
-            $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->MultiCell(15.5, .5, $sql_pasien->no_hp.(!empty($penj->no_telp) ? ' / '.$penj->no_telp : ''), '0', 'L');
-            $pdf->Cell(3, .5, 'Dokter Pengirim', '0', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
+            $pdf->MultiCell(15.5, .5, $sql_pasien->no_hp.(!empty($penj->no_telp ?? null) ? ' / '.$penj->no_telp : ''), '0', 'L');
+            $pdf->Cell(3, .5, 'Dokter Pengirim', '0', 0, 'L', $fill ?? false);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill ?? false);
             $pdf->MultiCell(15.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '0', 'L');
             $pdf->Ln();
             
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(19, .5, 'Anamnesa', '0', 0, 'L', $fill);
+            $pdf->Cell(19, .5, 'Anamnesa', '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
             $pdf->SetFont('Arial', 'i', '9');
-            $pdf->Cell(19, .5, 'Riwayat Kesehatan Pribadi ( berikan tanda V pada pilihan anda )', '0', 0, 'L', $fill);
+            $pdf->Cell(19, .5, 'Riwayat Kesehatan Pribadi ( berikan tanda V pada pilihan anda )', '0', 0, 'L', $fill ?? false);
             $pdf->Ln();
             
             # Blok Grup 1
-            $fill = FALSE;
+            $fill = false;
             
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(7, .5, 'Penyakit / Keluhan', '1', 0, 'C', $fill);
@@ -18717,7 +18718,6 @@ public function set_medcheck_lab_adm_save() {
                 $pdf->Cell(1, .5, '', '0', 0, 'C', $fill);
                 $pdf->Ln();
             }
-//            $pdf->Ln();
             
             $setY = 9.1;
             foreach ($sql_medc_ass1R as $ass1R) {
