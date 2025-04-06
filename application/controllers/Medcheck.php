@@ -20361,11 +20361,12 @@ public function set_medcheck_lab_adm_save() {
             $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
             $sql_user           = $this->db->where('id_user', $sql_medc_kwi->id_user)->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es1.png'; // base_url('file/img/logo-header-es1.png');
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es2.png'; // base_url('file/img/logo-header-es2.png');
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es3.png'; // base_url('file/img/logo-header-es3.png');
-            $gambar4            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es4.png'; // base_url('file/img/img/logo-header-es4.png');
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es1.png';
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es2.png';
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es3.png';
+            $gambar4            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es4.png';
             $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
+            $fill               = false;
             
             $this->load->library('MedLblPDF');
             $pdf = new MedLblPDF('P', 'cm', array(21.5,33));
@@ -20375,26 +20376,23 @@ public function set_medcheck_lab_adm_save() {
                         
             // Gambar Logo Atas 1
             if (file_exists($gambar1)) {
-            $pdf->Image($gambar1, 1.3, 1.15, 1.94, 1.21);
+                $pdf->Image($gambar1, 1.3, 1.15, 1.94, 1.21);
             }
             // Gambar Logo Atas 2
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2, 8.7, 1.15, 1.02, 1.15);
+                $pdf->Image($gambar2, 8.7, 1.15, 1.02, 1.15);
             }
             // Gambar Logo Atas 3
             if (file_exists($gambar3)) {
-            $pdf->Image($gambar3, 9.85, 1.15, 0.71, 1.59);
+                $pdf->Image($gambar3, 9.85, 1.15, 0.71, 1.59);
             }
             // Gambar Logo Atas 4
             if (file_exists($gambar4)) {
-            $pdf->Image($gambar4, 10.75, 1.15, 1.17, 1.23);
+                $pdf->Image($gambar4, 10.75, 1.15, 1.17, 1.23);
             }
 
             $pdf->SetFont('Arial', '', '9');
             $pdf->Cell(11, 1.75, '', 'B', 0, 'L', $fill);
-//            $pdf->Cell(2.5, 1.75, '', 'LTB', 0, 'L', $fill);
-//            $pdf->Cell(5, 1.75, 'sas', 'LTB', 0, 'L', $fill);
-//            $pdf->Cell(3.5, 1.75, '', 'LTB', 0, 'L', $fill);
             $pdf->Cell(3, 1.75, 'KWITANSI', 'B', 0, 'C', $fill);
             $pdf->Ln();
             $pdf->Cell(14, .5, '', '', 0, 'L', $fill);
@@ -20412,8 +20410,6 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Arial', 'i', '8');
             $pdf->MultiCell(10.5, .5, strtoupper(general::format_angka_str($sql_medc_kwi->nominal)).' RUPIAH', '', 'L');
-//            $pdf->Cell(10.5, .5, strtoupper(general::format_angka_str($sql_medc_kwi->nominal)).' RUPIAH', 'R', 0, 'L', $fill);
-//            $pdf->Ln();
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(3, .5, 'Untuk Pembayaran', '', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
