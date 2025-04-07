@@ -13166,50 +13166,51 @@ public function set_medcheck_lab_adm_save() {
     } 
 
     public function cart_medcheck_rad_file() {
-        if (akses::aksesLogin() == TRUE) {
+        if (!akses::aksesLogin()) {
+            echo json_encode(['success' => false, 'message' => 'Authentication failed']);
+            return;
+        }
+    
+        $response = ['success' => false, 'message' => ''];
+    
+        try {
             $id         = $this->input->post('id');
             $id_rad     = $this->input->post('id_rad');
             $id_item    = $this->input->post('id_item');
             $id_produk  = $this->input->post('id_produk');
-            $id_dokter  = $this->input->post('id_dokter');
             $judul      = $this->input->post('judul');
-            $status     = $this->input->post('status');
-            $act        = $this->input->post('act');
             
-            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
-            $this->form_validation->set_rules('id', 'ID', 'required');
-
-            if ($this->form_validation->run() == FALSE) {
-                $msg_error = [
-                    'id' => form_error('id'),
-                ];
-
-                $this->session->set_flashdata('form_error', $msg_error);
-
-                redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? '&act='.$act : '').(!empty($id) ? '&id='.$id : '').(!empty($id_rad) ? '&id_rad='.$id_rad : '').(!empty($status) ? '&status='.$status : '').(!empty($id_item) ? '&id_item='.$id_item : '').(!empty($id_produk) ? '&id_produk='.$id_produk : '')));
-            } else {
-                $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_medc_rad   = $this->db->where('id', general::dekrip($id_rad))->get('tbl_trans_medcheck_rad')->row();               $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                $sql_pasien     = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
-                $no_rm          = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
-                $folder         = realpath('./file/pasien/'.$no_rm);
+            // Validate required fields
+            if (empty($id) || empty($judul)) {
+                echo json_encode(['success' => false, 'message' => 'ID and Judul are required']);
+                return;
+            }
+    
+            $sql_medc = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+            $sql_medc_rad = $this->db->where('id', general::dekrip($id_rad))->get('tbl_trans_medcheck_rad')->row();
+            $sql_pasien = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
+            $no_rm = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
+            $folder = realpath('./file/pasien/'.$no_rm);
+    
+            if (!empty($_FILES['fupload']['name'])) {
+                $config['upload_path']      = $folder;
+                $config['allowed_types']    = 'jpg|png|jpeg';
+                $config['max_size']         = 5120; // 5MB
+                $config['remove_spaces']    = TRUE;
+                $config['overwrite']        = TRUE;
+                $config['file_name']        = 'medc_'.$sql_medc->no_rm.'_rad'.sprintf('%05d', rand(1,256));
                 
-                if (!empty($_FILES['fupload']['name'])) {
-                    $config['upload_path']      = $folder;
-                    $config['allowed_types']    = 'jpg|png|jpeg';
-                    $config['remove_spaces']    = TRUE;
-                    $config['overwrite']        = TRUE;
-                    $config['file_name']        = 'medc_'.$sql_medc->no_rm.'_rad'.sprintf('%05d', rand(1,256));
-                    $this->load->library('upload', $config);
-                    
-                    if (!$this->upload->do_upload('fupload')) {
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error : ' . $this->upload->display_errors('','') . '");');
-                        redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? '&act='.$act : '').(!empty($id) ? '&id='.$id : '').(!empty($id_rad) ? '&id_rad='.$id_rad : '').(!empty($status) ? '&status='.$status : '').(!empty($id_item) ? '&id_item='.$id_item : '').(!empty($id_produk) ? '&id_produk='.$id_produk : '').'&err='.$this->upload->display_errors()));
-                    } else {
-                        $f = $this->upload->data();
-                    }
+                $this->load->library('upload', $config);
+    
+                if (!$this->upload->do_upload('fupload')) {
+                    echo json_encode([
+                        'success' => false, 
+                        'message' => $this->upload->display_errors('','')
+                    ]);
+                    return;
                 }
+    
+                $f = $this->upload->data();
                 
                 $data_rad = [
                     'id_medcheck'       => $sql_medc->id,
@@ -13224,21 +13225,30 @@ public function set_medcheck_lab_adm_save() {
                     'file_ext'          => $f['file_ext'],
                     'file_type'         => $f['file_type'],
                 ];
-                
+    
                 crud::simpan('tbl_trans_medcheck_rad_file', $data_rad);
                 
-                $this->db->where('id', $sql_medc->id)->update('tbl_trans_medcheck', ['tgl_periksa_rad_kirim' => date('Y-m-d H:i:s')]);
-                
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("File radiologi berhasil diunggah");');
-                
-                redirect(base_url('medcheck/tambah.php?'.(!empty($act) ? 'act='.$act : '').(!empty($id) ? '&id='.$id : '').(!empty($id_rad) ? '&id_rad='.$id_rad : '').(!empty($status) ? '&status='.$status : '').(!empty($id_item) ? '&id_item='.$id_item : '').(!empty($id_produk) ? '&id_produk='.$id_produk : '')));
+                $this->db->where('id', $sql_medc->id)
+                         ->update('tbl_trans_medcheck', ['tgl_periksa_rad_kirim' => date('Y-m-d H:i:s')]);
+    
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'File radiologi berhasil diunggah',
+                    'file' => [
+                        'name' => $f['orig_name'],
+                        'type' => $f['file_type'],
+                        'size' => $f['file_size']
+                    ]
+                ]);
+                return;
             }
-        } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
-            redirect();
+    
+            echo json_encode(['success' => false, 'message' => 'No file uploaded']);
+            
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-    } 
+    }
 
     public function cart_medcheck_rad_file_hapus() {
         if (akses::aksesLogin() == TRUE) {
