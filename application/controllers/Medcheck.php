@@ -17019,29 +17019,35 @@ public function set_medcheck_lab_adm_save() {
 
             
             // Get audiometri data with proper error handling
-            $query = $this->db->select('
-                    tbl_trans_medcheck_lab_audiometri.*,
-                    tbl_trans_medcheck.pasien,
-                    tbl_trans_medcheck.no_rm,
-                    tbl_trans_medcheck.tgl_masuk as tgl_periksa,
-                    tbl_m_pasien.kode_dpn,
-                    tbl_m_pasien.kode,
-                    tbl_m_pasien.nama_pgl,
-                    tbl_m_pasien.tgl_lahir,
-                    tbl_m_pasien.jns_klm,
-                    tbl_m_pasien.alamat,
-                    tbl_m_karyawan.nama_dpn,
-                    tbl_m_karyawan.nama,
-                    tbl_m_karyawan.nama_blk
-                ')
-                    ->from('tbl_trans_medcheck_lab_audiometri')
-                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_lab_audiometri.id_medcheck')
-                    ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
-                    ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_lab_audiometri.id_user', 'left')
-                    ->where('tbl_trans_medcheck_lab_audiometri.id', general::dekrip($id_medcheck))->get()->row();
+            $query = $this->db->select([
+                'tbl_trans_medcheck_lab_audiometri.*',
+                'tbl_trans_medcheck.pasien',
+                'tbl_trans_medcheck.no_rm',
+                'tbl_trans_medcheck.tgl_masuk as tgl_periksa',
+                'tbl_m_pasien.kode_dpn',
+                'tbl_m_pasien.kode',
+                'tbl_m_pasien.nama_pgl',
+                'tbl_m_pasien.tgl_lahir',
+                'tbl_m_pasien.jns_klm',
+                'tbl_m_pasien.alamat',
+                'tbl_m_karyawan.nama_dpn',
+                'tbl_m_karyawan.nama',
+                'tbl_m_karyawan.nama_blk'
+            ])
+                ->from('tbl_trans_medcheck_lab_audiometri')
+                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_lab_audiometri.id_medcheck')
+                ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
+                ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_lab_audiometri.id_user', 'left')
+                ->where('tbl_trans_medcheck_lab_audiometri.id', general::dekrip($id_medcheck))->get()->row();
+            
+            if (!$query) {
+                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data audiometri tidak ditemukan");');
+                redirect('medcheck');
+                return;
+            }
             
             $sql_medc           = $this->db->where('id', $query->id_medcheck)->get('tbl_trans_medcheck')->row();
-            $sql_medc_lab       = $query; // $this->db->where('id', $sql_medc->id)->get('tbl_trans_medcheck_lab_audiometri')->row();
+            $sql_medc_lab       = $query;
             $sql_medc_lab_adm   = $this->db->where('id_medcheck', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab_audiometri')->row();
             $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
             $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
@@ -17052,9 +17058,9 @@ public function set_medcheck_lab_adm_save() {
             $folder             = realpath('./file/pasien/'.$no_rm);
             $file               = $folder.'/audiometri/'.$sql_medc_lab->nama_file;
 
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $sess_print         = $this->session->userdata('lab_print');
             $no_periksa         = sprintf('%04d', $sql_medc_lab->id).'/'.$setting->kode_surat.'/'.date('m').'/'.date('Y');
 
@@ -17062,15 +17068,15 @@ public function set_medcheck_lab_adm_save() {
             $judul2             = "Audiogram Result";
 
             $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $pdf = new MedLabPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 7);
-            $pdf->SetMargins(1,0.35,1);
+            $pdf->SetMargins(1, 0.35, 1);
             $pdf->header = 0;
-            $pdf->addPage('','',false);
+            $pdf->addPage('', '', false);
             
             // Gambar Watermark Tengah
             if(file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,15,19);     
+                $pdf->Image($gambar2, 5, 4, 15, 19);     
             }
             
             # Blok Judul
@@ -17106,7 +17112,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $sql_pasien->no_hp.(!empty($penj->no_telp) ? ' / '.$penj->no_telp : ''), '0', 0, 'L', $fill);
+            $pdf->Cell(4.5, .5, $sql_pasien->no_hp.(!empty($sql_pasien->no_telp) ? ' / '.$sql_pasien->no_telp : ''), '0', 0, 'L', $fill);
             $pdf->Cell(2.5, .5, 'Tgl Lahir', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), '0', 0, 'L', $fill);
@@ -17144,7 +17150,6 @@ public function set_medcheck_lab_adm_save() {
                         $x = (21 - $new_width) / 2;
                         try {
                             $pdf->Image($image_path, 1, 9, 19, 10);
-                            //    $pdf->Ln($new_height + 0.5);
                         } catch (Exception $e) {
                             log_message('error', 'Failed to load image: ' . $image_path . ' - ' . $e->getMessage());
                         }
@@ -17160,7 +17165,6 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetFont('Arial', '', '9');
             $pdf->Ln();
             $pdf->MultiCell(19, .5, $sql_medc_lab->hasil, 'LRB', 'L');            
-            # Content Here           
             
             // QR GENERATOR VALIDASI
             $pdf->SetY(-11);
@@ -17209,7 +17213,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(7.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(7.5, .5, $sql_dokter2->nik, '', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, $sql_dokter->nik, '', 0, 'L', $fill);
             $pdf->Ln();
             
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
@@ -17218,8 +17222,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Output($sql_pasien->nama_pgl. '_audiometri.pdf', $type);
             ob_end_flush();            
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
