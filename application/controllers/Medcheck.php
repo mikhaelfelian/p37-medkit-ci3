@@ -16068,7 +16068,9 @@ public function set_medcheck_lab_adm_save() {
             $pdf->addPage('','',false);
             
             # Gambar Watermark Tengah
-            $pdf->Image($gambar2,5,4,15,19);  
+            if(file_exists($gambar2)) {
+                $pdf->Image($gambar2,5,4,15,19);
+            }
             
             # Blok Judul
             $pdf->SetFont('Arial', 'B', '13');
@@ -18057,7 +18059,7 @@ public function set_medcheck_lab_adm_save() {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
-            $pdf->Image($gambar5,13.80,$getY,2,2);
+            $pdf->Image($gambar5,13.5,$getY,2,2);
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -18094,7 +18096,6 @@ public function set_medcheck_lab_adm_save() {
     public function pdf_medcheck_resume_rnp() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
-//            $id                 = $this->input->get('id');
             $id_medcheck        = $this->input->get('id');
             $id_rsm             = $this->input->get('id_resm');
             
@@ -18131,7 +18132,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,15,19);
+                $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
@@ -18177,17 +18178,11 @@ public function set_medcheck_lab_adm_save() {
             $fill = FALSE;
             foreach ($sql_medc_rsm_hsl as $rsm){
                 $pdf->SetFont('Arial', 'B', '8');
-//                $pdf->MultiCell(5.5, .5, $rsm->param, '0', 'L');
                 $pdf->Cell(4, .5, $rsm->param, '', 0, 'L', $fill);
                 $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
                 $pdf->SetFont('Arial', '', '8');
                 $pdf->MultiCell(14.5, .5, iconv('UTF-8', 'windows-1252', html_entity_decode($rsm->param_nilai)), '0', 'J');
             }
-            
-//            $pdf->SetFont('Arial', 'B', '8');
-//            $pdf->Cell(4, .5, 'ICD 10', '', 0, 'L', $fill);
-//            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
-//            $pdf->Ln();
             
             $n = 1;
             foreach ($sql_medc_icd as $icd){
@@ -18283,53 +18278,6 @@ public function set_medcheck_lab_adm_save() {
             ob_start();
             $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
             ob_end_flush();
-//            
-//            $sql_cek_file = $this->db->where('id_resume', $sql_medc_rsm->id)->get('tbl_trans_medcheck_file');
-//            
-//            if($sql_cek_file->num_rows() == 0){
-//                $this->load->helper('download');
-//                
-//               $folder      = realpath('./file/pasien/'.$kode_pasien);
-//               $filename    = $folder.'/kontol.pdf';
-//               $fdata       = (base_url('medcheck/surat/cetak_pdf_rsm_rnp.php?id='.$id_medcheck.'&id_resm='.$id_rsm));
-//               $fbase64     = 'data:application/pdf;base64,'.base64_encode(file_get_contents($pdf->Output($sql_pasien->nama_pgl. '.pdf', $type)));
-//                
-//                $data_file = array(
-//                   'id_medcheck'   => $sql_medc->id,
-//                   'id_pasien'     => $sql_medc->id_pasien,
-//                   'id_user'       => $this->ion_auth->user()->row()->id,
-//                   'tgl_simpan'    => date('Y-m-d H:i:s'),
-//                   'tgl_masuk'     => date('Y-m-d H:i'),
-//                   'judul'         => 'ppp',
-//                   'keterangan'    => 'hhh',
-////                   'file_name_ori' => $f['client_name'],
-//                   'file_name'     => $filename,
-//                   'file_ext'      => $f['file_ext'],
-//                   'file_type'     => $f['file_type'],
-//                   'file_base64'   => '-',
-//                   'status'        => '1',
-//               );
-//                
-//                crud::simpan('tbl_trans_medcheck_file', $data_file);
-//                
-//                force_download($filename, $fdata);
-//            }
-//            
-//                        $data_file = array(
-//                            'id_medcheck'   => $sql_medc->id,
-//                            'id_pasien'     => $sql_medc->id_pasien,
-//                            'id_user'       => $this->ion_auth->user()->row()->id,
-//                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-//                            'tgl_masuk'     => date('Y-m-d H:i'),
-//                            'judul'         => $judul,
-//                            'keterangan'    => $ket,
-//                            'file_name_ori' => $f['client_name'],
-//                            'file_name'     => $f['file_name'],
-//                            'file_ext'      => $f['file_ext'],
-//                            'file_type'     => $f['file_type'],
-////                            'file_base64'   => $file64,
-//                            'status'        => '1',
-//                        );
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -18340,7 +18288,6 @@ public function set_medcheck_lab_adm_save() {
     public function pdf_medcheck_ass_rnp() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
-//            $id                 = $this->input->get('id');
             $id_medcheck        = $this->input->get('id');
             $id_rsm             = $this->input->get('id_resm');
             
@@ -18351,11 +18298,10 @@ public function set_medcheck_lab_adm_save() {
             $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
             $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
             $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
-            $sql_dokter         = $this->db->where('id_user', $sql_medc_rsm->id_dokter)->get('tbl_m_karyawan')->row();
+            $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/skala-nyeri.png';
 
             // Create directory if it doesn't exist
@@ -18375,22 +18321,19 @@ public function set_medcheck_lab_adm_save() {
             
             // Gambar Watermark Tengah
             if (file_exists($gambar2)) {
-            $pdf->Image($gambar2,5,4,15,19);
+                $pdf->Image($gambar2,5,4,15,19);
             }
             
             // Blok Judul
             $pdf->SetFont('Arial', 'B', '11');
             $pdf->Cell(19, .5, $judul, 0, 1, 'C');
             $pdf->Ln(0);
-//            $pdf->SetFont('Arial', 'Bi', '10');
-//            $pdf->Cell(19, .5, $judul2, 0, 1, 'C');
-//            $pdf->Ln();
             
             // Blok ID PASIEN
             $pdf->SetFont('Arial', '', '9');
             $pdf->Cell(3, .5, 'No. Pemeriksaan', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
-            $pdf->Cell(4.5, .5, $sql_medc_rsm->no_surat, '0', 0, 'L', $fill);
+            $pdf->Cell(4.5, .5, $sql_medc->no_surat, '0', 0, 'L', $fill);
             $pdf->Cell(2.5, .5, 'No. RM', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, '0', 0, 'L', $fill);
@@ -18438,15 +18381,12 @@ public function set_medcheck_lab_adm_save() {
             $pdf->MultiCell(18, .5, $sql_medc_ass->riwayat_skg, '', 'J');
             $pdf->Cell(.5, .5, '', '', 0, 'L', $fill);
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(18.5, .5, 'b.  Riwayat Mnum Obat :', '', 0, 'L', $fill);
+            $pdf->Cell(18.5, .5, 'b.  Riwayat Minum Obat :', '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Arial', '', '9');
             
             $fill = FALSE;
             foreach ($sql_medc_ass_obt as $obt){
-//                $pdf->SetFont('Arial', 'B', '8');
-//                $pdf->MultiCell(5.5, .5, $rsm->param, '0', 'L');
-//                $pdf->Cell(4, .5, $rsm->param, '', 0, 'L', $fill);
                 $pdf->Cell(1, .5, '', '', 0, 'C', $fill);
                 $pdf->Cell(18, .5, '- '.$obt->param, '', 0, 'L', $fill);
                 $pdf->Ln();
@@ -18463,7 +18403,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(2, .5, $sql_medc->ttv_st.' C', '', 0, 'L', $fill);
             $pdf->Cell(3.5, .5, 'Berat Badan', '', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
-            $pdf->Cell(2, .5, $sql_medc->ttv_bb.' C', '', 0, 'L', $fill);
+            $pdf->Cell(2, .5, $sql_medc->ttv_bb.' kg', '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(.5, .5, '', '', 0, 'L', $fill);
             $pdf->Cell(3.5, .5, 'Tinggi Badan', '', 0, 'L', $fill);
@@ -18471,15 +18411,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(2, .5, $sql_medc->ttv_tb.' Cm', '', 0, 'L', $fill);
             $pdf->Cell(3.5, .5, 'Tekanan Darah', '', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
-            $pdf->Cell(2, .5, $sql_medc->ttv_td.' Cm', '', 0, 'L', $fill);
-            $pdf->Ln();
-            $pdf->Cell(.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(3.5, .5, 'Sistole', '', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
-            $pdf->Cell(2, .5, $sql_medc->ttv_sistole.' mmHg', '', 0, 'L', $fill);
-            $pdf->Cell(3.5, .5, 'Diastole', '', 0, 'L', $fill);
-            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
-            $pdf->Cell(2, .5, $sql_medc->ttv_diastole.' mmHg', '', 0, 'L', $fill);
+            $pdf->Cell(2, .5, $sql_medc->ttv_sistole.'/'.$sql_medc->ttv_diastole.' mmHg', '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(.5, .5, '', '', 0, 'L', $fill);
             $pdf->Cell(3.5, .5, 'Laju Nafas', '', 0, 'L', $fill);
@@ -18503,7 +18435,9 @@ public function set_medcheck_lab_adm_save() {
             }
             
             # Skala Nyeri
-            $pdf->Image($gambar3,1.5,16.75,11.75,3);
+            if (file_exists($gambar3)) {
+                $pdf->Image($gambar3,1.5,16.75,11.75,3);
+            }
             $pdf->Ln(1);
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(19, .5, '5.  ASUHAN KEPERAWATAN', '', 0, 'L', $fill);
@@ -18519,8 +18453,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->MultiCell(9.5, .5, $sql_medc_ass->askep_masalah, '', 'J');
             $pdf->SetXY($x, $y); // Mengatur posisi X dan Y baru
             $pdf->MultiCell(9.5, .5, $sql_medc_ass->askep_tujuan, '', 'J');
-            $x += 5;
-                    
+            
             $pdf->SetFillColor(235, 232, 228);
             $pdf->SetTextColor(0);
             $pdf->SetFont('Arial', '', '8');
@@ -21523,11 +21456,11 @@ public function set_medcheck_lab_adm_save() {
                 ]);
                 return;
             }
+            
+            // Start transaction
+            $this->db->trans_begin();
         
-            try {
-                // Start transaction
-                $this->db->trans_begin();
-                
+            try {                
                 $pengaturan = $this->db->get('tbl_pengaturan')->row();
                 
                 $sql_num    = $this->db->get('tbl_m_karyawan')->num_rows() + 1;
