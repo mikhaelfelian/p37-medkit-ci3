@@ -45,7 +45,7 @@
                     });
                 }
 
-                    // Set interval to check for notifications every 30 seconds (30000 ms)
+                // Set interval to check for notifications every 30 seconds (30000 ms)
                 setInterval(checkMutasiNotifications, 30000);
             <?php } ?>
 
