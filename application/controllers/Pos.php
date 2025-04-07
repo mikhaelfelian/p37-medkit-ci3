@@ -173,16 +173,7 @@ class Pos extends CI_Controller {
                 $data['sql_poli']       = $this->db->where('id', $data['sql_medc']->id_poli)->get('tbl_m_poli')->row();              
             }
 
-            /* Sidebar Menu */
-            $data['sidebar']    = 'admin-lte-3/includes/medcheck/sidebar_med';
-            /* --- Sidebar Menu --- */
-
-//            $this->load->view('admin-lte-3/1_atas', $data);
-//            $this->load->view('admin-lte-3/2_header', $data);
-//            $this->load->view('admin-lte-3/3_navbar', $data);
             $this->load->view('admin-lte-3/includes/trans/jual/trans_jual_inv_print_dm', $data);
-//            $this->load->view('admin-lte-3/5_footer',$data);
-//            $this->load->view('admin-lte-3/6_bawah',$data);
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -434,40 +425,29 @@ class Pos extends CI_Controller {
     
     public function set_trans_jual() {
         if (akses::aksesLogin() == TRUE) {
-            $kode_fp    = $this->input->post('kode_fp');
-            $tgl_masuk  = $this->input->post('tgl_masuk');
-            $tgl_tempo  = $this->input->post('tgl_tempo');
-            $plgn       = $this->input->post('id_customer');
-            $sales      = $this->input->post('id_sales');
-            $kategori   = $this->input->post('kategori');
-            $status_ppn = $this->input->post('status_ppn');
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-            $pengaturan2= $this->db->where('id', $this->ion_auth->user()->row()->id_app)->get('tbl_pengaturan_cabang')->row();
             $id_user    = $this->ion_auth->user()->row()->id;
-
-            $tgl_msk    = explode('/', $tgl_masuk);
-            $tgl_klr    = explode('/', $tgl_tempo);
             $sql_sales  = $this->db->where('id_user', $id_user)->get('tbl_m_karyawan')->row();
 
-            $sql_rm     = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_jual');
+            $sql_rm     = $this->db->where('MONTH(tgl_simpan)', date('m'))
+                                   ->where('YEAR(tgl_simpan)', date('Y'))
+                                   ->get('tbl_trans_jual');
             $str_rm     = $sql_rm->num_rows() + 1;
             $no_rm      = 'P'.date('ymd').sprintf('%04d', $str_rm);
 
-            $data = array(
+            $data = [
                 'tgl_simpan'   => date('Y-m-d H:i:s'),
                 'tgl_masuk'    => date('Y-m-d'),
                 'tgl_keluar'   => date('Y-m-d'),
-                'id_pelanggan' => (!empty($plgn) ? $plgn : 21933),
-                'id_sales'     => (!empty($sql_sales->id) ? $sql_sales->id : 0),
+                'id_pelanggan' => $this->input->post('id_customer') ?: 21933,
+                'id_sales'     => $sql_sales->id ?? 0,
                 'id_user'      => $id_user,
                 'status_ppn'   => 0,
-            );
+            ];
 
             $this->session->set_userdata('trans_jual_umum', $data);
             redirect(base_url('pos/trans_jual.php?id='.general::enkrip($no_rm)));
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('apt_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!");');
             redirect();
         }
     }
@@ -538,19 +518,17 @@ class Pos extends CI_Controller {
     
     public function set_trans_jual_batal() {
         if (akses::aksesLogin() == TRUE) {
-            $id         = $this->input->get('id');
-            $id_item    = $this->input->get('item_id');
-            $rute       = $this->input->get('route');
-
+            $id = $this->input->get('id');
+            
             if(!empty($id)){
                 $this->cart->destroy();
                 $this->session->unset_userdata('trans_jual_umum');
             }
-
+            
+            $this->session->set_flashdata('apt_toast', 'toastr.success("Transaksi berhasil dibatalkan");');
             redirect(base_url('pos/index.php'));
         } else {
-            $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('apt_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
@@ -594,19 +572,6 @@ class Pos extends CI_Controller {
                     if (check_form_submitted($form_id)) {
                         throw new Exception('Detected double form submission. Please try again.');
                     }
-                    
-                    // // Create a lock key for this transaction
-                    // $lock_key = 'trans_batal_' . general::dekrip($id);
-                    
-                    // // Check if there's already a transaction in progress
-                    // if ($this->cache->get($lock_key)) {
-                    //     $this->session->set_flashdata('apt_toast', 'toastr.warning("Transaksi sedang diproses, mohon tunggu!");');
-                    //     redirect(base_url('pos/trans_jual_list.php'));
-                    //     return;
-                    // }
-                    
-                    // // Set lock
-                    // $this->cache->save($lock_key, true, 300); // Lock for 5 minutes max
                     
                     # Hitung ulang data poin
                     if ($sql_poin && $pengaturan && $pengaturan->jml_poin_nom > 0) {
@@ -685,9 +650,6 @@ class Pos extends CI_Controller {
                                           'tgl_modif'  => date('Y-m-d H:i:s'),
                                           'jml'        => ($jml_akhir_rc < 0 ? 0 : (int) $jml_akhir_rc)
                                       ];
-                                      
-    //                                  # Balikin stok di database item yang relate ke racikan
-    //                                  $this->db->where('id', $rc->id_item)->update('tbl_m_produk', $data_item_rc);
                                       
                                       # Hapus ke tabel riwayat produk
                                       $this->db->where('id_penjualan', $sql_medc->id)
@@ -822,11 +784,6 @@ class Pos extends CI_Controller {
                         $this->db->trans_rollback();
                     }
                     
-                    // Release lock if exists
-                    if (isset($lock_key)) {
-                        $this->cache->delete($lock_key);
-                    }
-                    
                     $this->session->set_flashdata('apt_toast', 'toastr.error("Transaksi gagal: ' . $e->getMessage() . '");');
                     redirect(base_url('pos/trans_jual_list.php'));
                 }
@@ -874,7 +831,7 @@ class Pos extends CI_Controller {
                 $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                 $harga          = general::format_angka_db($hrg);
                 $potongan       = general::format_angka_db($pot);
-                echo $jml            = general::format_angka_db($jml);
+                $jml            = general::format_angka_db($jml);
                 $jml_pot        = $potongan * $jml;
                 
                 try {                    
