@@ -1,3 +1,6 @@
+<?php
+    echo akses::hakKasir();
+?>
 <?php if ($sql_medc->tipe != '6') { ?>
     <div class="card card-success card-outline rounded-0">
         <div class="card-body box-profile">
@@ -192,7 +195,7 @@
                         <li class="list-group-item rounded-0">
                             <b>Penjamin</b><br/>
                             <span class="float-left text-danger"><small><b><u><?php echo strtoupper($sql_penjamin->penjamin) ?></u></b></small></span>
-                            <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE) { ?>
+                            <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakKasir() == TRUE) { ?>
                                 <?php if ($sql_medc->tipe != '6') { ?>
                                     <?php echo nbs(2) . anchor(base_url('medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id) . '&act=penjamin_edit'), '<i class="fa fa-edit"></i>', 'class=""'); ?>
                                 <?php } ?>
@@ -209,7 +212,6 @@
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)) ?>
                             <b>Penjamin</b><br/>
                             <span class="float-left text-danger">
-
                                 <select id="platform" name="platform" class="form-control rounded-0<?php echo (!empty($hasError['platform']) ? ' is-invalid' : '') ?>">
                                     <option value="">- PENJAMIN -</option>
                                     <?php foreach ($sql_penjamin2 as $penj) { ?>
