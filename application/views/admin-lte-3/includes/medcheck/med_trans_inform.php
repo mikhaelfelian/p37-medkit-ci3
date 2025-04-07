@@ -116,7 +116,8 @@
                 data: {
                     id: "<?php echo $this->input->get('id') ?>",
                     id_form: "<?php echo $this->input->get('id_form') ?>",
-                    foto: signature
+                    foto: signature,
+                    <?php echo $this->security->get_csrf_token_name(); ?>: "<?php echo $this->security->get_csrf_hash(); ?>"
                 },
                 method: "POST",
                 success: function () {
@@ -132,7 +133,6 @@
             $("#1").hide().find('input').prop('disabled', true);
             $("#2").hide().find('input').prop('disabled', true);
             $("select[name=dokter]").prop('disabled', true);
-//            $("input[name=dokter]").hide().find('select').prop('disabled', true);
             $("input[name=nama]").prop('disabled', true);
             $("input[name=tgl_lahir]").prop('disabled', true);
             $("select[name=jns_klm]").prop('disabled', true);
@@ -162,7 +162,6 @@
 
                 $("div.divSurat").hide();
                 $("#" + tipe_surat).show().find('input').prop('disabled', false);
-//                $("#dokter" + tipe_surat).show().find('select').prop('disabled', false);
                 $("#dokter" + tipe_surat).prop('disabled', false);
                 $("#nama" + tipe_surat).show().find('input').prop('disabled', false);
                 $("#jns_klm" + tipe_surat).prop('disabled', false);
