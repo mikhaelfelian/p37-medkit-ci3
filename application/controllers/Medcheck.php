@@ -13860,7 +13860,7 @@ public function set_medcheck_lab_adm_save() {
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url($route));
-            }else{
+            } else {
                 try {
                     if (check_form_submitted('lab_hasil_form')) {
                         throw new Exception('Invalid form submission');
@@ -13873,6 +13873,7 @@ public function set_medcheck_lab_adm_save() {
                     $sql_medc_ck = $this->db->where('id_medcheck', general::dekrip($id))
                                         ->where('id_item', general::dekrip($id_item))
                                         ->get('tbl_trans_medcheck_det');
+                    
                     // Start transaction
                     $this->db->trans_begin();
 
@@ -13881,32 +13882,34 @@ public function set_medcheck_lab_adm_save() {
                         'tgl_baca'  => date('Y-m-d H:i:s'),
                     ];
                 
-                $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_medcheck_det', $data);                
+                    $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_medcheck_det', $data);                
                     
                     // Delete existing lab results before inserting new ones
-                    $this->db->where('id_medcheck', general::dekrip($id))->where('id_lab', general::dekrip($id_lab))->delete('tbl_trans_medcheck_lab_hsl');
+                    $this->db->where('id_medcheck', general::dekrip($id))
+                             ->where('id_lab', general::dekrip($id_lab))
+                             ->delete('tbl_trans_medcheck_lab_hsl');
                     
                     foreach ($nilai as $key => $hsl) {
                         $sql_nilai = $this->db->where('id', general::dekrip($key))->get('tbl_m_produk_ref_input')->row();
                         
                         $data_lab = [
-                        'id_medcheck'       => $sql_medc->id,
-                        'id_medcheck_det'   => $sql_medc_ck->row()->id,
-                        'id_lab'            => general::dekrip($id_lab),
-                        'id_user'           => $this->ion_auth->user()->row()->id,
-                        'id_item'           => general::dekrip($id_item),
+                            'id_medcheck'       => $sql_medc->id,
+                            'id_medcheck_det'   => $sql_medc_ck->row()->id,
+                            'id_lab'            => general::dekrip($id_lab),
+                            'id_user'           => $this->ion_auth->user()->row()->id,
+                            'id_item'           => general::dekrip($id_item),
                             'id_item_ref_ip'    => $sql_nilai->id,
-                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                            'tgl_simpan'        => date('Y-m-d H:i:s'),
                             'item_name'         => $sql_nilai->item_name,
                             'item_value'        => $hsl,
                             'item_satuan'       => $satuan[$key],
                             'item_hasil'        => $hasil[$key],
-                        'status'            => $sql_nilai->status,
+                            'status'            => $sql_nilai->status,
                             'status_hsl_lab'    => !empty($status_hsl[$key]) ? $status_hsl[$key] : '0',
                             'status_hsl_wrn'    => !empty($status_wrn[$key]) ? $status_wrn[$key] : '0',
                         ];
 
-                    $this->db->insert('tbl_trans_medcheck_lab_hsl', $data_lab);
+                        $this->db->insert('tbl_trans_medcheck_lab_hsl', $data_lab);
                     }
 
                     // Check transaction status and commit/rollback accordingly
@@ -13917,11 +13920,11 @@ public function set_medcheck_lab_adm_save() {
                         $this->db->trans_commit();
                     }
                 
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data laborat berhasil !");');
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data laborat berhasil !");');
                     redirect(base_url('medcheck/tambah.php?act=lab_input&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
                 } catch (Exception $e) {
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error saving lab data: '.$e->getMessage().'");');
-                redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
+                    redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&id_lab='.$id_lab.'&status='.$status));
                 }
             }
         } else {
@@ -16113,7 +16116,6 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill);
-//            $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5(date('Y-m-d H:i')), '0', 0, 'L', $fill);
             $pdf->Cell(2.5, .5, 'NIK', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $sql_pasien->nik, '0', 0, 'L', $fill);
@@ -16244,7 +16246,7 @@ public function set_medcheck_lab_adm_save() {
                         if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
                             $pdf->Cell(18.75, .5, $medc2->item.'' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
 //                            $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
-                            $pdf->Ln();
+                            $pdf->Ln(0.45);
                         }
 
                         foreach ($sql_lab2->result() as $lab2) {
@@ -16281,7 +16283,7 @@ public function set_medcheck_lab_adm_save() {
                                 $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
                                 $pdf->SetXY($x + 15, $y);
                                 $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                $pdf->Ln(0);
+                                $pdf->Ln(0.31);
                                 
                                 # Jika warna hasil di tandai merah
                                 if($lab2->status_hsl_wrn == 1){
