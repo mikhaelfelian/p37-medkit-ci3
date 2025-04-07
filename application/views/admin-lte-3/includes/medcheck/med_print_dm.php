@@ -211,7 +211,7 @@ margin: 10;*/
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold; font-size: 11px;">Kembali</td>
                 <td style="text-align: center; font-size: 11px; font-weight: bold;">Rp.</td>
-                <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($jml_kembali) ?></td>
+                <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo '-'.general::format_angka($jml_kembali) ?></td>
             </tr>
             <tr>
                 <td colspan="6" style="text-align: center; border-top: 1px double #000; font-size: 11px;">Terimakasih atas kunjungannya, semoga lekas sembuh</td>
