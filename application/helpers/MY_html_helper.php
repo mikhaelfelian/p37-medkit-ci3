@@ -190,3 +190,17 @@ if (!function_exists('pre_d')) {
         pre($data, false);
     }
 }
+
+if (!function_exists('br')) {
+    /**
+     * Generate HTML line break tag
+     * 
+     * @param int $count Number of line breaks to output
+     * @param bool $xhtml Whether to use XHTML compliant line breaks
+     * @return string HTML line break tag(s)
+     */
+    function br(int $count = 1, bool $xhtml = true): string {
+        $br = $xhtml ? '<br />' : '<br>';
+        return str_repeat($br, $count);
+    }
+}
