@@ -201,7 +201,7 @@ margin: 10;*/
                 <?php $sql_plat = $this->db->where('id', $plat->id_platform)->get('tbl_m_platform')->row() ?>
                 <?php $jml_tot_byr = $jml_tot_byr + $plat->nominal; ?>
                 <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo $sql_plat->platform ?></td>
+                    <td colspan="4" style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo $sql_plat->platform ?></td>
                     <td style="text-align: center; font-size: 11px; font-weight: bold;">Rp.</td>
                     <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($plat->nominal) ?></td>
                 </tr>
