@@ -150,8 +150,8 @@
     <div class="card-body box-profile">
         <div class="text-center">
             <?php
-            $file = (!empty($sql_pasien->file_name) ? realpath($sql_pasien->file_name) : '');
-            $foto = (file_exists($file) ? base_url($sql_pasien->file_name) : $sql_pasien->file_base64);
+                $file = (!empty($sql_pasien->file_name) ? realpath($sql_pasien->file_name) : '');
+                $foto = (file_exists($file) ? base_url($sql_pasien->file_name) : $sql_pasien->file_base64);
             ?>
             <img class="profile-user-img img-fluid img-circle" src="<?php echo (!empty($foto) ? $foto : base_url('assets/theme/admin-lte-3/icon_putra.png')) ?>" alt="User profile picture" style="width: 100px; height: 100px;">
         </div>
@@ -162,12 +162,12 @@
         </h3>
         <p class="text-muted text-center">
             <?php echo $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir) ?>
-            <?php echo br() ?>
+            <?php echo str_repeat('<br>', 1) ?>
             <?php echo general::jns_klm($sql_pasien->jns_klm) ?>
         </p>
         <p class="text-muted text-center">
             Poin
-            <?php echo br() ?>
+            <?php echo str_repeat('<br>', 1) ?>
             <?php echo (float)$sql_pasien_poin->jml_poin ?>
         </p>
 
