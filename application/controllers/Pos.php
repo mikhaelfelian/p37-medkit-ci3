@@ -874,15 +874,14 @@ class Pos extends CI_Controller {
                 $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                 $harga          = general::format_angka_db($hrg);
                 $potongan       = general::format_angka_db($pot);
+                echo $jml            = general::format_angka_db($jml);
                 $jml_pot        = $potongan * $jml;
                 
                 try {                    
                     // Get form ID and check for double submission
                     $form_id = $this->input->post('form_id');
                     if (check_form_submitted($form_id)) {
-                        $this->session->set_flashdata('apt_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
-                        redirect(base_url('pos/trans_jual.php?id='.$id));
-                        return;
+                        throw new Exception('Detected double form submission. Please try again.');
                     }
 
                     // Check if requested quantity is available in stock
@@ -891,9 +890,9 @@ class Pos extends CI_Controller {
                     }
 
                     
-                    $disk1          = $harga - (($diskon1 / 100) * $harga);
-                    $disk2          = $disk1 - (($diskon2 / 100) * $disk1);
-                    $disk3          = $disk2 - (($diskon3 / 100) * $disk2);
+                    $disk1          = $harga - (($diskon1 > 0 ? $diskon1 : 0) / 100) * $harga;
+                    $disk2          = $disk1 - (($diskon2 > 0 ? $diskon2 : 0) / 100) * $disk1;
+                    $disk3          = $disk2 - (($diskon3 > 0 ? $diskon3 : 0) / 100) * $disk2;
                     $diskon         = $harga - $disk3;
                     $tot_harga      = ($disk3 - $potongan);
                     $subtotal       = $harga * $jml;
