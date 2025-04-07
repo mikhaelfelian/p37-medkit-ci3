@@ -13891,20 +13891,20 @@ public function set_medcheck_lab_adm_save() {
                     
                     foreach ($nilai as $key => $hsl) {
                         $sql_nilai = $this->db->where('id', general::dekrip($key))->get('tbl_m_produk_ref_input')->row();
-                        
+
                         $data_lab = [
-                            'id_medcheck'       => $sql_medc->id,
-                            'id_medcheck_det'   => $sql_medc_ck->row()->id,
-                            'id_lab'            => general::dekrip($id_lab),
-                            'id_user'           => $this->ion_auth->user()->row()->id,
-                            'id_item'           => general::dekrip($id_item),
-                            'id_item_ref_ip'    => $sql_nilai->id,
+                            'id_medcheck'       => !empty($sql_medc->id) ? $sql_medc->id : null,
+                            'id_medcheck_det'   => !empty($sql_medc_ck->row()->id) ? $sql_medc_ck->row()->id : null,
+                            'id_lab'            => !empty($id_lab) ? general::dekrip($id_lab) : null,
+                            'id_user'           => !empty($this->ion_auth->user()->row()->id) ? $this->ion_auth->user()->row()->id : null,
+                            'id_item'           => !empty($id_item) ? general::dekrip($id_item) : null,
+                            'id_item_ref_ip'    => !empty($sql_nilai->id) ? $sql_nilai->id : null,
                             'tgl_simpan'        => date('Y-m-d H:i:s'),
-                            'item_name'         => $sql_nilai->item_name,
-                            'item_value'        => $hsl,
-                            'item_satuan'       => $satuan[$key],
-                            'item_hasil'        => $hasil[$key],
-                            'status'            => $sql_nilai->status,
+                            'item_name'         => !empty($sql_nilai->item_name) ? $sql_nilai->item_name : null,
+                            'item_value'        => !empty($hsl) ? $hsl : null,
+                            'item_satuan'       => !empty($satuan[$key]) ? $satuan[$key] : null,
+                            'item_hasil'        => !empty($hasil[$key]) ? $hasil[$key] : null,
+                            'status'            => !empty($sql_nilai->status) ? $sql_nilai->status : null,
                             'status_hsl_lab'    => !empty($status_hsl[$key]) ? $status_hsl[$key] : '0',
                             'status_hsl_wrn'    => !empty($status_wrn[$key]) ? $status_wrn[$key] : '0',
                         ];

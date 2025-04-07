@@ -48,17 +48,17 @@
                     <div class="form-group row">
                         <label for="inputEmail3" class="col-sm-4 col-form-label"><small><?php echo $item_input->item_name ?></small></label>
                         <div class="col-sm-3">
-                            <?php echo form_input(array('id' => 'jml', 'name' => 'nilai_normal[' . general::enkrip($item_input->id) . ']', 'class' => 'form-control pull-right text-left rounded-0', 'value' => html_entity_decode(htmlspecialchars($val)), 'placeholder' => 'Isikan Nilai Normal ...')) ?>
+                            <?php echo form_input(array('id' => 'jml', 'name' => 'nilai_normal[' . $item_input->id . ']', 'class' => 'form-control pull-right text-left rounded-0', 'value' => html_entity_decode(htmlspecialchars($val)), 'placeholder' => 'Isikan Nilai Normal ...')) ?>
                         </div>
                         <div class="col-sm-2">
-                            <?php echo form_input(array('id' => 'jml', 'name' => 'nilai_hasil[' . general::enkrip($item_input->id) . ']', 'class' => 'form-control pull-right text-left rounded-0', 'placeholder' => 'Isikan Hasil Lab ...')) ?>
+                            <?php echo form_input(array('id' => 'jml', 'name' => 'nilai_hasil[' . $item_input->id . ']', 'class' => 'form-control pull-right text-left rounded-0', 'placeholder' => 'Isikan Hasil Lab ...')) ?>
                         </div>
                         <div class="col-sm-2">
-                            <?php echo form_input(array('id' => 'jml', 'name' => 'nilai_satuan[' . general::enkrip($item_input->id) . ']', 'class' => 'form-control pull-right text-left rounded-0', 'value' => html_entity_decode(htmlspecialchars($item_input->item_satuan)), 'placeholder' => 'Isikan Satuan ...')) ?>
+                            <?php echo form_input(array('id' => 'jml', 'name' => 'nilai_satuan[' . $item_input->id . ']', 'class' => 'form-control pull-right text-left rounded-0', 'value' => html_entity_decode(htmlspecialchars($item_input->item_satuan)), 'placeholder' => 'Isikan Satuan ...')) ?>
                         </div>
                         <div class="col-sm-1">
-                            <?php echo form_checkbox(array('name' => 'status_hsl[' . general::enkrip($item_input->id) . ']', 'value' => '1')) ?> (*)
-                            <?php echo form_checkbox(array('name' => 'status_wrn[' . general::enkrip($item_input->id) . ']', 'value' => '1')) ?> <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <?php echo form_checkbox(array('name' => 'status_hsl[' . $item_input->id . ']', 'value' => '1')) ?> (*)
+                            <?php echo form_checkbox(array('name' => 'status_wrn[' . $item_input->id . ']', 'value' => '1')) ?> <i class="fa fa-exclamation-triangle text-danger"></i>
                         </div>
                     </div>
                 <?php } ?>
