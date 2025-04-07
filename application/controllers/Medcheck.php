@@ -4809,6 +4809,7 @@ class Medcheck extends CI_Controller {
                     'id_poli_tujuan'        => (!empty($poli_7an) ? $poli_7an : 0),
                     'tipe'                  => $tipe,
                     'tgl_simpan'            => date('Y-m-d H:i:s'),
+                    'keterangan'            => 'Transfer Pasien '.general::status_rawat($tipe),
                     'keterangan_perawat'    => $catatan,
                     'status'                => '0',
                 ];

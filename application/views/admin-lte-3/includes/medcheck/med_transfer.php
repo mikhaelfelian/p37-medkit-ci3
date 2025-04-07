@@ -158,9 +158,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center">No.</th>
-                                                <th class="text-left">Poli Asal</th>
-                                                <th class="text-left">Poli Tujuan</th>
-                                                <th class="text-left">Keterangan</th>
+                                                <th class="text-left" colspan="3">Keterangan</th>
                                                 <th class="text-center">#</th>
                                             </tr>                                    
                                         </thead>
@@ -175,9 +173,13 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="text-center"></td>
+                                                    <td class="text-left" colspan="4"><?php echo $det->keterangan; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center"></td>
                                                     <td class="text-left"><?php echo $sql_poli_asl->lokasi; ?></td>
                                                     <td class="text-left"><?php echo $sql_poli_7an->lokasi; ?></td>
-                                                    <td class="text-left"><?php echo $det->keterangan_perawat; ?></td>
+                                                    <td class="text-left" colspan="2"><?php echo $det->keterangan_perawat; ?></td>
                                                 </tr>
                                                 <?php $no++ ?>
                                             <?php } ?>
