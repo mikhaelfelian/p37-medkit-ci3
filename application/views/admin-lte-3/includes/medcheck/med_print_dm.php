@@ -287,5 +287,4 @@ margin: 10;*/
     <br />
     <button id="printPageButton" onclick="javascript:window.print()">Cetak</button>
 </body>
-
 </html>
