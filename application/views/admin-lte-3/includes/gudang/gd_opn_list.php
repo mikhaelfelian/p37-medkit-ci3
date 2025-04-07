@@ -48,7 +48,7 @@
                                     <tr>
                                         <th class="text-center"></th>
                                         <th><?php echo form_input(array('id' => 'tgl', 'name' => 'tgl', 'class' => 'form-control rounded-0', 'placeholder' => 'Isikan Tgl ...')) ?></th>
-                                        <th><?php // echo form_input(array('id' => 'user', 'name' => 'user', 'class' => 'form-control rounded-0', 'placeholder' => 'Isikan User ...')) ?></th>
+                                        <th></th>
                                         <th><?php echo form_input(array('id' => 'ket', 'name' => 'ket', 'class' => 'form-control rounded-0', 'placeholder' => 'Isikan Keterangan ...')) ?></th>
                                         <th>
                                             <button class="btn btn-primary btn-flat">
@@ -69,7 +69,9 @@
                                                 <td style="width: 100px;" class="text-left"><?php echo $this->tanggalan->tgl_indo($opname->tgl_simpan) ?></td>
                                                 <td style="width: 250px;" class="text-left"><?php echo anchor(base_url('gudang/data_opname_det.php?id=' . general::enkrip($opname->id)), $this->ion_auth->user($opname->id_user)->row()->first_name, '') ?></td>
                                                 <td style="width: 350px;" class="text-left"><?php echo $opname->keterangan; // echo (!empty($opname->dl_file) ? anchor(base_url('gudang/data_opname_dl.php?id='.general::enkrip($opname->id).'&file='.$opname->nm_file), $opname->nm_file) : $opname->nm_file)  ?></td>
-                                                <td style="width: 100px;" class="text-left"></td>
+                                                <td style="width: 100px;" class="text-left">
+                                                    <?php echo anchor(base_url('gudang/data_opname_tambah.php?nota=' . general::enkrip($opname->id)), '<i class="fa fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
+                                                </td>
                                             </tr>
                                             <?php
                                         }

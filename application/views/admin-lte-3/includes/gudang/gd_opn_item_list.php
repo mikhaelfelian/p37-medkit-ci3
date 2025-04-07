@@ -76,17 +76,16 @@
                                             $tot_penj = 0;
                                             ?>
                                             <?php foreach ($trans_opn_det as $penj_det) { ?>
-                                                <?php $produk = $this->db->where('id', $penj_det['options']['id_produk'])->get('tbl_m_produk')->row(); ?>
                                                 <tr>
                                                     <td class="text-center">
-                                                        <?php echo anchor(base_url('gudang/cart_opn_hapus.php?id=' . general::enkrip($penj_det['rowid']) . '&route=gudang/data_opname_item_list.php?nota=' . $trans_opn['sess_id']), '<i class="fa fa-remove"></i>', 'class="text-danger" onclick="return confirm(\'Hapus [' . $produk->produk . '] ?\')"') ?>
+                                                        <?php echo anchor(base_url('gudang/cart_opn_hapus.php?id=' . general::enkrip($penj_det->id) . '&route=gudang/data_opname_item_list.php?nota=' . $this->input->get('nota')), '<i class="fa fa-remove"></i>', 'class="text-danger" onclick="return confirm(\'Hapus [' . $penj_det->produk . '] ?\')"') ?>
                                                     </td>
                                                     <td class="text-center"><?php echo $no; ?>.</td>
-                                                    <td class="text-left"><?php echo $produk->produk ?></td>
-                                                    <td class="text-right"><?php echo (float) $penj_det['options']['jml_sys'] ?></td>
+                                                    <td class="text-left"><?php echo $penj_det->produk ?></td>
+                                                    <td class="text-right"><?php echo (float) $penj_det->jml_sys ?></td>
+                                                    <td class="text-right"><?php echo (float) $penj_det->jml . ' ' . $penj_det->satuan ?></td>
                                                     <td class="text-right">
-                                                        <?php echo (float) $penj_det['qty'] . ' ' . $penj_det->satuan ?></td>
-                                                    <td class="text-right"><?php echo (float) $penj_det['qty'] - $penj_det['options']['jml_sys'] ?>
+                                                        <?php echo (float) $penj_det->jml - $penj_det->jml_sys ?>
                                                     </td>
                                                 </tr>
                                                 <?php $no++; ?>
@@ -104,24 +103,20 @@
                                         <?php } ?>
                                     </tbody>
                                 </table>
-                                <!--
-                                <pre>
-<?php // print_r($this->session->all_userdata())  ?>
-                                </pre>
-                                -->
                             </div>
                         </div>
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-md-6">
                                     <button type="button" class="btn btn-danger btn-flat pull-left"
-                                        onclick="window.location.href = '<?php echo base_url('gudang/set_opname_batal.php?route=gudang/data_opname_tambah.php') ?>'"><i
+                                        onclick="window.location.href = '<?php echo base_url('gudang/set_opname_batal.php?id=' . $this->input->get('nota') . '&route=gudang/data_opname_tambah.php') ?>'"><i
                                             class="fa fa-remove"></i> Batal</button>
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <?php if (!empty($trans_opn_det)) { ?>
                                         <?php echo form_open(base_url('gudang/set_opname_proses.php'),'id="gd_opn_proses_form"') ?>
                                         <?php echo form_hidden('sess_id', $trans_opn['uuid']) ?>
+                                        <?php echo form_hidden('id', $this->input->get('nota')) ?>
                                         <?php echo add_form_protection() ?>
                                         <button type="submit" class="btn btn-primary btn-flat pull-right">Simpan
                                             &raquo;</button>
@@ -145,13 +140,14 @@
                         </div>
                         <div class="card-body">
                             <?php
-                            $filter_kode = strtoupper($this->input->get('filter_kode'));
-                            $filter_produk = strtoupper($this->input->get('filter_produk'));
+                            // Get filter parameters from URL
+                            $filter_kode    = strtoupper($this->input->get('filter_kode'));
+                            $filter_produk  = strtoupper($this->input->get('filter_produk'));
                             $filter_barcode = $this->input->get('filter_barcode');
-                            $filter_stok = $this->input->get('filter_stok');
-                            $filter_merk = $this->input->get('filter_merk');
-                            $filter_lokasi = $this->input->get('filter_lokasi');
-                            $jml = $this->input->get('jml');
+                            $filter_stok    = $this->input->get('filter_stok');
+                            $filter_merk    = $this->input->get('filter_merk');
+                            $filter_lokasi  = $this->input->get('filter_lokasi');
+                            $jml            = $this->input->get('jml');
                             ?>
                             <table class="table table-striped">
                                 <thead>
@@ -196,7 +192,7 @@
                                             $sql_kat = $this->db->where('id', $barang->id_kategori)->get('tbl_m_kategori')->row();
                                             $sql_mrk = $this->db->where('id', $barang->id_merk)->get('tbl_m_merk')->row();
                                             ?>
-                                            <?php echo form_open(base_url('gudang/cart_opn_simpan.php')) ?>
+                                            <?php echo form_open(base_url('gudang/cart_opn_simpan.php'), 'id="gd_opn_proses_form"') ?>
                                             <?php echo form_hidden('no_nota', $this->input->get('nota')); ?>
                                             <?php echo form_hidden('id_barang', general::enkrip($barang->id)); ?>
                                             <?php echo form_hidden('kode', $barang->kode); ?>
@@ -205,7 +201,7 @@
                                             <?php echo form_hidden('filter_jml', $_GET['jml']); ?>
                                             <?php echo form_hidden('filter_produk', $_GET['filter_produk']); ?>
                                             <?php echo form_hidden('filter_hal', $_GET['halaman']); ?>
-
+                                            
                                             <tr>
                                                 <td class="text-center" style="width: 50px;"><?php echo $no++ ?>.</td>
                                                 <td style="width: 450px;">

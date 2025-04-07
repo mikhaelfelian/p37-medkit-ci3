@@ -277,6 +277,7 @@ $route['gudang/data_opname_tambah.php']                 = "gudang/data_opname_ta
 $route['gudang/data_opname_det.php']                    = "gudang/data_opname_det";
 $route['gudang/data_opname_upload.php']                 = "gudang/data_opname_upload";
 $route['gudang/set_opname.php']                         = "gudang/set_opname";
+$route['gudang/set_opname_upd.php']                     = "gudang/set_opname_upd";
 $route['gudang/set_opname_batal.php']                   = "gudang/set_opname_batal";
 $route['gudang/set_opname_proses.php']                  = "gudang/set_opname_proses";
 $route['gudang/set_opname_cari_item.php']               = "gudang/set_opname_cari_item";

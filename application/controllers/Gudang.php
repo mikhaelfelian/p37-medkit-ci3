@@ -137,6 +137,7 @@ class Gudang extends CI_Controller {
         if (akses::aksesLogin() == TRUE) {
             $id   = $this->input->get('id');
             $idp  = $this->input->get('id_produk');
+            $nota = $this->input->get('nota');
             
             $data['sql_produk']     = $this->db->where('id', general::dekrip($idp))->get('tbl_m_produk')->row();
             $data['sql_produk_stok']= $this->db->where('id_produk', general::dekrip($idp))->get('tbl_m_produk_stok')->result();
@@ -144,7 +145,14 @@ class Gudang extends CI_Controller {
             $data['gudang_ls']      = $this->db->get('tbl_m_gudang')->result();
             $data['sess_jual']      = $this->session->userdata('trans_opname');
             $data['sql_gudang']     = $this->db->where('status !=', '3')->get('tbl_m_gudang')->result();
-            
+            $data['sql_util_so']    = $this->db->where('id', general::dekrip($nota))->get('tbl_util_so')->row();
+
+            if (!empty($nota)) {
+                $data['sql_util_so_det'] = $this->db->where('id_so', $data['sql_util_so']->id)->get('tbl_util_so_det')->result();
+            } else {
+                $data['sql_util_so_det'] = null;
+            }
+
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/gudang/sidebar_gudang';
             /* --- Sidebar Menu --- */
@@ -201,15 +209,18 @@ class Gudang extends CI_Controller {
             $filter_brcd     = $this->input->get('filter_barcode');
             $sort_type       = $this->input->get('sort_type');
             $sort_order      = $this->input->get('sort_order');
-            $jml             = $this->input->get('jml'); // ->where('so', '0')
+            $nota            = $this->input->get('nota');
+            $jml             = $this->input->get('jml');
             $jml_hal         = (!empty($jml) ? $jml  : $this->db->where('so', '0')->get('tbl_m_produk')->num_rows());
             $pengaturan      = $this->db->get('tbl_pengaturan')->row();
             
-            $trans_opname       = $this->session->userdata('trans_opname');
-            $data['hasError']   = $this->session->flashdata('form_error');
+            $trans_opname                    = $this->session->userdata('trans_opname');
+            $sql_so_det                      = $this->db->where('id_so', general::dekrip($nota))->get('tbl_util_so_det')->result();
+
+            $data['hasError']                = $this->session->flashdata('form_error');
                         
-            $config['base_url']               = base_url('gudang/data_opname_item_list.php?nota='.$this->input->get('nota').'&route='.$this->input->get('route').(!empty($filter_kode) ? '&filter_kode='.$filter_kode : '').(!empty($filter_brcd) ? '&filter_barcode='.$filter_brcd : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($sort_order) ? '&sort_order='.$sort_order : '').(!empty($jml) ? '&jml='.$jml : ''));
-            $config['total_rows']             = $jml_hal;
+            $config['base_url']              = base_url('gudang/data_opname_item_list.php?nota='.$this->input->get('nota').'&route='.$this->input->get('route').(!empty($filter_kode) ? '&filter_kode='.$filter_kode : '').(!empty($filter_brcd) ? '&filter_barcode='.$filter_brcd : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($sort_order) ? '&sort_order='.$sort_order : '').(!empty($jml) ? '&jml='.$jml : ''));
+            $config['total_rows']            = $jml_hal;
             
             $config['query_string_segment']  = 'halaman';
             $config['page_query_string']     = TRUE;
@@ -293,7 +304,7 @@ class Gudang extends CI_Controller {
             $this->pagination->initialize($config);
             
             /* Sidebar Menu */
-            $data['sidebar']    = 'admin-lte-3/includes/gudang/sidebar_gudang';
+            $data['sidebar']        = 'admin-lte-3/includes/gudang/sidebar_gudang';
             /* --- Sidebar Menu --- */
             
             $data['total_rows']     = $config['total_rows'];
@@ -302,7 +313,7 @@ class Gudang extends CI_Controller {
             $data['cetak']          = '<button type="button" onclick="window.location.href = \''.base_url('master/cetak_data_barang.php?'.(!empty($filter_kode) ? 'filter_kode='.$filter_kode : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning btn-flat"><i class="fa fa-print"></i> Cetak</button>';
             
             $data['trans_opn']      = $this->session->userdata('trans_opname');
-            $data['trans_opn_det']  = $this->cart->contents();
+            $data['trans_opn_det']  = $sql_so_det;
             
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
@@ -1512,9 +1523,9 @@ class Gudang extends CI_Controller {
                             redirect(base_url('gudang/trans_mutasi.php'));
                         } else {
                             $this->db->trans_commit();
-                    $this->session->set_userdata('trans_mutasi', $data);
+                            $this->session->set_userdata('trans_mutasi', $data);
                             $this->session->set_flashdata('gd_toast', 'toastr.success("Data mutasi berhasil disimpan");');
-                    redirect(base_url('gudang/trans_mutasi.php?id=' . general::enkrip($last_id)));
+                            redirect(base_url('gudang/trans_mutasi.php?id=' . general::enkrip($last_id)));
                         }
                     }
                 } catch (Exception $e) {
@@ -1953,40 +1964,39 @@ class Gudang extends CI_Controller {
                 $sql_brg_sat  = $this->db->where('id', $sql_brg->id_satuan)->get('tbl_m_satuan')->row();
                 $sql_merk     = $this->db->where('id', $sql_brg->id_merk)->get('tbl_m_merk')->row();
                 $sql_so       = $this->db->where('id', general::dekrip($no_nota))->get('tbl_util_so')->row();
-                $sess_cart    = $this->cart->contents();
                 
-                // Cek dikeranjang
-                foreach ($this->cart->contents() as $cart){
-                    // cek barang existing
-                    if($sql_brg->kode == $cart['options']['kode']){
-                        $this->cart->update(['rowid'=>$cart['rowid'],'qty'=>0]);
-                    }
-                }
-                
-                $keranjang = [
-                    'id'      => rand(1,1024).$sql_brg->id,
-                    'qty'     => (float)$qty,
-                    'price'   => 1,
-                    'name'    => $sql_brg->id,
-                    'options' => [
-                        'id_user'   => $this->ion_auth->user()->row()->id,
-                        'id_produk' => $sql_brg->id,
-                        'id_satuan' => $sql_brg->id_satuan,
-                        'id_gudang' => $trans_opname['id_gudang'],
-                        'kode'      => $sql_brg->kode,
-                        'produk'    => $sql_brg->produk,
-                        'satuan'    => $sql_brg_sat->satuanBesar,
-                        'satuan_ket'=> ($sql_brg_sat->ket > '1' ? ' ('.($qty * $sql_brg_sat->ket).' '.$sql_brg_sat->satuanTerkecil.')' : ''),
-                        'jml_sys'   => $sql_brg_stok->jml,
-                        'jml_satuan'=> 1,
-                        'kode'      => $sql_brg->kode,
-                    ]
+                // Save to tbl_util_so_det
+                $data_so_det = [
+                    'id_so'       => general::dekrip($no_nota),
+                    'id_produk'   => $sql_brg->id,
+                    'id_user'     => $this->ion_auth->user()->row()->id,
+                    'tgl_simpan'  => date('Y-m-d H:i:s'),
+                    'tgl_masuk'   => date('Y-m-d'),
+                    'kode'        => $sql_brg->kode,
+                    'barcode'     => $sql_brg->barcode,
+                    'produk'      => $sql_brg->produk,
+                    'satuan'      => $sql_brg_sat->satuanBesar,
+                    'keterangan'  => '',
+                    'jml'         => (float)$qty,
+                    'jml_sys'     => $sql_brg_stok->jml,
+                    'jml_so'      => (float)$qty,
+                    'jml_sls'     => $sql_brg_stok->jml - (float)$qty,
+                    'jml_satuan'  => 1,
+                    'merk'        => (!empty($sql_merk) ? $sql_merk->merk : ''),
+                    'sp'          => '0'
                 ];
-
-                $this->cart->insert($keranjang);
-
-                $this->session->set_flashdata('gd_toast', 'toastr.success("Data opname '.$sql_brg->produk.' berhasil disimpan");');
-                redirect(base_url('gudang/data_opname_item_list.php?nota='.$no_nota.'&route='.$rute.(!empty($f_produk) ? '&filter_produk='.$f_produk : '').(!empty($f_jml) ? '&jml='.$f_jml : '').(!empty($f_hal) ? '&halaman='.$f_hal : '')));
+                
+                try {                    
+                    if (!$this->db->insert('tbl_util_so_det', $data_so_det)) {
+                        throw new Exception("Gagal menyimpan data opname");
+                    }
+                    
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Data opname '.$sql_brg->produk.' berhasil disimpan");');
+                    redirect(base_url('gudang/data_opname_item_list.php?nota='.$no_nota.'&route='.$rute.(!empty($f_produk) ? '&filter_produk='.$f_produk : '').(!empty($f_jml) ? '&jml='.$f_jml : '').(!empty($f_hal) ? '&halaman='.$f_hal : '')));
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('gudang/data_opname_tambah.php?id='.$no_nota));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2005,13 +2015,10 @@ class Gudang extends CI_Controller {
                 $this->session->set_flashdata('gd_toast', 'toastr.error("Data barang tidak ditemukan")');
                 redirect(base_url('gudang/data_opname_tambah.php?id='.$no_nota));
             } else {
-                $cart = [
-                    'rowid' => general::dekrip($id_brg),
-                    'qty'   => 0
-                ];
-                $this->cart->update($cart);
-
+                
                 $this->session->set_flashdata('gd_toast', 'toastr.success("Data opname berhasil dihapus");');
+                // Delete from database
+                $this->db->where('id', general::dekrip($id_brg))->delete('tbl_util_so_det');
                 redirect(base_url(!empty($rute) ? $rute.'&route=gudang/data_opname_tambah.php' : 'gudang/data_opname_tambah.php?id='.$no_nota));
             }
         } else {
@@ -2047,27 +2054,101 @@ class Gudang extends CI_Controller {
                 $sql_gudang = $this->db->where('id', $gudang)->get('tbl_m_gudang')->row();
                 $sess_opn   = $this->session->userdata('trans_opname');
                 $uuid       = $this->uuid->v4();
-            
-                $data = [
-                    'uuid'         => $uuid,
-                    'id_gudang'    => $sql_gudang->id,
-                    'tgl_simpan'   => $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s'),
-                    'id_user'      => $this->ion_auth->user()->row()->id,
-                    'keterangan'   => $ket,
-                    'status'       => '0',
-                ];
+
+                // Insert data into tbl_util_so table
+                $this->db->trans_begin();
                 
-                if(empty($sess_opn)){
-                    $this->session->set_userdata('trans_opname', $data);
-                    $this->cart->destroy();
-                    $last_id = $uuid;
-                }else{
-                    $this->session->set_userdata('trans_opname', $data);
-                    $last_id = $uuid;
+                try {
+                    // Prepare data for insertion
+                    $data_so = [
+                        'uuid'         => $uuid,
+                        'id_gudang'    => $sql_gudang->id,
+                        'tgl_simpan'   => $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s'),
+                        'id_user'      => $this->ion_auth->user()->row()->id,
+                        'keterangan'   => $ket,
+                        'status'       => '0',
+                    ];
+                    
+                    // Insert data into tbl_util_so
+                    $this->db->insert('tbl_util_so', $data_so);
+                    $last_id = $this->db->insert_id();
+                                    
+                    $this->session->set_userdata('trans_opname', $data_so);
+                    $this->db->trans_commit();
+
+                    // Set success message
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Data stok opname berhasil disimpan");');
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('gudang/data_opname_tambah.php'));
                 }
                 
-                $this->session->set_flashdata('gd_toast', 'toastr.success("Data opname berhasil dibuat");');
                 redirect(base_url('gudang/data_opname_item_list.php?nota='.general::enkrip($last_id).'&route=gudang/data_opname_tambah.php'));
+            }
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+    public function set_opname_upd() {
+        if (akses::aksesLogin() == TRUE) {
+            $id         = $this->input->post('id');
+            $gudang     = $this->input->post('gudang');
+            $tgl_masuk  = $this->input->post('tgl_masuk');
+            $ket        = $this->input->post('keterangan');
+            
+            $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+            
+            $this->form_validation->set_rules('gudang', 'Gudang', 'required');
+            $this->form_validation->set_rules('tgl_masuk', 'Tanggal', 'required');
+            
+            if ($this->form_validation->run() == FALSE) {
+                $msg_error = [
+                    'gudang' => form_error('gudang'),
+                    'tgl_masuk' => form_error('tgl_masuk'),
+                ];
+                
+                $this->session->set_flashdata('form_error', $msg_error);
+                
+                redirect(base_url('gudang/data_opname_tambah.php?nota=' . general::enkrip($id)));
+            } else {
+                $sql_gudang = $this->db->where('id', $gudang)->get('tbl_m_gudang')->row();
+                $sql_opname = $this->db->where('id', general::dekrip($id))->get('tbl_util_so')->row();
+                
+                // Update data in tbl_util_so table
+                $this->db->trans_begin();
+                
+                try {
+                    // Prepare data for insertion
+                    $data_so = [
+                        'uuid'         => $sql_opname->uuid,
+                        'id_gudang'    => $sql_gudang->id,
+                        'tgl_simpan'   => $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s'),
+                        'id_user'      => $this->ion_auth->user()->row()->id,
+                        'keterangan'   => $ket,
+                        'status'       => '0',
+                    ];
+                    
+                    // Update data in tbl_util_so
+                    $this->db->where('id', $sql_opname->id);
+                    $this->db->update('tbl_util_so', $data_so);
+               
+                    $this->db->trans_commit();
+
+                    $this->session->set_userdata('trans_opname', $data_so);
+                    
+                    // Set success message
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Data stok opname berhasil diperbarui.");');
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
+                    redirect(base_url('gudang/data_opname_tambah.php?nota=' . $id));
+                }
+                
+                redirect(base_url('gudang/data_opname_item_list.php?nota=' . $id));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2078,11 +2159,25 @@ class Gudang extends CI_Controller {
     
     public function set_opname_batal() {
         if (akses::aksesLogin() == TRUE) {
-            $id   = $this->input->get('id');
-                        
+            $id     = $this->input->get('id');
+            $route  = $this->input->get('route');
+            
+            // Delete the record if ID is provided
+            if (!empty($id)) {
+                $this->db->where('id', general::dekrip($id));
+                $this->db->delete('tbl_util_so');
+                
+                $this->session->set_flashdata('gd_toast', 'toastr.success("Data stok opname berhasil dihapus.");');
+            }
+            
             $this->session->unset_userdata('trans_opname');
             $this->cart->destroy();
-            redirect(base_url('gudang/data_opname_tambah.php'));
+            
+            if (!empty($route)) {
+                redirect(base_url($route));
+            } else {
+                redirect(base_url('gudang/data_opname_tambah.php'));
+            }
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -2092,36 +2187,28 @@ class Gudang extends CI_Controller {
     
     public function set_opname_proses() {
         if (akses::aksesLogin() == TRUE) {
-            $no_nota    = $this->input->post('customer');
-            $tgl_masuk  = $this->input->post('tgl_masuk');
-            $ket        = $this->input->post('keterangan');
-            $tipe       = $this->input->post('tipe');
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
-            $pengaturan2= $this->db->where('id', $this->ion_auth->user()->row()->id_app)->get('tbl_pengaturan_cabang')->row();
-
+            $id         = $this->input->post('id');
+            $sess_id    = $this->input->post('sess_id');
+            
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
-
+            $this->form_validation->set_rules('id', 'ID', 'required');
             $this->form_validation->set_rules('sess_id', 'Session ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = [
-                    'sess_id' => form_error('sess_id'),
+                    'id'        => form_error('id'),
+                    'sess_id'   => form_error('sess_id'),
                 ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
-                
-                redirect(base_url('gudang/data_opname_tambah.php'));
+                redirect(base_url('gudang/data_opname_item_list.php?nota=' . $id));
             } else {
-                $sess_opn   = $this->session->userdata('trans_opname');
-                $sess_det   = $this->cart->contents();
-                $sql_gudang = $this->db->where('id', $sess_opn['id_gudang'])->get('tbl_m_gudang')->row();
-            
+                $sess_opn   = $this->db->where('id', general::dekrip($id))->get('tbl_util_so')->row();
+                $sess_det   = $this->db->where('id_so', general::dekrip($id))->get('tbl_util_so_det')->result();
+                $sql_gudang = $this->db->where('id', $sess_opn->id_gudang)->get('tbl_m_gudang')->row();
+                
+
                 $data = [
-                    'uuid'         => $sess_opn['uuid'],
-                    'id_gudang'    => $sess_opn['id_gudang'],
-                    'tgl_simpan'   => date('Y-m-d H:i:s'),
-                    'id_user'      => $sess_opn['id_user'],
-                    'keterangan'   => $sess_opn['keterangan'],
                     'status'       => '1'
                 ];
                 
@@ -2138,69 +2225,49 @@ class Gudang extends CI_Controller {
 
                     
                     # Simpan ke tabel SO
-                    $this->db->insert('tbl_util_so', $data);
-                    $last_id = crud::last_id();
+                    $this->db->where('id', general::dekrip($id))->update('tbl_util_so', $data);
+                    $last_id = $sess_opn->id;
                     
-                    foreach ($sess_det as $sess_det){
-                        $sql_brg            = $this->db->where('id', $sess_det['options']['id_produk'])->get('tbl_m_produk')->row();
-                        $sql_brg_stok       = $this->db->where('id_produk', $sess_det['options']['id_produk'])->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
-                        $sql_merk           = $this->db->where('id', $sql_brg->id_merk)->get('tbl_m_merk')->row();
-                        $jml_so             = $sess_det['qty'];
+                    foreach ($sess_det as $sess_det) {
+                        $sql_brg        = $this->db->where('id', $sess_det->id_produk)->get('tbl_m_produk')->row();
+                        $sql_brg_stok   = $this->db->where('id_produk', $sess_det->id_produk)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
+                        $sql_merk       = $this->db->where('id', $sql_brg->id_merk)->get('tbl_m_merk')->row();
+                        $jml_so         = $sess_det->jml;
                         
-                        // Prevent division by zero by ensuring jml_sys is not zero or null
-                        $jml_sys = !empty($sess_det['options']['jml_sys']) ? $sess_det['options']['jml_sys'] : 0;
-                        $jml_sls = $sess_det['qty'] - $jml_sys;
+                        // Ensure jml and jml_sys are valid numbers to prevent division by zero
+                        $jml        = !empty($sess_det->jml) && is_numeric($sess_det->jml) ? (float)$sess_det->jml : 0;
+                        $jml_sys    = !empty($sess_det->jml_sys) && is_numeric($sess_det->jml_sys) ? (float)$sess_det->jml_sys : 0;
+                        $jml_sls    = (float)$jml - (float)$jml_sys;
                         
                         $data_stok = [
-                            'tgl_modif'     => date('Y-m-d H:i:s'),
-                            'jml'           => (float)$sess_det['qty'],
-                            'so'            => '0'
-                        ];
-    
-                        $data_so = [
-                            'id_so'         => $last_id,
-                            'id_produk'     => $sess_det['options']['id_produk'],
-                            'id_user'       => $sess_opn['id_user'],
-                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                            'tgl_masuk'     => date('Y-m-d'),
-                            'kode'          => $sql_brg->kode,
-                            'barcode'       => $sql_brg->barcode,
-                            'produk'        => $sql_brg->produk,
-                            'satuan'        => $sess_det['options']['satuan'],
-                            'jml'           => (!empty($sess_det['qty']) ? $sess_det['qty'] : '0'),
-                            'jml_so'        => (!empty($sess_det['qty']) ? $sess_det['qty'] : '0'),
-                            'jml_sys'       => $jml_sys,
-                            'jml_sls'       => $jml_sls,
-                            'jml_satuan'    => 1,
-                            'merk'          => $sql_merk->merk
+                            'tgl_modif' => date('Y-m-d H:i:s'),
+                            'jml'       => (float)$sess_det->jml,
+                            'so'        => '0'
                         ];
                         
                         $data_hist = [
-                            'id_user'       => $sess_opn['id_user'],
-                            'id_produk'     => $sess_det['options']['id_produk'],
-                            'id_gudang'     => $sql_gudang->id,
-                            'id_so'         => $last_id,
-                            'tgl_simpan'    => date('Y-m-d H:i:s'),
-                            'tgl_masuk'     => date('Y-m-d H:i:s'),
-                            'no_nota'       => sprintf("%05s", $last_id),
-                            'kode'          => $sql_brg->kode,
-                            'produk'        => $sql_brg->produk,
-                            'satuan'        => $sess_det['options']['satuan'],
-                            'jml'           => (!empty($sess_det['qty']) ? $sess_det['qty'] : 0),
-                            'jml_satuan'    => 1,
-                            'keterangan'    => 'Stok Opname '.sprintf("%05s", $last_id),
-                            'status'        => '6',
+                            'id_user'     => $sess_opn->id_user,
+                            'id_produk'   => $sess_det->id_produk,
+                            'id_gudang'   => $sql_gudang->id,
+                            'id_so'       => $last_id,
+                            'tgl_simpan'  => date('Y-m-d H:i:s'),
+                            'tgl_masuk'   => date('Y-m-d H:i:s'),
+                            'no_nota'     => sprintf("%05s", $last_id),
+                            'kode'        => $sql_brg->kode,
+                            'produk'      => $sql_brg->produk,
+                            'satuan'      => $sess_det->satuan,
+                            'jml'         => (!empty($sess_det->jml) ? $sess_det->jml : 0),
+                            'jml_satuan'  => 1,
+                            'keterangan'  => 'Stok Opname '.sprintf("%05s", $last_id),
+                            'status'      => '6',
                         ];
                         
                         # Update stok nya di tabel produk
                         $this->db->where('id', $sql_brg_stok->id)->update('tbl_m_produk_stok', $data_stok);
                         
                         # Jumlahkan total atas dan bawah, sinkronkan dengan master item
-                        $jml_akhir_glob = $this->db->select_sum('jml')->where('id_produk', $sess_det['options']['id_produk'])->get('tbl_m_produk_stok')->row()->jml;
-                        $this->db->where('id', $sess_det['options']['id_produk'])->update('tbl_m_produk', ['jml' => $jml_akhir_glob]);
-                        
-                        # Simpan ke tabel so
-                        $this->db->insert('tbl_util_so_det', $data_so);
+                        $jml_akhir_glob = $this->db->select_sum('jml')->where('id_produk', $sess_det->id_produk)->get('tbl_m_produk_stok')->row()->jml;
+                        $this->db->where('id', $sess_det->id_produk)->update('tbl_m_produk', ['jml' => $jml_akhir_glob]);
                         
                         # Simpan ke tabel riwayat
                         $this->db->insert('tbl_m_produk_hist', $data_hist);                    
@@ -2222,7 +2289,7 @@ class Gudang extends CI_Controller {
                     $this->db->trans_rollback();
                     
                     $this->session->set_flashdata('gd_toast', 'toastr.error("Transaksi gagal disimpan: '.$e->getMessage().'");');
-                    redirect(base_url('gudang/data_opname_item_list.php?nota='.general::enkrip($sess_opn['uuid'])));
+                    redirect(base_url('gudang/data_opname_item_list.php?nota='.general::enkrip($sess_opn->uuid)));
                 }
             }
         } else {

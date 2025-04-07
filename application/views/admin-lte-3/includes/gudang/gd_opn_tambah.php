@@ -34,9 +34,10 @@
                         <div class="card-body table-responsive">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <?php echo form_open_multipart(base_url('gudang/set_opname.php'), 'autocomplete="off"') ?>
                                     <?php $hasError = $this->session->flashdata('form_error'); ?>
-                                    <?php echo form_hidden('id', $this->input->get('id')) ?>
+                                    <?php echo form_open(base_url('gudang/' . (!empty($_GET['nota']) ? 'set_opname_upd.php' : 'set_opname.php')), 'id="opname_form" autocomplete="off"') ?>
+                                    <?php echo form_hidden('id', $this->input->get('nota')) ?>
+                                    <?php echo add_form_protection(); ?>
 
                                     <div class="form-group <?php echo (!empty($hasError['pasien']) ? 'text-danger' : '') ?>">
                                         <label class="control-label">User</label>
@@ -48,26 +49,44 @@
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                                             </div>
-                                            <?php echo form_input(array('id' => 'tgl', 'name' => 'tgl_masuk', 'class' => 'form-control text-middle', 'style' => 'vertical-align: middle;')) ?>
+                                            <?php 
+                                            $tgl_value = '';
+                                            if (isset($_GET['nota']) && !empty($sql_util_so)) {
+                                                $tgl_value = date('d-m-Y', strtotime($sql_util_so->tgl_simpan));
+                                            }
+                                            echo form_input(array('id' => 'tgl', 'name' => 'tgl_masuk', 'class' => 'form-control text-middle', 'style' => 'vertical-align: middle;', 'value' => $tgl_value)) 
+                                            ?>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputEmail3">Gudang <i class="text-danger">*</i></label>
                                         <select name="gudang" class="form-control rounded-0 <?php echo (!empty($hasError['gd_asal']) ? 'is-invalid' : '') ?>">
                                             <option value="">- Pilih -</option>
-                                            <?php foreach ($sql_gudang as $gd) { ?>
-                                                <option value="<?php echo $gd->id ?>"><?php echo $gd->gudang . ($gd->status == '1' ? ' [Utama]' : ''); ?></option>
+                                            <?php foreach ($sql_gudang as $gd) { 
+                                                $selected = '';
+                                                if (isset($_GET['nota']) && !empty($sql_util_so) && $sql_util_so->id_gudang == $gd->id) {
+                                                    $selected = 'selected';
+                                                }
+                                            ?>
+                                                <option value="<?php echo $gd->id ?>" <?php echo $selected ?>><?php echo $gd->gudang . ($gd->status == '1' ? ' [Utama]' : ''); ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
                                     <div class="form-group <?php echo (!empty($hasError['tipe']) ? 'text-danger' : '') ?>">
                                         <label class="control-label">Keterangan</label>
-                                        <?php echo form_textarea(array('id' => 'keterangan', 'name' => 'keterangan', 'class' => 'form-control rounded-0 text-middle', 'style' => 'vertical-align: middle; height: 200px;')) ?>
+                                        <?php 
+                                        $keterangan = '';
+                                        if (isset($_GET['nota']) && !empty($sql_util_so)) {
+                                            $keterangan = $sql_util_so->keterangan;
+                                        }
+                                        echo form_textarea(array('id' => 'keterangan', 'name' => 'keterangan', 'class' => 'form-control rounded-0 text-middle', 'style' => 'vertical-align: middle; height: 200px;', 'value' => $keterangan)) 
+                                        ?>
                                     </div>
                                     <div class="text-right">
-                                        <button type="reset" class="btn btn-warning btn-flat"><i class="fa fa-undo"></i> Bersih</button>
+                                        <button type="button" class="btn btn-warning btn-flat" onclick="window.location.href='<?php echo base_url('gudang/data_opname.php') ?>'"><i class="fa fa-undo"></i> Kembali</button>
                                         <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>
                                     </div>
+                                    <?php echo add_double_submit_protection('opname_form')?>
                                     <?php echo form_close() ?>
                                 </div>
                                 <div class="col-md-8">
