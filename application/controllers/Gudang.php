@@ -2322,7 +2322,6 @@ class Gudang extends CI_Controller {
 //                            ->like('ROUND(harga_jual)', $hrga, (!empty($hrga) ? 'none' : ''))
                             ->get('tbl_m_produk')->num_rows();
 
-
             if($jml > 0){
                 redirect(base_url('gudang/data_opname_item_list.php?nota='.$nota.'&route='.$rute.(!empty($kode) ? 'filter_kode='.$kode : '').(!empty($mrk) ? 'filter_merk='.$mrk : '').(!empty($lok) ? 'filter_kategori='.$lok : '').(!empty($brcd) ? 'filter_barcode='.$brcd : '').(!empty($prod) ? '&filter_produk='.$prod : '').(!empty($sa) ? '&filter_stok='.$sa : '').(!empty($hpp) ? '&filter_hpp='.$hpp : '').(!empty($hrga) ? '&filter_harga='.$hrga : '').'&jml='.$jml));
             }else{
@@ -2388,7 +2387,6 @@ class Gudang extends CI_Controller {
             $config['last_link']             = '&raquo;';
             $config['anchor_class']          = 'class="page-link"';
             
-//            $where = "(tbl_m_produk.kode LIKE '%".$filter_kode."%' OR tbl_m_produk.barcode LIKE '%".$filter_kode."%')";
             $where = "MATCH(tbl_m_produk.produk) AGAINST('".$filter_produk."')";
 
             if(!empty($hal)){
