@@ -4,14 +4,17 @@
  *
  * @author Mike
  */
-class general extends CI_Model {
+class general extends CI_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->library('encrypt');
     }
 
-    public static function status_penerimaan($status) {
+    public static function status_penerimaan($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Menunggu</label>';
@@ -40,7 +43,8 @@ class general extends CI_Model {
         return $status;
     }
 
-public static function status_nota($status) {
+    public static function status_nota($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Menunggu</label>';
@@ -69,7 +73,8 @@ public static function status_nota($status) {
         return $status;
     }
 
-public static function status_nota_brc($status) {
+    public static function status_nota_brc($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Menunggu</label>';
@@ -98,7 +103,8 @@ public static function status_nota_brc($status) {
         return $status;
     }
 
-public static function status_nota_po($status) {
+    public static function status_nota_po($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Menunggu</label>';
@@ -127,7 +133,8 @@ public static function status_nota_po($status) {
         return $status;
     }
 
-public static function status_nota2($status) {
+    public static function status_nota2($status)
+    {
         switch ($status) {
             case '0':
                 $status = '1';
@@ -152,7 +159,8 @@ public static function status_nota2($status) {
         return $status;
     }
 
-public static function status_nota3($status) {
+    public static function status_nota3($status)
+    {
         switch ($status) {
             case '0':
                 $status = '[Layout]';
@@ -181,7 +189,8 @@ public static function status_nota3($status) {
         return $status;
     }
 
-public static function status_bayar($status) {
+    public static function status_bayar($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Belum Bayar</label>';
@@ -198,7 +207,8 @@ public static function status_bayar($status) {
         return $status;
     }
 
-public static function status_stok($status) {
+    public static function status_stok($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-success">Stok Masuk</label>';
@@ -226,9 +236,9 @@ public static function status_stok($status) {
 
             case '7':
                 $status = '<label class="badge badge-info">Stok Keluar</label>';
-                    break;
+                break;
 
-                case '8':
+            case '8':
                 $status = '<label class="badge badge-warning">Mutasi</label>';
                 break;
 
@@ -239,7 +249,8 @@ public static function status_stok($status) {
         return $status;
     }
 
-public static function status_gd($status) {
+    public static function status_gd($status)
+    {
         switch ($status) {
             case '0':
                 $status = '';
@@ -256,7 +267,8 @@ public static function status_gd($status) {
         return $status;
     }
 
-public static function status_tp($status) {
+    public static function status_tp($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-warning">POS</label>';
@@ -277,7 +289,8 @@ public static function status_tp($status) {
         return $status;
     }
 
-public static function status_nikah($status) {
+    public static function status_nikah($status)
+    {
         switch ($status) {
             case '1':
                 $status = 'Belum';
@@ -298,7 +311,8 @@ public static function status_nikah($status) {
         return $status;
     }
 
-public static function status_rawat($status) {
+    public static function status_rawat($status)
+    {
         switch ($status) {
             case '2':
                 $status = '<label class="badge badge-success">Rawat Jalan</label>';
@@ -315,12 +329,13 @@ public static function status_rawat($status) {
         return $status;
     }
 
-public static function status_rawat2($status) {
+    public static function status_rawat2($status)
+    {
         switch ($status) {
             case '1':
                 $status = 'Laborat';
                 break;
-            
+
             case '2':
                 $status = 'Rawat Jalan';
                 break;
@@ -349,12 +364,13 @@ public static function status_rawat2($status) {
     }
 
 
-public static function status_resep($status) {
+    public static function status_resep($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning"><i class="far fa-solid fa-clock-rotate-left"></i> Pending</label>';
                 break;
-            
+
             case '1':
                 $status = '<label class="badge badge-info"><i class="far fa-light fa-paper-plane"></i> Terkirim</label>';
                 break;
@@ -378,12 +394,13 @@ public static function status_resep($status) {
         return $status;
     }
 
-public static function status_periksa($status) {
+    public static function status_periksa($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning"><i class="far fa-solid fa-clock-rotate-left"></i> Belum Periksa</label>';
                 break;
-            
+
             case '1':
                 $status = '<label class="badge badge-info"><i class="far fa-check-circle"></i> Sudah Periksa</label>';
                 break;
@@ -407,12 +424,13 @@ public static function status_periksa($status) {
         return $status;
     }
 
-public static function status_rad($status) {
+    public static function status_rad($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning"><i class="far fa-solid fa-clock-rotate-left"></i> Baru</label>';
                 break;
-            
+
             case '1':
                 $status = '<label class="badge badge-info"><i class="far fa-check-circle"></i> Proses</label>';
                 break;
@@ -436,12 +454,13 @@ public static function status_rad($status) {
         return $status;
     }
 
-public static function status_farmasi($status) {
+    public static function status_farmasi($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Pending</label>';
                 break;
-            
+
             case '1':
                 $status = '<label class="badge badge-info">Diterima</label>';
                 break;
@@ -465,7 +484,8 @@ public static function status_farmasi($status) {
         return $status;
     }
 
-public static function tipe_bayar($status) {
+    public static function tipe_bayar($status)
+    {
         switch ($status) {
             case '1':
                 $status = 'UMUM';
@@ -486,7 +506,8 @@ public static function tipe_bayar($status) {
         return $status;
     }
 
-public static function tipe_gd($status) {
+    public static function tipe_gd($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-warning">Pindah</label>';
@@ -507,12 +528,13 @@ public static function tipe_gd($status) {
         return $status;
     }
 
-public static function tipe_surat($status) {
+    public static function tipe_surat($status)
+    {
         switch ($status) {
             default;
                 $str_tipe = '';
                 break;
-            
+
             case '1';
                 $str_tipe = 'Sehat';
                 break;
@@ -568,7 +590,8 @@ public static function tipe_surat($status) {
         return $str_tipe;
     }
 
-public static function tipe_surat_inf($status) {
+    public static function tipe_surat_inf($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'Pernyataan Rawat Inap';
@@ -581,7 +604,8 @@ public static function tipe_surat_inf($status) {
         return $str_tipe;
     }
 
-public static function tipe_surat_inf_stj($status) {
+    public static function tipe_surat_inf_stj($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'PERSETUJUAN';
@@ -594,7 +618,8 @@ public static function tipe_surat_inf_stj($status) {
         return $str_tipe;
     }
 
-public static function tipe_hubungan($status) {
+    public static function tipe_hubungan($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'Suami';
@@ -627,7 +652,8 @@ public static function tipe_hubungan($status) {
         return $str_tipe;
     }
 
-public static function tipe_sehat($status) {
+    public static function tipe_sehat($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'sehat';
@@ -640,7 +666,8 @@ public static function tipe_sehat($status) {
         return $str_tipe;
     }
 
-public static function tipe_obat_pakai($status) {
+    public static function tipe_obat_pakai($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'Menit';
@@ -665,7 +692,8 @@ public static function tipe_obat_pakai($status) {
         return $str_tipe;
     }
 
-public static function tipe_obat_makan($status) {
+    public static function tipe_obat_makan($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'Sebelum Makan';
@@ -690,8 +718,9 @@ public static function tipe_obat_makan($status) {
         return $str_tipe;
     }
 
-public static function tipe_obat_etiket($status) {
-        switch ($status) {            
+    public static function tipe_obat_etiket($status)
+    {
+        switch ($status) {
             case '1';
                 $str_tipe = '';
                 break;
@@ -707,7 +736,8 @@ public static function tipe_obat_etiket($status) {
         return $str_tipe;
     }
 
-public static function tipe_remun($status) {
+    public static function tipe_remun($status)
+    {
         switch ($status) {
             case '1';
                 $str_tipe = 'Persen';
@@ -720,7 +750,8 @@ public static function tipe_remun($status) {
         return $str_tipe;
     }
 
-public static function tipe_mutasi($status) {
+    public static function tipe_mutasi($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-success">Pindah</label>';
@@ -733,7 +764,8 @@ public static function tipe_mutasi($status) {
         return $status;
     }
 
-public static function tipe_item($status) {
+    public static function tipe_item($status)
+    {
         switch ($status) {
             case '2':
                 $status = 'Tindakan';
@@ -754,7 +786,8 @@ public static function tipe_item($status) {
         return $status;
     }
 
-public static function status_retur($status) {
+    public static function status_retur($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-success">Potong Nota</label>';
@@ -771,7 +804,8 @@ public static function status_retur($status) {
         return $status;
     }
 
-public static function status_retur_cetak($status) {
+    public static function status_retur_cetak($status)
+    {
         switch ($status) {
             case '1':
                 $status = 'Potong Nota';
@@ -788,7 +822,8 @@ public static function status_retur_cetak($status) {
         return $status;
     }
 
-public static function status_promo($status) {
+    public static function status_promo($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-success">Potong Nota</label>';
@@ -801,7 +836,8 @@ public static function status_promo($status) {
         return $status;
     }
 
-public static function status_aktif($status) {
+    public static function status_aktif($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning">Non-Aktif</label>';
@@ -814,7 +850,8 @@ public static function status_aktif($status) {
         return $status;
     }
 
-public static function status_grosir($status) {
+    public static function status_grosir($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-success">Umum</label>';
@@ -827,7 +864,8 @@ public static function status_grosir($status) {
         return $status;
     }
 
-public static function status_ppn($status) {
+    public static function status_ppn($status)
+    {
         switch ($status) {
             case '0':
                 $status = 'Non PPN';
@@ -844,7 +882,8 @@ public static function status_ppn($status) {
         return $status;
     }
 
-public static function status_dft($status) {
+    public static function status_dft($status)
+    {
         switch ($status) {
             case '0':
                 $status = 'None';
@@ -861,7 +900,8 @@ public static function status_dft($status) {
         return $status;
     }
 
-public static function status_rokok($status) {
+    public static function status_rokok($status)
+    {
         switch ($status) {
             case '0':
                 $status = '';
@@ -878,7 +918,8 @@ public static function status_rokok($status) {
         return $status;
     }
 
-public static function status_icd($status) {
+    public static function status_icd($status)
+    {
         switch ($status) {
             case '1':
                 $status = '<label class="badge badge-warning"><small>INA-CBG</small></label>';
@@ -895,16 +936,17 @@ public static function status_icd($status) {
         return $status;
     }
 
-public static function status_cuti($status) {
+    public static function status_cuti($status)
+    {
         switch ($status) {
             case '0':
                 $status = '<label class="badge badge-warning"><small>Menunggu</small></label>';
                 break;
-            
+
             case '1':
                 $status = '<label class="badge badge-success"><small>Disetujui</small></label>';
                 break;
-            
+
             case '2':
                 $status = '<label class="badge badge-danger"><small>Ditolak</small></label>';
                 break;
@@ -917,7 +959,8 @@ public static function status_cuti($status) {
     }
 
 
-public static function tipe_rak($status) {
+    public static function tipe_rak($status)
+    {
         switch ($status) {
             case '1':
                 $status = 'RAK';
@@ -930,7 +973,8 @@ public static function tipe_rak($status) {
         return $status;
     }
 
-public static function metode_bayar($status) {
+    public static function metode_bayar($status)
+    {
         switch ($status) {
             case '1':
                 $status = 'Tunai';
@@ -943,7 +987,8 @@ public static function metode_bayar($status) {
         return $status;
     }
 
-public static function tipe_pengeluaran($status) {
+    public static function tipe_pengeluaran($status)
+    {
         switch ($status) {
             case '0':
                 $status = 'Kas';
@@ -964,7 +1009,8 @@ public static function tipe_pengeluaran($status) {
         return $status;
     }
 
-public static function status_byr_met($status) {
+    public static function status_byr_met($status)
+    {
         switch ($status) {
             case 'cash':
                 $status = 'Kas';
@@ -985,76 +1031,83 @@ public static function status_byr_met($status) {
         return $status;
     }
 
-public static function no_nota($string,$tabel_nama, $tabel_kolom, $where, $sep) {
+    public static function no_nota($string, $tabel_nama, $tabel_kolom, $where, $sep)
+    {
         $CI =& get_instance();
         $pengaturan = $CI->db->query("SELECT * FROM tbl_pengaturan")->row();
-        $kode       = $CI->db->query("SELECT ".$tabel_kolom." as no_nota FROM ".$tabel_nama." ".(!empty($where) ? $where : ''))->num_rows();
-        $char       = $string; // Total String Nota
-        $pjg_char   = strlen($char); // Itung panjang Notanya
-        $noUrut     = $kode; // Incriment Numbering nota
+        $kode = $CI->db->query("SELECT " . $tabel_kolom . " as no_nota FROM " . $tabel_nama . " " . (!empty($where) ? $where : ''))->num_rows();
+        $char = $string; // Total String Nota
+        $pjg_char = strlen($char); // Itung panjang Notanya
+        $noUrut = $kode; // Incriment Numbering nota
         $noUrut++;
 
-        $IDbaru     = (!empty($string) ? $string : '').(!empty($sep) ? $sep : '').sprintf("%05s", $noUrut);
+        $IDbaru = (!empty($string) ? $string : '') . (!empty($sep) ? $sep : '') . sprintf("%05s", $noUrut);
         return $IDbaru;
     }
 
-public static function kode_kas($string,$tabel_nama, $tabel_kolom, $where, $where2) {
+    public static function kode_kas($string, $tabel_nama, $tabel_kolom, $where, $where2)
+    {
         $CI =& get_instance();
         $pengaturan = $CI->db->query("SELECT * FROM tbl_pengaturan")->row();
-        $kode       = $CI->db->query("SELECT MAX(".$tabel_kolom.") as no_nota FROM ".$tabel_nama.(isset($where) ? " WHERE ".$where."='".$where2."'" : ''))->row();
-        $char       = $string; // Total String Nota
-        $pjg_char   = strlen($char); // Itung panjang Notanya
-        $noUrut     = (int) substr($kode->no_nota, $pjg_char, 5); // Incriment Numbering nota
+        $kode = $CI->db->query("SELECT MAX(" . $tabel_kolom . ") as no_nota FROM " . $tabel_nama . (isset($where) ? " WHERE " . $where . "='" . $where2 . "'" : ''))->row();
+        $char = $string; // Total String Nota
+        $pjg_char = strlen($char); // Itung panjang Notanya
+        $noUrut = (int) substr($kode->no_nota, $pjg_char, 5); // Incriment Numbering nota
         $noUrut++;
 
-        $IDbaru     = sprintf("%05s", $noUrut);
+        $IDbaru = sprintf("%05s", $noUrut);
         return $IDbaru;
     }
 
-public static function random_kode($string,$tabel_nama, $tabel_kolom) {
+    public static function random_kode($string, $tabel_nama, $tabel_kolom)
+    {
         $CI =& get_instance();
-        $kode       = $CI->db->query("SELECT MAX(".$tabel_kolom.") as no_nota FROM ".$tabel_nama)->row();
-        $char       = $string."."; // Total String Nota
-        $pjg_char   = strlen($char); // Itung panjang Notanya
-        $noUrut     = (int) substr($kode->no_nota, $pjg_char, 5); // Incriment Numbering nota
+        $kode = $CI->db->query("SELECT MAX(" . $tabel_kolom . ") as no_nota FROM " . $tabel_nama)->row();
+        $char = $string . "."; // Total String Nota
+        $pjg_char = strlen($char); // Itung panjang Notanya
+        $noUrut = (int) substr($kode->no_nota, $pjg_char, 5); // Incriment Numbering nota
         $noUrut++;
 
-        $IDbaru     = $char . sprintf("%05s", $noUrut);
+        $IDbaru = $char . sprintf("%05s", $noUrut);
         return $IDbaru;
     }
 
-public static function jns_klm($jenis) {
+    public static function jns_klm($jenis)
+    {
         $CI =& get_instance();
-        switch ($jenis){
+        switch ($jenis) {
             case 'L':
                 $jns_klm = 'Laki-laki';
-            break;
+                break;
             case 'P':
                 $jns_klm = 'Perempuan';
-            break;
+                break;
             case 'O':
                 $jns_klm = 'Lainnya';
-            break;
+                break;
         }
         return $jns_klm;
     }
 
-public static function enkrip($string) {
+    public static function enkrip($string)
+    {
         $CI =& get_instance();
         $CI->load->library('encrypt');
         return $CI->encrypt->encode_url($string);
     }
 
-public static function dekrip($string) {
+    public static function dekrip($string)
+    {
         $CI =& get_instance();
         $CI->load->library('encrypt');
         return $CI->encrypt->decode_url($string);
     }
 
-public static function waktu_post($data) {
+    public static function waktu_post($data)
+    {
         $CI =& get_instance();
         $CI->load->library('tanggalan');
-        
+
         $original = strtotime($data);
         $chunks = array(
             array(60 * 60 * 24 * 365, 'tahun'),
@@ -1089,22 +1142,25 @@ public static function waktu_post($data) {
         return $print . ' yang lalu';
     }
 
-public static function format_angka($str,$dec = null){
-        $string = number_format($str,$dec,',','.');
+    public static function format_angka($str, $dec = null)
+    {
+        $string = number_format($str, $dec, ',', '.');
         return $string;
     }
 
-public static function format_angka2($str,$dec){
-        $string = number_format($str,$dec,'.','');
-        $var    = explode('.', $string);
-        $hasil  = ($var[1] == '00' ? $var[0] : $string);
+    public static function format_angka2($str, $dec)
+    {
+        $string = number_format($str, $dec, '.', '');
+        $var = explode('.', $string);
+        $hasil = ($var[1] == '00' ? $var[0] : $string);
         return $hasil;
     }
-    
-public static function format_angka_str($str) {
+
+    public static function format_angka_str($str)
+    {
         $CI =& get_instance();
         $CI->load->model('general');
-        
+
         $angka = abs($str);
         $terbilang = array(
             '',
@@ -1148,29 +1204,34 @@ public static function format_angka_str($str) {
         return $hasil;
     }
 
-public static function format_angka_db($str){
-        $angka  = (float) $str;
-        $string = str_replace(',','.', str_replace('.','', $str));
-        return $string;
-    }
-
-public static function format_numerik($str,$des){
-        $string = number_format($str,0,',','.');
-        return $string;
-    }
-
-public static function format_numerik2($str){
+    public static function format_angka_db($str)
+    {
+        $angka = (float) $str;
         $string = str_replace(',', '.', str_replace('.', '', $str));
         return $string;
     }
-    
-public static function format_romawi($integer) {
+
+    public static function format_numerik($str, $des)
+    {
+        $string = number_format($str, 0, ',', '.');
+        return $string;
+    }
+
+    public static function format_numerik2($str)
+    {
+        $string = str_replace(',', '.', str_replace('.', '', $str));
+        return $string;
+    }
+
+    public static function format_romawi($integer)
+    {
         // Convert the integer into an integer (just to make sure)
         $integer = intval($integer);
         $result = '';
 
         // Create a lookup array that contains all of the Roman numerals.
-        $lookup = array('M' => 1000,
+        $lookup = array(
+            'M' => 1000,
             'CM' => 900,
             'D' => 500,
             'CD' => 400,
@@ -1182,7 +1243,8 @@ public static function format_romawi($integer) {
             'IX' => 9,
             'V' => 5,
             'IV' => 4,
-            'I' => 1);
+            'I' => 1
+        );
 
         foreach ($lookup as $roman => $value) {
             // Determine the number of matches
@@ -1199,11 +1261,12 @@ public static function format_romawi($integer) {
         return $result;
     }
 
-public static function generateEAN($number) {
-//        $code       = '899' . str_pad($number, 9, '0');
-        $code       = '899'.$number;
+    public static function generateEAN($number)
+    {
+        //        $code       = '899' . str_pad($number, 9, '0');
+        $code = '899' . $number;
         $weightflag = true;
-        $sum        = 0;
+        $sum = 0;
         // Weight for a digit in the checksum is 3, 1, 3.. starting from the last digit.
         // loop backwards to make the loop length-agnostic. The same basic functionality
         // will work for codes of different lengths.
@@ -1215,7 +1278,8 @@ public static function generateEAN($number) {
         return $code;
     }
 
-public static function get_all_get() {
+    public static function get_all_get()
+    {
         $output = "?";
         $firstRun = true;
 
@@ -1226,16 +1290,17 @@ public static function get_all_get() {
                 $firstRun = false;
             }
 
-            if($key != 'halaman'){
+            if ($key != 'halaman') {
                 $output .= $key . "=" . $val;
             }
         }
 
-        $str = substr($output,-1);
-        return ($str == '&' ? substr($output,0,-1) : $output);
+        $str = substr($output, -1);
+        return ($str == '&' ? substr($output, 0, -1) : $output);
     }
-    
-public static function usia($tanggal_lahir) {
+
+    public static function usia($tanggal_lahir)
+    {
         $birthDate = new DateTime($tanggal_lahir);
         $today = new DateTime("today");
         if ($birthDate > $today) {
@@ -1246,8 +1311,9 @@ public static function usia($tanggal_lahir) {
         $d = $today->diff($birthDate)->d;
         return $y . " tahun " . $m . " bulan " . $d . " hari";
     }
-    
-public static function regex_lab($des) {
+
+    public static function regex_lab($des)
+    {
         // Strip HTML Tags
         $clear = strip_tags($des);
         // Clean up things like &amp;
@@ -1260,11 +1326,12 @@ public static function regex_lab($des) {
         $clear = preg_replace('/ +/', ' ', $clear);
         // Trim the string of leading/trailing space
         $clear = trim($clear);
-        
+
         return $clear;
     }
-    
-public static function encode($str) {
+
+    public static function encode($str)
+    {
         $str = mb_convert_encoding($str, 'UTF-32', 'UTF-8'); //big endian
         $split = str_split($str, 4);
 
@@ -1278,8 +1345,9 @@ public static function encode($str) {
         }
         return $res;
     }
-    
-public static function encode2($str) {
+
+    public static function encode2($str)
+    {
         $str = mb_convert_encoding($str, 'UTF-32', 'UTF-8');
         $t = unpack("N*", $str);
         $t = array_map(function ($n) {
@@ -1287,8 +1355,9 @@ public static function encode2($str) {
         }, $t);
         return implode("", $t);
     }
-    
-public static function base64_to_jpeg($base64_string, $output_file) {
+
+    public static function base64_to_jpeg($base64_string, $output_file)
+    {
         // open the output file for writing
         $ifp = fopen($output_file, 'wb');
 
@@ -1305,21 +1374,24 @@ public static function base64_to_jpeg($base64_string, $output_file) {
 
         return $output_file;
     }
-    
-public static function pre($str){
-        $print  = print_r('<pre>');
+
+    public static function pre($str)
+    {
+        $print = print_r('<pre>');
         $print .= print_r($str);
-        $print  = print_r('</pre>');
+        $print = print_r('</pre>');
         return $print;
     }
-    
-public static function bersih($str){
+
+    public static function bersih($str)
+    {
         $teks = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
         return $teks;
     }
-    
-    
-public static function rotateImage($filePath) {
+
+
+    public static function rotateImage($filePath)
+    {
 
         // the file must exist
         if (!file_exists($filePath)) {
