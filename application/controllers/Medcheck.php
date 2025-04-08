@@ -157,11 +157,10 @@ class Medcheck extends CI_Controller {
                 } else {
                     // Optimize query for non-doctor users
                     $select_fields = "id, id_user, id_dokter, id_nurse, id_analis, id_pasien, id_poli, id_dft, id_ant, id_kasir, id_instansi, 
-                                    id_encounter, id_condition, id_post_location, id_icd, id_icd10, tgl_simpan, tgl_modif, tgl_masuk, 
+                                    id_encounter, id_condition, id_post_location, tgl_simpan, tgl_modif, tgl_masuk, 
                                     tgl_periksa, tgl_periksa_lab, tgl_periksa_rad, tgl_periksa_pen, tgl_ranap, tgl_keluar, tgl_bayar, tgl_ttd,
-                                    no_rm, no_akun, no_nota, poli, dokter_nik AS nik_dokter, dokter AS nama_dokter, pasien_nik AS nik_pasien, 
-                                    pasien, tgl_lahir, keluhan, ttv, ttv_st, ttv_bb, ttv_tb, ttv_td, ttv_sistole, ttv_diastole, ttv_nadi, 
-                                    ttv_laju, ttv_saturasi, ttv_skala, diagnosa, anamnesa, pemeriksaan, program, alergi, metode, platform, 
+                                    no_rm, no_akun, no_nota, pasien, 
+                                    keluhan, anamnesa, pemeriksaan, program, alergi, metode, platform, 
                                     jml_total, jml_dp, jml_diskon, jml_potongan, jml_potongan_poin, jml_subtotal, jml_ppn, ppn, jml_gtotal, 
                                     jml_bayar, jml_kembali, jml_kurang, jml_poin, jml_poin_nom, tipe, tipe_bayar, status, status_bayar, 
                                     status_nota, status_hps, status_pos, status_periksa";
@@ -2448,8 +2447,6 @@ class Medcheck extends CI_Controller {
                 $data['sql_medc_rsm_dt3']   = $this->db->where('id_medcheck', general::dekrip($id))->where('id_resume', general::dekrip($id_rsm))->where('status_trp', '1')->get('tbl_trans_medcheck_resume_det')->result();
                 $data['sql_medc_rsm_dt4']   = $this->db->where('id', general::dekrip($id_item))->get('tbl_trans_medcheck_resume_det')->row();
                 $data['sql_medc_mcu']       = $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_mcu');
-//                $data['sql_medc_mcu_rw']= $this->db->where('id_medcheck', general::dekrip($id))->where('id', general::dekrip($id_mcu))->get('tbl_trans_medcheck_mcu')->row();
-//                $data['sql_medc_mcu_dt']= $this->db->where('id_medcheck', general::dekrip($id))->where('id_mcu', general::dekrip($id_mcu))->group_by('id_item_kat')->get('tbl_trans_medcheck_det')->result();
                 $data['sql_medc_file']      = $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_file')->result();
                 $data['sql_medc_kmr']       = $this->db->select('tbl_trans_medcheck_kamar.id, tbl_m_kamar.kode, tbl_m_kamar.kamar, tbl_m_kamar.tipe, tbl_trans_medcheck_kamar.id, tbl_trans_medcheck_kamar.id_medcheck, tbl_trans_medcheck_kamar.tgl_simpan, tbl_trans_medcheck_kamar.tgl_simpan, tbl_trans_medcheck_kamar.keterangan')->where('tbl_trans_medcheck_kamar.id_medcheck', general::dekrip($id))->join('tbl_m_kamar', 'tbl_m_kamar.id=tbl_trans_medcheck_kamar.id_kamar')->get('tbl_trans_medcheck_kamar')->result();
                 $data['sql_pasien']         = $this->db->where('id', $data['sql_medc']->id_pasien)->get('tbl_m_pasien')->row();
@@ -2465,8 +2462,6 @@ class Medcheck extends CI_Controller {
                 $data['sql_konsul_rw']      = $this->db->where('id', general::dekrip($id_post))->get('tbl_trans_konsul')->row();
                 $data['sql_antrian']        = $this->db->where('id_medcheck', $data['sql_medc']->id)->get('tr_queue')->result();
                 $data['pengaturan']         = $setting; 
-//                $data['sql_konsul_bls']     = $this->db->where('id_parent', general::dekrip($id_post))->get('tbl_trans_konsul')->result();
-                
                 $st_medrep                  = (!empty($status) ? $status : $data['sql_medc']->status);
                 $data['st_medrep']          = $st_medrep;
                 
@@ -4011,7 +4006,7 @@ class Medcheck extends CI_Controller {
                     }
 
                     // Set cache lock to prevent concurrent processing
-                    $lock_key = 'medcheck_process_lock_' . $pasien . '_' . $dft_id.'_'.$uuid;
+                    $lock_key = 'medcheck_process_lock_' . $pasien . '_' . $dft_id . '_' . $uuid;
                     
                     // Check if cache driver is loaded properly
                     if (!isset($this->cache) || !isset($this->cache->file)) {
@@ -4023,7 +4018,7 @@ class Medcheck extends CI_Controller {
                     
                     if ($cache_result !== FALSE) {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Proses sedang berlangsung, mohon tunggu...");');
-                        redirect(base_url('medcheck/index.php?tipe='.$tipe));
+                        redirect(base_url('medcheck/index.php?tipe=' . $tipe));
                         return;
                     }
                     
@@ -4033,7 +4028,7 @@ class Medcheck extends CI_Controller {
                     // Start transaction
                     $this->db->trans_begin();
 
-                # Masukkan ke tabel medcheck
+                    # Masukkan ke tabel medcheck
                     // Check if a record with the same UUID already exists
                     $existing_record = $this->db->where('uuid', $uuid)
                                                ->get('tbl_trans_medcheck')
@@ -4043,127 +4038,127 @@ class Medcheck extends CI_Controller {
                         throw new Exception("Transaksi dengan UUID yang sama sudah ada dalam database!");
                     }
 
-                $this->db->insert('tbl_trans_medcheck', $data);
-                $last_id = crud::last_id();
-                
-                # Masukkan data dokter jadi satu di tabel raber
+                    $this->db->insert('tbl_trans_medcheck', $data);
+                    $last_id = crud::last_id();
+                    
+                    # Masukkan data dokter jadi satu di tabel raber
                     $data_dokter = [
-                    'id_medcheck'   => $last_id,
-                    'id_user'       => $this->ion_auth->user()->row()->id,
-                    'id_pasien'     => (!empty($pasien) ? $pasien : '0'),
-                    'id_dokter'     => (!empty($dokter) ? $dokter : '0'),
-                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                    'keterangan'    => '',
-                    'status'        => '1'
+                        'id_medcheck'   => $last_id,
+                        'id_user'       => $this->ion_auth->user()->row()->id,
+                        'id_pasien'     => (!empty($pasien) ? $pasien : '0'),
+                        'id_dokter'     => (!empty($dokter) ? $dokter : '0'),
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'keterangan'    => '',
+                        'status'        => '1'
                     ];
-                
-                $this->db->insert('tbl_trans_medcheck_dokter', $data_dokter);
-                
-                # Masukkan GC ke tabel riwayat berkas
+                    
+                    $this->db->insert('tbl_trans_medcheck_dokter', $data_dokter);
+                    
+                    # Masukkan GC ke tabel riwayat berkas
                     $data_file_gc = [
-                    'id_medcheck'       => $last_id,
-                    'id_pasien'         => (!empty($pasien) ? $pasien : '0'),
-                    'id_user'           => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'tgl_masuk'         => date('Y-m-d H:i'),
-                    'judul'             => 'SURAT PERSETUJUAN UMUM',
-                    'file_name'         => '/surat/print_pdf_gc.php?dft='.general::enkrip($sql_dft_gc->row()->id),
-                    'file_ext'          => '.pdf',
-                    'file_type'         => 'application/pdf',
-                    'status'            => '2',
+                        'id_medcheck'       => $last_id,
+                        'id_pasien'         => (!empty($pasien) ? $pasien : '0'),
+                        'id_user'           => $this->ion_auth->user()->row()->id,
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'tgl_masuk'         => date('Y-m-d H:i'),
+                        'judul'             => 'SURAT PERSETUJUAN UMUM',
+                        'file_name'         => '/surat/print_pdf_gc.php?dft=' . general::enkrip($sql_dft_gc->row()->id),
+                        'file_ext'          => '.pdf',
+                        'file_type'         => 'application/pdf',
+                        'status'            => '2',
                     ];
-                
-                # Jika GC dibuat maka simpan berkas ke tabel berkas
-                if($sql_dft_gc->num_rows() > 0){
-                    $this->db->insert('tbl_trans_medcheck_file', $data_file_gc);
-                }
-                
-                # Jika tipe medcheck lab atau radiologi
-                if($tipe == '1'){                   
-                    $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_lab')->num_rows() + 1;
-                    $no_surat   = sprintf('%03d', $nomer).'/'.$pengaturan->kode_surat.'/'.date('m').'/'.date('Y');
-                    $grup       = $this->ion_auth->get_users_groups()->row();
-                    $is_farm    = ($grup->name == 'analis' ? '2' : '0');
-                    $is_farm_id = ($grup->name == 'analis' ? $this->ion_auth->user()->row()->id : '0');
-                    $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
-                
+                    
+                    # Jika GC dibuat maka simpan berkas ke tabel berkas
+                    if ($sql_dft_gc->num_rows() > 0) {
+                        $this->db->insert('tbl_trans_medcheck_file', $data_file_gc);
+                    }
+                    
+                    # Jika tipe medcheck lab atau radiologi
+                    if ($tipe == '1') {                   
+                        $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_lab')->num_rows() + 1;
+                        $no_surat   = sprintf('%03d', $nomer) . '/' . $pengaturan->kode_surat . '/' . date('m') . '/' . date('Y');
+                        $grup       = $this->ion_auth->get_users_groups()->row();
+                        $is_farm    = ($grup->name == 'analis' ? '2' : '0');
+                        $is_farm_id = ($grup->name == 'analis' ? $this->ion_auth->user()->row()->id : '0');
+                        $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
+                    
                         $data_lab = [
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'tgl_masuk'     => date('Y-m-d H:i:s'),
-                        'id_medcheck'   => $last_id,
-                        'id_pasien'     => $pasien,
-                        'id_user'       => $this->ion_auth->user()->row()->id,
-                        'id_analis'     => $is_farm_id,
-                        'id_dokter'     => $is_doc_id,
-                        'no_lab'        => $no_surat,
-                        'status'        => '0',
-                        'status_cvd'    => '0',
+                            'tgl_simpan'    => date('Y-m-d H:i:s'),
+                            'tgl_masuk'     => date('Y-m-d H:i:s'),
+                            'id_medcheck'   => $last_id,
+                            'id_pasien'     => $pasien,
+                            'id_user'       => $this->ion_auth->user()->row()->id,
+                            'id_analis'     => $is_farm_id,
+                            'id_dokter'     => $is_doc_id,
+                            'no_lab'        => $no_surat,
+                            'status'        => '0',
+                            'status_cvd'    => '0',
                         ];
-                    
-                    # Simpan ke tabel lab
-                    $this->db->insert('tbl_trans_medcheck_lab', $data_lab);                
-                    } elseif($tipe == '4'){
-                    $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_rad')->num_rows() + 1;
-                    $no_surat   = sprintf('%03d', $nomer).'/'.$pengaturan->kode_rad.'/'.date('m').'/'.date('Y');
-                    $grup       = $this->ion_auth->get_users_groups()->row();
-                    $is_rad     = ($grup->name == 'radiografer' ? '2' : '0');
-                    $is_rad_id  = ($grup->name == 'radiografer' ? $this->ion_auth->user()->row()->id : '0');
-                    $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
-                   
+                        
+                        # Simpan ke tabel lab
+                        $this->db->insert('tbl_trans_medcheck_lab', $data_lab);                
+                    } elseif ($tipe == '4') {
+                        $nomer      = $this->db->where('MONTH(tgl_simpan)', date('m'))->get('tbl_trans_medcheck_rad')->num_rows() + 1;
+                        $no_surat   = sprintf('%03d', $nomer) . '/' . $pengaturan->kode_rad . '/' . date('m') . '/' . date('Y');
+                        $grup       = $this->ion_auth->get_users_groups()->row();
+                        $is_rad     = ($grup->name == 'radiografer' ? '2' : '0');
+                        $is_rad_id  = ($grup->name == 'radiografer' ? $this->ion_auth->user()->row()->id : '0');
+                        $is_doc_id  = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
+                       
                         $data_rad = [
-                        'tgl_simpan'    => date('Y-m-d H:i:s'),
-                        'tgl_masuk'     => date('Y-m-d H:i:s'),
-                        'id_medcheck'   => $last_id,
-                        'id_pasien'     => $pasien,
-                        'id_user'       => $this->ion_auth->user()->row()->id,
-                        'id_radiografer'=> $is_rad_id,
-                        'id_dokter'     => $is_doc_id,
-                        'no_rad'        => $no_surat,
-                        'no_sample'     => '-',
-                        'status'        => '0',
+                            'tgl_simpan'    => date('Y-m-d H:i:s'),
+                            'tgl_masuk'     => date('Y-m-d H:i:s'),
+                            'id_medcheck'   => $last_id,
+                            'id_pasien'     => $pasien,
+                            'id_user'       => $this->ion_auth->user()->row()->id,
+                            'id_radiografer'=> $is_rad_id,
+                            'id_dokter'     => $is_doc_id,
+                            'no_rad'        => $no_surat,
+                            'no_sample'     => '-',
+                            'status'        => '0',
                         ];
-                    
-                    # Simpan ke tabel rad
-                    $this->db->insert('tbl_trans_medcheck_rad', $data_rad);
-                }
+                        
+                        # Simpan ke tabel rad
+                        $this->db->insert('tbl_trans_medcheck_rad', $data_rad);
+                    }
 
-                # Update ke tabel pendaftaran
-                    $this->db->where('id', $dft_id)->update('tbl_pendaftaran', ['status_akt' => '2', 'file_base64'=>'']);
+                    # Update ke tabel pendaftaran
+                    $this->db->where('id', $dft_id)->update('tbl_pendaftaran', ['status_akt' => '2', 'file_base64' => '']);
 
-                # Upload file foto
-                $kode   = sprintf('%05d', $sql_pas->kode);
-                $no_rm  = strtolower($pengaturan->kode_pasien).$kode;
-                $path   = 'file/pasien/'.$no_rm.'/';
-                $folder = realpath('./'.$path);
+                    # Upload file foto
+                    $kode   = sprintf('%05d', $sql_pas->kode);
+                    $no_rm  = strtolower($pengaturan->kode_pasien) . $kode;
+                    $path   = 'file/pasien/' . $no_rm . '/';
+                    $folder = realpath('./' . $path);
 
-                if (!empty($_FILES['fupload']['name'])) {
-                    $config['upload_path']      = $folder;
-                    $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
-                    $config['remove_spaces']    = TRUE;
-                    $config['overwrite']        = TRUE;
-                        $config['file_name']        = 'profile_'.$no_rm;
-                    $this->load->library('upload', $config);
+                    if (!empty($_FILES['fupload']['name'])) {
+                        $config['upload_path']      = $folder;
+                        $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
+                        $config['remove_spaces']    = TRUE;
+                        $config['overwrite']        = TRUE;
+                        $config['file_name']        = 'profile_' . $no_rm;
+                        $this->load->library('upload', $config);
 
-                    if (!$this->upload->do_upload('fupload')) {
+                        if (!$this->upload->do_upload('fupload')) {
                             // Log error but continue processing
                             throw new Exception('File upload failed: ' . $this->upload->display_errors());
-                    } else {
+                        } else {
                             $f = $this->upload->data();
-                        
-                        # Data File
+                            
+                            # Data File
                             $data_file = [
-                            'file_name'     => $path.$f['orig_name'],
-                            'file_type'     => $f['file_type'],
-                            'file_ext'      => $f['file_ext'],
+                                'file_name'     => $path . $f['orig_name'],
+                                'file_type'     => $f['file_type'],
+                                'file_ext'      => $f['file_ext'],
                             ];
 
-                        # Simpan File Gambar ke tabel
-                        $this->db->where('id', $sql_pas->id)->update('tbl_m_pasien', $data_file);
+                            # Simpan File Gambar ke tabel
+                            $this->db->where('id', $sql_pas->id)->update('tbl_m_pasien', $data_file);
+                        }
                     }
-                }
-                
+                    
                     # Commit transaction if all operations successful
-                if ($this->db->trans_status() === FALSE) {
+                    if ($this->db->trans_status() === FALSE) {
                         throw new Exception("Database transaction failed");
                     }
                     
