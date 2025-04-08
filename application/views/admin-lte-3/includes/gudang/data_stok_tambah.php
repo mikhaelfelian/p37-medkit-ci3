@@ -494,10 +494,10 @@
                                         $tot_so = 0;
                                         // If no reset point, count all SO
                                         $stok_opname = $this->db->select('SUM(jml * jml_satuan) as total')
-                                            ->where('id_produk', $barang->id)
-                                            ->where('status', 6)
-                                            ->get('tbl_m_produk_hist')
-                                            ->row();
+                                                                ->where('id_produk', $barang->id)
+                                                                ->where('status', 6)
+                                                                ->get('tbl_m_produk_hist')
+                                                                ->row();
                                         if ($stok_opname) {
                                             $tot_so = $stok_opname->total;
                                         }
@@ -522,11 +522,11 @@
                                             $stok_masuk_after_reset = 0;
                                             if ($reset_point) {
                                                 $sm_after_reset = $this->db->select('SUM(jml * jml_satuan) as total')
-                                                    ->where('id_produk', $barang->id)
-                                                    ->where('status', 1)
-                                                    ->where('tgl_simpan >', $reset_point->tgl_simpan)
-                                                    ->get('tbl_m_produk_hist')
-                                                    ->row();
+                                                                           ->where('id_produk', $barang->id)
+                                                                           ->where('status', 1)
+                                                                           ->where('tgl_simpan >', $reset_point->tgl_simpan)
+                                                                           ->get('tbl_m_produk_hist')
+                                                                           ->row();
                                                 $stok_masuk_after_reset = $sm_after_reset ? $sm_after_reset->total : 0;
                                             }
                                             $sisa_st = $tot_so + $stok_masuk_after_reset - $tot_sk;
@@ -564,7 +564,6 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
 <script src="<?php echo base_url('assets/theme/admin-lte-2/plugins/JAutoNumber/autonumeric.js') ?>"></script>
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.js') ?>"></script>
 <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">

@@ -2467,9 +2467,9 @@ class Gudang extends CI_Controller {
             $gd      = $this->input->get('filter_gd');
 
             $total_rows = $this->db
-                            ->where('id_produk', $data['barang']->id)
-                            ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
-                            ->get('tbl_m_produk_hist')->num_rows();
+                               ->where('id_produk', $data['barang']->id)
+                               ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                               ->get('tbl_m_produk_hist')->num_rows();
             /* -- End Blok Filter -- */
             /* -- Form Error -- */
             $data['hasError']                = $this->session->flashdata('form_error');
@@ -2514,12 +2514,10 @@ class Gudang extends CI_Controller {
             $data['barang_hist'] = $this->db
                                         ->select('tgl_simpan, tgl_masuk, id, id_user, id_gudang, id_pembelian, id_pembelian_det, id_penjualan, id_produk, no_nota, kode, jml, jml_satuan, nominal, satuan, keterangan, status')
                                         ->where('id_produk', $data['barang']->id)
-                                        ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                                        // ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
                                         ->limit($config['per_page'], $hal)
-                                        ->group_by('tgl_simpan, tgl_masuk, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
                                         ->order_by('tgl_simpan, status', 'asc')
                                         ->get('tbl_m_produk_hist')->result();
-            
             $this->pagination->initialize($config);
             
             /* Blok pagination */
@@ -2527,10 +2525,6 @@ class Gudang extends CI_Controller {
             $data['PerPage']    = $config['per_page'];
             $data['pagination'] = $this->pagination->create_links();
             /* --End Blok pagination-- */
-            
-            # -- END PAGINATION UNTUK HISTORY
-            
-            
 
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/gudang/sidebar_gudang';
@@ -2562,74 +2556,86 @@ class Gudang extends CI_Controller {
             $this->form_validation->set_rules('id', 'Kode Barang', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'     => form_error('id'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_barang_tambah.php?id='.$id));
             } else {
-                foreach ($_POST['jml'] as $key => $pos){                    
-                    $data_stok_gd = array(
-                        'tgl_modif'   => date('Y-m-d H:i:s'),
-                        'jml'         => (int)$_POST['jml'][$key],
-                    );
+                try {
+                    foreach ($_POST['jml'] as $key => $pos) {                    
+                        // Get current stock data
+                        $stock_data = $this->db->where('id', $key)->get('tbl_m_produk_stok')->row();
+                        if (!$stock_data) {
+                            throw new Exception("Data stok tidak ditemukan");
+                        }
+                        
+                        $product_data   = $this->db->where('id', $stock_data->id_produk)->get('tbl_m_produk')->row();
+                        $gudang_data    = $this->db->where('id', $stock_data->id_gudang)->get('tbl_m_gudang')->row();
+                        
+                        // Calculate stock difference
+                        $old_stock      = $stock_data->jml;
+                        $new_stock      = (int)$_POST['jml'][$key];
+                        $stock_diff     = $new_stock - $old_stock;
+                        
+                        // Update stock data
+                        $data_stok_gd = [
+                            'tgl_modif' => date('Y-m-d H:i:s'),
+                            'jml'       => $new_stock,
+                        ];
+                        
+                        # Simpan stok per gudang
+                        $this->db->where('id', $key)->update('tbl_m_produk_stok', $data_stok_gd);
+    
+                        # Catat log barang ke tabel history
+                        $data_mut_hist = [
+                            'tgl_simpan'    => date('Y-m-d H:i:s'),
+                            'tgl_masuk'     => $this->tanggalan->tgl_indo_sys(date('Y-m-d')),
+                            'id_gudang'     => $stock_data->id_gudang,
+                            'id_produk'     => $stock_data->id_produk,
+                            'id_user'       => $this->ion_auth->user()->row()->id,
+                            'id_penjualan'  => 0,
+                            'no_nota'       => 'ADJUST-'.date('YmdHis'),
+                            'kode'          => $product_data->kode,
+                            'produk'        => $product_data->produk,
+                            'keterangan'    => 'Penyesuaian stok manual',
+                            'jml'           => $stock_diff,
+                            'jml_satuan'    => 1,
+                            'satuan'        => $product_data->satuan,
+                            'nominal'       => 0,
+                            'status'        => '9'
+                        ];
+                        
+                        # Simpan riwayat stok
+                        $this->db->insert('tbl_m_produk_hist', $data_mut_hist);
+                    }
                     
-                    # Simpan stok per gudang
-                    $this->db->where('id', $key)->update('tbl_m_produk_stok', $data_stok_gd);
-                }
-                
-                $sql_stk_gd = $this->db->select_sum('jml')->where('id_produk', general::dekrip($id))->get('tbl_m_produk_stok')->row();
-                $data_stok = array(
-                    'tgl_modif'   => date('Y-m-d H:i:s'),
-                    'jml'         => $sql_stk_gd->jml,
-                );
-                
-                # Update stok global
-                $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', $data_stok);
-                
-                if ($this->db->affected_rows() > 0) {
+                    $sql_stk_gd = $this->db->select_sum('jml')->where('id_produk', general::dekrip($id))->get('tbl_m_produk_stok')->row();
+                    $data_stok = [
+                        'tgl_modif' => date('Y-m-d H:i:s'),
+                        'jml'       => $sql_stk_gd->jml,
+                    ];
+                    
+                    # Update stok global
+                    $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', $data_stok);
+                    
                     $this->session->set_flashdata('gd_toast', 'toastr.success("Update stok berhasil disimpan !");');
-                } else {
-                    $this->session->set_flashdata('gd_toast', 'toastr.error("Update stok gagal disimpan !");');
+                    
+                    if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE){
+                        redirect(base_url('gudang/data_stok_tambah.php?id='.$id));
+                    }else{
+                        redirect(base_url('master/data_barang_tambah.php?id='.$id.'&route=gudang/data_stok_list'));
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('gd_toast', 'toastr.error("Update stok gagal: ' . $e->getMessage() . '");');
+                    
+                    if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE){
+                        redirect(base_url('gudang/data_stok_tambah.php?id='.$id));
+                    }else{
+                        redirect(base_url('master/data_barang_tambah.php?id='.$id.'&route=gudang/data_stok_list'));
+                    }
                 }
-                
-                if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE){
-                    redirect(base_url('gudang/data_stok_tambah.php?id='.$id));
-                }else{
-                    redirect(base_url('master/data_barang_tambah.php?id='.$id.'&route=gudang/data_stok_list'));
-                }
-                
-//                crud::update('tbl_m_produk', 'id', general::dekrip($id), $data_stok);
-//                    echo '<pre>';
-//                    print_r($data_stok);
-//                
-//                if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE){
-//                    redirect(base_url('gudang/data_stok_tambah.php?id='.$id));
-//                }else{
-//                    redirect(base_url('master/data_barang_tambah.php?id='.$id.'&route=gudang/data_stok_list'));
-//                }
-//
-//                if ($sql_stk_gd->num_rows() > 0) {
-//                    foreach ($sql_stk_gd->result() as $gds) {
-//                        if ($gds->id_gudang == $sql_cek_gd->id) {
-//                            $jml_sa = $jml - $gds->jml;
-//
-//                            crud::update('tbl_m_produk_stok', 'id', $gds->id, array('jml'=>$jml_sa));
-//                        }
-//                    }
-//                } else {
-//                    crud::simpan('tbl_m_produk_stok', $data_stok);
-//                }
-//
-//                $this->session->set_flashdata('gudang', '<div class="alert alert-success">Data stok disimpan</div>');
-//                crud::update('tbl_m_produk', 'id', general::dekrip($id), $data_stok);
-//                
-//                if(akses::hakSA() == TRUE OR akses::hakOwner() == TRUE){
-//                    redirect(base_url('gudang/data_stok_tambah.php?id='.$id));
-//                }else{
-//                    redirect(base_url('master/data_barang_tambah.php?id='.$id.'&route=gudang/data_stok_list'));
-//                }
             }
         } else {
             $errors = $this->ion_auth->messages();
