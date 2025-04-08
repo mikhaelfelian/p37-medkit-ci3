@@ -1665,7 +1665,7 @@ class Medcheck extends CI_Controller {
         $status         = $this->input->get('status');
         $stp            = $this->input->post('status_poli');
 
-        $id['id']       = $id; //$this->input->post('cari');
+        $dt = array();
         $dt['csflagqu'] = $sts;
         $dt['ccustsrv'] = strtoupper($this->session->userdata('nama_lengkap'));
         $dt['cnote']    = (!empty($stp) ? $stp : 'PANGGILAN');
@@ -1701,12 +1701,14 @@ class Medcheck extends CI_Controller {
             $file2  = $fldr . "/" . $filename2 . ".mp3";
 
             // Check folder exists, if not create it, else verify CHMOD
-            if (!is_dir($fldr))
+            if (!is_dir($fldr)) {
                 mkdir($fldr);
-            else
-            if (substr(sprintf('%o', fileperms('../'.BASE_ANTRIAN.'/scale/audio/')), -4) != "0777")
-                chmod("scale/audio/", 0777);
-
+            } else {
+                $perms = substr(sprintf('%o', fileperms('../'.BASE_ANTRIAN.'/scale/audio/')), -4);
+                if ($perms != "0777") {
+                    chmod('../'.BASE_ANTRIAN.'/scale/audio/', 0777);
+                }
+            }
 
             // If MP3 file exists do not create new request
             if (!file_exists($file2)) {
@@ -1736,9 +1738,6 @@ class Medcheck extends CI_Controller {
             $dt['status_pgl']   = '0';
         }
         
-        $id = $this->input->get('id');
-        
-//        $dt['cUser'] = $this->ion_auth->user()->row()->username;
         $dt['dLastUpdate'] = date('Y-m-d H:i:s');
         
         $this->db->where('id', $id)->update("tr_queue", $dt);
