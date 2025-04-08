@@ -70,7 +70,9 @@
                                                 <td style="width: 250px;" class="text-left"><?php echo anchor(base_url('gudang/data_opname_det.php?id=' . general::enkrip($opname->id)), $this->ion_auth->user($opname->id_user)->row()->first_name, '') ?></td>
                                                 <td style="width: 350px;" class="text-left"><?php echo $opname->keterangan; // echo (!empty($opname->dl_file) ? anchor(base_url('gudang/data_opname_dl.php?id='.general::enkrip($opname->id).'&file='.$opname->nm_file), $opname->nm_file) : $opname->nm_file)  ?></td>
                                                 <td style="width: 100px;" class="text-left">
-                                                    <?php echo anchor(base_url('gudang/data_opname_tambah.php?nota=' . general::enkrip($opname->id)), '<i class="fa fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
+                                                    <?php if($opname->id_user == $this->ion_auth->user()->row()->id): ?>
+                                                        <?php echo anchor(base_url('gudang/data_opname_tambah.php?nota=' . general::enkrip($opname->id)), '<i class="fa fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                             <?php
