@@ -2336,7 +2336,6 @@ class transaksi extends CI_Controller {
                 $this->db->trans_begin();
 
                 try {
-                    echo general::dekrip($id_brg);
                     $sql_gudang    = $this->db->where('status', '2')->get('tbl_m_gudang')->row();
                     $sql_item      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
                     $sql_item_stok = $this->db->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
@@ -2470,14 +2469,14 @@ class transaksi extends CI_Controller {
                     $stok_glob = $this->db->select_sum('jml')->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row()->jml;
                     $this->db->where('id', $sql_item->id)->update('tbl_m_produk', ['jml' => (float)$stok_glob]);
                     
-                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_item->produk.'</b> berhasil disimpan!");');
-                    
                     # Transaksi Selesai
                     if ($this->db->trans_status() === FALSE) {
                         throw new Exception("Transaksi gagal, silakan coba lagi");
                     }
                     
                     $this->db->trans_commit();
+                    
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_item->produk.'</b> berhasil diupdate! Stok akhir: '.$stok_akhir.' '.$sql_satuan->satuanTerkecil.'");');
                     
                     redirect(base_url('transaksi/beli/trans_beli_edit.php?id='.$id));
                 } catch (Exception $e) {
