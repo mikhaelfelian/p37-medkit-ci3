@@ -2582,7 +2582,7 @@ class Gudang extends CI_Controller {
                         // Update stock data
                         $data_stok_gd = [
                             'tgl_modif' => date('Y-m-d H:i:s'),
-                            'jml'       => $new_stock,
+                            'jml'       => $new_stock, 
                         ];
                         
                         # Simpan stok per gudang
