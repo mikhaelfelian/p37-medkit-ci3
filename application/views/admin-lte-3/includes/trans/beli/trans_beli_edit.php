@@ -465,5 +465,6 @@
                         .appendTo(ul);
             };
 <?php } ?>
+<?php echo $this->session->flashdata('trans_toast'); ?>
     });
 </script>
