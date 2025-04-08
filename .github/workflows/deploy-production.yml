@@ -1,0 +1,24 @@
+name: Deploy to Production Server
+
+on:
+  workflow_dispatch:  # dijalankan manual dari tab Actions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Setup SSH Connection
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy Code to Production cPanel
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          cd ${{ secrets.DEPLOY_PATH_PROD }} &&
+          git pull origin main &&
+          exit"
