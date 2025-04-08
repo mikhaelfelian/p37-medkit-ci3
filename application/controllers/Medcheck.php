@@ -12428,11 +12428,11 @@ public function set_medcheck_lab_adm_save() {
                                        ->where('id_item', $sql_item->id)
                                        ->get('tbl_trans_medcheck_apres');
                 
-                $disk1      = $harga - (($diskon1 / 100) * $harga);
-                $disk2      = $disk1 - (($diskon2 / 100) * $disk1);
-                $disk3      = $disk2 - (($diskon3 / 100) * $disk2);
-                $diskon     = ($harga - $disk3) * (int)$jml;
-                $subtotal   = (($disk3 - $potongan) * (int)$jml) - $potongan_poin;
+                $disk1      = (float)$harga - (((float)$diskon1 / 100) * (float)$harga);
+                $disk2      = (float)$disk1 - (((float)$diskon2 / 100) * (float)$disk1);
+                $disk3      = (float)$disk2 - (((float)$diskon3 / 100) * (float)$disk2);
+                $diskon     = ((float)$harga - (float)$disk3) * (int)$jml;
+                $subtotal   = (((float)$disk3 - (float)$potongan) * (int)$jml) - (float)$potongan_poin;
                 
                 $data = [
                     'tgl_modif'     => date('Y-m-d H:i:s'),
@@ -12462,7 +12462,7 @@ public function set_medcheck_lab_adm_save() {
                 if($sql_cek_remun->num_rows() > 0){
                     # Tentukan remun tipenya dan hitung total remunnya
                     $remun      = ($sql_item->remun_tipe == '2' ? $sql_item->remun_nom : (($sql_item->remun_perc / 100) * $subtotal));
-                    $remun_tot  = ($remun * (int)$sql_medc_ck->row()->jml) - $diskon - $jml_pot;
+                    $remun_tot  = ($remun * (int)$sql_medc_ck->row()->jml) - (float)$diskon - (float)$jml_pot;
                     
                     $data_remun = [
                         'harga'             => $subtotal,
@@ -12477,7 +12477,7 @@ public function set_medcheck_lab_adm_save() {
                 if($sql_cek_apres->num_rows() > 0){
                     # Tentukan apres tipenya dan hitung total remunnya
                     $apres      = ($sql_item->remun_tipe == '2' ? $sql_item->apres_nom : (($sql_item->apres_perc / 100) * $subtotal));
-                    $apres_tot  = ($apres * (int)$sql_medc_ck->row()->jml) - $diskon - $jml_pot;
+                    $apres_tot  = ($apres * (int)$sql_medc_ck->row()->jml) - (float)$diskon - (float)$jml_pot;
                     
                     $data_apres = [
                         'harga'             => $subtotal,
@@ -12490,17 +12490,17 @@ public function set_medcheck_lab_adm_save() {
                 
                 // Update price di total penjualan
                 $sql_medc_det_sum   = $this->db->select('SUM(diskon) AS diskon, SUM(potongan) AS potongan, SUM(subtotal) AS subtotal')->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->row();
-                $jml_total          = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->diskon + $sql_medc_det_sum->potongan;
-                $jml_diskon         = $sql_medc_det_sum->diskon;
-                $jml_potongan       = $sql_medc_det_sum->potongan;
+                $jml_total          = (float)$sql_medc_det_sum->subtotal + (float)$sql_medc_det_sum->diskon + (float)$sql_medc_det_sum->potongan;
+                $jml_diskon         = (float)$sql_medc_det_sum->diskon;
+                $jml_potongan       = (float)$sql_medc_det_sum->potongan;
                 
                 // Prevent division by zero
                 $diskon = 0;
                 if($sql_medc->jml_total > 0) {
-                    $diskon = (($sql_medc->jml_total - $sql_medc_det_sum->subtotal) / $sql_medc->jml_total) * 100;
+                    $diskon = (($sql_medc->jml_total - (float)$sql_medc_det_sum->subtotal) / $sql_medc->jml_total) * 100;
                 }
                 
-                $jml_gtotal = $sql_medc->jml_total - $jml_diskon - $jml_potongan;
+                $jml_gtotal = (float)$sql_medc->jml_total - $jml_diskon - $jml_potongan;
                         
                 $data_medc_tot = [
                     'jml_diskon'    => $jml_diskon,
@@ -13901,7 +13901,7 @@ public function set_medcheck_lab_adm_save() {
                             'id_item_ref_ip'    => !empty($sql_nilai->id) ? $sql_nilai->id : null,
                             'tgl_simpan'        => date('Y-m-d H:i:s'),
                             'item_name'         => !empty($sql_nilai->item_name) ? $sql_nilai->item_name : null,
-                            'item_value'        => !empty($hsl) ? $hsl : null,
+                            'item_value'        => !empty($nilai[$key]) ? $nilai[$key] : null,
                             'item_satuan'       => !empty($satuan[$key]) ? $satuan[$key] : null,
                             'item_hasil'        => !empty($hasil[$key]) ? $hasil[$key] : null,
                             'status'            => !empty($sql_nilai->status) ? $sql_nilai->status : null,
