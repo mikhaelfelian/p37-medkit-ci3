@@ -8,6 +8,9 @@ date_default_timezone_set('Asia/Jakarta');
 // Force timezone for any date/time operations
 ini_set('date.timezone', 'Asia/Jakarta');
 
+define('BASE_URL', $uri);
+define('BASE_ANTRIAN', ($_SERVER['SERVER_NAME'] == 'simrs.esensia.co.id' ? 'antrian.esensia.co.id' : 'dev.esensia.co.id/antrian'));
+
 /**
  * CodeIgniter
  *
