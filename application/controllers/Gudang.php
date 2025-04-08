@@ -2523,7 +2523,6 @@ class Gudang extends CI_Controller {
             $data['barang_hist'] = $this->db
                                         ->select('tgl_simpan, tgl_masuk, id, id_user, id_gudang, id_pembelian, id_pembelian_det, id_penjualan, id_produk, no_nota, kode, jml, jml_satuan, nominal, satuan, keterangan, status')
                                         ->where('id_produk', $data['barang']->id)
-                                        // ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
                                         ->limit($config['per_page'], $hal)
                                         ->order_by('tgl_simpan, status', 'asc')
                                         ->get('tbl_m_produk_hist')->result();
