@@ -2595,7 +2595,6 @@ class Gudang extends CI_Controller {
                             'id_gudang'     => $stock_data->id_gudang,
                             'id_produk'     => $stock_data->id_produk,
                             'id_user'       => $this->ion_auth->user()->row()->id,
-                            'id_penjualan'  => 0,
                             'no_nota'       => 'ADJUST-'.date('YmdHis'),
                             'kode'          => $product_data->kode,
                             'produk'        => $product_data->produk,
