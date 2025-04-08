@@ -2599,7 +2599,7 @@ class Gudang extends CI_Controller {
                             'kode'          => $product_data->kode,
                             'produk'        => $product_data->produk,
                             'keterangan'    => 'Penyesuaian stok manual',
-                            'jml'           => $stock_diff,
+                            'jml'           => ($stock_diff > 0 ? $stock_diff : $_POST['jml'][$key]),
                             'jml_satuan'    => 1,
                             'satuan'        => $product_data->satuan,
                             'nominal'       => 0,
