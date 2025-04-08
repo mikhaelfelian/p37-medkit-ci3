@@ -5284,38 +5284,34 @@ class laporan extends CI_Controller {
                 }
             }
 
-            $objPHPExcel = new PHPExcel();
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
             // Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A4:J4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A4:J4')->getFont()->setBold(TRUE);
+            $sheet->getStyle('A4:J4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A4:J4')->getFont()->setBold(TRUE);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A4', 'No.')
-                    ->setCellValue('B4', 'Tgl')
-                    ->setCellValue('C4', 'No. Faktur')
-                    ->setCellValue('D4', 'Dokter')
-                    ->setCellValue('E4', 'Tindakan')
-                    ->setCellValue('F4', 'Pasien')
-                    ->setCellValue('G4', 'Jml')
-                    ->setCellValue('H4', 'Harga')
-                    ->setCellValue('I4', 'Remunerasi')
-                    ->setCellValue('J4', 'Subtotal');
+            $sheet->setCellValue('A4', 'No.')
+                  ->setCellValue('B4', 'Tgl')
+                  ->setCellValue('C4', 'No. Faktur')
+                  ->setCellValue('D4', 'Dokter')
+                  ->setCellValue('E4', 'Tindakan')
+                  ->setCellValue('F4', 'Pasien')
+                  ->setCellValue('G4', 'Jml')
+                  ->setCellValue('H4', 'Harga')
+                  ->setCellValue('I4', 'Remunerasi')
+                  ->setCellValue('J4', 'Subtotal');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(30);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(50);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(40);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(6);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(14);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(14);
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(50);
+            $sheet->getColumnDimension('F')->setWidth(40);
+            $sheet->getColumnDimension('G')->setWidth(6);
+            $sheet->getColumnDimension('H')->setWidth(14);
+            $sheet->getColumnDimension('I')->setWidth(14);
+            $sheet->getColumnDimension('J')->setWidth(14);
 
             if(!empty($sql_remun)){
                 $no    = 1;
@@ -5326,60 +5322,53 @@ class laporan extends CI_Controller {
                     $remun    = ($penjualan->remun_tipe == '2' ? $penjualan->remun_nom : (($penjualan->remun_perc / 100) * $penjualan->harga));
                     $total    = $total + $penjualan->remun_subtotal;
 
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('G'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-//                    $objPHPExcel->getActiveSheet()->getStyle('B'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('B'.$cell.':F'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('H'.$cell.':J'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                    $objPHPExcel->getActiveSheet()->getStyle('H'.$cell.':J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                    $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('G'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('B'.$cell.':F'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('H'.$cell.':J'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('H'.$cell.':J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, $no)
-                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                            ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
-                            ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
-                            ->setCellValue('E'.$cell, $penjualan->item)
-                            ->setCellValue('F'.$cell, $penjualan->nama_pgl)
-                            ->setCellValue('G'.$cell, $penjualan->jml)
-                            ->setCellValue('H'.$cell, $penjualan->harga)
-                            ->setCellValue('I'.$cell, $remun)
-                            ->setCellValue('J'.$cell, $penjualan->remun_subtotal);
+                    $sheet->setCellValue('A'.$cell, $no)
+                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                          ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
+                          ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
+                          ->setCellValue('E'.$cell, $penjualan->item)
+                          ->setCellValue('F'.$cell, $penjualan->nama_pgl)
+                          ->setCellValue('G'.$cell, $penjualan->jml)
+                          ->setCellValue('H'.$cell, $penjualan->harga)
+                          ->setCellValue('I'.$cell, $remun)
+                          ->setCellValue('J'.$cell, $penjualan->remun_subtotal);
                     
                     $no++;
                     $cell++;
                 }
 
-                $sell1     = $cell;
+                $sell1 = $cell;
                 
-                $objPHPExcel->getActiveSheet()->getStyle('J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
-                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell1.':J'.$sell1.'')->getFont()->setBold(TRUE);
-                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell1.':J'.$sell1)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $objPHPExcel->setActiveSheetIndex(0)
-                        ->setCellValue('A' . $sell1, 'TOTAL REMUNERASI')->mergeCells('A'.$sell1.':I'.$sell1.'')
-                        ->setCellValue('J' . $sell1, $total);
+                $sheet->getStyle('J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                $sheet->getStyle('A'.$sell1.':J'.$sell1)->getFont()->setBold(TRUE);
+                $sheet->getStyle('A'.$sell1.':J'.$sell1)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->setCellValue('A' . $sell1, 'TOTAL REMUNERASI');
+                $sheet->mergeCells('A'.$sell1.':I'.$sell1);
+                $sheet->setCellValue('J' . $sell1, $total);
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('LAP REMUNERASI');
+            $sheet->setTitle('LAP REMUNERASI');
 
             /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
             /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
-
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setFooter(0);
 
             /** Page Setup * */
             // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
                     ->setLastModifiedBy($this->ion_auth->user()->row()->username)
                     ->setTitle("Stok")
                     ->setSubject("Aplikasi Bengkel POS")
@@ -5387,21 +5376,14 @@ class laporan extends CI_Controller {
                     ->setKeywords("Pasifik POS")
                     ->setCategory("Untuk mencetak nota dot matrix");
 
-
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
+            // Redirect output to a client's web browser
             header('Content-Type: application/vnd.ms-excel');
-            // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="data_remunerasi_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
+            header('Cache-Control: max-age=0');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
+            $writer->save('php://output');
             exit;
         }else{
             $errors = $this->ion_auth->messages();
