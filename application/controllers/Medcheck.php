@@ -14587,18 +14587,8 @@ public function set_medcheck_lab_adm_save() {
                     $pdf->Ln(1);
 
                     $pdf->SetFont('Arial', '', '10');
-                    $pdf->Cell(19, .5, 'Bahwa pasien sedang dalam perawatan di kamar rawat inap kami, sehingga tidak dapat', '', 0, 'L', $fill);
-                    $pdf->Ln();
-                    $pdf->Cell(8.5, .5, 'melaksanakan kewajibannya mulai tanggal', '', 0, 'L', $fill);
-                    $pdf->SetFont('Arial', 'B', '10');
-                    $pdf->Cell(2.5, .5, $this->tanggalan->tgl_indo2($sql_medc_srt->tgl_masuk), '', 0, 'C', $fill);
-                    $pdf->SetFont('Arial', '', '10');
-                    $pdf->Cell(1, .5, 's/d ', '0', 0, 'C', $fill);
-                    $pdf->SetFont('Arial', 'B', '10');
-                    $pdf->Cell(7, .5, ($sql_medc_srt->status_sembuh == '1' ? 'Sembuh' : $this->tanggalan->tgl_indo2($sql_medc_srt->tgl_keluar)).'.', '', 0, 'L', $fill);
-                    $pdf->Ln();
-                    $pdf->SetFont('Arial', '', '10');
-                    $pdf->Cell(19, .5, 'Harap yang berkepentingan maklum.', '', 0, 'L', $fill);
+                    $text1 = 'Bahwa pasien sedang dalam perawatan di kamar rawat inap kami, sehingga tidak dapat melaksanakan kewajibannya mulai tanggal '.$this->tanggalan->tgl_indo2($sql_medc_srt->tgl_masuk).' s/d '.($sql_medc_srt->status_sembuh == '1' ? 'Sembuh' : $this->tanggalan->tgl_indo2($sql_medc_srt->tgl_keluar)).'. Harap yang berkepentingan maklum.';
+                    $pdf->MultiCell(19, .5, $text1, '', 'J', $fill);
                     $pdf->Ln(1);
             
                     $pdf->SetFont('Arial', '', '10');
