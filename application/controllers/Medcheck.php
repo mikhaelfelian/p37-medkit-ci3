@@ -13890,7 +13890,7 @@ public function set_medcheck_lab_adm_save() {
                              ->delete('tbl_trans_medcheck_lab_hsl');
                     
                     foreach ($nilai as $key => $hsl) {
-                        $sql_nilai = $this->db->where('id', general::dekrip($key))->get('tbl_m_produk_ref_input')->row();
+                        $sql_nilai = $this->db->where('id', $key)->get('tbl_m_produk_ref_input')->row();
 
                         $data_lab = [
                             'id_medcheck'       => !empty($sql_medc->id) ? $sql_medc->id : null,
