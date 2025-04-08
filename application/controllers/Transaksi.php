@@ -2336,6 +2336,7 @@ class transaksi extends CI_Controller {
                 $this->db->trans_begin();
 
                 try {
+                    echo general::dekrip($id_brg);
                     $sql_gudang    = $this->db->where('status', '2')->get('tbl_m_gudang')->row();
                     $sql_item      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
                     $sql_item_stok = $this->db->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
@@ -2345,6 +2346,18 @@ class transaksi extends CI_Controller {
                     $sql_supp      = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
                     $trans_beli    = $this->session->userdata('trans_beli_edit');
                     $pengaturan    = $this->db->get('tbl_pengaturan')->row();
+
+                    if (!$sql_item) {
+                        throw new Exception("Data produk tidak ditemukan");
+                    }
+
+                    if (!$sql_gudang) {
+                        throw new Exception("Data gudang tidak ditemukan");
+                    }
+
+                    if (!$sql_beli) {
+                        throw new Exception("Data pembelian tidak ditemukan");
+                    }
 
                     # Delete before update
                     if(!empty($sql_beli_det->id)){
@@ -2357,7 +2370,15 @@ class transaksi extends CI_Controller {
                         ];
 
                         $this->db->where('id', $sql_item_stok->id)->update('tbl_m_produk_stok', $data_stok_awal);
+                        if ($this->db->affected_rows() <= 0 && $stok_awal != $sql_item_stok->jml) {
+                            throw new Exception("Gagal mengupdate stok awal");
+                        }
+                        
                         $this->db->where('id', $sql_item->id)->update('tbl_m_produk', ['jml' => (float)$stok_akhir_glob]);
+                        if ($this->db->affected_rows() <= 0 && $stok_akhir_glob != $sql_item->jml) {
+                            throw new Exception("Gagal mengupdate stok global");
+                        }
+                        
                         $this->db->where('id_pembelian_det', $sql_beli_det->id)->delete('tbl_m_produk_hist');
                         $this->db->where('id', $sql_beli_det->id)->delete('tbl_trans_beli_det');
                     }
@@ -2415,15 +2436,16 @@ class transaksi extends CI_Controller {
 
                     # Update product table
                     $this->db->where('id', $sql_item_stok->id)->update('tbl_m_produk_stok', $data_stok);
-                                        
+                    
                     # Simpan ke tabel trans beli detail
                     $this->db->insert('tbl_trans_beli_det', $data_pemb_det);
+                    
                     $last_id = $this->db->insert_id();
                     
                     $data_brg_hist = [
                         'tgl_simpan'        => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')).' '.date('H:i:s'),
                         'tgl_masuk'         => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')),
-                        'tgl_ed'            => $sql_item->tgl_ed ?? null,
+                        'tgl_ed'            => $sql_item->tgl_ed ?? '0000-00-00',
                         'id_produk'         => $sql_item->id,
                         'id_user'           => $this->ion_auth->user()->row()->id,
                         'id_gudang'         => $sql_gudang->id,
@@ -2444,17 +2466,15 @@ class transaksi extends CI_Controller {
 
                     # Insert into product history table
                     $this->db->insert('tbl_m_produk_hist', $data_brg_hist);
-
+                    
                     $stok_glob = $this->db->select_sum('jml')->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row()->jml;
                     $this->db->where('id', $sql_item->id)->update('tbl_m_produk', ['jml' => (float)$stok_glob]);
                     
-                    # Check transaction status
+                    # Transaksi Selesai
                     if ($this->db->trans_status() === FALSE) {
-                        $this->db->trans_rollback();
-                        throw new Exception("Gagal menyimpan data pembelian!");
+                        throw new Exception("Transaksi gagal, silakan coba lagi");
                     }
                     
-                    # Transaksi Selesai
                     $this->db->trans_commit();
                     
                     $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_item->produk.'</b> berhasil disimpan!");');

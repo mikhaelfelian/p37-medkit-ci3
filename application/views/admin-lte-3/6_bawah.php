@@ -28,25 +28,25 @@
             setInterval(refreshCsrfToken, 120000);
             
             <?php if (akses::hakGudang() == TRUE OR akses::hakAdmin() == TRUE) { ?>
-                function checkMutasiNotifications() {
-                    $.getJSON("<?= base_url('notification/notif_gudang') ?>", function(response) {
-                        if (response.status && response.total > 0) {
-                            // Loop through each notification
-                            response.data.forEach(function(item) {
-                                toastr.info(
-                                    item.message + '<br/>' +
-                                    '<small>Oleh: ' + item.user + '</small>',
-                                    'Mutasi #' + item.nomer
-                                );
-                            });
-                        }
-                    }).fail(function() {
-                        console.log("Failed to check notifications");
-                    });
-                }
+                // function checkMutasiNotifications() {
+                //     $.getJSON("<?= base_url('notification/notif_gudang') ?>", function(response) {
+                //         if (response.status && response.total > 0) {
+                //             // Loop through each notification
+                //             response.data.forEach(function(item) {
+                //                 toastr.info(
+                //                     item.message + '<br/>' +
+                //                     '<small>Oleh: ' + item.user + '</small>',
+                //                     'Mutasi #' + item.nomer
+                //                 );
+                //             });
+                //         }
+                //     }).fail(function() {
+                //         console.log("Failed to check notifications");
+                //     });
+                // }
 
-                // Set interval to check for notifications every 30 seconds (30000 ms)
-                setInterval(checkMutasiNotifications, 30000);
+                // // Set interval to check for notifications every 30 seconds (30000 ms)
+                // setInterval(checkMutasiNotifications, 30000);
             <?php } ?>
 
             function updateDateTime() {
