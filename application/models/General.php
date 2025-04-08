@@ -247,7 +247,7 @@ class general extends CI_Model
                 break;
         }
         return $status;
-    }
+    } 
 
     public static function status_gd($status)
     {
