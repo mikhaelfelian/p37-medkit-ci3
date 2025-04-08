@@ -226,10 +226,14 @@ public static function status_stok($status) {
 
             case '7':
                 $status = '<label class="badge badge-info">Stok Keluar</label>';
+                    break;
+
+                case '8':
+                $status = '<label class="badge badge-warning">Mutasi</label>';
                 break;
 
-            case '8':
-                $status = '<label class="badge badge-warning">Mutasi</label>';
+            case '9':
+                $status = '<label class="badge badge-info">Adjustment</label>';
                 break;
         }
         return $status;
