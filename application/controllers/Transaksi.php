@@ -2470,6 +2470,8 @@ class transaksi extends CI_Controller {
                     $stok_glob = $this->db->select_sum('jml')->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row()->jml;
                     $this->db->where('id', $sql_item->id)->update('tbl_m_produk', ['jml' => (float)$stok_glob]);
                     
+                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_item->produk.'</b> berhasil disimpan!");');
+                    
                     # Transaksi Selesai
                     if ($this->db->trans_status() === FALSE) {
                         throw new Exception("Transaksi gagal, silakan coba lagi");
@@ -2477,7 +2479,6 @@ class transaksi extends CI_Controller {
                     
                     $this->db->trans_commit();
                     
-                    $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_item->produk.'</b> berhasil disimpan!");');
                     redirect(base_url('transaksi/beli/trans_beli_edit.php?id='.$id));
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
