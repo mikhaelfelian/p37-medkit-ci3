@@ -13887,6 +13887,7 @@ public function set_medcheck_lab_adm_save() {
                     // Delete existing lab results before inserting new ones
                     $this->db->where('id_medcheck', general::dekrip($id))
                              ->where('id_lab', general::dekrip($id_lab))
+                             ->where('id_medcheck_det', general::dekrip($id_det))
                              ->delete('tbl_trans_medcheck_lab_hsl');
                     
                     foreach ($nilai as $key => $hsl) {
