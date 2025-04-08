@@ -1,4 +1,4 @@
-name: Deploy to Production Server
+name: Deploy to Production
 
 on:
   workflow_dispatch:  # dijalankan manual dari tab Actions
