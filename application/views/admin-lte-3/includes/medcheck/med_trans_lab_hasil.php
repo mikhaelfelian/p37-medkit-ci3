@@ -42,7 +42,7 @@
                     if($sql_pasien->jns_klm == 'L'){
                         $val = ($usia >= 14 ? $item_input->item_value_l1 : $item_input->item_value_l2);
                     }elseif($sql_pasien->jns_klm == 'P'){
-                        $val = ($usia >= 14 ? $item_input->item_value_p1 : $item_input->item_value_p2);
+                        $val = ($usia >= 14 ? $item_input->item_value_p1 : $item_input->item_value_p2); 
                     }
                 ?>
                     <div class="form-group row">
