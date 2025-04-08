@@ -20945,7 +20945,7 @@ public function set_medcheck_lab_adm_save() {
             $term  = $this->input->get('term');
             $stat  = $this->input->get('status');
             $page  = $this->input->get('page');
-            $sg    = $this->ion_auth->user()->row()->status_gudang;
+            $sg    = $this->db->where('status', '1')->get('tbl_m_gudang')->row()->status;
             
             switch ($page){
                 default:
