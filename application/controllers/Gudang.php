@@ -2353,7 +2353,7 @@ class Gudang extends CI_Controller {
             $jml_hal         = (!empty($jml) ? $jml  : $this->db->where('status_subt', '1')->get('tbl_m_produk')->num_rows());
             $pengaturan      = $this->db->get('tbl_pengaturan')->row();
             
-            $data['hasError'] = $this->session->flashdata('form_error');
+            $data['hasError']                = $this->session->flashdata('form_error');
                         
             $config['base_url']              = base_url('gudang/data_stok_list.php?'.(!empty($filter_kode) ? '&filter_kode='.$filter_kode : '').(!empty($filter_kat) ? '&filter_kategori='.$filter_kat : '').(!empty($filter_brcd) ? '&filter_barcode='.$filter_brcd : '').(!empty($filter_merk) ? '&filter_merk='.$filter_merk : '').(!empty($filter_lokasi) ? '&filter_lokasi='.$filter_lokasi : '').(!empty($filter_produk) ? '&filter_produk='.$filter_produk : '').(!empty($filter_hpp) ? '&filter_hpp='.$filter_hpp : '').(!empty($filter_harga) ? '&filter_harga='.$filter_harga : '').(!empty($sort_order) ? '&sort_order='.$sort_order : '').(!empty($jml) ? '&jml='.$jml : ''));
             $config['total_rows']            = $jml_hal;
@@ -2391,37 +2391,46 @@ class Gudang extends CI_Controller {
 
             if(!empty($hal)){
                 if (!empty($jml)) {
-                    $data['barang'] = $this->db->where('status_subt', '1')->limit($config['per_page'],$hal)
-                                                   ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR tbl_m_produk.kode LIKE '%".$filter_produk."%')")
-//                                                   ->like('kode', $filter_kode)
-//                                                   ->like('barcode', $filter_brcd, (!empty($filter_brcd) ? 'none' : ''))
-//                                                   ->like('produk', $filter_produk)
-                                                   ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
-                                                   ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
-                                                   ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
-                                                   ->like('status_subt', $filter_stok, ($filter_stok !='' ? 'none' : ''))
+                    $data['barang'] = $this->db->where('status_subt', '1')
+                                               ->where('status_hps', '0')
+                                               ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR 
+                                                       tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR 
+                                                       tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR 
+                                                       tbl_m_produk.kode LIKE '%".$filter_produk."%')")
+                                               ->limit($config['per_page'], $hal)
+                                               ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
+                                               ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
+                                               ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
+                                               ->like('status_subt', $filter_stok, ($filter_stok !='' ? 'none' : ''))
                                                ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
                                                ->get('tbl_m_produk')->result();
                 } else {
-                    $data['barang'] = $this->db->where('status_subt', '1')->limit($config['per_page'],$hal)->order_by('produk', (!empty($sort_order) ? $sort_order : 'asc'))->get('tbl_m_produk')->result();
+                    $data['barang'] = $this->db->where('status_subt', '1')
+                                               ->where('status_hps', '0')
+                                               ->limit($config['per_page'], $hal)
+                                               ->order_by('produk', (!empty($sort_order) ? $sort_order : 'asc'))
+                                               ->get('tbl_m_produk')->result();
                 }
-            }else{
+            } else {
                 if (!empty($jml)) {
-                    $data['barang'] = $this->db->where('status_subt', '1')->limit($config['per_page'],$hal)
-                                                   ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR tbl_m_produk.kode LIKE '%".$filter_produk."%')")
-//                                                   ->like('kode', $filter_kode)
-//                                                   ->like('barcode', $filter_brcd, 'none')
-//                                                   ->like('produk', $filter_produk)
-                                                   ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
-                                                   ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
-                                                   ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
-                                                   ->like('status_subt', $filter_stok, ($filter_stok !='' ? 'none' : ''))
+                    $data['barang'] = $this->db->where('status_subt', '1')
+                                               ->where('status_hps', '0')
+                                               ->where("(tbl_m_produk.produk LIKE '%".$filter_produk."%' OR 
+                                                       tbl_m_produk.produk_alias LIKE '%".$filter_produk."%' OR 
+                                                       tbl_m_produk.produk_kand LIKE '%".$filter_produk."%' OR 
+                                                       tbl_m_produk.kode LIKE '%".$filter_produk."%')")
+                                               ->limit($config['per_page'], $hal)
+                                               ->like('harga_jual', $filter_harga, (!empty($filter_harga) ? 'after' : ''))
+                                               ->like('id_merk', $filter_merk, (!empty($filter_merk) ? 'none' : ''))
+                                               ->like('id_kategori', $filter_kat, (!empty($filter_kat) ? 'none' : ''))
+                                               ->like('status_subt', $filter_stok, ($filter_stok !='' ? 'none' : ''))
                                                ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
                                                ->get('tbl_m_produk')->result();
                 } else {
-                    $data['barang'] = $this->db->where('status_subt', '1')->limit($config['per_page'])
+                    $data['barang'] = $this->db->where('status_subt', '1')
+                                               ->where('status_hps', '0')
+                                               ->limit($config['per_page'])
                                                ->order_by(!empty($sort_type) ? $sort_type : 'produk', (!empty($sort_order) ? $sort_order : 'asc'))
-//                                               ->order_by(!empty($sort_type) ? $sort_type : 'id', (isset($sort_order) ? $sort_order : 'desc'))
                                                ->get('tbl_m_produk')->result();
                 }
             }
