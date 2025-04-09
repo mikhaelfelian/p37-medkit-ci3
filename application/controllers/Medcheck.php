@@ -2028,8 +2028,8 @@ class Medcheck extends CI_Controller {
                     'tgl_lahir'     => form_error('tgl_lahir'),
                     'alamat'        => form_error('alamat'),
                     'platform'      => form_error('platform'),
-                    'file'          => form_error('file'),
-                    'file_id'       => form_error('file_id'),
+                    // 'file'          => form_error('file'),
+                    // 'file_id'       => form_error('file_id'),
                     'tipe_rawat'    => form_error('tipe_rawat'),
                 ];
 
