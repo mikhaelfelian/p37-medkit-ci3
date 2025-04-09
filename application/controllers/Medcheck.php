@@ -21449,7 +21449,9 @@ public function set_medcheck_lab_adm_save() {
                 $sql_num    = $this->db->get('tbl_m_karyawan')->num_rows() + 1;
                 $kode_no    = sprintf('%05d', $sql_num);
                 
-                $get_grup   = $this->ion_auth->get_users_groups(general::dekrip($id_user))->row();
+                // Get current user ID instead of undefined $id_user
+                $id_user = $this->ion_auth->user()->row()->id;
+                $get_grup   = $this->ion_auth->get_users_groups($id_user)->row();
                 $sql_grup   = $this->ion_auth->group($get_grup->id)->row();
                 
                 // Generate username and email
@@ -21512,7 +21514,163 @@ public function set_medcheck_lab_adm_save() {
                     'success' => true,
                     'message' => 'Data dokter berhasil disimpan',
                     'redirect' => base_url('medcheck/index.php'),
-                    'id' => general::enkrip($last_id_dokter)
+                    'id' => general::enkrip($last_id_kary)
+                ]);
+        
+            } catch (Exception $e) {
+                // Rollback transaction
+                $this->db->trans_rollback();
+        
+                // Send error response
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+        } else {
+            $errors = $this->ion_auth->messages();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Authentifikasi gagal, silahkan login ulang!'
+            ]);
+        }
+    }
+
+    /**
+     * Function to handle master patient data submission from form modal
+     * 
+     * @return json
+     */
+    public function set_master_pasien() {
+        if (Akses::aksesLogin() == TRUE) {
+            // Check if request is AJAX
+            $is_ajax = $this->input->is_ajax_request();
+            
+            if (!$is_ajax) {
+                exit('No direct script access allowed');
+            }
+
+            $pengaturan   = $this->db->get('tbl_pengaturan')->row();
+
+            $id           = $this->input->post('id');
+            $nik          = $this->input->post('nik');
+            $gelar        = $this->input->post('gelar');
+            $nama         = $this->input->post('nama');
+            $jns_klm      = $this->input->post('jns_klm');
+            $tmp_lahir    = $this->input->post('tmp_lahir');
+            $tgl_lahir    = $this->input->post('tgl_lahir');
+            $no_hp        = $this->input->post('no_hp');
+            $alamat       = $this->input->post('alamat');
+            $alamat_dom   = $this->input->post('alamat_dom');
+            $pekerjaan    = $this->input->post('pekerjaan');
+            $no_rmh       = $this->input->post('no_rmh');
+            $route        = $this->input->post('route');
+            $file         = $this->input->post('file');
+            $file_id      = $this->input->post('file_id');
+        
+            // Set validation rules
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('nik', 'NIK', 'required|trim');
+            $this->form_validation->set_rules('nama', 'Nama Lengkap', 'required|trim');
+            $this->form_validation->set_rules('jns_klm', 'Jenis Kelamin', 'required');
+        
+            // Run validation
+            if ($this->form_validation->run() === FALSE) {
+                echo json_encode([
+                    'success'   => false,
+                    'message'   => 'Validasi gagal',
+                    'errors'    => $this->form_validation->error_array()
+                ]);
+                return;
+            }
+
+            // Get Pasien data
+            $sql_pasien = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
+            $sql_gelar  = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
+            
+            // Start transaction
+            $this->db->trans_begin();
+        
+            try {
+
+                // Process and save profile image if provided
+                if (!empty($file)) {
+                    // Get directory path
+                    $dir            = FCPATH.'/';
+                    $kode_pasien    = sprintf('%05d', $sql_pasien->id);
+                    $no_rm          = strtolower($pengaturan->kode_pasien).$kode_pasien;
+                    $path           = 'file/pasien/'.$no_rm.'/';
+                    
+                    // Create directory if it doesn't exist
+                    if (!file_exists($dir.$path)) {
+                        mkdir($dir.$path, 0777, true);
+                    }
+                    
+                    // Save profile image
+                    $filename = $path.'profile_'.$kode_pasien.'.png';
+                    general::base64_to_jpeg($file, $dir.$filename);
+
+                    $data_pasien['foto'] = $filename;
+                }
+                
+                // Process and save ID image if provided
+                if (!empty($file_id)) {
+                    // Get directory path if not already set
+                    if (!isset($dir)) {
+                        $dir            = FCPATH.'/';
+                        $kode_pasien    = sprintf('%05d', $sql_pasien->id);
+                        $no_rm          = strtolower($pengaturan->kode_pasien).$kode_pasien;
+                        $path           = 'file/pasien/'.$no_rm.'/';
+                        
+                        // Create directory if it doesn't exist
+                        if (!file_exists($dir.$path)) {
+                            mkdir($dir.$path, 0777, true);
+                        }
+                    }
+                    
+                    // Save ID image
+                    $filename_id = $path.'ID_'.$kode_pasien.'.png';
+                    general::base64_to_jpeg($file_id, $dir.$filename_id);
+
+                    $data_pasien['foto_id'] = $filename_id;
+                }
+
+                $nama_pgl = (!empty($sql_gelar->gelar) ? $sql_gelar->gelar.' ' : '').$nama;
+
+                
+                // Prepare data for tbl_m_pasien
+                $data_pasien = [
+                    'tgl_simpan'        => date('Y-m-d H:i:s'),
+                    'nik'               => $nik,
+                    'nama'              => strtoupper($nama),
+                    'nama_pgl'          => strtoupper($nama_pgl),
+                    'alamat'            => $alamat,
+                    'alamat_dom'        => $alamat_dom,
+                    'no_hp'             => $no_hp,
+                    'no_rmh'            => $no_rmh,
+                    'jns_klm'           => $jns_klm,
+                    'tgl_lahir'         => $this->tanggalan->tgl_indo_sys($tgl_lahir),
+                    'tmp_lahir'         => $tmp_lahir
+                ];
+        
+                $this->db->where('id', $sql_pasien->id)->update('tbl_m_pasien', $data_pasien);
+                $last_id_pasien = $sql_pasien->id;
+        
+                // Check transaction status
+                if ($this->db->trans_status() === FALSE) {
+                    throw new Exception('Gagal menyimpan data');
+                }
+        
+                // Commit transaction
+                $this->db->trans_commit();
+        
+                // Send success response
+                echo json_encode([
+                    'success'   => true,
+                    'message'   => 'Data pasien berhasil diubah !!',
+                    // 'redirect'  => base_url('medcheck/tindakan.php?id='.general::enkrip($last_id_pasien)),
+                    'id'        => general::enkrip($last_id_pasien),
+                    'data'      => $data_pasien
                 ]);
         
             } catch (Exception $e) {

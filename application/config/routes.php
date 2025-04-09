@@ -595,13 +595,6 @@ $route['medcheck/resep/cetak_label.php']                = "medcheck/pdf_medcheck
 $route['medcheck/resep/cetak_label_xls.php']            = "medcheck/xls_medcheck_label";
 $route['medcheck/resep/cetak_label_json.php']           = "medcheck/json_medcheck_label";
 
-$route['medcheck/json_medcheck.php']                    = "medcheck/json_medcheck";
-$route['medcheck/json_medcheck_ant.php']                = "medcheck/json_medcheck_ant";
-$route['medcheck/json_pasien.php']                      = "medcheck/json_pasien";
-$route['medcheck/json_dokter.php']                      = "medcheck/json_dokter";
-$route['medcheck/json_item.php']                        = "medcheck/json_item";
-$route['medcheck/json_icd.php']                         = "medcheck/json_icd";
-
 $route['medcheck/surat/cetak.php']                      = "medcheck/cetak_medcheck_surat";
 $route['medcheck/surat/hapus.php']                      = "medcheck/hapus_medcheck_surat";
 $route['medcheck/surat/hapus_inform.php']               = "medcheck/hapus_medcheck_surat_inform";
@@ -619,6 +612,15 @@ $route['medcheck/surat/cetak_pdf_rsm_rnp.php']          = "medcheck/pdf_medcheck
 $route['medcheck/surat/cetak_pdf_ass_rnp.php']          = "medcheck/pdf_medcheck_ass_rnp";
 $route['medcheck/surat/cetak_pdf_ass_fisik.php']        = "medcheck/pdf_medcheck_ass_fisik";
 $route['medcheck/resep/cetak_pdf.php']                  = "medcheck/pdf_medcheck_resep";
+
+$route['medcheck/json_medcheck.php']                    = "medcheck/json_medcheck";
+$route['medcheck/json_medcheck_ant.php']                = "medcheck/json_medcheck_ant";
+$route['medcheck/json_pasien.php']                      = "medcheck/json_pasien";
+$route['medcheck/json_dokter.php']                      = "medcheck/json_dokter";
+$route['medcheck/json_item.php']                        = "medcheck/json_item";
+$route['medcheck/json_icd.php']                         = "medcheck/json_icd";
+
+$route['medcheck/set_master_pasien.php']                = "medcheck/set_master_pasien";
 
 // route['medcheck/cetak_audiometri.php'] = 'medcheck/cetak_audiometri'; 
 /* --- Medcheck --- */
