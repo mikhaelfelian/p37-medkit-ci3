@@ -3977,7 +3977,6 @@ class Medcheck extends CI_Controller {
                     'tgl_masuk'    => date('Y-m-d H:i:s'),
                     'pasien'       => $sql_pas->nama_pgl,
                     'keluhan'      => $keluhan,
-                    'ttv'          => (!empty($ttv) ? $ttv : ''),
                     'ttv_st'       => $ttv_st,
                     'ttv_bb'       => $ttv_bb,
                     'ttv_tb'       => $ttv_tb,
@@ -10282,16 +10281,16 @@ public function set_medcheck_lab_adm_save() {
                     $is_doc_id = ($grup->name == 'dokter' ? $this->ion_auth->user()->row()->id : '0');
                         
                     $data = [
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'id_medcheck'       => (int)$sql_medc->id,
-                    'id_medcheck_rm'    => (int)(!empty($id_rm) ? general::dekrip($id_rm) : '0'),
-                    'id_icd'            => (int)(!empty($icd) ? $icd : '0'),
-                    'id_user'           => (int)$this->ion_auth->user()->row()->id,
-                    'id_dokter'         => (int)$is_doc_id,
-                    'kode'              => $sql_icd->kode,
-                    'icd'               => $sql_icd->icd,
-                    'diagnosa_en'       => $sql_icd->icd,
-                    'status_icd'        => (!empty($st_icd) ? $st_icd : '0'),
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'id_medcheck'       => (int)$sql_medc->id,
+                        'id_medcheck_rm'    => (int)(!empty($id_rm) ? general::dekrip($id_rm) : '0'),
+                        'id_icd'            => (int)(!empty($icd) ? $icd : '0'),
+                        'id_user'           => (int)$this->ion_auth->user()->row()->id,
+                        'id_dokter'         => (int)$is_doc_id,
+                        'kode'              => $sql_icd->kode,
+                        'icd'               => $sql_icd->icd,
+                        'diagnosa_en'       => $sql_icd->icd,
+                        'status_icd'        => (!empty($st_icd) ? $st_icd : '0'),
                     ];
                 
                 # Simpan ke tabel ICD
