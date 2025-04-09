@@ -16264,7 +16264,7 @@ public function set_medcheck_lab_adm_save() {
                                 $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
                                 $pdf->SetXY($x + 15, $y);
                                 $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                $pdf->Ln(0.33);
+                                // $pdf->Ln(0.31);
                                 
                                 # Jika warna hasil di tandai merah
                                 if($lab2->status_hsl_wrn == 1){
