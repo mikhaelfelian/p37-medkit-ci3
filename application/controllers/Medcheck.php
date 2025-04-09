@@ -2068,6 +2068,14 @@ class Medcheck extends CI_Controller {
                     $sql_cek = $this->db->where('nik', $nik)
                                                ->get('tbl_m_pasien')
                                                ->row();
+
+                    if(!empty($file)){
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Foto Pasien tidak boleh kosong.");');
+                    }
+
+                    if(!empty($file_id)){
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Foto Identitas tidak boleh kosong.");');
+                    }
                     
                     if ($sql_cek) {
                         // Set flash data for error message
