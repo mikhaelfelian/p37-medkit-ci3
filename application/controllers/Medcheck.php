@@ -2004,6 +2004,18 @@ class Medcheck extends CI_Controller {
             
             $pengaturan   = $this->db->get('tbl_pengaturan')->row();
 
+                // // Check if this is a new patient registration (tipe_pas = 2)
+                // if ($tipe_pas == '2') {
+                //     if(empty($file)){
+                //         $this->session->set_flashdata('medcheck_file_toast', 'toastr.error("Foto Pasien tidak boleh kosong.");');
+                //     }
+
+                //     if(empty($file_id)){
+                //         $this->session->set_flashdata('medcheck_file_id_toast', 'toastr.error("Foto Identitas tidak boleh kosong.");');
+                //     }
+                // }
+
+
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('nik', 'NIK', 'required');
@@ -2014,8 +2026,8 @@ class Medcheck extends CI_Controller {
             $this->form_validation->set_rules('tgl_lahir', 'Tanggal Lahir', 'required');
             $this->form_validation->set_rules('alamat', 'Alamat', 'required');
             $this->form_validation->set_rules('platform', 'Platform', 'required');
-            $this->form_validation->set_rules('file', 'File', 'required');
-            $this->form_validation->set_rules('file_id', 'File ID', 'required');
+            // $this->form_validation->set_rules('file', 'File', 'required');
+            // $this->form_validation->set_rules('file_id', 'File ID', 'required');
             $this->form_validation->set_rules('tipe_rawat', 'Tipe', 'required');
 
             if ($this->form_validation->run() == FALSE) {
@@ -2049,14 +2061,14 @@ class Medcheck extends CI_Controller {
                 $this->session->set_flashdata('dokter', $dokter);
                 $this->session->set_flashdata('alergi', $alergi);
 
-                // File Kosong
-                if(!empty($msg_error['file'])){
-                    $this->session->set_flashdata('medcheck_file_toast', 'toastr.error("Foto Pasien tidak boleh kosong.");');
-                }
+                // // File Kosong
+                // if(!empty($msg_error['file'])){
+                //     $this->session->set_flashdata('medcheck_file_toast', 'toastr.error("Foto Pasien tidak boleh kosong.");');
+                // }
 
-                if(!empty($msg_error['file_id'])){
-                    $this->session->set_flashdata('medcheck_file_id_toast', 'toastr.error("Foto Identitas tidak boleh kosong.");');
-                }
+                // if(!empty($msg_error['file_id'])){
+                //     $this->session->set_flashdata('medcheck_file_id_toast', 'toastr.error("Foto Identitas tidak boleh kosong.");');
+                // }
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 // $this->session->set_flashdata('medcheck_toast', 'toastr.error("Validation error, please check the form again.");');
@@ -2068,14 +2080,6 @@ class Medcheck extends CI_Controller {
                     $sql_cek = $this->db->where('nik', $nik)
                                                ->get('tbl_m_pasien')
                                                ->row();
-
-                    if(!empty($file)){
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Foto Pasien tidak boleh kosong.");');
-                    }
-
-                    if(!empty($file_id)){
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Foto Identitas tidak boleh kosong.");');
-                    }
                     
                     if ($sql_cek) {
                         // Set flash data for error message
@@ -2152,44 +2156,44 @@ class Medcheck extends CI_Controller {
                     'status_dft'        => '1',
                 ];
 
-                try {
-                    // Start database transaction
-                    $this->db->trans_begin();
+                // try {
+                //     // Start database transaction
+                //     $this->db->trans_begin();
                     
-                    // Check for form resubmission
-                    if (check_form_submitted($this->input->post('form_id'))) {
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
-                        redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
-                        return;
-                    }
+                //     // Check for form resubmission
+                //     if (check_form_submitted($this->input->post('form_id'))) {
+                //         $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');
+                //         redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                //         return;
+                //     }
                     
-                    // Insert data into the database
-                    $this->db->insert('tbl_pendaftaran', $data);
+                //     // Insert data into the database
+                //     $this->db->insert('tbl_pendaftaran', $data);
                     
-                    // Check if the transaction was successful
-                    if ($this->db->trans_status() === FALSE) {
-                        // Something went wrong, rollback transaction
-                        $this->db->trans_rollback();
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Gagal menyimpan data pendaftaran. Silahkan coba lagi.");');
-                    } else {
-                        // All good, commit the transaction
-                        $this->db->trans_commit();
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pendaftaran berhasil disimpan.");');
-                    }
+                //     // Check if the transaction was successful
+                //     if ($this->db->trans_status() === FALSE) {
+                //         // Something went wrong, rollback transaction
+                //         $this->db->trans_rollback();
+                //         $this->session->set_flashdata('medcheck_toast', 'toastr.error("Gagal menyimpan data pendaftaran. Silahkan coba lagi.");');
+                //     } else {
+                //         // All good, commit the transaction
+                //         $this->db->trans_commit();
+                //         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pendaftaran berhasil disimpan.");');
+                //     }
                     
-                    // Redirect to appropriate page
-                    redirect(base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')));
+                //     // Redirect to appropriate page
+                //     redirect(base_url('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d')));
                     
-                } catch (Exception $e) {
-                    // Rollback transaction on exception
-                    $this->db->trans_rollback();
+                // } catch (Exception $e) {
+                //     // Rollback transaction on exception
+                //     $this->db->trans_rollback();
                     
-                    // Set error message
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan sistem. Silahkan coba lagi.");');
+                //     // Set error message
+                //     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan sistem. Silahkan coba lagi.");');
                     
-                    // Redirect back to form
-                    redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
-                }
+                //     // Redirect back to form
+                //     redirect(base_url('medcheck/daftar.php?tipe_pas=' . $tipe_pas));
+                // }
             }
         }else{
             $errors = $this->ion_auth->messages();
