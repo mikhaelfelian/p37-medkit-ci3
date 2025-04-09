@@ -172,14 +172,12 @@
         </p>
 
         <?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner2() == TRUE or akses::hakPerawat() == TRUE or akses::hakAnalis() == TRUE) { ?>
-            <?php if ($sql_medc->status_bayar == '0') { ?>
-                <p class="text-muted text-center">
-                    <button type="button" class="btn btn-warning btn-flat btn-sm rounded-0" data-toggle="modal"
-                        data-target="#editPasienModal">
-                        <i class="fa fa-edit"></i> Ubah Pasien
-                    </button>
-                </p>
-            <?php } ?>
+            <p class="text-muted text-center">
+                <button type="button" class="btn btn-warning btn-flat btn-sm rounded-0" data-toggle="modal"
+                    data-target="#editPasienModal">
+                    <i class="fa fa-edit"></i> Ubah Pasien
+                </button>
+            </p>
         <?php } ?>
         <p class="text-muted text-center">
             <?php echo anchor(base_url('medcheck/cetak_label_json.php?id=' . general::enkrip($sql_medc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-print"></i> Cetak Label', 'class="btn btn-primary btn-flat btn-sm rounded-0" style="width: 107.14px;" target="_blank"'); ?>
@@ -391,7 +389,9 @@
                                             <div class="form-group">
                                                 <label class="control-label">NIK* <small><i>(* KTP / Passport /
                                                             KIA)</i></small></label>
-                                                <input type="text" id="nik" name="nik" class="form-control rounded-0" value="<?php echo $sql_pasien->nik ?>" placeholder="Nomor Identitas ...">
+                                                <input type="text" id="nik" name="nik" class="form-control rounded-0"
+                                                    value="<?php echo $sql_pasien->nik ?>"
+                                                    placeholder="Nomor Identitas ...">
                                             </div>
                                             <div class="row">
                                                 <div class="col-3">
@@ -409,7 +409,10 @@
                                                 <div class="col-9">
                                                     <div class="form-group">
                                                         <label class="control-label">Nama Lengkap*</label>
-                                                        <input type="text" id="nama" name="nama" class="form-control rounded-0" value="<?php echo $sql_pasien->nama ?>" placeholder="John Doe ...">
+                                                        <input type="text" id="nama" name="nama"
+                                                            class="form-control rounded-0"
+                                                            value="<?php echo $sql_pasien->nama ?>"
+                                                            placeholder="John Doe ...">
                                                     </div>
                                                 </div>
                                             </div>
@@ -424,7 +427,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">Tempat Lahir</label>
-                                                <input type="text" id="tmp_lahir" name="tmp_lahir" class="form-control rounded-0" value="<?php echo $sql_pasien->tmp_lahir ?>" placeholder="Semarang ...">
+                                                <input type="text" id="tmp_lahir" name="tmp_lahir"
+                                                    class="form-control rounded-0"
+                                                    value="<?php echo $sql_pasien->tmp_lahir ?>"
+                                                    placeholder="Semarang ...">
                                             </div>
 
                                             <div class="form-group">
@@ -432,27 +438,39 @@
                                                             Required)</i></small></label>
                                                 <div class="input-group mb-3">
                                                     <div class="input-group-append">
-                                                        <span class="input-group-text rounded-0"><i class="fas fa-calendar"></i></span>
+                                                        <span class="input-group-text rounded-0"><i
+                                                                class="fas fa-calendar"></i></span>
                                                     </div>
-                                                    <input type="text" id="tgl_lahir" name="tgl_lahir" class="form-control rounded-0" value="<?php echo $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir) ?>" readonly="TRUE" placeholder="Isikan dengan format 15-02-1992 ...">
+                                                    <input type="text" id="tgl_lahir" name="tgl_lahir"
+                                                        class="form-control rounded-0"
+                                                        value="<?php echo $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir) ?>"
+                                                        readonly="TRUE"
+                                                        placeholder="Isikan dengan format 15-02-1992 ...">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="control-label">No. HP</label>
-                                                <input type="text" id="no_hp" name="no_hp" class="form-control rounded-0" value="<?php echo $sql_pasien->no_hp ?>" placeholder="Nomor kontak WA pasien / keluarga pasien ...">
+                                                <input type="text" id="no_hp" name="no_hp"
+                                                    class="form-control rounded-0"
+                                                    value="<?php echo $sql_pasien->no_hp ?>"
+                                                    placeholder="Nomor kontak WA pasien / keluarga pasien ...">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Alamat KTP<small><i>* Sesuai
                                                             Identitas</i></small></label>
-                                                <textarea id="alamat" name="alamat" class="form-control rounded-0" style="height: 124px;" placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat ?></textarea>
+                                                <textarea id="alamat" name="alamat" class="form-control rounded-0"
+                                                    style="height: 124px;"
+                                                    placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat ?></textarea>
                                             </div>
 
                                             <div class="form-group">
                                                 <label class="control-label">Alamat Domisili<small><i>* Sesuai
                                                             Domisili</i></small></label>
-                                                <textarea id="alamat_dom" name="alamat_dom" class="form-control rounded-0" style="height: 124px;" placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat_dom ?></textarea>
+                                                <textarea id="alamat_dom" name="alamat_dom"
+                                                    class="form-control rounded-0" style="height: 124px;"
+                                                    placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat_dom ?></textarea>
                                             </div>
 
                                             <div class="form-group">
@@ -469,7 +487,10 @@
 
                                             <div class="form-group">
                                                 <label class="control-label">No. Rumah</label>
-                                                <input type="text" id="no_rmh" name="no_rmh" class="form-control rounded-0" value="<?php echo $sql_pasien->no_telp ?>" placeholder="Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...">
+                                                <input type="text" id="no_rmh" name="no_rmh"
+                                                    class="form-control rounded-0"
+                                                    value="<?php echo $sql_pasien->no_telp ?>"
+                                                    placeholder="Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...">
                                             </div>
                                         </div>
                                     </div>
@@ -560,41 +581,41 @@
         video_id.style.display = 'none';
         gambar_id.style.display = 'block';
     }
-    
+
     // Submit form dengan AJAX
-    $(document).ready(function() {
-        $('#pasien_form').on('submit', function(e) {
+    $(document).ready(function () {
+        $('#pasien_form').on('submit', function (e) {
             e.preventDefault();
-            
+
             // Get CSRF token
             var csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>';
             var csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
-            
+
             // Add CSRF token to form data
             var formData = $(this).serialize();
             formData += '&' + csrfName + '=' + csrfHash;
-            
+
             $.ajax({
                 url: '<?php echo base_url('medcheck/set_master_pasien.php') ?>',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     // Set CSRF token in header
                     xhr.setRequestHeader(csrfName, csrfHash);
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.success === true) {
                         toastr.success(response.message);
                         $('#editPasienModal').modal('hide');
                         // Redirect to the same page instead of refreshing div
-                        setTimeout(function() {
+                        setTimeout(function () {
                             window.location.href = window.location.href;
                         }, 1500);
                     } else {
                         // Tampilkan error dengan toastr
                         if (response.errors) {
-                            $.each(response.errors, function(key, value) {
+                            $.each(response.errors, function (key, value) {
                                 toastr.error(value);
                             });
                         } else {
@@ -602,7 +623,7 @@
                         }
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     toastr.error('Terjadi kesalahan: ' + xhr.responseText);
                 }
             });
