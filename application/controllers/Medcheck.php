@@ -21653,8 +21653,12 @@ public function set_medcheck_lab_adm_save() {
                     'tmp_lahir'         => $tmp_lahir
                 ];
         
+                # Update tbl_m_pasien
                 $this->db->where('id', $sql_pasien->id)->update('tbl_m_pasien', $data_pasien);
                 $last_id_pasien = $sql_pasien->id;
+
+                # Update tbl_trans_medcheck
+                $this->db->where('id_pasien', $sql_pasien->id)->update('tbl_trans_medcheck', ['pasien' => $nama_pgl]);
         
                 // Check transaction status
                 if ($this->db->trans_status() === FALSE) {
