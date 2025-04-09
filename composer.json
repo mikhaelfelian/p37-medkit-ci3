@@ -2,6 +2,7 @@
     "require": {
         "phpoffice/phpspreadsheet": "^4.1",
         "endroid/qr-code": "^6.0",
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "tecnickcom/tcpdf": "^6.9"
     }
 }
