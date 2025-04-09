@@ -4027,7 +4027,7 @@ class Medcheck extends CI_Controller {
                     // Start transaction
                     $this->db->trans_begin();
 
-                # Masukkan ke tabel medcheck
+                    # Masukkan ke tabel medcheck
                     // Check if a record with the same UUID already exists
                     $existing_record = $this->db->where('uuid', $uuid)
                                                ->get('tbl_trans_medcheck')
@@ -20920,10 +20920,10 @@ public function set_medcheck_lab_adm_save() {
     }
     
     public function json_item() {
-        //Check if this is an AJAX request
-        // if (!$this->input->is_ajax_request()) {
-        //     exit('No direct script access allowed');
-        // }
+        // Check if this is an AJAX request
+        if (!$this->input->is_ajax_request()) {
+            exit('No direct script access allowed');
+        }
         
         if (akses::aksesLogin() == TRUE) {
             $term  = $this->input->get('term');
