@@ -4,9 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Guidelines use this workflows :
-- If you want to push into production server input ''main'' on column
-- if  you want revert input SHA tags (e.g. e6a1b1d you wil be revert this prev commits)'
+        description: 'Commit SHA, tag, or branch to deploy (e.g. main, e6a1b1d)'
         required: true
         default: 'main'
 
@@ -19,6 +17,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.inputs.ref }}
+        fetch-depth: 0  # penting supaya bisa checkout commit SHA
 
     - name: Setup SSH Connection
       uses: webfactory/ssh-agent@v0.5.3
