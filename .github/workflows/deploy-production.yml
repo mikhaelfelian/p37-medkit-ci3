@@ -40,4 +40,4 @@ jobs:
             mv /tmp/database.backup.php application/config/database.php
 
             echo "✅ Deployment to production complete"
-          EOF
+          EOF 
