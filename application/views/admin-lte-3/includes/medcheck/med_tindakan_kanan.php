@@ -513,120 +513,122 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    // Variabel untuk menyimpan stream kamera
-    var video = document.getElementById('kamera');
-    var video_id = document.getElementById('kamera_id');
-    var canvas = document.createElement('canvas');
-    var canvas_id = document.createElement('canvas');
-    var gambar = document.getElementById('gambar');
-    var gambar_id = document.getElementById('gambar_id');
-    var file_input = document.getElementById('file');
-    var file_input_id = document.getElementById('file_id');
+<?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner2() == TRUE) { ?>
+    <script type="text/javascript">
+        // Variabel untuk menyimpan stream kamera
+        var video = document.getElementById('kamera');
+        var video_id = document.getElementById('kamera_id');
+        var canvas = document.createElement('canvas');
+        var canvas_id = document.createElement('canvas');
+        var gambar = document.getElementById('gambar');
+        var gambar_id = document.getElementById('gambar_id');
+        var file_input = document.getElementById('file');
+        var file_input_id = document.getElementById('file_id');
 
-    // Akses kamera
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function (stream) {
-            video.srcObject = stream;
-            video_id.srcObject = stream;
-        })
-        .catch(function (err) {
-            console.log("Error: " + err);
-        });
+        // Akses kamera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+                video_id.srcObject = stream;
+            })
+            .catch(function (err) {
+                console.log("Error: " + err);
+            });
 
-    // Fungsi untuk mengambil gambar pasien
-    function takeSnapshot() {
-        // Ambil ukuran dari video
-        var width = video.offsetWidth, height = video.offsetHeight;
+        // Fungsi untuk mengambil gambar pasien
+        function takeSnapshot() {
+            // Ambil ukuran dari video
+            var width = video.offsetWidth, height = video.offsetHeight;
 
-        // Atur ukuran canvas sesuai video
-        canvas.width = width;
-        canvas.height = height;
+            // Atur ukuran canvas sesuai video
+            canvas.width = width;
+            canvas.height = height;
 
-        // Gambar frame dari video ke canvas
-        canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+            // Gambar frame dari video ke canvas
+            canvas.getContext('2d').drawImage(video, 0, 0, width, height);
 
-        // Konversi ke base64
-        var data_url = canvas.toDataURL('image/png');
+            // Konversi ke base64
+            var data_url = canvas.toDataURL('image/png');
 
-        // Tampilkan gambar dan simpan base64 ke input hidden
-        gambar.src = data_url;
-        file_input.value = data_url;
+            // Tampilkan gambar dan simpan base64 ke input hidden
+            gambar.src = data_url;
+            file_input.value = data_url;
 
-        // Sembunyikan video, tampilkan gambar
-        video.style.display = 'none';
-        gambar.style.display = 'block';
-    }
+            // Sembunyikan video, tampilkan gambar
+            video.style.display = 'none';
+            gambar.style.display = 'block';
+        }
 
-    // Fungsi untuk mengambil gambar identitas
-    function takeSnapshot_id() {
-        // Ambil ukuran dari video
-        var width = video_id.offsetWidth, height = video_id.offsetHeight;
+        // Fungsi untuk mengambil gambar identitas
+        function takeSnapshot_id() {
+            // Ambil ukuran dari video
+            var width = video_id.offsetWidth, height = video_id.offsetHeight;
 
-        // Atur ukuran canvas sesuai video
-        canvas_id.width = width;
-        canvas_id.height = height;
+            // Atur ukuran canvas sesuai video
+            canvas_id.width = width;
+            canvas_id.height = height;
 
-        // Gambar frame dari video ke canvas
-        canvas_id.getContext('2d').drawImage(video_id, 0, 0, width, height);
+            // Gambar frame dari video ke canvas
+            canvas_id.getContext('2d').drawImage(video_id, 0, 0, width, height);
 
-        // Konversi ke base64
-        var data_url = canvas_id.toDataURL('image/png');
+            // Konversi ke base64
+            var data_url = canvas_id.toDataURL('image/png');
 
-        // Tampilkan gambar dan simpan base64 ke input hidden
-        gambar_id.src = data_url;
-        file_input_id.value = data_url;
+            // Tampilkan gambar dan simpan base64 ke input hidden
+            gambar_id.src = data_url;
+            file_input_id.value = data_url;
 
-        // Sembunyikan video, tampilkan gambar
-        video_id.style.display = 'none';
-        gambar_id.style.display = 'block';
-    }
+            // Sembunyikan video, tampilkan gambar
+            video_id.style.display = 'none';
+            gambar_id.style.display = 'block';
+        }
 
-    // Submit form dengan AJAX
-    $(document).ready(function () {
-        $('#pasien_form').on('submit', function (e) {
-            e.preventDefault();
+        // Submit form dengan AJAX
+        $(document).ready(function () {
+            $('#pasien_form').on('submit', function (e) {
+                e.preventDefault();
 
-            // Get CSRF token
-            var csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>';
-            var csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
+                // Get CSRF token
+                var csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>';
+                var csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
 
-            // Add CSRF token to form data
-            var formData = $(this).serialize();
-            formData += '&' + csrfName + '=' + csrfHash;
+                // Add CSRF token to form data
+                var formData = $(this).serialize();
+                formData += '&' + csrfName + '=' + csrfHash;
 
-            $.ajax({
-                url: '<?php echo base_url('medcheck/set_master_pasien.php') ?>',
-                type: 'POST',
-                data: formData,
-                dataType: 'json',
-                beforeSend: function (xhr) {
-                    // Set CSRF token in header
-                    xhr.setRequestHeader(csrfName, csrfHash);
-                },
-                success: function (response) {
-                    if (response.success === true) {
-                        toastr.success(response.message);
-                        $('#editPasienModal').modal('hide');
-                        // Redirect to the same page instead of refreshing div
-                        setTimeout(function () {
-                            window.location.href = window.location.href;
-                        }, 1500);
-                    } else {
-                        // Tampilkan error dengan toastr
-                        if (response.errors) {
-                            $.each(response.errors, function (key, value) {
-                                toastr.error(value);
-                            });
+                $.ajax({
+                    url: '<?php echo base_url('medcheck/set_master_pasien.php') ?>',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    beforeSend: function (xhr) {
+                        // Set CSRF token in header
+                        xhr.setRequestHeader(csrfName, csrfHash);
+                    },
+                    success: function (response) {
+                        if (response.success === true) {
+                            toastr.success(response.message);
+                            $('#editPasienModal').modal('hide');
+                            // Redirect to the same page instead of refreshing div
+                            setTimeout(function () {
+                                window.location.href = window.location.href;
+                            }, 1500);
                         } else {
-                            toastr.error(response.message);
+                            // Tampilkan error dengan toastr
+                            if (response.errors) {
+                                $.each(response.errors, function (key, value) {
+                                    toastr.error(value);
+                                });
+                            } else {
+                                toastr.error(response.message);
+                            }
                         }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('Terjadi kesalahan: ' + xhr.responseText);
                     }
-                },
-                error: function (xhr, status, error) {
-                    toastr.error('Terjadi kesalahan: ' + xhr.responseText);
-                }
+                });
             });
         });
-    });
-</script>
+    </script>
+<?php } ?>
