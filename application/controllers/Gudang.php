@@ -1445,11 +1445,19 @@ class Gudang extends CI_Controller {
             $nota  = $this->input->get('no_nota');
             $rute  = $this->input->get('route');
             
-            if(!empty($id)){
-                $this->db->where('id', general::dekrip($id))->delete('tbl_trans_mutasi_det');
+            try {
+                if(!empty($id)){
+                    if(!$this->db->where('id', general::dekrip($id))->delete('tbl_trans_mutasi_det')) {
+                        throw new Exception("Gagal menghapus item mutasi");
+                    }
+                    $this->session->set_flashdata('gd_toast', 'toastr.success("Item berhasil dihapus");');
+                }
+                
+                redirect(base_url('gudang/'.(!empty($rute) ? $rute : 'trans_mutasi.php').'?id='.$nota));
+            } catch (Exception $e) {
+                $this->session->set_flashdata('gd_toast', 'toastr.error("' . $e->getMessage() . '");');
+                redirect(base_url('gudang/'.(!empty($rute) ? $rute : 'trans_mutasi.php').'?id='.$nota));
             }
-            
-            redirect(base_url('gudang/'.(!empty($rute) ? $rute : 'trans_mutasi.php').'?id='.$nota));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
@@ -2781,13 +2789,9 @@ class Gudang extends CI_Controller {
         }
     }
     
-    
-
-    
-    
     public function json_item() {
         if (akses::aksesLogin() == TRUE) {
-            $term  = $this->input->get('term');
+            $term  = $this->input->get('term') ?? '';
             $stat  = $this->input->get('status');
             $page  = $this->input->get('page');
                         
@@ -2798,22 +2802,23 @@ class Gudang extends CI_Controller {
                             ->order_by('tbl_m_produk.produk', 'asc')
                             ->get('tbl_m_produk')->result();
 
+            $produk = [];
             if(!empty($sql)){
-                foreach ($sql as $sql) {
-                    $sql_satuan = $this->db->where('id', $sql->id_satuan)->get('tbl_m_satuan')->row();
+                foreach ($sql as $sql_item) {
+                    $sql_satuan = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                     
                     $produk[] = array(
-                        'id'        => general::enkrip($sql->id),
-                        'kode'      => $sql->kode,
-                        'name'      => $sql->produk,
-                        'alias'     => (!empty($sql->produk_alias) ? $sql->produk_alias : ''),
-                        'kandungan' => (!empty($sql->produk_kand) ? '(' . strtolower($sql->produk_kand) . ')' : ''),
-                        'satuan'    => $sql_satuan->satuanTerkecil,
+                        'id'        => general::enkrip($sql_item->id),
+                        'kode'      => $sql_item->kode,
+                        'name'      => $sql_item->produk,
+                        'alias'     => (!empty($sql_item->produk_alias) ? $sql_item->produk_alias : ''),
+                        'kandungan' => (!empty($sql_item->produk_kand) ? '(' . strtolower($sql_item->produk_kand) . ')' : ''),
+                        'satuan'    => $sql_satuan?->satuanTerkecil ?? '',
                     );
                 }
-
-                echo json_encode($produk);
             }
+            
+            echo json_encode($produk);
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
