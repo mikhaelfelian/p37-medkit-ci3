@@ -1,12 +1,7 @@
 name: Deploy to Production
 
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Commit SHA, tag, or branch to deploy (e.g. main or e6a1b1d)'
-        required: true
-        default: 'main'
+  workflow_dispatch:  # dijalankan manual dari tab Actions
 
 jobs:
   deploy:
@@ -15,8 +10,6 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
-      with:
-        ref: ${{ github.event.inputs.ref }}
 
     - name: Setup SSH Connection
       uses: webfactory/ssh-agent@v0.5.3
@@ -25,9 +18,7 @@ jobs:
 
     - name: Deploy Code to Production cPanel
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ${{ secrets.DEPLOY_PATH_PROD }}
-          git fetch origin
-          git checkout ${{ github.event.inputs.ref }}
-          exit
-EOF
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          cd ${{ secrets.DEPLOY_PATH_PROD }} &&
+          git pull origin main &&
+          exit"
