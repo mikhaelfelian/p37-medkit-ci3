@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Commit SHA, tag, or branch to deploy (e.g. main, e6a1b1d)'
+        description: 'Commit SHA, tag, atau branch yang akan di-deploy (misal: main atau e6a1b1d)'
         required: true
         default: 'main'
 
@@ -13,21 +13,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ github.event.inputs.ref }}
-        fetch-depth: 0  # penting supaya bisa checkout commit SHA
+      - name: Checkout Repository (local action only)
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
 
-    - name: Setup SSH Connection
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Setup SSH Connection
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Deploy Code to Production cPanel
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-          cd ${{ secrets.DEPLOY_PATH_PROD }} &&
-          git fetch origin &&
-          git checkout ${{ github.event.inputs.ref }}
-        "
+      - name: Deploy Code to Production cPanel
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd ${{ secrets.DEPLOY_PATH_PROD }}
+            echo "Fetching latest from origin..."
+            git fetch origin
+            echo "Forcing reset to clean state..."
+            git reset --hard
+            echo "Checking out to ${{ github.event.inputs.ref }}"
+            git checkout ${{ github.event.inputs.ref }}
+            echo "Deployment to production complete."
+          EOF
