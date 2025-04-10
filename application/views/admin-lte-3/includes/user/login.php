@@ -58,6 +58,7 @@
                         src="<?php echo base_url('assets/theme/admin-lte-3/dist/img/' . (!empty($pengaturan->logo) ? $pengaturan->logo : 'AdminLTELogo.png')); ?>"
                         alt="<?php echo $pengaturan->judul . ' Logo'; ?>" class="brand-image img-rounded"
                         style="width: 209px; height: 94px; background-color: #fff;"></a>
+                        test
             </div>
             <div class="card-body">
                 <?php $msg = $this->session->flashdata('login') ?>
