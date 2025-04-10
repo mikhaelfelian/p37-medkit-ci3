@@ -499,7 +499,7 @@
                                     if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakGudang() == TRUE) { ?>
                                         <?php
                                         // Calculate stock opname (SO)
-                                        $tot_so = 0;
+                                        $tot_so = 0; 
                                         // If no reset point, count all SO
                                         $stok_opname = $this->db->select('SUM(jml * jml_satuan) as total')
                                                                 ->where('id_produk', $barang->id)
