@@ -27,7 +27,15 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.DEPLOY_PATH_PROD }}
+
+            # Simpan perubahan lokal agar tidak bentrok
+            git stash push -m "temp stash before deploy"
+
+            # Checkout dan update kode dari branch
             git fetch origin
             git checkout ${{ github.event.inputs.ref }}
             git pull origin ${{ github.event.inputs.ref }}
+
+            # Kembalikan perubahan lokal (misal database.php)
+            git stash pop || true
           EOF
