@@ -1,12 +1,5 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
-// Start of Selection
-// Start of Selection
-// Start of Selection
-// Start of Selection
-// Start of Selection
-// Start of Selection
-// Start of Selection
 
 class Login extends CI_Controller {
 
