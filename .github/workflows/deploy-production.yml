@@ -25,19 +25,16 @@ jobs:
 
       - name: Deploy Code to Production cPanel
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.DEPLOY_PATH_PROD }}
 
             echo "🔒 Backup database config"
             cp application/config/database.php /tmp/database.backup.php
 
-            echo "📦 Fetch & Reset"
+            echo "📦 Pulling latest changes"
             git fetch origin
-            git reset --hard
             git checkout ${{ github.event.inputs.ref }}
-
-            echo "🔁 Restore database config"
-            mv /tmp/database.backup.php application/config/database.php
+            git pull origin ${{ github.event.inputs.ref }}
 
             echo "✅ Deployment to production complete"
           EOF
