@@ -1148,7 +1148,10 @@ class Pos extends CI_Controller {
                     $jml_total      = $sql_medc_det->subtotal + $sql_medc_det->potongan + $sql_medc_det->diskon;
                     $jml_pot        = $sql_medc_det->potongan;
                     $jml_diskon     = $sql_medc_det->diskon;
-                    $diskon         = ($jml_diskon / $jml_total) * 100;
+                    
+                    // Fix for division by zero error - check if jml_total is zero
+                    $diskon         = ($jml_total > 0) ? ($jml_diskon / $jml_total) * 100 : 0;
+                    
                     $jml_subtotal   = $sql_medc_det->subtotal;
                     $ppn            = $pengaturan->ppn;
                     $jml_ppn        = $pengaturan->ppn;
