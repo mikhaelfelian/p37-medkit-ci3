@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
-/**
+/***
  * Description of Gudang controller
  *
  * @author Mikhael Felian Waskito - mikhaelfelian@gmail.com
