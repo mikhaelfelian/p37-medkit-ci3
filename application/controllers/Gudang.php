@@ -1514,8 +1514,8 @@ class Gudang extends CI_Controller {
                         throw new Exception("Gudang Asal dan Tujuan tidak boleh sama !");
                     } else {
                         # Set transaksi mutasi di gudang
-                    $this->db->insert('tbl_trans_mutasi', $data);
-                    $last_id = crud::last_id();
+                        $this->db->insert('tbl_trans_mutasi', $data);
+                        $last_id = crud::last_id();
                     
                         if ($this->db->trans_status() === FALSE) {
                             $this->db->trans_rollback();
@@ -1672,8 +1672,8 @@ class Gudang extends CI_Controller {
                     $this->db->trans_commit();
 
                     // Destroy all sessions related to this transaction
-                $this->session->unset_userdata('trans_mutasi');
-                $this->cart->destroy();
+                    $this->session->unset_userdata('trans_mutasi');
+                    $this->cart->destroy();
                 
                     $this->session->set_flashdata('gd_toast', 'toastr.success("Transaksi mutasi berhasil diproses");');
                     redirect(base_url('gudang/trans_mutasi_det.php?id='.$id));                    
@@ -2794,6 +2794,7 @@ class Gudang extends CI_Controller {
             $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep')
                             ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                             ->where('tbl_m_produk.status_subt', '1')
+                            ->where('tbl_m_produk.status_hps', '0')
                             ->order_by('tbl_m_produk.produk', 'asc')
                             ->get('tbl_m_produk')->result();
 
