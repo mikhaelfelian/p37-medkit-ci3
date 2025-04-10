@@ -3255,7 +3255,6 @@ class laporan extends CI_Controller {
                                                             ->where('MONTH(tbl_m_karyawan.tgl_lahir) >=', $bln_awal)
                                                             ->where('DAY(tbl_m_karyawan.tgl_lahir) <=', $hr_akhir)
                                                             ->where('MONTH(tbl_m_karyawan.tgl_lahir) <=', $bln_akhir)
-//                                                            ->limit($config['per_page'], $hal)
                                                             ->order_by('tbl_m_karyawan.nama', 'ASC') 
                                                             ->get('tbl_m_karyawan')->result();
                         break;
