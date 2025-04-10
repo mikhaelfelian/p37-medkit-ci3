@@ -79,7 +79,7 @@ $db['default'] = array(
 	'username' => 'esensiaco_user',
 	'password' => 'ALfa*$7512',
 	'database' => 'esensiaco_medkit_dev',
-	'dbdriver' => 'mysqli',
+	'dbdriver' => 'mysqli', 
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),
