@@ -496,7 +496,7 @@
                                         ->row();
                                     $global_stock = $current_stock ? $current_stock->total : 0;
 
-                                    if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE) { ?>
+                                    if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakOwner2() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakGudang() == TRUE) { ?>
                                         <?php
                                         // Calculate stock opname (SO)
                                         $tot_so = 0;
