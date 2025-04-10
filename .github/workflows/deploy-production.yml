@@ -25,7 +25,7 @@ jobs:
 
       - name: Deploy Code to Production cPanel
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             cd ${{ secrets.DEPLOY_PATH_PROD }}
 
             echo "🔒 Backup database config"
@@ -40,4 +40,4 @@ jobs:
             mv /tmp/database.backup.php application/config/database.php
 
             echo "✅ Deployment to production complete"
-          EOF 
+          EOF
