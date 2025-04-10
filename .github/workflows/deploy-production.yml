@@ -27,11 +27,17 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.DEPLOY_PATH_PROD }}
-            echo "Fetching latest from origin..."
+
+            echo "🔒 Backup database config"
+            cp application/config/database.php /tmp/database.backup.php
+
+            echo "📦 Fetch & Reset"
             git fetch origin
-            echo "Forcing reset to clean state..."
             git reset --hard
-            echo "Checking out to ${{ github.event.inputs.ref }}"
             git checkout ${{ github.event.inputs.ref }}
-            echo "Deployment to production complete."
+
+            echo "🔁 Restore database config"
+            mv /tmp/database.backup.php application/config/database.php
+
+            echo "✅ Deployment to production complete"
           EOF
