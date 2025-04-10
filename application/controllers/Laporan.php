@@ -4395,46 +4395,39 @@ class laporan extends CI_Controller {
         }
     }
     
-    public function set_data_stok_masuk(){
+    public function set_data_stok_masuk() {
         if (akses::aksesLogin() == TRUE) {
-            $tgl     = $this->input->post('tgl');
-            $tgl_rtg = $this->input->post('tgl_rentang');
+            $tgl        = $this->input->post('tgl');
+            $tgl_rtg    = $this->input->post('tgl_rentang');
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
-
             $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_awal    = !empty($tgl_rtg) ? $this->tanggalan->tgl_indo_sys($tgl_rentang[0]) : '';
+            $tgl_akhir   = !empty($tgl_rtg) ? $this->tanggalan->tgl_indo_sys($tgl_rentang[1]) : '';
+            $tgl_masuk   = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : '';
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_trans_beli_det.kode')
-                        ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
-                        ->where('DATE(tbl_trans_beli.tgl_masuk)', $tgl_masuk)
-                        ->get('tbl_trans_beli_det');
+                                ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
+                                ->where('DATE(tbl_trans_beli.tgl_masuk)', $tgl_masuk)
+                                ->get('tbl_trans_beli_det');
                 
                 redirect(base_url('laporan/data_stok_masuk.php?case=per_tanggal&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
             } elseif ($tgl_rtg) {
                 $sql = $this->db->select('tbl_trans_beli_det.kode')
-                        ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
-                        ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $tgl_awal)
-                        ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $tgl_akhir)
-                        ->get('tbl_trans_beli_det');
+                                ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
+                                ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $tgl_awal)
+                                ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $tgl_akhir)
+                                ->get('tbl_trans_beli_det');
                 redirect(base_url('laporan/data_stok_masuk.php?case=per_rentang&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir . '&jml=' . $sql->num_rows()));
             }
-
-//                echo '<pre>';
-//                print_r($sql);
-//                echo '</pre>';
-        }else{
+        } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
-    
     public function set_data_stok_telusur(){
         if (akses::aksesLogin() == TRUE) {
             $item           = $this->input->post('item');
