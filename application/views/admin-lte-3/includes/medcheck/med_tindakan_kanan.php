@@ -328,7 +328,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <div class="card card-default rounded-0">
                             <div class="card-header">
                                 <h3 class="card-title">Foto Pasien</h3>
@@ -365,7 +365,7 @@
                                     Ambil Gambar</button>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-9">
                         <form id="pasien_form" autocomplete="off">
                             <input type="hidden" name="id" value="<?php echo general::enkrip($sql_pasien->id) ?>">
@@ -513,75 +513,75 @@
         </div>
     </div>
 </div>
-<?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner2() == TRUE) { ?>
+<?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakPerawat() == TRUE) { ?>
     <script type="text/javascript">
-        // Variabel untuk menyimpan stream kamera
-        var video = document.getElementById('kamera');
-        var video_id = document.getElementById('kamera_id');
-        var canvas = document.createElement('canvas');
-        var canvas_id = document.createElement('canvas');
-        var gambar = document.getElementById('gambar');
-        var gambar_id = document.getElementById('gambar_id');
-        var file_input = document.getElementById('file');
-        var file_input_id = document.getElementById('file_id');
+        // // Variabel untuk menyimpan stream kamera
+        // var video = document.getElementById('kamera');
+        // var video_id = document.getElementById('kamera_id');
+        // var canvas = document.createElement('canvas');
+        // var canvas_id = document.createElement('canvas');
+        // var gambar = document.getElementById('gambar');
+        // var gambar_id = document.getElementById('gambar_id');
+        // var file_input = document.getElementById('file');
+        // var file_input_id = document.getElementById('file_id');
 
-        // Akses kamera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function (stream) {
-                video.srcObject = stream;
-                video_id.srcObject = stream;
-            })
-            .catch(function (err) {
-                console.log("Error: " + err);
-            });
+        // // Akses kamera
+        // navigator.mediaDevices.getUserMedia({ video: true })
+        //     .then(function (stream) {
+        //         video.srcObject = stream;
+        //         video_id.srcObject = stream;
+        //     })
+        //     .catch(function (err) {
+        //         console.log("Error: " + err);
+        //     });
 
-        // Fungsi untuk mengambil gambar pasien
-        function takeSnapshot() {
-            // Ambil ukuran dari video
-            var width = video.offsetWidth, height = video.offsetHeight;
+        // // Fungsi untuk mengambil gambar pasien
+        // function takeSnapshot() {
+        //     // Ambil ukuran dari video
+        //     var width = video.offsetWidth, height = video.offsetHeight;
 
-            // Atur ukuran canvas sesuai video
-            canvas.width = width;
-            canvas.height = height;
+        //     // Atur ukuran canvas sesuai video
+        //     canvas.width = width;
+        //     canvas.height = height;
 
-            // Gambar frame dari video ke canvas
-            canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+        //     // Gambar frame dari video ke canvas
+        //     canvas.getContext('2d').drawImage(video, 0, 0, width, height);
 
-            // Konversi ke base64
-            var data_url = canvas.toDataURL('image/png');
+        //     // Konversi ke base64
+        //     var data_url = canvas.toDataURL('image/png');
 
-            // Tampilkan gambar dan simpan base64 ke input hidden
-            gambar.src = data_url;
-            file_input.value = data_url;
+        //     // Tampilkan gambar dan simpan base64 ke input hidden
+        //     gambar.src = data_url;
+        //     file_input.value = data_url;
 
-            // Sembunyikan video, tampilkan gambar
-            video.style.display = 'none';
-            gambar.style.display = 'block';
-        }
+        //     // Sembunyikan video, tampilkan gambar
+        //     video.style.display = 'none';
+        //     gambar.style.display = 'block';
+        // }
 
-        // Fungsi untuk mengambil gambar identitas
-        function takeSnapshot_id() {
-            // Ambil ukuran dari video
-            var width = video_id.offsetWidth, height = video_id.offsetHeight;
+        // // Fungsi untuk mengambil gambar identitas
+        // function takeSnapshot_id() {
+        //     // Ambil ukuran dari video
+        //     var width = video_id.offsetWidth, height = video_id.offsetHeight;
 
-            // Atur ukuran canvas sesuai video
-            canvas_id.width = width;
-            canvas_id.height = height;
+        //     // Atur ukuran canvas sesuai video
+        //     canvas_id.width = width;
+        //     canvas_id.height = height;
 
-            // Gambar frame dari video ke canvas
-            canvas_id.getContext('2d').drawImage(video_id, 0, 0, width, height);
+        //     // Gambar frame dari video ke canvas
+        //     canvas_id.getContext('2d').drawImage(video_id, 0, 0, width, height);
 
-            // Konversi ke base64
-            var data_url = canvas_id.toDataURL('image/png');
+        //     // Konversi ke base64
+        //     var data_url = canvas_id.toDataURL('image/png');
 
-            // Tampilkan gambar dan simpan base64 ke input hidden
-            gambar_id.src = data_url;
-            file_input_id.value = data_url;
+        //     // Tampilkan gambar dan simpan base64 ke input hidden
+        //     gambar_id.src = data_url;
+        //     file_input_id.value = data_url;
 
-            // Sembunyikan video, tampilkan gambar
-            video_id.style.display = 'none';
-            gambar_id.style.display = 'block';
-        }
+        //     // Sembunyikan video, tampilkan gambar
+        //     video_id.style.display = 'none';
+        //     gambar_id.style.display = 'block';
+        // }
 
         // Submit form dengan AJAX
         $(document).ready(function () {
@@ -631,4 +631,4 @@
             });
         });
     </script>
-<?php } ?>
+<?php } ?> 
