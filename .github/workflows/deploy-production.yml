@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Commit SHA, tag, or branch to deploy (e.g. main or e6a1b1d)'
+        description: 'Guidelines use this workflows :
+- If you want to push into production server input ''main'' on column
+- if  you want revert input SHA tags (e.g. e6a1b1d you wil be revert this prev commits)'
         required: true
         default: 'main'
 
