@@ -23,19 +23,24 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy Code to Production cPanel
+      - name: Deploy Code to Production cPanel (except database.php)
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             cd ${{ secrets.DEPLOY_PATH_PROD }}
 
-            # Simpan perubahan lokal agar tidak bentrok
-            git stash push -m "temp stash before deploy"
+            echo "📁 Save current database.php"
+            cp database/database.php /tmp/database.php
 
-            # Checkout dan update kode dari branch
+            echo "📦 Update code from repo (excluding database.php)"
             git fetch origin
             git checkout ${{ github.event.inputs.ref }}
-            git pull origin ${{ github.event.inputs.ref }}
+            git reset --mixed origin/${{ github.event.inputs.ref }}
+            git restore --source=origin/${{ github.event.inputs.ref }} . 
+            git restore --staged . 
+            rm -f database/database.php
 
-            # Kembalikan perubahan lokal (misal database.php)
-            git stash pop || true
+            echo "♻️ Restore local database.php"
+            mv /tmp/database.php database/database.php
+
+            echo "✅ Deployment complete without touching database config"
           EOF
