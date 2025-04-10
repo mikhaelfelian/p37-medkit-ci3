@@ -2834,8 +2834,10 @@ class laporan extends CI_Controller {
                 $config['next_link']             = '&rsaquo;';
                 $config['last_link']             = '&raquo;';
                 $config['anchor_class']          = 'class="page-link"';
-            
-                $sql_doc = $this->db->where('id', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
+                
+                // Initialize dokter variable to avoid undefined variable error
+                $dokter = $this->input->get('dokter') ?? null;
+                $sql_doc = $dokter ? $this->db->where('id', general::dekrip($dokter))->get('tbl_m_karyawan')->row() : null;
                 
                 switch ($case){
                     default:
@@ -3235,8 +3237,6 @@ class laporan extends CI_Controller {
             
             if($jml > 0){
                 $data['hasError'] = $this->session->flashdata('form_error');
-            
-                $sql_doc = $this->db->where('id', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
                 
                 switch ($case){                    
                     case 'per_tanggal':
