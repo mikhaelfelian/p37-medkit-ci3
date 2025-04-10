@@ -2350,7 +2350,7 @@ class Gudang extends CI_Controller {
             $sort_type       = $this->input->get('sort_type');
             $sort_order      = $this->input->get('sort_order');
             $jml             = $this->input->get('jml');
-            $jml_hal         = (!empty($jml) ? $jml  : $this->db->where('status_subt', '1')->get('tbl_m_produk')->num_rows());
+            $jml_hal         = (!empty($jml) ? $jml  : $this->db->where('status_subt', '1')->where('status_hps', '0')->get('tbl_m_produk')->num_rows());
             $pengaturan      = $this->db->get('tbl_pengaturan')->row();
             
             $data['hasError']                = $this->session->flashdata('form_error');
