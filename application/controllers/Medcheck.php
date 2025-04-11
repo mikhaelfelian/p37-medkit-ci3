@@ -16190,11 +16190,8 @@ public function set_medcheck_lab_adm_save() {
             $pdf->subjudul  = $judul2;
             
             // Set document information
-            $pdf->SetTitle($judul.' - ' . $sql_pasien->nama_pgl);
+            $pdf->SetTitle('Laboratory Result - ' . $sql_pasien->nama_pgl);
             $pdf->SetMargins(1, 1, 1);
-            
-            // Enable auto page breaks to handle content overflow
-            $pdf->SetAutoPageBreak(TRUE, 15);
             
             // Set font to helvetica instead of Arial to avoid font definition errors
             $pdf->SetFont('helvetica', '', 10);
