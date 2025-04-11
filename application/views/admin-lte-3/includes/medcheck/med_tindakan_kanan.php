@@ -318,200 +318,134 @@
 <!-- Modal Edit Pasien -->
 <div class="modal fade" id="editPasienModal" tabindex="-1" role="dialog" aria-labelledby="editPasienModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-0">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editPasienModalLabel">Ubah Data Pasien</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <!-- <div class="col-md-3">
-                        <div class="card card-default rounded-0">
-                            <div class="card-header">
-                                <h3 class="card-title">Foto Pasien</h3>
-                            </div>
-                            <div class="card-body table-responsive p-0">
-                                <section id="foto_pasien">
-                                    <video autoplay="true" id="kamera" class="img-fluid">
-                                        Silahkan perbarui peramban anda !!
-                                    </video>
-                                    <img id="gambar" class="p-0">
-                                </section>
-                            </div>
-                            <div class="card-footer p-0">
-                                <button type="button" onclick="takeSnapshot()"
-                                    class="btn btn-primary btn-flat btn-block rounded-0"><i class="fa fa-camera"></i>
-                                    Ambil Gambar</button>
-                            </div>
-                        </div>
-                        <div class="card card-default rounded-0">
-                            <div class="card-header">
-                                <h3 class="card-title">Foto Identitas</h3>
-                            </div>
-                            <div class="card-body table-responsive p-0">
-                                <section id="foto_pasien_id">
-                                    <video autoplay="true" id="kamera_id" class="img-fluid">
-                                        Silahkan perbarui peramban anda !!
-                                    </video>
-                                    <img id="gambar_id" class="p-0">
-                                </section>
-                            </div>
-                            <div class="card-footer p-0">
-                                <button type="button" onclick="takeSnapshot_id()"
-                                    class="btn btn-primary btn-flat btn-block rounded-0"><i class="fa fa-camera"></i>
-                                    Ambil Gambar</button>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div class="col-md-9">
-                        <form id="pasien_form" autocomplete="off">
+    <form id="pasien_form" autocomplete="off">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPasienModalLabel">Form Data Pasien</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
                             <input type="hidden" name="id" value="<?php echo general::enkrip($sql_pasien->id) ?>">
                             <input type="hidden" name="route" value="<?php echo $this->input->get('route') ?>">
                             <input type="hidden" id="file" name="file">
                             <input type="hidden" id="file_id" name="file_id">
                             <?php echo add_form_protection(); ?>
-                            <div class="card card-default rounded-0">
-                                <div class="card-header">
-                                    <h3 class="card-title">Form Data Pasien</h3>
-                                    <div class="card-tools">
-                                        <ul class="pagination pagination-sm float-right">
-                                            <?php echo $pagination ?>
-                                        </ul>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">NIK* <small><i>(* KTP / Passport /
+                                            KIA)</i></small></label>
+                                <input type="text" id="nik" name="nik" class="form-control rounded-0"
+                                    value="<?php echo $sql_pasien->nik ?>" placeholder="Nomor Identitas ...">
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Gelar*</label>
+                                        <select name="gelar" class="form-control rounded-0">
+                                            <option value="">- Pilih -</option>
+                                            <option value="1" <?php echo ($sql_pasien->id_gelar == '1' ? 'selected' : '') ?>>TN.</option>
+                                            <option value="2" <?php echo ($sql_pasien->id_gelar == '2' ? 'selected' : '') ?>>NN.</option>
+                                            <option value="3" <?php echo ($sql_pasien->id_gelar == '3' ? 'selected' : '') ?>>NY.</option>
+                                            <option value="4" <?php echo ($sql_pasien->id_gelar == '4' ? 'selected' : '') ?>>AN.</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="card-body table-responsive">
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">NIK* <small><i>(* KTP / Passport /
-                                                            KIA)</i></small></label>
-                                                <input type="text" id="nik" name="nik" class="form-control rounded-0"
-                                                    value="<?php echo $sql_pasien->nik ?>"
-                                                    placeholder="Nomor Identitas ...">
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Gelar*</label>
-                                                        <select name="gelar" class="form-control rounded-0">
-                                                            <option value="">- Pilih -</option>
-                                                            <option value="1" <?php echo ($sql_pasien->id_gelar == '1' ? 'selected' : '') ?>>TN.</option>
-                                                            <option value="2" <?php echo ($sql_pasien->id_gelar == '2' ? 'selected' : '') ?>>NN.</option>
-                                                            <option value="3" <?php echo ($sql_pasien->id_gelar == '3' ? 'selected' : '') ?>>NY.</option>
-                                                            <option value="4" <?php echo ($sql_pasien->id_gelar == '4' ? 'selected' : '') ?>>AN.</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-9">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Nama Lengkap*</label>
-                                                        <input type="text" id="nama" name="nama"
-                                                            class="form-control rounded-0"
-                                                            value="<?php echo $sql_pasien->nama ?>"
-                                                            placeholder="John Doe ...">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label">Jenis Kelamin*</label>
-                                                <select name="jns_klm" class="form-control rounded-0">
-                                                    <option value="">- Pilih -</option>
-                                                    <option value="L" <?php echo ($sql_pasien->jns_klm == 'L' ? 'selected' : '') ?>>Laki - laki</option>
-                                                    <option value="P" <?php echo ($sql_pasien->jns_klm == 'P' ? 'selected' : '') ?>>Perempuan</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">Tempat Lahir</label>
-                                                <input type="text" id="tmp_lahir" name="tmp_lahir"
-                                                    class="form-control rounded-0"
-                                                    value="<?php echo $sql_pasien->tmp_lahir ?>"
-                                                    placeholder="Semarang ...">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label">Tgl Lahir* <small><i>(*
-                                                            Required)</i></small></label>
-                                                <div class="input-group mb-3">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text rounded-0"><i
-                                                                class="fas fa-calendar"></i></span>
-                                                    </div>
-                                                    <input type="text" id="tgl_lahir" name="tgl_lahir"
-                                                        class="form-control rounded-0"
-                                                        value="<?php echo $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir) ?>"
-                                                        readonly="TRUE"
-                                                        placeholder="Isikan dengan format 15-02-1992 ...">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">No. HP</label>
-                                                <input type="text" id="no_hp" name="no_hp"
-                                                    class="form-control rounded-0"
-                                                    value="<?php echo $sql_pasien->no_hp ?>"
-                                                    placeholder="Nomor kontak WA pasien / keluarga pasien ...">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Alamat KTP<small><i>* Sesuai
-                                                            Identitas</i></small></label>
-                                                <textarea id="alamat" name="alamat" class="form-control rounded-0"
-                                                    style="height: 124px;"
-                                                    placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat ?></textarea>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label">Alamat Domisili<small><i>* Sesuai
-                                                            Domisili</i></small></label>
-                                                <textarea id="alamat_dom" name="alamat_dom"
-                                                    class="form-control rounded-0" style="height: 124px;"
-                                                    placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat_dom ?></textarea>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label">Pekerjaan</label>
-                                                <select name="pekerjaan" class="form-control rounded-0">
-                                                    <option value="">- Pilih -</option>
-                                                    <?php foreach ($this->db->get('tbl_m_jenis_kerja')->result() as $kerja) { ?>
-                                                        <option value="<?php echo $kerja->id ?>" <?php echo ($kerja->id == $sql_pasien->id_pekerjaan ? 'selected' : '') ?>>
-                                                            <?php echo $kerja->jenis ?>
-                                                        </option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="control-label">No. Rumah</label>
-                                                <input type="text" id="no_rmh" name="no_rmh"
-                                                    class="form-control rounded-0"
-                                                    value="<?php echo $sql_pasien->no_telp ?>"
-                                                    placeholder="Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <button type="submit" class="btn btn-primary btn-flat rounded-0"><i
-                                                    class="fa fa-save"></i> Simpan</button>
-                                        </div>
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <label class="control-label">Nama Lengkap*</label>
+                                        <input type="text" id="nama" name="nama" class="form-control rounded-0"
+                                            value="<?php echo $sql_pasien->nama ?>" placeholder="John Doe ...">
                                     </div>
                                 </div>
                             </div>
-                        </form>
+
+                            <div class="form-group">
+                                <label class="control-label">Jenis Kelamin*</label>
+                                <select name="jns_klm" class="form-control rounded-0">
+                                    <option value="">- Pilih -</option>
+                                    <option value="L" <?php echo ($sql_pasien->jns_klm == 'L' ? 'selected' : '') ?>>Laki -
+                                        laki</option>
+                                    <option value="P" <?php echo ($sql_pasien->jns_klm == 'P' ? 'selected' : '') ?>>
+                                        Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Tempat Lahir</label>
+                                <input type="text" id="tmp_lahir" name="tmp_lahir" class="form-control rounded-0"
+                                    value="<?php echo $sql_pasien->tmp_lahir ?>" placeholder="Semarang ...">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Tgl Lahir* <small><i>(*
+                                            Required)</i></small></label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text rounded-0"><i class="fas fa-calendar"></i></span>
+                                    </div>
+                                    <input type="text" id="tgl_lahir" name="tgl_lahir" class="form-control rounded-0"
+                                        value="<?php echo $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir) ?>"
+                                        readonly="TRUE" placeholder="Isikan dengan format 15-02-1992 ...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">No. HP</label>
+                                <input type="text" id="no_hp" name="no_hp" class="form-control rounded-0"
+                                    value="<?php echo $sql_pasien->no_hp ?>"
+                                    placeholder="Nomor kontak WA pasien / keluarga pasien ...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Alamat KTP<small><i>* Sesuai
+                                            Identitas</i></small></label>
+                                <textarea id="alamat" name="alamat" class="form-control rounded-0"
+                                    style="height: 124px;"
+                                    placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat ?></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Alamat Domisili<small><i>* Sesuai
+                                            Domisili</i></small></label>
+                                <textarea id="alamat_dom" name="alamat_dom" class="form-control rounded-0"
+                                    style="height: 124px;"
+                                    placeholder="Mohon diisi alamat lengkap ..."><?php echo $sql_pasien->alamat_dom ?></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Pekerjaan</label>
+                                <select name="pekerjaan" class="form-control rounded-0">
+                                    <option value="">- Pilih -</option>
+                                    <?php foreach ($this->db->get('tbl_m_jenis_kerja')->result() as $kerja) { ?>
+                                        <option value="<?php echo $kerja->id ?>" <?php echo ($kerja->id == $sql_pasien->id_pekerjaan ? 'selected' : '') ?>>
+                                            <?php echo $kerja->jenis ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">No. Rumah</label>
+                                <input type="text" id="no_rmh" name="no_rmh" class="form-control rounded-0"
+                                    value="<?php echo $sql_pasien->no_telp ?>"
+                                    placeholder="Isikan Nomor rumah (PSTN) pasien / keluarga pasien ...">
+                            </div>
+                        </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-flat rounded-0 float-right"><i
+                            class="fa fa-save"></i>
+                        Simpan
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakPerawat() == TRUE) { ?>
     <script type="text/javascript">
@@ -631,4 +565,4 @@
             });
         });
     </script>
-<?php } ?> 
+<?php } ?>
