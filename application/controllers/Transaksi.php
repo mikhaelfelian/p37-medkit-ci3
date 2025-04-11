@@ -15,7 +15,6 @@ class transaksi extends CI_Controller {
         parent::__construct();
         $this->load->library('cart');
         $this->load->library('Excel');
-        $this->load->library('phpqrcode/qrlib');
     }
 
     

@@ -39,7 +39,6 @@ class Sdm extends CI_Controller {
     public $bcrypt;
     public function __construct() {
         parent::__construct();
-        $this->load->library('phpqrcode/qrlib');
     }
     
     public function index() {

@@ -14,7 +14,6 @@ class Pos extends CI_Controller {
         parent::__construct();
         $this->load->library('cart');
         $this->load->library('Excel');
-        $this->load->library('qrcode/ciqrcode');
     }
     
     public function index() {

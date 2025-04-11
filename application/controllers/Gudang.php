@@ -15,7 +15,6 @@ class Gudang extends CI_Controller {
         $this->load->library('cart'); 
         // $this->load->library('fpdf');
         $this->load->library('Excel');
-        $this->load->library('phpqrcode/qrlib');
     }
     
     public function index() {
