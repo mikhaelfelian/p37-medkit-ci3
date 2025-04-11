@@ -123,7 +123,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th class="text-center"><input type="checkbox" name="print_all" id="ckAll"></th>
+                            <th class="text-center"><input type="checkbox" name="print_all" id="ckAll" onclick="toggleCheckboxes()"></th>
                             <th class="text-center">No.</th>
                             <th class="text-left">Lab Item</th>
                             <?php if (akses::hakAnalis() == TRUE OR akses::hakDokter() == TRUE) { ?>                
@@ -159,7 +159,7 @@
                                 <tr>
                                     <td class="text-center">
                                         <?php if ($medc->status_hsl == '1') { ?>
-                                            <input type="checkbox" id="ck" name="print[<?php echo $medc->id ?>]" value="1">
+                                            <input type="checkbox" class="item-checkbox" id="ck" name="print[<?php echo $medc->id ?>]" value="1" onclick="checkItemStatus()">
                                             <input type="hidden" id="" name="print_lab[<?php echo $medc->id ?>]" value="<?php echo $medc->id_lab ?>">
                                             <input type="hidden" id="" name="print_kat[<?php echo $medc->id ?>]" value="<?php echo $medc->id_lab_kat ?>">
                                         <?php } ?>
@@ -251,3 +251,29 @@
     </div>
 </div>
 <?php echo form_close() ?>
+
+<script type="text/javascript">
+    function toggleCheckboxes() {
+        var mainCheckbox = document.getElementById('ckAll');
+        var checkboxes = document.getElementsByClassName('item-checkbox');
+        
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = mainCheckbox.checked;
+        }
+    }
+    
+    function checkItemStatus() {
+        var mainCheckbox = document.getElementById('ckAll');
+        var checkboxes = document.getElementsByClassName('item-checkbox');
+        var allChecked = true;
+        
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (!checkboxes[i].checked) {
+                allChecked = false;
+                break;
+            }
+        }
+        
+        mainCheckbox.checked = allChecked;
+    }
+</script>
