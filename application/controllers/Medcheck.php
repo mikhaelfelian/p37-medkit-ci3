@@ -16193,6 +16193,9 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetTitle('Laboratory Result - ' . $sql_pasien->nama_pgl);
             $pdf->SetMargins(1, 1, 1);
             
+            // Enable auto page break
+            $pdf->SetAutoPageBreak(TRUE, 1);
+            
             // Set font to helvetica instead of Arial to avoid font definition errors
             $pdf->SetFont('helvetica', '', 10);
             
