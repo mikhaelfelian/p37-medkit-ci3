@@ -165,7 +165,13 @@ margin: 10;*/
                 $jml_ongkir     = $sql_medc->jml_ongkir;
                 $jml_total      = $sql_medc_sum->subtotal + $sql_medc_sum->diskon + $sql_medc_sum->potongan + $sql_medc_sum->potongan_poin;
                 $jml_diskon     = $jml_total - $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
-                $diskon         = ($jml_diskon / $jml_total) * 100;
+                
+                // Fix for division by zero error
+                $diskon = 0;
+                if ($jml_total > 0) {
+                    $diskon = ($jml_diskon / $jml_total) * 100;
+                }
+                
                 $jml_subtotal   = $sql_medc_sum->subtotal + $jml_ongkir;
             ?>
             <tr>
