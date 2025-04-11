@@ -39,7 +39,6 @@ class Medcheck extends CI_Controller {
         $this->load->library('form_validation');
         $this->load->library('user_agent');
         $this->load->model('Ion_auth_model', 'ion_auth_model');
-        $this->load->library('phpqrcode/qrlib');
     }
     
     public function index() {
