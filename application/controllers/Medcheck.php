@@ -16143,6 +16143,7 @@ public function set_medcheck_lab_adm_save() {
             $status_ctk         = $this->input->get('status_ctk');
             
             $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+            // Fix: Remove reference to undefined variable $id
             $sql_medc_lab       = $this->db->where('id', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab')->row(); 
             $sql_medc_lab_det   = $this->db->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->where('status', '3')->where('status_hsl', '1')->where('status_ctk', '1')->group_by('id_lab_kat')->get('tbl_trans_medcheck_det')->result(); 
             $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
@@ -16161,31 +16162,56 @@ public function set_medcheck_lab_adm_save() {
             $judul              = "HASIL PEMERIKSAAN LABORATORIUM";
             $judul2             = "Laboratory Result";
 
-            // Increase memory limit to handle large PDF generation
-            ini_set('memory_limit', '256M');
+            $data['sql_medc_lab']       = $sql_medc_lab;
+            $data['sql_medc_lab_det']   = $sql_medc_lab_det;
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
-            $pdf->SetAutoPageBreak('auto', 6.5);
-            $pdf->SetMargins(1,0.35,1);
-            $pdf->header = 0;
-            $pdf->addPage('','',false);
+            // Remove reference to undefined variable
+            $data['sql_medc']           = $sql_medc;
+            $data['sql_poli']           = $sql_poli;
+            $data['sql_pasien']         = $sql_pasien;
+            $data['sql_pekerjaan']      = $sql_pekerjaan;
+            $data['sql_dokter']         = $sql_dokter;
+            $data['sql_dokter2']        = $sql_dokter2;
+            $data['sql_dokter3']        = $sql_dokter3;
+            $data['kode_pasien']        = $kode_pasien;
+            $data['gambar1']            = $gambar1;
+            $data['gambar2']            = $gambar2;
+            $data['gambar3']            = $gambar3;
+            $data['judul']              = $judul;
+            $data['judul2']             = $judul2;
+            $data['setting']            = $setting;
+                        
+            // Load MedLabTCPDF library
+            $this->load->library('MedLabTCPDF');
             
-            # Gambar Watermark Tengah
-            if(file_exists($gambar2)) {
-                $pdf->Image($gambar2,5,4,15,19);
-            }
+            // Create new PDF document
+            $pdf = new MedLabTCPDF('P', 'cm', 'FOLIO', true, 'UTF-8', false);
+            $pdf->judul     = $judul;
+            $pdf->subjudul  = $judul2;
             
-            # Blok Judul
-            $pdf->SetFont('Arial', 'B', '13');
-            $pdf->Cell(19, .5, $judul, 0, 1, 'C');
-            $pdf->Ln(0);
-            $pdf->SetFont('Arial', 'Bi', '13');
-            $pdf->Cell(19, .5, $judul2, 'B', 1, 'C');
-            $pdf->Ln();
+            // Set document information
+            $pdf->SetTitle($judul.' - ' . $sql_pasien->nama_pgl);
+            $pdf->SetMargins(1, 1, 1);
             
-            # Blok Data Pasien
-            $pdf->SetFont('Arial', '', '9');
+            // Enable auto page breaks to handle content overflow
+            $pdf->SetAutoPageBreak(TRUE, 15);
+            
+            // Set font to helvetica instead of Arial to avoid font definition errors
+            $pdf->SetFont('helvetica', '', 10);
+            
+            // Add a page
+            $pdf->AddPage();
+            
+            // Set page header
+            $pdf->setHeaderFont(Array('helvetica', 'B', 12));
+            $pdf->setHeaderMargin(5);
+            
+            // Add page header text
+            $pdf->SetY(4.5); // Position after the header image
+            $pdf->Ln(0.5);
+
+            // Patient information block
+            $pdf->SetFont('helvetica', '', '9');
             $pdf->Cell(3, .5, 'No. Pemeriksaan', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(4.5, .5, $sql_medc_lab->no_lab, '0', 0, 'L', $fill);
@@ -16231,38 +16257,22 @@ public function set_medcheck_lab_adm_save() {
             $pdf->MultiCell(15.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '0', 'L');
             $pdf->Ln();
             
-            # Render hasil lab
-            $data = array(
-                'sql_medc_lab'      => $sql_medc_lab,
-                'sql_medc_lab_det'  => $sql_medc_lab_det,
-                'sql_medc'          => $sql_medc,
-                'sql_poli'          => $sql_poli,
-                'sql_pasien'        => $sql_pasien,
-                'sql_pekerjaan'     => $sql_pekerjaan,
-                'sql_dokter'        => $sql_dokter,
-                'sql_dokter2'       => $sql_dokter2,
-                'sql_dokter3'       => $sql_dokter3,
-                'kode_pasien'       => $kode_pasien,
-                'gambar1'           => $gambar1,
-                'gambar2'           => $gambar2,
-                'gambar3'           => $gambar3,
-                'judul'             => $judul,
-                'judul2'            => $judul2,
-                'setting'           => $setting
-            );
+            // Reset font for content
+            $pdf->SetFont('helvetica', '', 10);
             
-            // Load view as string to avoid memory issues
+            // Get HTML content from view
             ob_start();
             $this->load->view('admin-lte-3/includes/medcheck/med_trans_periksa_pdf', $data);
-            $html_content = ob_get_clean();
+            $html = ob_get_contents();
+            ob_end_clean();
+
             
-            // Process HTML content in smaller chunks if needed
-            $pdf->writeHTML($html_content, true, false, true, false, '');
+            // Write HTML to PDF
+            $pdf->writeHTML($html, true, false, true, false, '');
             
-            // Output PDF with optimized memory usage
+            // Output PDF
             $pdf->Output($sql_pasien->nama_pgl . '_lab_result.pdf', 'I');
-            
-        } else {
+        }else{
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
