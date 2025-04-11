@@ -15,6 +15,7 @@ class pengaturan extends CI_Controller {
         $this->load->helper('file');
         $this->load->helper('download');
         $this->load->dbforge();
+        $this->load->library('phpqrcode/qrlib');
     }
     
     public function printer() {
