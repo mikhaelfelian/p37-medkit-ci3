@@ -2133,10 +2133,8 @@ class Medcheck extends CI_Controller {
                         return;
                     }
 
-
-                    $uuid    = $this->uuid->v4();
                     $data = [
-                        'uuid'              => $uuid,
+                        'uuid'              => $this->uuid->v4(),
                         'tgl_simpan'        => date('Y-m-d H:i:s'),
                         'tgl_masuk'         => $tmsk.' '.date('H:i:s'),
                         'id_ant'            => (!empty($id_ant) ? $id_ant : 0),
