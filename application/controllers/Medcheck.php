@@ -2172,15 +2172,20 @@ class Medcheck extends CI_Controller {
                         'status_dft'        => '1',
                     ];
                     
+                    // Check if record already exists
+                    $check_exists = $this->db->where([
+                        'id_pasien'  => $data['id_pasien'],
+                        'tgl_masuk'  => $data['tgl_masuk'],
+                        'id_poli'    => $data['id_poli'],
+                        'id_dokter'  => $data['id_dokter']
+                    ])->get('tbl_pendaftaran');
+                    
+                    if ($check_exists->num_rows() > 0) {
+                        throw new Exception('Data pendaftaran sudah ada untuk pasien ini pada hari yang sama.');
+                    }
+                    
                     // Insert data into the database
                     $this->db->insert('tbl_pendaftaran', $data);
-
-                    $sql_cek = $this->db->where('uuid', $uuid)->get('tbl_pendaftaran');
-  
-                    if($sql_cek->num_rows() > 0){
-                        $this->db->trans_rollback();
-                        throw new Exception('Terjadi kesalahan sistem, silahkan coba lagi.');
-                    }
 
                     // Check if the transaction was successful
                     if ($this->db->trans_status() === FALSE) {
