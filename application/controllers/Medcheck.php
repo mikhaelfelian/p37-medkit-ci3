@@ -12668,22 +12668,45 @@ public function set_medcheck_lab_adm_save() {
                 $this->db->trans_begin();
                 
                 try {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception('Form sudah disubmit sebelumnya!');
+                    }
+                    
+                    // Set cache lock to prevent concurrent processing
+                    $lock_key = 'medcheck_process_lock_' . $sql_medc->id . '_' . $this->ion_auth->user()->row()->id;
+                    
+                    // Check if cache driver is loaded properly
+                    if (!isset($this->cache) || !isset($this->cache->file)) {
+                        // Load cache driver if not already loaded
+                        $this->load->driver('cache', array('adapter' => 'file'));
+                    }
+                    
+                    // Check if there's an active lock
+                    if ($this->cache->file->get($lock_key)) {
+                        throw new Exception('Proses sedang berlangsung, mohon tunggu sebentar!');
+                    }
+                    
+                    // Set lock for 30 seconds
+                    $this->cache->file->save($lock_key, TRUE, 30);
+                    
                     // Check if the transaction status is 5 (completed)
                     if ($sql_medc->status == '5') {
-
                         // if item is stockable, will update stock
                         if($sql_item->status_subt == '1'){
-                            $sql_gudang = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
-                            $sql_stok   = $this->db->where('id_produk', $sql_item->id)
+                            $sql_gudang     = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
+                            $sql_stok       = $this->db->where('id_produk', $sql_item->id)
                                                    ->where('id_gudang', $sql_gudang->id)
                                                    ->get('tbl_m_produk_stok')
                                                    ->row();
-                            $sql_hist   = $this->db->where('id_penjualan', $sql_medc->id)
+                            $sql_hist       = $this->db->where('id_penjualan', $sql_medc->id)
                                                    ->where('id_produk', $sql_item->id)
                                                    ->get('tbl_m_produk_hist')
                                                    ->row();
-                            $stok_akhir = ((int)$sql_stok->jml + (int)$sql_hist->jml) - (int)$jml;
-                            $nominal    = (float)$harga;
+                            $sql_medc_stok  = $this->db->where('id_medcheck_det', $sql_medc_ck->id)->get('tbl_trans_medcheck_stok')->row();
+                            $stok_akhir     = ((int)$sql_stok->jml + (int)$sql_hist->jml) - (int)$jml;
+                            $nominal        = (float)$harga;
     
                             // kick out if stock minus
                             if ($stok_akhir < 0) {
@@ -12706,6 +12729,14 @@ public function set_medcheck_lab_adm_save() {
                             ];
     
                             $this->db->where('id', $sql_hist->id)->update('tbl_m_produk_hist', $data_hist);
+
+                            $data_medc_stok = [
+                                'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                'jml'           => (int)$jml,
+                                'stok_akhir'    => $stok_akhir,
+                            ];
+
+                            $this->db->where('id', $sql_medc_stok->id)->update('tbl_trans_medcheck_stok', $data_medc_stok);
                         }
 
                         // if item has reference, will update stock reference
@@ -12716,10 +12747,15 @@ public function set_medcheck_lab_adm_save() {
                                 $sql_gudang     = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
                                 $sql_ref_stk    = $this->db->where('id_produk', $ref->id_produk)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
                                 $sql_hist_ref   = $this->db->where('id_penjualan', $sql_medc->id)
-                                                           ->where('id_produk', $ref->id_produk)
+                                                           ->where('id_produk', $ref->id_produk_item)
                                                            ->get('tbl_m_produk_hist')
                                                            ->row();
-                                $stok_akhir_ref = ((int)$sql_ref_stk->jml + (int)$sql_hist_ref->jml) - (int)$jml;
+                                $jml_ref        = $ref->jml * $jml;
+                                $stok_akhir_ref = ((int)$sql_ref_stk->jml + (int)$sql_hist_ref->jml) - $jml_ref;
+
+                                if($stok_akhir_ref < 0){
+                                    throw new Exception("Stok <b>{$ref->id_produk_item}</b> kurang, silahkan periksa stok barang!!");
+                                }
                                 
                                 $data_ref_stk = [
                                     'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -12732,7 +12768,7 @@ public function set_medcheck_lab_adm_save() {
                                 $data_hist_ref = [
                                     'tgl_simpan'    => date('Y-m-d H:i:s'),
                                     'tgl_modif'     => date('Y-m-d H:i:s'),
-                                    'jml'           => (int)$jml,
+                                    'jml'           => $jml_ref,
                                 ];
 
                                 $this->db->where('id', $sql_hist_ref->id)->update('tbl_m_produk_hist', $data_hist_ref);
@@ -12825,11 +12861,19 @@ public function set_medcheck_lab_adm_save() {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data berhasil diupdate!");');
                     }
                     
+                    // Delete the lock regardless of outcome
+                    $this->cache->file->delete($lock_key);
+                    
                     redirect(base_url('medcheck/invoice/bayar.php?id='.$id));
                     
                 } catch (Exception $e) {
                     // Rollback transaction on exception
                     $this->db->trans_rollback();
+                    
+                    // Delete the lock if it exists
+                    if (isset($lock_key) && isset($this->cache) && isset($this->cache->file)) {
+                        $this->cache->file->delete($lock_key);
+                    }
                     
                     // Set error message
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("Terjadi kesalahan: ' . $e->getMessage() . '");');

@@ -129,7 +129,8 @@
                 </div>
                 <div class="col-lg-4">
                     <?php if (!empty($sql_produk)) { ?>
-    <?php echo form_open_multipart(base_url('medcheck/cart_medcheck_update.php'), 'autocomplete="off"') ?>
+    <?php echo form_open(base_url('medcheck/cart_medcheck_update.php'), 'id="medc_item_form" autocomplete="off"') ?>
+    <?php echo add_form_protection(); ?>
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Form Data Item</h3>
@@ -263,6 +264,7 @@
                                 </div>
                         <?php } ?>
                         </div>
+                        <?php echo add_double_submit_protection('medc_item_form') ?>
                         <?php echo form_close(); ?>
                     <?php } ?>
                     <?php if (empty($sql_produk)) { ?>
