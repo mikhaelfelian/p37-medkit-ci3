@@ -90,37 +90,4 @@ class MedLabTCPDF extends TCPDF {
             $this->Image($gambar3, 0, $pageHeight-7, $pageWidth, 7, 'png');
         }
     }
-
-    // Override the AddPage method to ensure proper page breaks
-    public function AddPage($orientation = '', $format = '', $keepmargins = false, $tocpage = false) {
-        parent::AddPage($orientation, $format, $keepmargins, $tocpage);
-        
-        // Reset Y position after adding new page
-        $this->SetY(40);
-    }
-
-    // Custom method to check if we need a new page
-    public function checkPageBreak($h = 0, $y = null, $addpage = true) {
-        if ($this->GetY() + $h > $this->PageBreakTrigger) {
-            if ($addpage) {
-                $this->AddPage();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    // Custom method to write HTML content with proper page breaks
-    public function writeHTMLWithPageBreaks($html, $ln = true, $fill = false, $reseth = false, $cell = false, $align = '') {
-        // Split HTML into chunks if it's too long
-        $chunks = str_split($html, 1000); // Adjust chunk size as needed
-        
-        foreach ($chunks as $chunk) {
-            // Check if we need a new page
-            $this->checkPageBreak(10); // Adjust height as needed
-            
-            // Write the chunk
-            $this->writeHTML($chunk, $ln, $fill, $reseth, $cell, $align);
-        }
-    }
 } 
