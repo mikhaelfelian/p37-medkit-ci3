@@ -41,7 +41,7 @@
                                         <th class="text-center">Tgl Mutasi</th>
                                         <th>User</th>
                                         <th>Keterangan</th>
-                                        <th>Tipe</th>
+                                        <th>Status</th>
                                         <th></th>
                                     </tr>
                                     
@@ -75,7 +75,7 @@
                                                 <td style="width: 150px;"><?php echo $this->tanggalan->tgl_indo($mutasi->tgl_simpan) ?></td>
                                                 <td><?php echo anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($mutasi->id)), $this->ion_auth->user($mutasi->id_user)->row()->first_name, '') ?></td>
                                                 <td><?php echo $mutasi->keterangan; // echo (!empty($mutasi->dl_file) ? anchor(base_url('gudang/data_opname_dl.php?id='.general::enkrip($mutasi->id).'&file='.$mutasi->nm_file), $mutasi->nm_file) : $mutasi->nm_file)  ?></td>
-                                                <td><?php echo general::tipe_mutasi($mutasi->tipe); ?></td>
+                                                <td><?php echo general::status_mutasi($mutasi->status_terima); ?></td>
                                                 <td>
                                                     <?php if($mutasi->status_nota == '0'){ ?>
                                                         <?php echo anchor(base_url('gudang/trans_mutasi_edit.php?id=' . general::enkrip($mutasi->id)), '<i class="fas fa-edit"></i> Ubah &raquo;', 'class="btn btn-'.($jml_kurang > 0 ? 'info' : 'primary').' btn-flat btn-xs" style="width: 65px;"') ?>

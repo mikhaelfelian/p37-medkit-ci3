@@ -910,7 +910,7 @@ class Gudang extends CI_Controller {
             /* -- End Blok Pagination -- */
 
             if(!empty($hal)){
-                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
+                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota, status_terima')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'],$hal)
                            ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
@@ -918,7 +918,7 @@ class Gudang extends CI_Controller {
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
             }else{
-                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
+                   $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota, status_terima')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'])
                            ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
@@ -1754,7 +1754,7 @@ class Gudang extends CI_Controller {
                     'tgl_keluar'        => date('Y-m-d'),
                     'tgl_modif'         => date('Y-m-d H:i:s'),
                     'id_user_terima'    => $this->ion_auth->users()->row()->id,
-                    'status_nota'       => '3', // Status ditolak
+                    'status_nota'       => '2', // Status ditolak
                     'status_terima'     => '2'  // Status ditolak
                 ];
 

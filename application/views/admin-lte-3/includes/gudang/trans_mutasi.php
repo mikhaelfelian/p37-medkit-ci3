@@ -159,7 +159,7 @@
                                             <?php echo form_input(array('id' => 'item', 'name' => 'item', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['item']) ? ' is-invalid' : ''), 'placeholder' => 'Inputkan Nama Item ...', 'value' => (!empty($sql_produk->produk) ? $sql_produk->produk : ''), 'readonly' => 'TRUE')) ?>
                                         </div>
                                     </div>
-                                    <?php if (Akses::hakFarmasi() != TRUE or Akses::hakPerawat() != TRUE): ?>
+                                    <?php if (Akses::hakFarmasi() != TRUE && Akses::hakPerawat() != TRUE): ?>
                                         <?php foreach ($sql_produk_stk as $stok) { ?>
                                             <div class="form-group row">
                                                 <label for="inputEmail3" class="col-sm-3 col-form-label"><i><small>Stok

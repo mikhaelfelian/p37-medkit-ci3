@@ -484,6 +484,28 @@ class general extends CI_Model
         return $status;
     }
 
+    public static function status_mutasi($status)
+    {
+        switch ($status) {
+            case '0':
+                $status = '<label class="badge badge-warning">Pending</label>';
+                break;
+
+            case '1':
+                $status = '<label class="badge badge-info">Diterima</label>';
+                break;
+
+            case '2':
+                $status = '<label class="badge badge-danger">Tolak</label>';
+                break;
+
+            default:
+                $status = '';
+                break;
+        }
+        return $status;
+    }
+
     public static function tipe_bayar($status)
     {
         switch ($status) {
