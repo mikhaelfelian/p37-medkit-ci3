@@ -944,11 +944,6 @@ class Pos extends CI_Controller {
                 $nomor_id       = $sql_no->id + 1;
                 $no_akun        = strtoupper(date('Mdy').sprintf('%04d', $nomor_id));
                 
-                # Generate invoice number - using MAX to avoid duplicates
-                $sql_invoice    = $this->db->select_max('no_nota')->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->row();
-                $no_nota        = (!empty($sql_invoice->no_nota) ? (int)$sql_invoice->no_nota + 1 : 1);
-                $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
-                
                 // Check if form is submitted to prevent duplicate submissions
                 if (check_form_submitted('trans_jual_proses_form')) {
                     $this->session->set_flashdata('apt_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
@@ -970,8 +965,16 @@ class Pos extends CI_Controller {
                 
                 // Set lock for 30 seconds
                 $this->cache->save($lock_key, true, 30);
-                
-                try {
+                                   
+                /* Transaksi Database */
+                $this->db->trans_begin();
+
+                try {                
+                    # Generate invoice number - using MAX to avoid duplicates
+                    $sql_invoice    = $this->db->select_max('no_nota')->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->row();
+                    $no_nota        = (!empty($sql_invoice->no_nota) ? (int)$sql_invoice->no_nota + 1 : 1);
+                    $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
+
                     $sess_medc      = $this->session->userdata('trans_jual_umum');
                     $sess_medc_det  = $this->cart->contents();
                     $sql_pas        = $this->db->where('id', $sess_medc['id_pelanggan'])->get('tbl_m_pasien')->row();
@@ -991,10 +994,9 @@ class Pos extends CI_Controller {
                     $nomer          = $this->db->where('MONTH(tgl_simpan)', date('m'))->where('YEAR(tgl_simpan)', date('Y'))->get('tbl_trans_medcheck')->num_rows();
                     $no_nota        = (int)$nomer + 1;
                     $no_nota        = 'INV/'.date('Y').'/'.date('m').'/'.sprintf('%05d', $no_nota);
-                    $uuid           = $this->uuid->v4();
 
                     $data = [
-                        'uuid'         => $uuid,
+                        'uuid'         => $this->uuid->v4(),
                         'id_user'      => $this->ion_auth->user()->row()->id,
                         'id_pasien'    => (!empty($sess_medc['id_pelanggan']) ? $sess_medc['id_pelanggan'] : '0'),
                         'id_poli'      => '5',
@@ -1010,10 +1012,6 @@ class Pos extends CI_Controller {
                         'status_pos'    => '1',
                         'status_nota'   => '1',
                     ];
-                    
-                    /* Transaksi Database */
-                    $this->db->query('SET autocommit = 0;');
-                    $this->db->trans_start();
         
                     # Masukkan ke tabel medcheck
                     $this->db->insert('tbl_trans_medcheck', $data);
@@ -1061,6 +1059,7 @@ class Pos extends CI_Controller {
                         $last_id_det = crud::last_id();
                         
                         $data_stok_trace = [
+                              'uuid'              => $this->uuid->v4(),
                               'tgl_simpan'        => date('Y-m-d H:i:s'),
                               'tgl_masuk'         => date('Y-m-d H:i:s'),
                               'id_medcheck'       => $last_id,
@@ -1073,10 +1072,8 @@ class Pos extends CI_Controller {
                               'stok_akhir'        => $jml_akhir_stk, 
                         ];
                         
-                        # Masukkan ke tabel medcheck trace
-                        $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
-                        
                         $data_penj_hist = [
+                            'uuid'          => $this->uuid->v4(),
                             'tgl_simpan'    => date('Y-m-d H:i:s'),
                             'tgl_masuk'     => date('Y-m-d H:i:s'),
                             'id_gudang'     => $sql_gudang->id,
@@ -1095,8 +1092,45 @@ class Pos extends CI_Controller {
                             'status'        => '4'
                         ];
                         
-                        # Masukkan ke tabel hist produk
-                        $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
+                        # Check if the product already exists in history for this transaction
+                        $existing_history = $this->db->where('id_penjualan', $last_id)
+                                                     ->where('id_produk', $sql_item->id)
+                                                     ->where('no_nota', $no_nota)
+                                                     ->where('kode', $sql_item->kode)
+                                                     ->where('produk', $sql_item->produk)
+                                                     ->where('id_pelanggan', $sess_medc['id_pelanggan'])
+                                                     ->where('id_gudang', $sql_gudang->id)
+                                                     ->get('tbl_m_produk_hist')
+                                                     ->num_rows();
+                        
+                        # Only insert if the product doesn't already exist in history for this transaction
+                        if ($existing_history == 0) {                                
+                            # Save to product history table
+                            $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
+                        } else {
+                            $this->db->trans_rollback();
+                            # Throw exception for duplicate entry attempt
+                            throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$last_id} with nota {$no_nota}");
+                        }
+
+                        # Check if the stock trace already exists for this item and transaction
+                        $existing_stock_trace = $this->db->where('id_medcheck', $last_id)
+                                                        ->where('id_medcheck_det', $last_id_det)
+                                                        ->where('id_gudang', $sql_gudang->id)
+                                                        ->where('id_item', $sql_item->id)
+                                                        ->get('tbl_trans_medcheck_stok')
+                                                        ->num_rows();
+                            
+                        # Only insert if the stock trace doesn't already exist
+                        if ($existing_stock_trace == 0) {
+                            # Save to product stock trace table
+                            $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
+                        } else {
+                            # Rollback transaction
+                            $this->db->trans_rollback();
+                            # Throw exception for duplicate entry attempt
+                            throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$last_id} with nota {$no_nota}");
+                        }
                     }
                     
                     # Setelah semua proses tersimpan, saat nya mengurangi stok
@@ -1109,6 +1143,11 @@ class Pos extends CI_Controller {
                             
                         # Hitung ulang secara live, stok saat ini dikurangi stok yang keluar
                         $stok_akhir         = $sql_gudang_stok->jml - $stok->jml;
+
+                        if($stok_akhir < 0){
+                            $this->db->trans_rollback();
+                            throw new Exception("Stok tidak mencukupi untuk item ".$sql_item->produk.". Stok tersedia: ".$sql_gudang_stok->jml);
+                        }
                         
                         # Kumpulkan informasi pengurangan stok disini
                         $data_stok = [
@@ -1170,11 +1209,11 @@ class Pos extends CI_Controller {
                     $this->db->where('id', $last_id)->update('tbl_trans_medcheck', $data_total);
     
                     # Complete transaction
-                    $this->db->trans_complete();
-                    
-                    # Check transaction status
                     if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
                         throw new Exception("Database transaction failed");
+                    } else {
+                        $this->db->trans_commit();
                     }
     
                     # Hapus session
@@ -1186,8 +1225,7 @@ class Pos extends CI_Controller {
                     // Release lock
                     $this->cache->delete($lock_key);
                     
-                    redirect(base_url('pos/trans_jual_list.php'));
-                    
+                    redirect(base_url('pos/trans_jual_list.php'));                    
                 } catch (Exception $e) {
                     // Rollback transaction
                     $this->db->trans_rollback();
