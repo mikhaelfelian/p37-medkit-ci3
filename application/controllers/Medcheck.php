@@ -4026,8 +4026,11 @@ class Medcheck extends CI_Controller {
                 
                 /* Transaksi Database */
                     
-                    // Start transaction
-                    $this->db->trans_begin();
+                // Start transaction
+                $this->db->trans_begin();
+
+                // Set cache lock to prevent concurrent processing
+                $lock_key = 'medcheck_process_lock_' . $pasien . '_' . $dft_id . '_' . $this->ion_auth->user()->row()->id;
                     
                 try {
                     // Get form ID and check for double submission
@@ -4035,9 +4038,6 @@ class Medcheck extends CI_Controller {
                     if (check_form_submitted($form_id)) {
                         throw new Exception("Form sudah disubmit sebelumnya!");
                     }
-
-                    // Set cache lock to prevent concurrent processing
-                    $lock_key = 'medcheck_process_lock_' . $pasien . '_' . $dft_id . '_' . $uuid;
                     
                     // Check if cache driver is loaded properly
                     if (!isset($this->cache) || !isset($this->cache->file)) {
@@ -12618,6 +12618,7 @@ public function set_medcheck_lab_adm_save() {
             } else {
                 $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
                 $sql_item       = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
+                $sql_item_ref   = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref'); 
                 $sql_medc_ck    = $this->db->where('id', general::dekrip($id_item_det))->get('tbl_trans_medcheck_det');
                 $sql_radg_ck    = $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
                 $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
@@ -12663,10 +12664,81 @@ public function set_medcheck_lab_adm_save() {
                     'potongan'      => (float)$jml_pot,
                     'subtotal'      => (float)$subtotal,
                 ];
+                // Start database transaction
+                $this->db->trans_begin();
                 
                 try {
-                    // Start database transaction
-                    $this->db->trans_begin();
+                    // Check if the transaction status is 5 (completed)
+                    if ($sql_medc->status == '5') {
+
+                        // if item is stockable, will update stock
+                        if($sql_item->status_subt == '1'){
+                            $sql_gudang = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
+                            $sql_stok   = $this->db->where('id_produk', $sql_item->id)
+                                                   ->where('id_gudang', $sql_gudang->id)
+                                                   ->get('tbl_m_produk_stok')
+                                                   ->row();
+                            $sql_hist   = $this->db->where('id_penjualan', $sql_medc->id)
+                                                   ->where('id_produk', $sql_item->id)
+                                                   ->get('tbl_m_produk_hist')
+                                                   ->row();
+                            $stok_akhir = ((int)$sql_stok->jml + (int)$sql_hist->jml) - (int)$jml;
+                            $nominal    = (float)$harga;
+    
+                            // kick out if stock minus
+                            if ($stok_akhir < 0) {
+                                throw new Exception("Stok <b>{$sql_item->produk}</b> kurang, silahkan periksa stok barang!!");
+                            }
+    
+                            $data_item_stk = [
+                                'tgl_modif'  => date('Y-m-d H:i:s'),
+                                'jml'        => $stok_akhir,
+                            ];
+    
+                            $this->db->where('id', $sql_stok->id)->update('tbl_m_produk_stok', $data_item_stk);
+    
+                            // Prepare history data
+                            $data_hist = [
+                                'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                'tgl_modif'     => date('Y-m-d H:i:s'),
+                                'jml'           => (int)$jml,
+                                'nominal'       => $nominal,
+                            ];
+    
+                            $this->db->where('id', $sql_hist->id)->update('tbl_m_produk_hist', $data_hist);
+                        }
+
+                        // if item has reference, will update stock reference
+                        if($sql_item_ref->num_rows() > 0) {
+
+                            // loop reference item
+                            foreach($sql_item_ref->result() as $ref){
+                                $sql_gudang     = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
+                                $sql_ref_stk    = $this->db->where('id_produk', $ref->id_produk)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
+                                $sql_hist_ref   = $this->db->where('id_penjualan', $sql_medc->id)
+                                                           ->where('id_produk', $ref->id_produk)
+                                                           ->get('tbl_m_produk_hist')
+                                                           ->row();
+                                $stok_akhir_ref = ((int)$sql_ref_stk->jml + (int)$sql_hist_ref->jml) - (int)$jml;
+                                
+                                $data_ref_stk = [
+                                    'tgl_modif'  => date('Y-m-d H:i:s'),
+                                    'jml'        => $stok_akhir_ref,
+                                ];
+
+                                $this->db->where('id', $sql_ref_stk->id)->update('tbl_m_produk_stok', $data_ref_stk);
+
+                                // Prepare history data
+                                $data_hist_ref = [
+                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
+                                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                                    'jml'           => (int)$jml,
+                                ];
+
+                                $this->db->where('id', $sql_hist_ref->id)->update('tbl_m_produk_hist', $data_hist_ref);
+                            }
+                        }
+                    }
                     
                     if($sql_medc_ck->num_rows() > 0){
                         $last_id = $sql_medc_ck->row()->id;
@@ -12741,7 +12813,7 @@ public function set_medcheck_lab_adm_save() {
                     ];
                     
                     $this->db->where('id', $sql_medc->id)->update('tbl_trans_medcheck', $data_medc_tot);
-                    
+
                     // Check if the transaction was successful
                     if ($this->db->trans_status() === FALSE) {
                         // Something went wrong, rollback transaction
