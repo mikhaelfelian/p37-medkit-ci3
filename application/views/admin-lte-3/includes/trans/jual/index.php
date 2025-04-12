@@ -249,7 +249,7 @@
                                             ORDER BY 
                                                 total_sold DESC
                                             LIMIT 25
-                                        ")->result();
+                                        ")->result(); 
                                         
                                         $no = 1;
                                         if (!empty($best_sellers)) {
