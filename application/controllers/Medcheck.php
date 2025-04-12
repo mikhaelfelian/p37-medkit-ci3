@@ -12625,6 +12625,7 @@ public function set_medcheck_lab_adm_save() {
                 $harga          = general::format_angka_db($hrg);
                 $potongan       = general::format_angka_db($pot);
                 $potongan_poin  = general::format_angka_db($pot_poin);
+                $jml            = general::format_angka_db($jml);
                 $jml_pot        = $potongan * (int)$jml;
                 $jml_pot_poin   = $potongan_poin;
                 $dokter         = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
