@@ -1187,6 +1187,7 @@ class Gudang extends CI_Controller {
                 
                 # Catat log barang keluar ke tabel
                 $data_mut_hist = [
+                    'uuid'          => $this->uuid->v4(),
                     'tgl_simpan'    => $sql_mut_det->tgl_simpan,
                     'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($sql_mut_det->tgl_simpan),
                     'id_gudang'     => $sql_mut->id_gd_asal,
@@ -2254,6 +2255,7 @@ class Gudang extends CI_Controller {
                         ];
                         
                         $data_hist = [
+                            'uuid'        => $this->uuid->v4(),
                             'id_user'     => $sess_opn->id_user,
                             'id_produk'   => $sess_det->id_produk,
                             'id_gudang'   => $sql_gudang->id,
@@ -2607,6 +2609,7 @@ class Gudang extends CI_Controller {
     
                         # Catat log barang ke tabel history
                         $data_mut_hist = [
+                            'uuid'          => $this->uuid->v4(),
                             'tgl_simpan'    => date('Y-m-d H:i:s'),
                             'tgl_masuk'     => $this->tanggalan->tgl_indo_sys(date('Y-m-d')),
                             'id_gudang'     => $stock_data->id_gudang,
