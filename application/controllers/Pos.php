@@ -1052,7 +1052,7 @@ class Pos extends CI_Controller {
                             'potongan'      => $cart['options']['potongan'],
                             'subtotal'      => $cart['options']['subtotal'],
                             'status'        => (int)$sql_item->status
-                        ];
+                        ]; 
                         
                         # Masukkan ke tabel medcheck det
                         $this->db->insert('tbl_trans_medcheck_det', $data_cart);
