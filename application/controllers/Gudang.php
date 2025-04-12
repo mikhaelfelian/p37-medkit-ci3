@@ -2484,17 +2484,27 @@ class Gudang extends CI_Controller {
             /* -- Blok Filter -- */
             $hal     = $this->input->get('halaman');
             $gd      = $this->input->get('filter_gd');
+            $jml     = $this->input->get('filter_jml');
+            $ket     = $this->input->get('filter_ket');
+            $status  = $this->input->get('filter_status');
 
             $total_rows = $this->db
                                ->where('id_produk', $data['barang']->id)
                                ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                               ->like('jml', $jml, (!empty($jml) ? 'none' : ''))
+                               ->like('keterangan', $ket, (!empty($ket) ? 'none' : ''))
+                               ->like('status', $status, (!empty($status) ? 'none' : ''))
                                ->get('tbl_m_produk_hist')->num_rows();
             /* -- End Blok Filter -- */
             /* -- Form Error -- */
             $data['hasError']                = $this->session->flashdata('form_error');
 
             /* -- Blok Pagination -- */
-            $config['base_url']              = base_url('gudang/data_stok_tambah.php?id='.$id.(!empty($gd) ? '&filter_gd='.$gd : ''));
+            $config['base_url']              = base_url('gudang/data_stok_tambah.php?id='.$id.
+                                                (!empty($gd) ? '&filter_gd='.$gd : '').
+                                                (!empty($jml) ? '&filter_jml='.$jml : '').
+                                                (!empty($ket) ? '&filter_ket='.$ket : '').
+                                                (!empty($status) ? '&filter_status='.$status : ''));
             $config['total_rows']            = $total_rows;
             
             $config['query_string_segment']  = 'halaman';
@@ -2534,6 +2544,9 @@ class Gudang extends CI_Controller {
                                         ->select('tgl_simpan, tgl_masuk, id, id_user, id_gudang, id_pembelian, id_pembelian_det, id_penjualan, id_produk, no_nota, kode, jml, jml_satuan, nominal, satuan, keterangan, status')
                                         ->where('id_produk', $data['barang']->id)
                                         ->like('id_gudang', $gd, (!empty($gd) ? 'none' : ''))
+                                        ->like('jml', $jml, (!empty($jml) ? 'none' : ''))
+                                        ->like('keterangan', $ket, (!empty($ket) ? 'none' : ''))
+                                        ->like('status', $status, (!empty($status) ? 'none' : ''))
                                         ->limit($config['per_page'], $hal)
                                         ->order_by('tgl_simpan, status', 'asc')
                                         ->get('tbl_m_produk_hist')->result();

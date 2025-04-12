@@ -153,35 +153,53 @@
                                     </tr>
                                 </thead>
                                 <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE) { ?>
-                                    <?php echo form_open(base_url('gudang/set_cari_stok_tambah.php'), 'autocomplete="off"') ?>
+                                    <form method="get" action="<?php echo base_url('gudang/data_stok_tambah.php'); ?>" autocomplete="off">
+                                    <input type="hidden" name="id" value="<?php echo $this->input->get('id'); ?>">
                                     <?php echo form_hidden('id_produk', general::enkrip($barang->id)) ?>
                                 
                                     <tbody>
                                         <tr>
                                             <td>
                                                 <div
-                                                    class="form-group <?php echo (!empty($hasError['gd']) ? 'has-error' : '') ?>">
-                                                    <select name="gudang" class="form-control">
+                                                    class="form-group <?php echo (!empty($hasError['id_gudang']) ? 'has-error' : '') ?>">
+                                                    <select name="filter_gd" class="form-control rounded-0">
                                                         <option value="">- [Pilih] -</option>
                                                         <?php foreach ($gudang_ls as $gudang) { ?>
-                                                            <option value="<?php echo $gudang->id ?>">
+                                                            <option value="<?php echo $gudang->id ?>" <?php echo ($this->input->get('filter_gd') == $gudang->id ? 'selected' : ''); ?>>
                                                                 <?php echo $gudang->gudang ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td style="width: 100px;"></td>
+                                            <td style="width: 100px;">
+                                                <input type="number" name="filter_jml" class="form-control rounded-0" placeholder="Jumlah" value="<?php echo $this->input->get('filter_jml'); ?>">
+                                            </td>
                                             <td style="width: 100px;"></td>
                                             <?php if (akses::hakSA() == TRUE) { ?>
                                                 <td></td>
                                             <?php } ?>
-                                            <td><?php // echo form_input(array('id' => 'keterangan', 'name' => 'keterangan', 'class' => 'form-control')) ?>
+                                            <td>
+                                                <input type="text" name="filter_ket" class="form-control rounded-0" placeholder="Keterangan" value="<?php echo $this->input->get('filter_ket'); ?>">
                                             </td>
-                                            <td colspan="2"><button type="submit" class="btn btn-primary btn-flat"><i
-                                                        class="fa fa-search"></i> Cari</button></td>
+                                            <td>
+                                                <select name="filter_status" class="form-control rounded-0">
+                                                    <option value="">- [Semua] -</option>
+                                                    <option value="1" <?php echo ($this->input->get('filter_status') == '1' ? 'selected' : ''); ?>>Stok Masuk Pembelian</option>
+                                                    <option value="2" <?php echo ($this->input->get('filter_status') == '2' ? 'selected' : ''); ?>>Stok Masuk</option>
+                                                    <option value="3" <?php echo ($this->input->get('filter_status') == '3' ? 'selected' : ''); ?>>Stok Masuk Retur Jual</option>
+                                                    <option value="4" <?php echo ($this->input->get('filter_status') == '4' ? 'selected' : ''); ?>>Stok Keluar Penjualan</option>
+                                                    <option value="5" <?php echo ($this->input->get('filter_status') == '5' ? 'selected' : ''); ?>>Stok Keluar Retur Beli</option>
+                                                    <option value="6" <?php echo ($this->input->get('filter_status') == '6' ? 'selected' : ''); ?>>SO (Stock Opname)</option>
+                                                    <option value="7" <?php echo ($this->input->get('filter_status') == '7' ? 'selected' : ''); ?>>Stok Keluar</option>
+                                                    <option value="8" <?php echo ($this->input->get('filter_status') == '8' ? 'selected' : ''); ?>>Mutasi Antar Gudang</option>
+                                                    <option value="9" <?php echo ($this->input->get('filter_status') == '9' ? 'selected' : ''); ?>>Adjust stok</option>
+                                                </select>
+                                            </td>
+                                            <td><button type="submit" class="btn btn-primary btn-flat rounded-0"><i
+                                                        class="fa fa-search"></i></button></td>
                                         </tr>
                                     </tbody>
-                                    <?php echo form_close() ?>
+                                    </form>
                                 <?php } ?>
                                 <tbody>
                                     <?php
