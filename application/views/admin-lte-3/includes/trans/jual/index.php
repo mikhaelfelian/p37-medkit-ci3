@@ -204,6 +204,78 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Best Seller Products -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card rounded-0">
+                        <div class="card-header">
+                            <h3 class="card-title">25 Produk Terlaris</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Kode Produk</th>
+                                            <th>Nama Produk</th>
+                                            <th>Jumlah Terjual</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Get best seller products
+                                        $best_sellers = $this->db->query("
+                                            SELECT 
+                                                tmd.kode, 
+                                                tmd.item, 
+                                                SUM(tmd.jml) as total_sold
+                                            FROM 
+                                                tbl_trans_medcheck_det tmd
+                                            JOIN 
+                                                tbl_trans_medcheck tm ON tmd.id_medcheck = tm.id
+                                            WHERE 
+                                                tm.status_pos = '1' AND
+                                                tm.status_bayar = '1' AND
+                                                tm.status_hps = '0'
+                                            GROUP BY 
+                                                tmd.kode, tmd.item
+                                            ORDER BY 
+                                                total_sold DESC
+                                            LIMIT 25
+                                        ")->result();
+                                        
+                                        $no = 1;
+                                        if (!empty($best_sellers)) {
+                                            foreach ($best_sellers as $product) {
+                                        ?>
+                                            <tr>
+                                                <td><?php echo $no++; ?></td>
+                                                <td><?php echo $product->kode; ?></td>
+                                                <td><?php echo $product->item; ?></td>
+                                                <td class="text-right"><?php echo number_format($product->total_sold, 0, ',', '.'); ?></td>
+                                            </tr>
+                                        <?php 
+                                            }
+                                        } else {
+                                        ?>
+                                            <tr>
+                                                <td colspan="4" class="text-center">Tidak ada data produk terlaris</td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- /.row -->
         </div>
         <!-- /.container-fluid -->
