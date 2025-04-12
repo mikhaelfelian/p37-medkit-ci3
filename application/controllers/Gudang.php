@@ -15,17 +15,17 @@ class Gudang extends CI_Controller {
         $this->load->library('cart'); 
         // $this->load->library('fpdf');
         $this->load->library('Excel');
+        $this->load->model('Gudang_model');
     }
     
     public function index() {
         if (akses::aksesLogin() == TRUE) {
-            /* Blok pagination */
-            $data['cetak']      = '<button type="button" onclick="window.location.href = \''.base_url('transaksi/cetak_data_penj.php?'.(!empty($nt) ? 'filter_nota='.$nt : '').(!empty($tg) ? '&filter_tgl='.$tg : '').(!empty($tp) ? '&filter_tgl_tempo='.$tp : '').(!empty($cs) ? '&filter_cust='.$cs : '').(!empty($sl) ? '&filter_sales='.$sl : '').(!empty($jml) ? '&jml='.$jml : '')).'\'" class="btn btn-warning"><i class="fa fa-print"></i> Cetak</button>';
-            /* --End Blok pagination-- */
-            
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/gudang/sidebar_gudang';
             /* --- Sidebar Menu --- */
+            
+            /* Get minimum stock data */
+            $data['minimum_stock'] = $this->Gudang_model->get_minimum_stock();
             
             /* Load view tampilan */
             $this->load->view('admin-lte-3/1_atas', $data);
@@ -868,7 +868,7 @@ class Gudang extends CI_Controller {
 
             /* -- Blok Pagination -- */
             $jml_hal = $this->db->select('id, no_nota')
-                            ->where('status_nota', $sn)
+                            ->like('status_nota', $sn)
                             ->like('DATE(tgl_simpan)', $tg)
                             ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
                             ->get('tbl_trans_mutasi')->num_rows();
@@ -911,7 +911,7 @@ class Gudang extends CI_Controller {
 
             if(!empty($hal)){
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota, status_terima')
-                           ->where('status_nota', $sn)
+                           ->like('status_nota', $sn)
                            ->limit($config['per_page'],$hal)
                            ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)
@@ -919,7 +919,7 @@ class Gudang extends CI_Controller {
                            ->get('tbl_trans_mutasi')->result();
             }else{
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota, status_terima')
-                           ->where('status_nota', $sn)
+                           ->like('status_nota', $sn)
                            ->limit($config['per_page'])
                            ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)

@@ -506,6 +506,27 @@ class general extends CI_Model
         return $status;
     }
 
+    /**
+     * Get stock status badge
+     * 
+     * Returns HTML badge for stock status based on quantity
+     * 
+     * @param int $quantity Current stock quantity
+     * @return string HTML badge with appropriate color
+     */
+    public static function status_stok_badge($quantity)
+    {
+        if ($quantity <= 0) {
+            return '<span class="badge badge-danger">Habis</span>';
+        } else if ($quantity <= 5) {
+            return '<span class="badge badge-danger">Kritis</span>';
+        } else if ($quantity <= 10) {
+            return '<span class="badge badge-warning">Rendah</span>';
+        } else {
+            return '<span class="badge badge-success">Normal</span>';
+        }
+    }
+
     public static function tipe_bayar($status)
     {
         switch ($status) {
