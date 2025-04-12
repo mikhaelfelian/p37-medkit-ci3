@@ -1559,6 +1559,7 @@ class transaksi extends CI_Controller {
 
                         # History Pembelian
                         $data_brg_hist = [
+                            'uuid'              => $this->uuid->v4(),
                             'tgl_simpan'        => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')).' '.date('H:i:s'),
                             'tgl_masuk'         => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')),
                             'tgl_ed'            => $sql_item->tgl_ed ?? null,
@@ -2441,6 +2442,7 @@ class transaksi extends CI_Controller {
                     $last_id = $this->db->insert_id();
                     
                     $data_brg_hist = [
+                        'uuid'              => $this->uuid->v4(),
                         'tgl_simpan'        => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')).' '.date('H:i:s'),
                         'tgl_masuk'         => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')),
                         'tgl_ed'            => $sql_item->tgl_ed ?? '0000-00-00',
