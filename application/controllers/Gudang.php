@@ -870,7 +870,7 @@ class Gudang extends CI_Controller {
             $jml_hal = $this->db->select('id, no_nota')
                             ->where('status_nota', $sn)
                             ->like('DATE(tgl_simpan)', $tg)
-                            ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
+                            ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
                             ->get('tbl_trans_mutasi')->num_rows();
             
             $config['base_url']              = base_url('gudang/data_mutasi.php?filter_tgl='.$tg.'&filter_status='.$sn);
@@ -913,7 +913,7 @@ class Gudang extends CI_Controller {
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'],$hal)
-                                            ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
+                           ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();
@@ -921,7 +921,7 @@ class Gudang extends CI_Controller {
                    $data['sql_mut'] = $this->db->select('id, no_nota, DATE(tgl_simpan) as tgl_simpan, DATE(tgl_keluar) as tgl_keluar, id_user, keterangan, id_gd_asal, id_gd_tujuan, tipe, status_nota')
                            ->where('status_nota', $sn)
                            ->limit($config['per_page'])
-                                            ->like('id_user', ($id_grup->name == 'farmasi' ? $id_user : ''), ($id_grup->name == 'farmasi' ? 'none' : ''))
+                           ->like('id_user', ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? $id_user : ''), ($id_grup->name == 'farmasi' || $id_grup->name == 'perawat' ? 'none' : ''))
                            ->like('DATE(tgl_simpan)', $tg)
                            ->order_by('id','desc')
                            ->get('tbl_trans_mutasi')->result();

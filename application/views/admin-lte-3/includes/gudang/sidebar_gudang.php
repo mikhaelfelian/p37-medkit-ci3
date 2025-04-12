@@ -1,4 +1,4 @@
-<?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakGudang() == TRUE) { ?>
+<?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakOwner2() == TRUE or akses::hakAdminM() == TRUE or akses::hakAdmin() == TRUE or akses::hakGudang() == TRUE) { ?>
     <!-- <li class="nav-header">DATA PENERIMAAN</li>
     <li class="nav-item">
         <a href="<?php // echo base_url('gudang/trans_beli_list.php') ?>" class="nav-link">
@@ -96,6 +96,31 @@
             <i class="nav-icon fas fa-paper-plane"></i>
             <p>
                 Data Permintaan (pend)
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('gudang/data_mutasi.php?filter_status=2') ?>" class="nav-link">
+            <i class="nav-icon fas fa-history"></i>
+            <p>
+                Riwayat Permintaan
+            </p>
+        </a>
+    </li>
+<?php } elseif (akses::hakPerawat() == TRUE) { ?>
+    <li class="nav-item">
+        <a href="<?php echo base_url('gudang/trans_mutasi.php') ?>" class="nav-link">
+            <i class="nav-icon fas fa-truck"></i>
+            <p>
+                Permintaan Stok
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('gudang/data_mutasi.php?filter_status=0') ?>" class="nav-link">
+            <i class="nav-icon fas fa-inbox"></i>
+            <p>
+                Data Permintaan (draft)
             </p>
         </a>
     </li>

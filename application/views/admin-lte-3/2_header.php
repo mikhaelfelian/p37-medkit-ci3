@@ -25,10 +25,17 @@
                     <li class="nav-item d-none d-sm-inline-block">
                         <a href="<?php echo base_url('laporan/data_periksa.php') ?>" class="nav-link">Follow Up Pasien</a>
                     </li>
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <a href="<?php echo base_url('laporan/index.php') ?>" class="nav-link">Laporan</a>
-                    </li>
+                    <?php if (akses::hakPerawat() == TRUE) { ?>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a href="<?php echo base_url('gudang/index.php') ?>" class="nav-link">Gudang</a>
+                        </li>
+                    <?php } ?>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a href="<?php echo base_url('laporan/index.php') ?>" class="nav-link">Laporan</a>
+                        </li>
                 <?php } ?>
+
+
                     
                 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE) { ?>
                     <li class="nav-item d-none d-sm-inline-block">

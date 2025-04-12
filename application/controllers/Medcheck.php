@@ -12865,8 +12865,7 @@ public function set_medcheck_lab_adm_save() {
                     // Delete the lock regardless of outcome
                     $this->cache->file->delete($lock_key);
                     
-                    redirect(base_url('medcheck/invoice/bayar.php?id='.$id));
-                    
+                    redirect(base_url('medcheck/invoice/bayar.php?id='.$id));                    
                 } catch (Exception $e) {
                     // Rollback transaction on exception
                     $this->db->trans_rollback();
