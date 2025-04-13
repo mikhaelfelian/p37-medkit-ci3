@@ -16475,7 +16475,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->subjudul  = $judul2;
             
             // Set document information
-            $pdf->SetTitle('Laboratory Result - ' . $sql_pasien->nama_pgl);
+            $pdf->SetTitle('Hasil Pemeriksaan Lab - ' . $sql_pasien->nama_pgl);
             $pdf->SetMargins(1, 5, 1);
             
             // Enable auto page break
@@ -16544,7 +16544,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Get HTML content from view
             ob_start();
-            $this->load->view('admin-lte-3/includes/medcheck/med_trans_periksa_pdf', $data);
+            $this->load->view('admin-lte-3/includes/medcheck/pdf/med_trans_lab_pdf', $data);
             $html = ob_get_contents();
             ob_end_clean();
 
