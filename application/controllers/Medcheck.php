@@ -5532,7 +5532,7 @@ class Medcheck extends CI_Controller {
                                     # Save to Remuneration table
                                     $this->db->insert('tbl_trans_medcheck_remun', $data_remun);
                                 }
-                            }
+                            } 
                             
                             # If appreciation is not empty, then save it
                             # Appreciation for calculating income from lab
