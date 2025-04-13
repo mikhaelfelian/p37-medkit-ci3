@@ -63,7 +63,7 @@ This version includes significant changes from the original CodeIgniter 2 codeba
 - Alfian Hari Susatya - https://github.com/alfianharisusatya
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+<small>This project is licensed under the MIT License - see the LICENSE file for details.</small>
 -----------------------------------------------------------------------
 # 🚀 Deployment Guide – Esensia SIMRS
 
