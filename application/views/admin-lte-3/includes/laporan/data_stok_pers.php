@@ -163,8 +163,8 @@
                                             $sm             = $sm + (($penj->status == '1' OR $penj->status == '6') ? $penj->jml : 0);
                                             $sk             = $sk + (($penj->status == '4') ? $penj->jml : 0);
                                             
-                                            $msk            = ($penj->status == '1' ? $sql_beli_det->subtotal : '');
-                                            $klr            = ($penj->status == '4' ? $penj->nominal : '');
+                                            $msk            = ($penj->status == '1' ? (float)$sql_beli_det->subtotal : 0);
+                                            $klr            = ($penj->status == '4' ? (float)$penj->nominal : 0);
                                             
                                             $st_sisa = ($st_awal + $msk) - $klr;
                                             ?>
