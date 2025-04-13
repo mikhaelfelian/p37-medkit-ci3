@@ -5264,10 +5264,10 @@ class Medcheck extends CI_Controller {
                                 $jml_akhir_stk   = $sql_gudang_stok->jml - $medc_det->jml;
 
                                 # Check if stock is sufficient
-                                if ($jml_akhir_stk < 0) {
-                                    $this->db->trans_rollback();
-                                    throw new Exception("Stok tidak mencukupi untuk item ".$medc_det->item.". Stok tersedia: ".$sql_gudang_stok->jml);
-                                }
+                                // if ($jml_akhir_stk < 0) {
+                                //     $this->db->trans_rollback();
+                                //     throw new Exception("Stok tidak mencukupi untuk item ".$medc_det->item.". Stok tersedia: ".$sql_gudang_stok->jml);
+                                // }
                                                     
                                 $data_item = [
                                     'tgl_modif'  => date('Y-m-d H:i:s'),
