@@ -18,7 +18,7 @@ class Gudang_model extends CI_Model {
      * @param int $limit Maximum number of records to return
      * @return array Array of products with low stock
      */
-    public function get_minimum_stock($limit = 100) {
+    public function get_minimum_stock($limit = 250) {
         // Only get from active warehouse
         $sg = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
 
