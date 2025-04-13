@@ -5223,7 +5223,7 @@ class Medcheck extends CI_Controller {
                                                              ->get('tbl_m_produk_hist')
                                                              ->num_rows();
                                         
-                                        # Only insert if the product doesn't already exist in history for this transaction
+                                        // # Only insert if the product doesn't already exist in history for this transaction
                                         // if ($existing_history == 0) {                                
                                             # Save to product history table
                                             $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rc);
@@ -5232,26 +5232,25 @@ class Medcheck extends CI_Controller {
                                         //     # Throw exception for duplicate entry attempt
                                         //     throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
                                         // }
-
                                         
                                         
-                                        # Check if the stock trace already exists for this item and transaction
-                                        $existing_stock_trace = $this->db->where('id_medcheck', $sql_medc->id)
-                                                                            ->where('id_medcheck_det', $rc->id)
-                                                                            ->where('id_gudang', $sql_gudang->id)
-                                                                            ->where('id_item', $sql_item_rc->id)
-                                                                            ->get('tbl_trans_medcheck_stok')
-                                                                            ->num_rows();
+                                        // # Check if the stock trace already exists for this item and transaction
+                                        // $existing_stock_trace = $this->db->where('id_medcheck', $sql_medc->id)
+                                        //                                     ->where('id_medcheck_det', $rc->id)
+                                        //                                     ->where('id_gudang', $sql_gudang->id)
+                                        //                                     ->where('id_item', $sql_item_rc->id)
+                                        //                                     ->get('tbl_trans_medcheck_stok')
+                                        //                                     ->num_rows();
                                             
-                                        # Only insert if the stock trace doesn't already exist
+                                        // # Only insert if the stock trace doesn't already exist
                                         // if ($existing_stock_trace == 0) {
                                             # Save to product stock trace table
                                             $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rc);
                                         // } else {
-                                            # Rollback transaction
-                                            // $this->db->trans_rollback();
-                                            # Throw exception for duplicate entry attempt
-                                            // throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                        //     # Rollback transaction
+                                        //     $this->db->trans_rollback();
+                                        //     # Throw exception for duplicate entry attempt
+                                        //     throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
                                         // }
                                     }
                                 }
@@ -5326,13 +5325,13 @@ class Medcheck extends CI_Controller {
                                                              ->get('tbl_m_produk_hist')
                                                              ->num_rows();
                                 
-                                # Only insert if the product doesn't already exist in history for this transaction
+                                // # Only insert if the product doesn't already exist in history for this transaction
                                 // if ($existing_history == 0) {                                
                                     # Save to product history table
                                     $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
                                 // } else {
-                                    $this->db->trans_rollback();
-                                    # Throw exception for duplicate entry attempt
+                                //     $this->db->trans_rollback();
+                                //     # Throw exception for duplicate entry attempt
                                 //     throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$sql_medc->id} with nota {$no_nota}");
                                 // }                                
                                 
@@ -5344,14 +5343,14 @@ class Medcheck extends CI_Controller {
                                                                  ->get('tbl_trans_medcheck_stok')
                                                                  ->num_rows();
                                     
-                                # Only insert if the stock trace doesn't already exist
+                                // # Only insert if the stock trace doesn't already exist
                                 // if ($existing_stock_trace == 0) {
                                     # Save to product stock trace table
                                     $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
                                 // } else {
-                                    # Rollback transaction
-                                    // $this->db->trans_rollback();
-                                    # Throw exception for duplicate entry attempt
+                                //     # Rollback transaction
+                                //     $this->db->trans_rollback();
+                                //     # Throw exception for duplicate entry attempt
                                 //     throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$sql_medc->id} with nota {$no_nota}");
                                 // }
                             }                      
@@ -5459,7 +5458,7 @@ class Medcheck extends CI_Controller {
                                         
                                         // # Only insert if the product doesn't already exist in history for this transaction
                                         // if ($existing_history == 0) {                                
-                                        //     # Save to product history table
+                                            # Save to product history table
                                             $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rf);
                                         // } else {
                                         //     $this->db->trans_rollback();
@@ -5474,7 +5473,7 @@ class Medcheck extends CI_Controller {
                                                                             ->get('tbl_trans_medcheck_stok')
                                                                             ->num_rows();
                                             
-                                        # Only insert if the stock trace doesn't already exist
+                                        // # Only insert if the stock trace doesn't already exist
                                         // if ($existing_stock_trace == 0) {
                                             # Save to product stock trace table
                                             $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rf);
@@ -9028,7 +9027,7 @@ public function set_medcheck_lab_adm_save() {
             }
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
