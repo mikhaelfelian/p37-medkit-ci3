@@ -5730,10 +5730,11 @@ class Medcheck extends CI_Controller {
                     'jml_gtotal'    => 0,
                     'status'        => '2',
                 ];
+
+                # Begin transaction
+                $this->db->trans_begin();
                 
                 try {
-                    # Begin transaction
-                    $this->db->trans_begin();
                 
                     # Update data nota dll
                     $this->db->where('id', general::dekrip($id))->update('tbl_trans_medcheck', $data);         
@@ -5875,6 +5876,7 @@ class Medcheck extends CI_Controller {
                         # Rollback transaction
                         $this->db->trans_rollback();
                         throw new Exception("Terjadi kesalahan dalam proses pembatalan transaksi");
+                        exit;
                     } else {
                         # Commit transaction
                         $this->db->trans_commit();
@@ -12751,6 +12753,7 @@ public function set_medcheck_lab_adm_save() {
                             // kick out if stock minus
                             if ($stok_akhir < 0) {
                                 throw new Exception("Stok <b>{$sql_item->produk}</b> kurang, silahkan periksa stok barang!!");
+                                exit;
                             }
     
                             $data_item_stk = [
@@ -12779,41 +12782,42 @@ public function set_medcheck_lab_adm_save() {
                             $this->db->where('id', $sql_medc_stok->id)->update('tbl_trans_medcheck_stok', $data_medc_stok);
                         }
 
-                        // if item has reference, will update stock reference
-                        if($sql_item_ref->num_rows() > 0) {
+                        // // if item has reference, will update stock reference
+                        // if($sql_item_ref->num_rows() > 0) {
 
-                            // loop reference item
-                            foreach($sql_item_ref->result() as $ref){
-                                $sql_gudang     = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
-                                $sql_ref_stk    = $this->db->where('id_produk', $ref->id_produk)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
-                                $sql_hist_ref   = $this->db->where('id_penjualan', $sql_medc->id)
-                                                           ->where('id_produk', $ref->id_produk_item)
-                                                           ->get('tbl_m_produk_hist')
-                                                           ->row();
-                                $jml_ref        = $ref->jml * $jml;
-                                $stok_akhir_ref = ((int)$sql_ref_stk->jml + (int)$sql_hist_ref->jml) - $jml_ref;
+                        //     // loop reference item
+                        //     foreach($sql_item_ref->result() as $ref){
+                        //         $sql_gudang     = $this->db->where('status', '1')->get('tbl_m_gudang')->row();
+                        //         $sql_ref_stk    = $this->db->where('id_produk', $ref->id_produk)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
+                        //         $sql_hist_ref   = $this->db->where('id_penjualan', $sql_medc->id)
+                        //                                    ->where('id_produk', $ref->id_produk_item)
+                        //                                    ->get('tbl_m_produk_hist')
+                        //                                    ->row();
+                        //         $jml_ref        = $ref->jml * $jml;
+                        //         $stok_akhir_ref = ((int)$sql_ref_stk->jml + (int)$sql_hist_ref->jml) - $jml_ref;
 
-                                if($stok_akhir_ref < 0){
-                                    throw new Exception("Stok <b>{$ref->id_produk_item}</b> kurang, silahkan periksa stok barang!!");
-                                }
+                        //         if($stok_akhir_ref < 0){
+                        //             throw new Exception("Stok <b>{$ref->id_produk_item}</b> kurang, silahkan periksa stok barang!!");
+                        //             exit;
+                        //         }
                                 
-                                $data_ref_stk = [
-                                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                                    'jml'        => $stok_akhir_ref,
-                                ];
+                        //         $data_ref_stk = [
+                        //             'tgl_modif'  => date('Y-m-d H:i:s'),
+                        //             'jml'        => $stok_akhir_ref,
+                        //         ];
 
-                                $this->db->where('id', $sql_ref_stk->id)->update('tbl_m_produk_stok', $data_ref_stk);
+                        //         $this->db->where('id', $sql_ref_stk->id)->update('tbl_m_produk_stok', $data_ref_stk);
 
-                                // Prepare history data
-                                $data_hist_ref = [
-                                    'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                    'tgl_modif'     => date('Y-m-d H:i:s'),
-                                    'jml'           => $jml_ref,
-                                ];
+                        //         // Prepare history data
+                        //         $data_hist_ref = [
+                        //             'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        //             'tgl_modif'     => date('Y-m-d H:i:s'),
+                        //             'jml'           => $jml_ref,
+                        //         ];
 
-                                $this->db->where('id', $sql_hist_ref->id)->update('tbl_m_produk_hist', $data_hist_ref);
-                            }
-                        }
+                        //         $this->db->where('id', $sql_hist_ref->id)->update('tbl_m_produk_hist', $data_hist_ref);
+                        //     }
+                        // }
                     }
                     
                     if($sql_medc_ck->num_rows() > 0){
