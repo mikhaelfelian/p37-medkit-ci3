@@ -3,7 +3,7 @@ name: Deploy to Development
 on:
   push:
     branches:
-      - main  # Adjust to your main branch
+      - main  # Sesuaikan dengan branch utama
 
 jobs:
   deploy:
@@ -25,14 +25,28 @@ jobs:
           git pull origin main &&
           exit"
 
-    - name: Notify Deployment Completion to GitHub
+    - name: Create an Issue for Notification
+      uses: peter-evans/create-issue@v3
+      with:
+        title: 'Notifikasi Deployment'
+        body: |
+          🚀 **Deployment Selesai di Development**:
+          - **Branch**: `main`
+          - **Commit Terakhir**: `${{ github.sha }}`
+          - **Link**: [Lihat di Development](http://dev.esensia.co.id)
+          
+          ✅ **Deployment ke server development selesai**. Silakan cek hasilnya.
+
+        labels: "deployment"
+
+    - name: Notify Contributors via Issue Comment
       uses: peter-evans/create-or-update-comment@v3
       with:
-        issue-number: 1  # Replace with the number of the issue created for notifications
+        issue-number: 1  # Ganti dengan nomor issue tempat komentar akan diposting
         body: |
-          🚀 **Deployment Completed to Development**:
+          🚀 **Deployment Selesai di Development**:
           - **Branch**: `main`
-          - **Last Commit**: `${{ github.sha }}`
-          - **Link**: [View on Development](http://dev.esensia.co.id)
+          - **Commit Terakhir**: `${{ github.sha }}`
+          - **Link**: [Lihat di Development](http://dev.esensia.co.id)
           
-          ✅ **Deployment to the development server is complete**. Please check the result.
+          ✅ **Deployment ke server development selesai**. Silakan cek hasilnya.
