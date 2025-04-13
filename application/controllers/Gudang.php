@@ -2640,7 +2640,7 @@ class Gudang extends CI_Controller {
                         ];
                         
                         # Simpan riwayat stok
-                        $this->db->insert('tbl_m_produk_hist', $data_mut_hist);
+                        // $this->db->insert('tbl_m_produk_hist', $data_mut_hist);
                     }
                     
                     $sql_stk_gd = $this->db->select_sum('jml')->where('id_produk', general::dekrip($id))->get('tbl_m_produk_stok')->row();
