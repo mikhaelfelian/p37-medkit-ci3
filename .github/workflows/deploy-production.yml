@@ -29,7 +29,7 @@ jobs:
 
       - name: Deploy Code to Production cPanel
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.DEPLOY_PATH_PROD }}
 
             echo "📁 Backup database.php"
@@ -56,6 +56,15 @@ jobs:
               echo "❌ Invalid mode input: ${{ github.event.inputs.mode }}"
               exit 1
             fi
+
+            echo ""
+            echo "📝 ===== COMMIT TERAKHIR ====="
+            echo "🔹 Commit SHA  : \$(git log -1 --pretty=format:'%H')"
+            echo "👤 Author      : \$(git log -1 --pretty=format:'%an <%ae>')"
+            echo "🕒 Tanggal     : \$(git log -1 --pretty=format:'%cd' --date=local)"
+            echo "💬 Message     : \$(git log -1 --pretty=format:'%s')"
+            echo "=============================="
+            echo ""
 
             echo "♻️ Restore database.php"
             mv /tmp/database.php database/database.php
