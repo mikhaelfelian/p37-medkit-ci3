@@ -3,7 +3,7 @@ name: Deploy to Development
 on:
   push:
     branches:
-      - main  # Sesuaikan dengan branch utama
+      - main  # Adjust to your main branch
 
 jobs:
   deploy:
@@ -24,3 +24,15 @@ jobs:
           cd ${{ secrets.DEPLOY_PATH }} &&
           git pull origin main &&
           exit"
+
+    - name: Notify Deployment Completion to GitHub
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        issue-number: 1  # Replace with the number of the issue created for notifications
+        body: |
+          🚀 **Deployment Completed to Development**:
+          - **Branch**: `main`
+          - **Last Commit**: `${{ github.sha }}`
+          - **Link**: [View on Development](http://dev.esensia.co.id)
+          
+          ✅ **Deployment to the development server is complete**. Please check the result.
