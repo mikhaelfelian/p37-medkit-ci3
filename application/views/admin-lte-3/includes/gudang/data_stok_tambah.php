@@ -495,6 +495,19 @@
                                         if ($stok_keluar) {
                                             $tot_sk = $stok_keluar->total;
                                         }
+
+                                        // Calculate stock transfers (status=8) after reset point
+                                        $stok_transfer = $this->db->select('SUM(jml * jml_satuan) as total')
+                                            ->where('id_produk', $barang->id)
+                                            ->where('status', 8)
+                                            ->where('tgl_simpan >', $reset_point->tgl_simpan)
+                                            ->get('tbl_m_produk_hist')
+                                            ->row();
+                                        
+                                        $tot_transfer = 0;
+                                        if ($stok_transfer && $stok_transfer->total) {
+                                            $tot_transfer = $stok_transfer->total;
+                                        }
                                     } else {
                                         // If no reset point, count all stock out
                                         $stok_keluar = $this->db->select('SUM(jml * jml_satuan) as total')
@@ -504,6 +517,18 @@
                                             ->row();
                                         if ($stok_keluar) {
                                             $tot_sk = $stok_keluar->total;
+                                        }
+
+                                        // Calculate stock transfers (status=8) if no reset point
+                                        $stok_transfer = $this->db->select('SUM(jml * jml_satuan) as total')
+                                            ->where('id_produk', $barang->id)
+                                            ->where('status', 8)
+                                            ->get('tbl_m_produk_hist')
+                                            ->row();
+                                        
+                                        $tot_transfer = 0;
+                                        if ($stok_transfer && $stok_transfer->total) {
+                                            $tot_transfer = $stok_transfer->total;
                                         }
                                     }
 
@@ -528,13 +553,19 @@
                                             $tot_so = $stok_opname->total;
                                         }
                                         ?>
-                                        <tr>
+                                        <!-- <tr>
                                             <th colspan="4" class="text-right">Total Stok Opname</th>
                                             <td class="text-right"><?php echo number_format($tot_so, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
-                                        </tr><tr>
+                                        </tr> -->
+                                        <tr>
                                             <th colspan="4" class="text-right">Total Stok Masuk</th>
                                             <td class="text-right"><?php echo number_format($tot_sm, 0) ?></td>
+                                            <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right">Total Transfer Stok</td>
+                                            <td class="text-right"><?php echo number_format($tot_transfer, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
                                         <tr>
