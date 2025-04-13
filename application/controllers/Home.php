@@ -196,7 +196,7 @@ class home extends CI_Controller {
     }
 
     /**
-     * TEST for update date and time display
+     * for update date and time display
      * Function to update date and time display
      * 
      * This function is used to update the date and time display in the UI
