@@ -5249,10 +5249,10 @@ class Medcheck extends CI_Controller {
                                             $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rc);
                                         // } else {
                                             # Rollback transaction
-                                            $this->db->trans_rollback();
+                                            // $this->db->trans_rollback();
                                             # Throw exception for duplicate entry attempt
-                                            throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
-                                        }
+                                            // throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                        // }
                                     }
                                 }
                             }                      
