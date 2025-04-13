@@ -32,6 +32,15 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -d '{
-                "body": "🚀 **Deployment Completed to Development**:\n- **Branch**: main\n- **Last Commit**: '${{ github.sha }}'\n- **Link**: [View on Development](http://dev.esensia.co.id)\n\n✅ **Deployment to development server is complete. Please check the result.**"
+                "body": "🚀 **Deployment Completed to Development Server**:\n- **Branch**: main\n- **Last Commit**: '${{ github.sha }}'\n- **Link**: [View on Development](http://dev.esensia.co.id)\n\n✅ **Deployment to development server is complete. Please check the result.**"
               }' \
           https://api.github.com/repos/${{ github.repository }}/issues/1/comments
+
+        # Menambahkan assignee ke issue
+        curl -X PATCH \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -d '{
+                "assignees": ["alfianharisusatya"]
+              }' \
+          https://api.github.com/repos/${{ github.repository }}/issues/1
