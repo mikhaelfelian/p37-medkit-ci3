@@ -14292,7 +14292,7 @@ public function set_medcheck_lab_adm_save() {
                             'item_name'         => !empty($sql_nilai->item_name) ? $sql_nilai->item_name : null,
                             'item_value'        => !empty($nilai[$key]) ? $nilai[$key] : null,
                             'item_satuan'       => !empty($satuan[$key]) ? $satuan[$key] : null,
-                            'item_hasil'        => !empty($hasil[$key]) ? $hasil[$key] : null,
+                            'item_hasil'        => !empty($hasil[$key]) ? $hasil[$key] : '0',
                             'status'            => !empty($sql_nilai->status) ? $sql_nilai->status : null,
                             'status_hsl_lab'    => !empty($status_hsl[$key]) ? $status_hsl[$key] : '0',
                             'status_hsl_wrn'    => !empty($status_wrn[$key]) ? $status_wrn[$key] : '0',
