@@ -5164,6 +5164,7 @@ class Medcheck extends CI_Controller {
                                         if ($jml_akhir_rc_stk < 0) {
                                             $this->db->trans_rollback();
                                             throw new Exception("Stok tidak mencukupi untuk item racikan ".$sql_item_rc->produk.". Stok tersedia: ".$sql_gudang_stok_rc->jml);
+                                            exit;
                                         }
                                         
                                         $data_item_rc = [
@@ -5267,6 +5268,7 @@ class Medcheck extends CI_Controller {
                                 if ($jml_akhir_stk < 0) {
                                     $this->db->trans_rollback();
                                     throw new Exception("Stok tidak mencukupi untuk item ".$medc_det->item.". Stok tersedia: ".$sql_gudang_stok->jml);
+                                    exit;
                                 }
                                                     
                                 $data_item = [
@@ -5376,6 +5378,7 @@ class Medcheck extends CI_Controller {
                                             
                                             // Throw exception with error message
                                             throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
+                                            exit;
                                         }
 
                                         $data_item_reff = [
@@ -5601,6 +5604,7 @@ class Medcheck extends CI_Controller {
                             if ($stok_akhir < 0) {
                                 $this->db->trans_rollback();
                                 throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
+                                exit;
                             }
                             
                             # Collect stock reduction information here
@@ -5636,10 +5640,11 @@ class Medcheck extends CI_Controller {
                             # Save final global stock to main item master table
                             $this->db->where('id', $stok->id_item)->update('tbl_m_produk', $data_stok_glob);
                         }
-
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil di proses!");');
                     }else{
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi sudah pernah di proses!");');
+                        // Rollback the transaction since the transaction has already been processed
+                        $this->db->trans_rollback();
+                        throw new Exception('Transaksi sudah pernah di proses !!');
                     }
                     
                     # Poin Pasien
@@ -9076,6 +9081,26 @@ public function set_medcheck_lab_adm_save() {
             $hml_periksa    = $this->input->post('hml_periksa');
             $hml_tgl_awal   = $this->input->post('hml_tgl_awal');
             $hml_tgl_akhir  = $this->input->post('hml_tgl_akhir');
+            $trb_tipe_flt   = $this->input->post('trb_tipe_terbang');
+            $trb_periksa    = $this->input->post('trb_periksa');
+            $trb_tgl_awal   = $this->input->post('trb_tgl_awal');
+            $trb_tgl_akhir  = $this->input->post('trb_tgl_akhir');
+            $tht_tgl        = $this->input->post('tht_tgl');
+            $tht_lt_kanan   = $this->input->post('tht_lt_kanan');
+            $tht_lt_kiri        = $this->input->post('tht_lt_kiri');
+            $tht_membran_kanan = $this->input->post('tht_membran_kanan');
+            $tht_membran_kiri  = $this->input->post('tht_membran_kiri');
+            $tht_mukosa_kanan  = $this->input->post('tht_mukosa_kanan');
+            $tht_mukosa_kiri   = $this->input->post('tht_mukosa_kiri');
+            $tht_konka_kanan   = $this->input->post('tht_konka_kanan');
+            $tht_konka_kiri    = $this->input->post('tht_konka_kiri');
+            $tht_timpa_kanan   = $this->input->post('tht_timpa_kanan');
+            $tht_timpa_kiri    = $this->input->post('tht_timpa_kiri');
+            $tht_tonsil_tg     = $this->input->post('tht_tonsil_tg');
+            $tht_mukosa_tg     = $this->input->post('tht_mukosa_tg');
+            $tht_faring_tg     = $this->input->post('tht_faring_tg');
+            $tht_kesimpulan    = $this->input->post('tht_kesimpulan');
+            $tht_audio         = $this->input->post('tht_audio');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
@@ -9155,8 +9180,8 @@ public function set_medcheck_lab_adm_save() {
                 // Prevent division by zero by ensuring both dates are valid
                 if ($tgl_awal && $tgl_akhir) {
                     $diff       = date_diff($tgl_awal, $tgl_akhir);
-                    $hari       = $diff->format("%d");
-                    $jml_hari   = ($tgl_awal == $tgl_akhir ? '1' : ($hari > 1 ? $hari + 1 : '2'));
+                    $hari       = $diff->format("%a"); // Use %a for total days difference instead of %d
+                    $jml_hari   = ($tgl_awal == $tgl_akhir ? '1' : ($hari + 1)); // Simplify logic and always add 1 to include both start and end dates
                 } else {
                     // Default value if dates are invalid
                     $jml_hari   = '1';
@@ -9168,7 +9193,7 @@ public function set_medcheck_lab_adm_save() {
                     'tgl_keluar'        => (!empty($tgl_keluar) ? $this->tanggalan->tgl_indo_sys($tgl_keluar) : '0000-00-00'),
                     'tgl_kontrol'       => (!empty($tgl_kontrol) ? $this->tanggalan->tgl_indo_sys($tgl_kontrol) : '0000-00-00'),
                     'id_medcheck'       => $sql_medc->id,
-                    'id_dokter'         => $sql_medc->id_dokter,
+                    'id_dokter'         => (!empty($dokter) ? $dokter : $sql_medc->id_dokter),
                     'id_pasien'         => $sql_medc->id_pasien,
                     'id_user'           => $this->ion_auth->user()->row()->id,
                     'no_surat'          => $no_surat,
@@ -9196,6 +9221,25 @@ public function set_medcheck_lab_adm_save() {
                     'hml_tipe_terbang'  => (!empty($hml_tipe_flt) ? $hml_tipe_flt : '0'),
                     'hml_tgl_awal'      => (!empty($hml_tgl_awal) ? $this->tanggalan->tgl_indo_sys($hml_tgl_awal) : '0000-00-00'),
                     'hml_tgl_akhir'     => (!empty($hml_tgl_akhir) ? $this->tanggalan->tgl_indo_sys($hml_tgl_akhir) : '0000-00-00'),
+                    'trb_periksa'       => (!empty($trb_periksa) ? $trb_periksa : '0'),
+                    'trb_tipe_terbang'  => (!empty($trb_tipe_flt) ? $trb_tipe_flt : '0'),
+                    'trb_tgl_awal'      => (!empty($trb_tgl_awal) ? $this->tanggalan->tgl_indo_sys($trb_tgl_awal) : '0000-00-00'),
+                    'trb_tgl_akhir'     => (!empty($trb_tgl_akhir) ? $this->tanggalan->tgl_indo_sys($trb_tgl_akhir) : '0000-00-00'),
+                    'tht_lt_kanan'      => $tht_lt_kanan,
+                    'tht_lt_kiri'       => $tht_lt_kiri,
+                    'tht_membran_kanan'     => $tht_membran_kanan,
+                    'tht_membran_kiri'      => $tht_membran_kiri,
+                    'tht_mukosa_kanan'      => $tht_mukosa_kanan,
+                    'tht_mukosa_kiri'       => $tht_mukosa_kiri,
+                    'tht_konka_kanan'       => $tht_konka_kanan,
+                    'tht_konka_kiri'        => $tht_konka_kiri,
+                    'tht_timpa_kanan'       => $tht_timpa_kanan,
+                    'tht_timpa_kiri'        => $tht_timpa_kiri,
+                    'tht_tonsil_tg'         => $tht_tonsil_tg,
+                    'tht_mukosa_tg'         => $tht_mukosa_tg,
+                    'tht_faring_tg'         => $tht_faring_tg,
+                    'tht_kesimpulan'        => $tht_kesimpulan,
+                    'tht_audio'             => $tht_audio,
                     'tb'                => (float)general::format_angka_db($tb),
                     'td'                => $td,
                     'bb'                => (float)general::format_angka_db($bb),
