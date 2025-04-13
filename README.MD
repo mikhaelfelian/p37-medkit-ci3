@@ -127,9 +127,9 @@ Example: `e6a1b1d`
 
 ## 👤 CI/CD Users
 
-| Name            | Role                    |
-|-----------------|-------------------------|
-| Mikhael Felian  | Main Programmer         |
-| Alfian Hari     | Contributor / QA Tester |
+| Name            | Role                    | Contact                                |
+|-----------------|-------------------------|----------------------------------------|
+| Mikhael Felian  | Main Programmer         | mikhaelfelian@gmail.com                |
+| Alfian Hari     | Contributor / QA Tester | https://github.com/alfianharisusatya   |
 
 
