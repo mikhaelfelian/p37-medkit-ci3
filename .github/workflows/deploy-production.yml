@@ -22,6 +22,16 @@ jobs:
         with:
           ref: main
 
+      - name: Get Last Commit Info
+        id: commitinfo
+        run: |
+          echo "🔍 Menampilkan informasi commit terakhir:"
+          COMMIT_MSG=$(git log -1 --pretty=format:"🔹 Commit SHA  : %H%n👤 Author      : %an <%ae>%n🕒 Tanggal     : %cd%n💬 Message     : %s" --date=local)
+          echo "$COMMIT_MSG"
+          echo "commit_message<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Setup SSH Connection
         uses: webfactory/ssh-agent@v0.5.3
         with:
@@ -29,7 +39,7 @@ jobs:
 
       - name: Deploy Code to Production cPanel
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             cd ${{ secrets.DEPLOY_PATH_PROD }}
 
             echo "📁 Backup database.php"
@@ -57,17 +67,13 @@ jobs:
               exit 1
             fi
 
-            echo ""
-            echo "📝 ===== COMMIT TERAKHIR ====="
-            echo "🔹 Commit SHA  : \$(git log -1 --pretty=format:'%H')"
-            echo "👤 Author      : \$(git log -1 --pretty=format:'%an <%ae>')"
-            echo "🕒 Tanggal     : \$(git log -1 --pretty=format:'%cd' --date=local)"
-            echo "💬 Message     : \$(git log -1 --pretty=format:'%s')"
-            echo "=============================="
-            echo ""
-
             echo "♻️ Restore database.php"
             mv /tmp/database.php database/database.php
 
             echo "✅ Deployment finished for mode: ${{ github.event.inputs.mode }}"
           EOF
+
+      - name: Show Commit Log Again (Optional Copy)
+        run: |
+          echo "🔁 Commit Info Recap:"
+          echo "${{ steps.commitinfo.outputs.commit_message }}"
