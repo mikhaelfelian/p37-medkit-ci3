@@ -5565,7 +5565,7 @@ class Medcheck extends CI_Controller {
                                     'id_medcheck_det'   => (int)$medc_det->id,
                                     'id_dokter'         => (int)$dokter,
                                     'id_item'           => (int)$sql_item->id,
-                                    'tgl_simpan'        => date('Y-m-d H:i:s'),
+                                    'tgl_simpan'        => date('Y-m-d H:i:s'), 
                                     'item'              => $sql_item->produk,
                                     'harga'             => (float)$medc_det->harga,
                                     'jml'               => (float)$medc_det->jml,
