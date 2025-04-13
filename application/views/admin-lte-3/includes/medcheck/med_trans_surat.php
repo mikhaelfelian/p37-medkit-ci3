@@ -87,9 +87,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'tgl_masuk_sht',
                                                         'name' => 'tgl_masuk',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_masuk)) : '',
-                                                        'placeholder' => 'Tgl Surat ...'
+                                                        'placeholder' => 'Tgl Surat ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -191,9 +192,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'tgl_masuk_skt',
                                                         'name' => 'tgl_masuk',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_masuk)) : '',
-                                                        'placeholder' => 'Tgl Surat ...'
+                                                        'placeholder' => 'Tgl Surat ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -209,9 +211,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'tgl_keluar_skt',
                                                         'name' => 'tgl_keluar',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_keluar)) : '',
-                                                        'placeholder' => 'Tgl Sembuh ...'
+                                                        'placeholder' => 'Tgl Sembuh ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -243,9 +246,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'tgl_masuk_rnp',
                                                         'name' => 'tgl_masuk',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_masuk)) : '',
-                                                        'placeholder' => 'Tgl Surat ...'
+                                                        'placeholder' => 'Tgl Surat ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -261,9 +265,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'tgl_keluar_rnp',
                                                         'name' => 'tgl_keluar',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_keluar)) : '',
-                                                        'placeholder' => 'Tgl Sembuh ...'
+                                                        'placeholder' => 'Tgl Sembuh ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -295,9 +300,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'tgl_masuk_kntl',
                                                         'name' => 'tgl_kontrol',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_kontrol)) : '',
-                                                        'placeholder' => 'Tgl Surat ...'
+                                                        'placeholder' => 'Tgl Surat ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -316,9 +322,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'lahir_tgl',
                                                         'name' => 'tgl_lahir',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->tgl_lahir)) : '',
-                                                        'placeholder' => 'Tgl Surat ...'
+                                                        'placeholder' => 'Tgl Surat ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -417,9 +424,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'mati_tgl',
                                                         'name' => 'mati_tgl',
-                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->mati_tgl)) : '',
-                                                        'placeholder' => 'Tgl ...'
+                                                        'placeholder' => 'Tgl ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -470,6 +478,7 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'cvd_tgl_periksa',
                                                         'name' => 'cvd_tgl_periksa',
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
                                                         'class' => 'form-control text-middle rounded-0',
                                                         'value' => isset($surat) ? date('d-m-Y', strtotime($surat->cvd_tgl_periksa)) : '',
                                                         'placeholder' => 'Tgl ...'
