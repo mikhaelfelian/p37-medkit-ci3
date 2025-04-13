@@ -6747,7 +6747,7 @@ class laporan extends CI_Controller {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    }
+    } 
 
     public function xls_data_omset_zahir(){
         if (akses::aksesLogin() == TRUE) {
