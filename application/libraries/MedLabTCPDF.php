@@ -14,7 +14,7 @@ class MedLabTCPDF extends TCPDF {
         $setting = $CI->db->get('tbl_pengaturan')->row();
         $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es.png';
 
-        $this->Ln(1);
+        $this->SetY(1);
         $this->SetFont('Helvetica', 'B', '12');
         $this->SetTextColor(0,146,63); // Set font color to green (RGB: 0,146,63)
         $this->Cell(10.5, .5, '', '', 0, 'L', FALSE);
@@ -73,6 +73,7 @@ class MedLabTCPDF extends TCPDF {
         }
 
     }
+
     // Page footer
     public function Footer() {
         $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';

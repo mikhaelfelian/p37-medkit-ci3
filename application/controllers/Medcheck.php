@@ -16476,10 +16476,10 @@ public function set_medcheck_lab_adm_save() {
             
             // Set document information
             $pdf->SetTitle('Laboratory Result - ' . $sql_pasien->nama_pgl);
-            $pdf->SetMargins(1, 1, 1);
+            $pdf->SetMargins(1, 5, 1);
             
             // Enable auto page break
-            $pdf->SetAutoPageBreak(TRUE, 15);
+            $pdf->SetAutoPageBreak(TRUE, 8);
             
             // Set font to helvetica instead of Arial to avoid font definition errors
             $pdf->SetFont('helvetica', '', 10);
@@ -16490,10 +16490,7 @@ public function set_medcheck_lab_adm_save() {
             // Set page header
             $pdf->setHeaderFont(Array('helvetica', 'B', 12));
             $pdf->setHeaderMargin(5);
-            
-            // Add page header text
-            $pdf->SetY(4.5); // Position after the header image
-            $pdf->Ln(0.5);
+
 
             // Patient information block
             $pdf->SetFont('helvetica', '', '9');
