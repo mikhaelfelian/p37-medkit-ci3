@@ -24,29 +24,3 @@ jobs:
           cd ${{ secrets.DEPLOY_PATH }} &&
           git pull origin main &&
           exit"
-
-    - name: Create an Issue for Notification
-      uses: peter-evans/create-issue@v3
-      with:
-        title: 'Notifikasi Deployment'
-        body: |
-          🚀 **Deployment Selesai di Development**:
-          - **Branch**: `main`
-          - **Commit Terakhir**: `${{ github.sha }}`
-          - **Link**: [Lihat di Development](http://dev.esensia.co.id)
-          
-          ✅ **Deployment ke server development selesai**. Silakan cek hasilnya.
-
-        labels: "deployment"
-
-    - name: Notify Contributors via Issue Comment
-      uses: peter-evans/create-or-update-comment@v3
-      with:
-        issue-number: 1  # Ganti dengan nomor issue tempat komentar akan diposting
-        body: |
-          🚀 **Deployment Selesai di Development**:
-          - **Branch**: `main`
-          - **Commit Terakhir**: `${{ github.sha }}`
-          - **Link**: [Lihat di Development](http://dev.esensia.co.id)
-          
-          ✅ **Deployment ke server development selesai**. Silakan cek hasilnya.
