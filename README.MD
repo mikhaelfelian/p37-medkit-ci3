@@ -60,6 +60,76 @@ This version includes significant changes from the original CodeIgniter 2 codeba
 
 ## Contributors
 - Mikhael Felian Waskito - mikhaelfelian@gmail.com (contributed 01/03/2025)
+- Alfian Hari Susatya
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
+-----------------------------------------------------------------------
+# 🚀 Deployment Guide – Esensia SIMRS
+
+## 📦 Overview
+
+This project uses **GitHub Actions** for **Continuous Integration & Deployment (CI/CD)** to the production server `simrs.esensia.co.id`.
+
+Deployment is manually triggered via the **"Actions > Deploy to Production"** menu in GitHub.
+
+## 🌐 Environment
+
+| Environment               | Description                |
+|---------------------------|---------------------------|
+| `dev.esensia.co.id`       | Testing environment for Alfian |
+| `simrs.esensia.co.id`     | Main production server          |
+
+---
+
+## ⚙️ Workflow: Deploy to Production
+
+This workflow runs in `workflow_dispatch` mode, which can be manually triggered from GitHub.
+
+### 🔢 Input Parameters
+
+| Input Name | Description |
+|------------|-----------|
+| `mode`     | Deploy mode. Options: `commit-all`, `commit-sha`, `revert-all`, `revert-sha` |
+| `ref`      | Commit SHA or branch name (example: `main` or `e6a1b1d`). Used only if mode is `commit-sha` or `revert-sha` |
+
+---
+
+## 🚦 Mode Explanations
+
+### ✅ `commit-all`
+Deploy all latest changes from the `main` branch.
+
+### ✅ `commit-sha`
+Deploy based on a specific commit (SHA commit).  
+Example: `e6a1b1d`  
+📌 Use this if you only want to push a specific commit.
+
+### 🔄 `revert-all`
+Revert the last commit on the production server.
+
+### 🔄 `revert-sha`
+Checkout back to a specific commit (for manual rollback).  
+Example: `e6a1b1d`
+
+------
+
+## 🧪 Suggested Workflow
+
+1. **Developer commits to `main` branch or others**.
+2. **Deploy to `dev.esensia.co.id` (automatic)**.
+3. **Testing by Alfian**.
+4. If testing passes, **run the "Deploy to Production" workflow**:
+   - Choose mode `commit-all` or `commit-sha`.
+   - Press `Run Workflow`.
+
+---
+
+## 👤 CI/CD Users
+
+| Name            | Role                    |
+|-----------------|-------------------------|
+| Mikhael Felian  | Main Programmer         |
+| Alfian Hari     | Contributor / QA Tester |
+
+
