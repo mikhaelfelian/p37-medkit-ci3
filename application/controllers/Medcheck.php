@@ -5600,12 +5600,12 @@ class Medcheck extends CI_Controller {
                             # Recalculate live, current stock minus outgoing stock
                             $stok_akhir = $sql_gudang_stok->jml - $stok->jml;
 
-                            # Check if stock is sufficient
-                            if ($stok_akhir < 0) {
-                                $this->db->trans_rollback();
-                                throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
-                                exit;
-                            }
+                            // # Check if stock is sufficient
+                            // if ($stok_akhir < 0) {
+                            //     $this->db->trans_rollback();
+                            //     throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
+                            //     exit;
+                            // }
                             
                             # Collect stock reduction information here
                             $data_stok = [
