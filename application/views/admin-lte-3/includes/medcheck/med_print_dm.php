@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>INVOICE</title>
+        <title>INVOICE</title> 
         <style>
             @media print {
                 html, body {
@@ -36,7 +36,7 @@ margin: 10;*/
                     font-size: 5px;
                 }
             }
-        </style>
+        </style> 
     </head>
     <body>
         <table border="0" style="width: 365px;" cellspacing="0">
