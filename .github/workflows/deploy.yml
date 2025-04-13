@@ -30,7 +30,7 @@ jobs:
         echo "Starting to create issue comment..."
         # Membuat komentar di issue yang sudah ada menggunakan GitHub API
         response=$(curl -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.TOKENS }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -d '{
                 "body": "🚀 **Deployment Completed to Development Server**:\n- **Branch**: main\n- **Last Commit**: '${{ github.sha }}'\n- **Link**: [View on Development](http://dev.esensia.co.id)\n\n✅ **Deployment to development server is complete. Please check the result.**"
@@ -42,7 +42,7 @@ jobs:
         echo "Starting to assign assignee..."
         # Menambahkan assignee ke issue
         assign_response=$(curl -X PATCH \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.TOKENS }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -d '{
                 "assignees": ["alfianharisusatya"]
