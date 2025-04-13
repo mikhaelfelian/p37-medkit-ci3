@@ -5224,14 +5224,14 @@ class Medcheck extends CI_Controller {
                                                              ->num_rows();
                                         
                                         # Only insert if the product doesn't already exist in history for this transaction
-                                        if ($existing_history == 0) {                                
+                                        // if ($existing_history == 0) {                                
                                             # Save to product history table
                                             $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rc);
-                                        } else {
-                                            $this->db->trans_rollback();
-                                            # Throw exception for duplicate entry attempt
-                                            throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
-                                        }
+                                        // } else {
+                                        //     $this->db->trans_rollback();
+                                        //     # Throw exception for duplicate entry attempt
+                                        //     throw new Exception("Duplicate entry detected: Product ID {$sql_item_rc->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                        // }
 
                                         
                                         
@@ -5244,10 +5244,10 @@ class Medcheck extends CI_Controller {
                                                                             ->num_rows();
                                             
                                         # Only insert if the stock trace doesn't already exist
-                                        if ($existing_stock_trace == 0) {
+                                        // if ($existing_stock_trace == 0) {
                                             # Save to product stock trace table
                                             $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rc);
-                                        } else {
+                                        // } else {
                                             # Rollback transaction
                                             $this->db->trans_rollback();
                                             # Throw exception for duplicate entry attempt
@@ -5327,14 +5327,14 @@ class Medcheck extends CI_Controller {
                                                              ->num_rows();
                                 
                                 # Only insert if the product doesn't already exist in history for this transaction
-                                if ($existing_history == 0) {                                
+                                // if ($existing_history == 0) {                                
                                     # Save to product history table
                                     $this->db->insert('tbl_m_produk_hist', $data_penj_hist);
-                                } else {
+                                // } else {
                                     $this->db->trans_rollback();
                                     # Throw exception for duplicate entry attempt
-                                    throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$sql_medc->id} with nota {$no_nota}");
-                                }                                
+                                //     throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                // }                                
                                 
                                 # Check if the stock trace already exists for this item and transaction
                                 $existing_stock_trace = $this->db->where('id_medcheck', $sql_medc->id)
@@ -5345,15 +5345,15 @@ class Medcheck extends CI_Controller {
                                                                  ->num_rows();
                                     
                                 # Only insert if the stock trace doesn't already exist
-                                if ($existing_stock_trace == 0) {
+                                // if ($existing_stock_trace == 0) {
                                     # Save to product stock trace table
                                     $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace);
-                                } else {
+                                // } else {
                                     # Rollback transaction
-                                    $this->db->trans_rollback();
+                                    // $this->db->trans_rollback();
                                     # Throw exception for duplicate entry attempt
-                                    throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$sql_medc->id} with nota {$no_nota}");
-                                }
+                                //     throw new Exception("Duplicate entry detected: Product ID {$sql_item->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                // }
                             }                      
                             # -- END OF ITEM
                             
@@ -5457,15 +5457,15 @@ class Medcheck extends CI_Controller {
                                                              ->get('tbl_m_produk_hist')
                                                              ->num_rows();
                                         
-                                        # Only insert if the product doesn't already exist in history for this transaction
-                                        if ($existing_history == 0) {                                
-                                            # Save to product history table
+                                        // # Only insert if the product doesn't already exist in history for this transaction
+                                        // if ($existing_history == 0) {                                
+                                        //     # Save to product history table
                                             $this->db->insert('tbl_m_produk_hist', $data_penj_hist_rf);
-                                        } else {
-                                            $this->db->trans_rollback();
-                                            # Throw exception for duplicate entry attempt
-                                            throw new Exception("Duplicate entry detected: Product ID {$sql_item_rf->id} for transaction {$sql_medc->id} with nota {$no_nota}");
-                                        }
+                                        // } else {
+                                        //     $this->db->trans_rollback();
+                                        //     # Throw exception for duplicate entry attempt
+                                        //     throw new Exception("Duplicate entry detected: Product ID {$sql_item_rf->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                        // }
                                         
                                         # Check if the stock trace already exists for this item and transaction
                                         $existing_stock_trace = $this->db->where('id_medcheck', $sql_medc->id)
@@ -5475,15 +5475,15 @@ class Medcheck extends CI_Controller {
                                                                             ->num_rows();
                                             
                                         # Only insert if the stock trace doesn't already exist
-                                        if ($existing_stock_trace == 0) {
+                                        // if ($existing_stock_trace == 0) {
                                             # Save to product stock trace table
                                             $this->db->insert('tbl_trans_medcheck_stok', $data_stok_trace_rf);
-                                        } else {
-                                            # Rollback transaction
-                                            $this->db->trans_rollback();
-                                            # Throw exception for duplicate entry attempt
-                                            throw new Exception("Duplicate entry detected: Product ID {$sql_item_rf->id} for transaction {$sql_medc->id} with nota {$no_nota}");
-                                        }
+                                        // } else {
+                                        //     # Rollback transaction
+                                        //     $this->db->trans_rollback();
+                                        //     # Throw exception for duplicate entry attempt
+                                        //     throw new Exception("Duplicate entry detected: Product ID {$sql_item_rf->id} for transaction {$sql_medc->id} with nota {$no_nota}");
+                                        // }
                                         
                                         # Save to product detail table
                                         $this->db->insert('tbl_trans_medcheck_det', $data_det);
@@ -8849,31 +8849,31 @@ public function set_medcheck_lab_adm_save() {
             $trb_periksa    = $this->input->post('trb_periksa');
             $trb_tgl_awal   = $this->input->post('trb_tgl_awal');
             $trb_tgl_akhir  = $this->input->post('trb_tgl_akhir');
-            $tht_tgl                = $this->input->post('tht_tgl');
-            $tht_lt_kanan           = $this->input->post('tht_lt_kanan');
-            $tht_lt_kiri            = $this->input->post('tht_lt_kiri');
-            $tht_membran_kanan      = $this->input->post('tht_membran_kanan');
-            $tht_membran_kiri       = $this->input->post('tht_membran_kiri');
-            $tht_mukosa_kanan       = $this->input->post('tht_mukosa_kanan');
-            $tht_mukosa_kiri        = $this->input->post('tht_mukosa_kiri');
-            $tht_konka_kanan        = $this->input->post('tht_konka_kanan');
-            $tht_konka_kiri         = $this->input->post('tht_konka_kiri');
-            $tht_timpa_kanan        = $this->input->post('tht_timpa_kanan');
-            $tht_timpa_kiri         = $this->input->post('tht_timpa_kiri');
-            $tht_tonsil_tg          = $this->input->post('tht_tonsil_tg');
-            $tht_mukosa_tg          = $this->input->post('tht_mukosa_tg');
-            $tht_faring_tg          = $this->input->post('tht_faring_tg');
-            $tht_kesimpulan         = $this->input->post('tht_kesimpulan');
-            $tht_audio              = $this->input->post('tht_audio');
+            $tht_tgl        = $this->input->post('tht_tgl');
+            $tht_lt_kanan   = $this->input->post('tht_lt_kanan');
+            $tht_lt_kiri        = $this->input->post('tht_lt_kiri');
+            $tht_membran_kanan = $this->input->post('tht_membran_kanan');
+            $tht_membran_kiri  = $this->input->post('tht_membran_kiri');
+            $tht_mukosa_kanan  = $this->input->post('tht_mukosa_kanan');
+            $tht_mukosa_kiri   = $this->input->post('tht_mukosa_kiri');
+            $tht_konka_kanan   = $this->input->post('tht_konka_kanan');
+            $tht_konka_kiri    = $this->input->post('tht_konka_kiri');
+            $tht_timpa_kanan   = $this->input->post('tht_timpa_kanan');
+            $tht_timpa_kiri    = $this->input->post('tht_timpa_kiri');
+            $tht_tonsil_tg     = $this->input->post('tht_tonsil_tg');
+            $tht_mukosa_tg     = $this->input->post('tht_mukosa_tg');
+            $tht_faring_tg     = $this->input->post('tht_faring_tg');
+            $tht_kesimpulan    = $this->input->post('tht_kesimpulan');
+            $tht_audio         = $this->input->post('tht_audio');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'id'        => form_error('id'),
-                );
+                $msg_error = [
+                    'id' => form_error('id'),
+                ];
 
                 $this->session->set_flashdata('anamnesa', $msg_error);
 
@@ -8948,7 +8948,7 @@ public function set_medcheck_lab_adm_save() {
                 $hari           = $diff->format("%d%");
                 $jml_hari       = ($tgl_awal == $tgl_akhir ? '1' : ($hari > 1 ? $hari + 1 : '2'));
                 
-                $data = array(
+                $data = [
                     'tgl_simpan'        => date('Y-m-d H:i:s'),
                     'tgl_masuk'         => (!empty($tgl_masuk) ? $this->tanggalan->tgl_indo_sys($tgl_masuk) : date('Y-m-d')),
                     'tgl_keluar'        => (!empty($tgl_keluar) ? $this->tanggalan->tgl_indo_sys($tgl_keluar) : '0000-00-00'),
@@ -9011,28 +9011,24 @@ public function set_medcheck_lab_adm_save() {
                     'keterangan'        => (!empty($vks_nama) ? $vks_nama : ''),
                     'tipe'              => $tipe_surat,
                     'status_sembuh'     => (!empty($sembuh) ? $sembuh : '0'),
-                );
+                ];
                 
                 # Simpan data surat kedalam tabel
-                $this->db->insert('tbl_trans_medcheck_surat', $data);
-                
-                if ($this->db->affected_rows() > 0) {
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Surat '.general::tipe_surat($tipe_surat).' berhasil disimpan !");');
+                try {
+                    $this->db->insert('tbl_trans_medcheck_surat', $data);
+                    
+                    if ($this->db->affected_rows() > 0) {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Surat '.general::tipe_surat($tipe_surat).' berhasil disimpan !");');
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Gagal menyimpan surat: '.$e->getMessage().'");');
                 }
                 
                 redirect(base_url('medcheck/tambah.php?id='.general::enkrip($sql_medc->id).'&status='.$status));
-                
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
-//
-//                $this->session->set_flashdata('medcheck', '<div class="alert alert-success">Data surat berhasil disimpan</div>');
-//                crud::simpan('tbl_trans_medcheck_surat', $data);             
-//                redirect(base_url('medcheck/tambah.php?id='.general::enkrip($sql_medc->id).'&status='.$status));
             }
         } else {
             $errors = $this->ion_auth->messages();
-            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }
