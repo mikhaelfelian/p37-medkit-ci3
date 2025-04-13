@@ -6563,6 +6563,7 @@ class laporan extends CI_Controller {
             $hal        = $this->input->get('halaman');
             $poli       = $this->input->get('poli');
             $tipe       = $this->input->get('tipe');
+            $tipe_byr   = $this->input->get('tipe_byr'); // Added missing variable
             $plat       = $this->input->get('plat');
             $pasien_id  = $this->input->get('id_pasien');
             $pasien     = $this->input->get('pasien');
@@ -6739,8 +6740,7 @@ class laporan extends CI_Controller {
             header('Pragma: public'); // HTTP/1.0
 
             $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
+            $writer->save('php://output');
             exit;
         }else{
             $errors = $this->ion_auth->messages();
