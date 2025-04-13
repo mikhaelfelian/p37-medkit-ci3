@@ -773,9 +773,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'trb_tgl_awal',
                                                         'name' => 'trb_tgl_awal',
-                                                        'class' => 'form-control text-middle rounded-0',
-                                                        'value' => isset($surat) ? date('d-m-Y', strtotime($surat->trb_tgl_awal)) : '',
-                                                        'placeholder' => 'Tgl Surat ...'
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
+                                                        'value' => isset($surat) ? date('d/m/Y', strtotime($surat->trb_tgl_awal)) : '',
+                                                        'placeholder' => 'Tgl Surat ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -790,9 +791,10 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'trb_tgl_akhir',
                                                         'name' => 'trb_tgl_akhir',
-                                                        'class' => 'form-control text-middle rounded-0',
-                                                        'value' => isset($surat) ? date('d-m-Y', strtotime($surat->trb_tgl_akhir)) : '',
-                                                        'placeholder' => 'Tgl Sembuh ...'
+                                                        'class' => 'form-control text-middle rounded-0 datepicker',
+                                                        'value' => isset($surat) ? date('d/m/Y', strtotime($surat->trb_tgl_akhir)) : '',
+                                                        'placeholder' => 'Tgl Sembuh ...',
+                                                        'autocomplete' => 'off'
                                                     )) ?>
                                                 </div>
                                             </div>
