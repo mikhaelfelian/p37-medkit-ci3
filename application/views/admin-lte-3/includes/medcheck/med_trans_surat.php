@@ -888,7 +888,7 @@
                                                     'placeholder' => 'Bagian Kanan ...'
                                                 )) ?>
                                             </div>
-                                        </div>
+                                        </div> 
                                         <div id="tht" class="form-group row">
                                             <label for="tht" class="col-sm-3 col-form-label">Timpanometri</label>
                                             <div class="col-sm-3">
