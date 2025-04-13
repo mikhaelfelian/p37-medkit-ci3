@@ -564,7 +564,7 @@
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4" class="text-right">Total Transfer Stok</td>
+                                            <th colspan="4" class="text-right">Total Transfer Stok</th>
                                             <td class="text-right"><?php echo number_format($tot_transfer, 0) ?></td>
                                             <td colspan="4" class="text-left"><?php echo $prod_sat; ?></td>
                                         </tr>
@@ -586,10 +586,10 @@
                                                                            ->row();
                                                 $stok_masuk_after_reset = $sm_after_reset ? $sm_after_reset->total : 0;
                                             }
-                                            $sisa_st = $tot_so + $stok_masuk_after_reset - $tot_sk;
+                                            $sisa_st = $tot_so + $stok_masuk_after_reset + $tot_transfer - $tot_sk;
                                         } else {
                                             // If no stock opname, simply calculate stock in - stock out
-                                            $sisa_st = $tot_sm - $tot_sk;
+                                            $sisa_st = $tot_sm + $tot_transfer - $tot_sk;
                                         }
                                         ?>
                                         <tr>
