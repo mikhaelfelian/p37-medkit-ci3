@@ -5160,11 +5160,11 @@ class Medcheck extends CI_Controller {
                                         $jml_akhir_rc         = $sql_item_rc->jml - $rc->jml;
                                         $jml_akhir_rc_stk     = $sql_gudang_stok_rc->jml - $rc->jml;
                                         
-                                        # Check if stock is sufficient
-                                        if ($jml_akhir_rc_stk < 0) {
-                                            $this->db->trans_rollback();
-                                            throw new Exception("Stok tidak mencukupi untuk item racikan ".$sql_item_rc->produk.". Stok tersedia: ".$sql_gudang_stok_rc->jml);
-                                        }
+                                        // # Check if stock is sufficient
+                                        // if ($jml_akhir_rc_stk < 0) {
+                                        //     $this->db->trans_rollback();
+                                        //     throw new Exception("Stok tidak mencukupi untuk item racikan ".$sql_item_rc->produk.". Stok tersedia: ".$sql_gudang_stok_rc->jml);
+                                        // }
                                         
                                         $data_item_rc = [
                                             'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -5369,14 +5369,14 @@ class Medcheck extends CI_Controller {
                                         $jml_akhir_reff     = $sql_item_rf->jml - ($reff->jml * $medc_det->jml);
                                         $jml_akhir_reff_stk = $sql_gudang_stok->jml - ($reff->jml * $medc_det->jml);
                                 
-                                        // Check if stock is sufficient
-                                        if ($jml_akhir_reff_stk < 0) {
-                                            // Rollback transaction
-                                            $this->db->trans_rollback();
+                                        // // Check if stock is sufficient
+                                        // if ($jml_akhir_reff_stk < 0) {
+                                        //     // Rollback transaction
+                                        //     $this->db->trans_rollback();
                                             
-                                            // Throw exception with error message
-                                            throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
-                                        }
+                                        //     // Throw exception with error message
+                                        //     throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
+                                        // }
 
                                         $data_item_reff = [
                                             'tgl_modif'  => date('Y-m-d H:i:s'),
@@ -5597,11 +5597,11 @@ class Medcheck extends CI_Controller {
                             # Recalculate live, current stock minus outgoing stock
                             $stok_akhir = $sql_gudang_stok->jml - $stok->jml;
 
-                            # Check if stock is sufficient
-                            if ($stok_akhir < 0) {
-                                $this->db->trans_rollback();
-                                throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
-                            }
+                            // # Check if stock is sufficient
+                            // if ($stok_akhir < 0) {
+                            //     $this->db->trans_rollback();
+                            //     throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
+                            // }
                             
                             # Collect stock reduction information here
                             $data_stok = [
