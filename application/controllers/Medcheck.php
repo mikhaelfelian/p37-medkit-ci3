@@ -16479,7 +16479,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetMargins(1, 5, 1);
             
             // Enable auto page break
-            $pdf->SetAutoPageBreak(TRUE, 8);
+            $pdf->SetAutoPageBreak(TRUE, 7);
             
             // Set font to helvetica instead of Arial to avoid font definition errors
             $pdf->SetFont('helvetica', '', 10);

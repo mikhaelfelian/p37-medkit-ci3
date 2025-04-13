@@ -88,7 +88,8 @@ class MedLabTCPDF extends TCPDF {
             $pageHeight = $this->getPageHeight();
             
             // Position image at absolute bottom of page, centered
-            $this->Image($gambar3, 0, $pageHeight-7, $pageWidth, 7, 'png');
+            // Set image to be in background (send to back) by setting the last parameter to true
+            $this->Image($gambar3, 0, $pageHeight-7, $pageWidth, 7, 'png', '', '', false, 300, '', false, false, 0, false, true);
         }
     }
 } 
