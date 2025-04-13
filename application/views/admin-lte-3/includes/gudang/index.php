@@ -131,7 +131,7 @@
                                                 <td><?php echo date('d-m-Y', strtotime($item->tgl_simpan)); ?></td>
                                                 <td><?php echo $item->kode; ?></td>
                                                 <td><?php if (akses::hakperawat() != true && akses::hakfarmasi() != true): ?><a
-                                                            href="<?php echo base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($item->id)); ?>"><?php echo $item->produk; ?></a><?php else: ?><?php echo $item->produk; ?><?php endif; ?>
+                                                            href="<?php echo base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($item->id)); ?>" target="_blank"><?php echo $item->produk; ?></a><?php else: ?><?php echo $item->produk; ?><?php endif; ?>
                                                 </td>
                                                 <td><?php echo $item->jml; ?></td>
                                                 <td>
