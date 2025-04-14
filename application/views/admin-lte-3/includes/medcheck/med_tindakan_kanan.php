@@ -328,11 +328,11 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                            <input type="hidden" name="id" value="<?php echo general::enkrip($sql_pasien->id) ?>">
-                            <input type="hidden" name="route" value="<?php echo $this->input->get('route') ?>">
-                            <input type="hidden" id="file" name="file">
-                            <input type="hidden" id="file_id" name="file_id">
-                            <?php echo add_form_protection(); ?>
+                    <input type="hidden" name="id" value="<?php echo general::enkrip($sql_pasien->id) ?>">
+                    <input type="hidden" name="route" value="<?php echo $this->input->get('route') ?>">
+                    <input type="hidden" id="file" name="file">
+                    <input type="hidden" id="file_id" name="file_id">
+                    <?php echo add_form_protection(); ?>
 
                     <div class="row">
                         <div class="col-md-6">
@@ -387,9 +387,9 @@
                                     <div class="input-group-append">
                                         <span class="input-group-text rounded-0"><i class="fas fa-calendar"></i></span>
                                     </div>
-                                    <input type="text" id="tgl_lahir" name="tgl_lahir" class="form-control rounded-0"
-                                        value="<?php echo $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir) ?>"
-                                        readonly="TRUE" placeholder="Isikan dengan format 15-02-1992 ...">
+                                    <input type="date" id="tgl_lahir" name="tgl_lahir" class="form-control rounded-0"
+                                        value="<?php echo date('d-m-Y', strtotime($sql_pasien->tgl_lahir)) ?>"
+                                        placeholder="dd-mm-yyyy">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -448,6 +448,11 @@
     </form>
 </div>
 <?php if (akses::hakSA() == TRUE or akses::hakOwner() == TRUE or akses::hakPerawat() == TRUE) { ?>
+    <script src="<?php echo base_url('assets/theme/admin-lte-2/plugins/JAutoNumber/autonumeric.js') ?>"></script>
+    <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.js') ?>"></script>
+    <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/moment/moment.min.js') ?>"></script>
+    <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">
+
     <script type="text/javascript">
         // // Variabel untuk menyimpan stream kamera
         // var video = document.getElementById('kamera');
