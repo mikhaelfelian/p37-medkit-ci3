@@ -1220,7 +1220,6 @@ class Gudang extends CI_Controller {
                 'success' => true,
                 'message' => 'Transaksi berhasil diproses'
             ]);
-
         } catch (Exception $e) {
             // Rollback transaction
             $this->db->trans_rollback();
