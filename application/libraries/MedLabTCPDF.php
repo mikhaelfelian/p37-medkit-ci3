@@ -15,7 +15,7 @@ class MedLabTCPDF extends TCPDF {
         $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es.png';
 
         $this->SetY(1);
-        $this->SetFont('Helvetica', 'B', '12');
+        $this->SetFont('Helvetica', 'B', '11');
         $this->SetTextColor(0,146,63); // Set font color to green (RGB: 0,146,63)
         $this->Cell(10.5, .5, '', '', 0, 'L', FALSE);
         $this->Cell(8.5, .5, 'INSTALASI LABORATORIUM', '', 0, 'L', FALSE);
@@ -28,11 +28,11 @@ class MedLabTCPDF extends TCPDF {
 
         // Add title block
         $this->SetTextColor(0, 0, 0); // Set text color to black
-        $this->SetFont('Helvetica', 'B', '13');
+        $this->SetFont('Helvetica', 'B', '10');
         $this->Cell(19, .5, $this->judul, (!empty($this->subjudul) ? 0 : 'B'), 1, 'C');
         $this->Ln(0);
         if(!empty($this->subjudul)) {
-            $this->SetFont('Helvetica', 'BI', '13');
+            $this->SetFont('Helvetica', 'BI', '10');
             $this->Cell(19, .5, $this->subjudul, 'B', 1, 'C');
         }
 

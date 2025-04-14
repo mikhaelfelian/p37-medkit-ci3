@@ -16524,20 +16524,20 @@ public function set_medcheck_lab_adm_save() {
             
             // Set document information
             $pdf->SetTitle('Hasil Pemeriksaan Lab - ' . $sql_pasien->nama_pgl);
-            $pdf->SetMargins(1, 5, 1);
+            $pdf->SetMargins(1, 4.5, 1);
             
             // Enable auto page break
             $pdf->SetAutoPageBreak(TRUE, 7);
             
             // Set font to helvetica instead of Arial to avoid font definition errors
-            $pdf->SetFont('helvetica', '', 10);
+            $pdf->SetFont('helvetica', '', 9);
             
             // Add a page
             $pdf->AddPage();
             
-            // Set page header
-            $pdf->setHeaderFont(Array('helvetica', 'B', 12));
-            $pdf->setHeaderMargin(5);
+            // // Set page header
+            // $pdf->setHeaderFont(Array('helvetica', 'B', 10));
+            // $pdf->setHeaderMargin(5);
 
 
             // Patient information block
@@ -16588,7 +16588,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Ln();
             
             // Reset font for content
-            $pdf->SetFont('helvetica', '', 10);
+            $pdf->SetFont('helvetica', '', 9);
             
             // Get HTML content from view
             ob_start();

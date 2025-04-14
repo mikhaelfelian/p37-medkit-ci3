@@ -144,12 +144,13 @@ $sess_print = $this->session->userdata('lab_print');
 <?php endif; ?>
 
 <?php if (isset($sql_medc_lab) && $sql_medc_lab->status_normal == '1'): ?>
-<div style="margin-top: 10px;">
-    <table width="100%" border="0" cellpadding="3" cellspacing="0">
+    <br/><br/>
+    <table border="0" cellspacing="0">
         <tr>
-            <td colspan="4" style="font-weight: bold; font-size: 10pt; color: #312AEE; border: 1px solid #312AEE; text-align: center;">
+            <td  style="font-weight: bold; font-size: 10pt; color: #312AEE; border: 1px solid #312AEE; text-align: center;">
                 PELAPORAN NILAI KRITIS
             </td>
+            <td></td>
         </tr>
         <tr>
             <td width="25%" style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE;">
@@ -197,7 +198,6 @@ $sess_print = $this->session->userdata('lab_print');
             <td></td>
         </tr>
     </table>
-</div>
 <?php endif; ?>
 
 <div style="margin-top: 20px;">
