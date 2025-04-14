@@ -1938,117 +1938,49 @@ class laporan extends CI_Controller {
                         $data['stok_msk']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('status', '1')->where('DATE(tgl_simpan)', $tgl)->get('tbl_m_produk_hist')->row()->jml;
                         $data['stok_klr']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('status', '4')->where('DATE(tgl_simpan)', $tgl)->get('tbl_m_produk_hist')->row()->jml;
 
-                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
+                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk'] + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']);
                         $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
 
-                        $data['sql_stok_hist']   = $this->db
-//                                                        ->where('status', '4')
-                                                        ->where('id_produk', $data['sql_stok']->id)
-//                                                        ->where('id >=', $data['stok_so']->id)
-                                                        ->where('DATE(tgl_simpan)', $tgl)
-                                                        ->like('id_gudang', $id_gdg)
-                                                        ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                        ->order_by('tgl_simpan', 'desc')
-                                                        ->get('v_produk_hist')->result();
+                        $data['sql_stok_hist'] = $this->db
+                                                      ->where('id_produk', $data['sql_stok']->id)
+                                                      ->where('DATE(tgl_simpan)', $tgl)
+                                                      ->like('id_gudang', $id_gdg)
+                                                      ->order_by('tgl_simpan', 'desc')
+                                                      ->get('tbl_m_produk_hist')->result();
                         
-                        $data['sql_stok_msk']   = $this->db
-                                                       ->where('status', '1')
-                                                       ->where('id_produk', $data['sql_stok']->id)
-                                                       ->where('DATE(tgl_simpan)', $tgl)
-                                                       ->like('id_gudang', $id_gdg)
-                                                       ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                       ->order_by('tgl_simpan', 'desc')
-                                                       ->get('v_produk_hist')->result();
-                        
-//                        $data['sql_stok_hist']   = $this->db
-//                                                        ->where('status', '4')
-//                                                        ->where('id_produk', $data['sql_stok']->id)
-//                                                        ->where('id >=', $data['stok_so']->id)
-//                                                        ->where('DATE(tgl_simpan)', $tgl)
-//                                                        ->like('id_gudang', $id_gdg)
-//                                                        ->get('tbl_m_produk_hist')->result();
-//                        $data['sql_stok_msk']   = $this->db
-//                                                       ->where('status', '1')
-//                                                       ->where('id_produk', $data['sql_stok']->id)
-//                                                       ->where('DATE(tgl_simpan)', $tgl)
-//                                                       ->like('id_gudang', $id_gdg)
-//                                                       ->get('tbl_m_produk_hist')->result();
+                        $data['sql_stok_msk'] = $this->db
+                                                     ->where('status', '1')
+                                                     ->where('id_produk', $data['sql_stok']->id)
+                                                     ->where('DATE(tgl_simpan)', $tgl)
+                                                     ->like('id_gudang', $id_gdg)
+                                                     ->order_by('tgl_simpan', 'desc')
+                                                     ->get('tbl_m_produk_hist')->result();
                     break;
                 
                     case 'per_rentang':
                         $data['gd_aktif']   = $this->db->where('id', $id_gdg)->get('tbl_m_gudang')->row();
-                        $data['stok_mts']   = $this->db->where('id_produk', $data['sql_stok']->id)->where('status', '8')->where('DATE(tgl_simpan) <=', $tgl_akhir)->limit(1)->order_by('id', 'DESC')->get('v_produk_hist')->row();
-                        $data['stok_so']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('id_gudang', $id_gdg)->where('status', '6')->where('DATE(tgl_simpan) <=', $tgl_akhir)->limit(1)->order_by('id', 'DESC')->get('v_produk_hist')->row();
+                        $data['stok_mts']   = $this->db->where('id_produk', $data['sql_stok']->id)->where('status', '8')->where('DATE(tgl_simpan) <=', $tgl_akhir)->limit(1)->order_by('id', 'DESC')->get('tbl_m_produk_hist')->row();
+                        $data['stok_so']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('id_gudang', $id_gdg)->where('status', '6')->where('DATE(tgl_simpan) <=', $tgl_akhir)->limit(1)->order_by('id', 'DESC')->get('tbl_m_produk_hist')->row();
                         
-//                        if(!empty($data['stok_so'])){
-//                            $data['stok_msk']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('status', '1')->where('DATE(tgl_simpan) >=', $tgl_awal)->where('DATE(tgl_simpan) <=', $tgl_akhir)->like('id_gudang', $id_gdg)->get('v_produk_hist')->row();
-//                            $data['stok_klr']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('id >=', $data['stok_so']->id)->where('status', '4')->where('DATE(tgl_simpan) >=', $tgl_awal)->where('DATE(tgl_simpan) <=', $tgl_akhir)->like('id_gudang', $id_gdg)->get('v_produk_hist')->row()->jml;
-//
-////                          $data['tot_msk']    = $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml;
-//                            $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
-//                            $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
-//                        
-//                            $data['sql_stok_hist']  = $this->db
-////                                                           ->where('status', '4')
-//                                                           ->where('id_produk', $data['sql_stok']->id)
-////                                                           ->where('id >=', $data['stok_so']->id)
-//                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
-//                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-//                                                           ->like('id_gudang', $id_gdg)
-//                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-//                                                           ->order_by('tgl_simpan', 'desc')
-//                                                           ->get('v_produk_hist')->result();
-//
-//                            $data['sql_stok_msk']   = $this->db
-//                                                           ->where('status', '1')
-////                                                           ->where('id_produk', $data['sql_stok']->id)
-//                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
-//                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-//                                                           ->like('id_gudang', $id_gdg)
-//                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-//                                                           ->order_by('tgl_simpan', 'desc')
-//                                                           ->get('v_produk_hist')->result();
-////                        
-////                            $data['sql_stok_hist']  = $this->db
-////                                                           ->where('status', '4')
-////                                                           ->where('id_produk', $data['sql_stok']->id)
-////                                                           ->where('id >=', $data['stok_so']->id)
-////                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
-////                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-////                                                           ->like('id_gudang', $id_gdg)
-////                                                           ->get('tbl_m_produk_hist')->result();
-////
-////                            $data['sql_stok_msk']   = $this->db
-////                                                           ->where('status', '1')
-////                                                           ->where('id_produk', $data['sql_stok']->id)
-////                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
-////                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-////                                                           ->like('id_gudang', $id_gdg)
-////                                                           ->get('tbl_m_produk_hist')->result();
-//                        }else{
-                            $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
-                            $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
-                            
-                            $data['sql_stok_hist']  = $this->db
-//                                                           ->where('status', '4')
-                                                           ->where('id_produk', $data['sql_stok']->id)
-//                                                           ->where('id >=', $data['stok_so']->id)
-                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
-                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-                                                           ->like('id_gudang', $id_gdg)
-                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                           ->order_by('tgl_simpan', 'desc')
-                                                           ->get('v_produk_hist')->result();
+                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk'] + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']);
+                        $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
+                        
+                        $data['sql_stok_hist'] = $this->db
+                                                      ->where('id_produk', $data['sql_stok']->id)
+                                                      ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                                      ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                                      ->like('id_gudang', $id_gdg)
+                                                      ->order_by('tgl_simpan', 'desc')
+                                                      ->get('tbl_m_produk_hist')->result();
 
-                            $data['sql_stok_msk']   = $this->db
-                                                           ->where('status', '1')
-                                                           ->where('id_produk', $data['sql_stok']->id)
-                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
-                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                           ->like('id_gudang', $id_gdg)
-                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                           ->get('v_produk_hist')->result();
-//                        }
+                        $data['sql_stok_msk'] = $this->db
+                                                     ->where('status', '1')
+                                                     ->where('id_produk', $data['sql_stok']->id)
+                                                     ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                                     ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                                     ->like('id_gudang', $id_gdg)
+                                                     ->order_by('tgl_simpan', 'desc')
+                                                     ->get('tbl_m_produk_hist')->result();
                     break;
                 }
             }
@@ -2100,41 +2032,25 @@ class laporan extends CI_Controller {
                         $data['stok_msk']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('status', '1')->where('DATE(tgl_simpan)', $tgl)->get('v_produk_hist')->row()->jml;
                         $data['stok_klr']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('status', '4')->where('DATE(tgl_simpan)', $tgl)->get('v_produk_hist')->row()->jml;
 
-                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
+                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk'] + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']);
                         $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
 
-                        $data['sql_stok_hist']   = $this->db
-//                                                        ->where('status', '4')
-                                                        ->where('id_produk', $data['sql_stok']->id)
-//                                                        ->where('id >=', $data['stok_so']->id)
-                                                        ->where('DATE(tgl_simpan)', $tgl)
-                                                        ->like('id_gudang', $id_gdg)
-                                                        ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                        ->order_by('tgl_simpan', 'desc')
-                                                        ->get('v_produk_hist')->result();
+                        $data['sql_stok_hist'] = $this->db
+                                                      ->where('id_produk', $data['sql_stok']->id)
+                                                      ->where('DATE(tgl_simpan)', $tgl)
+                                                      ->like('id_gudang', $id_gdg)
+                                                      ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                      ->order_by('tgl_simpan', 'desc')
+                                                      ->get('tbl_m_produk_hist')->result();
                         
-                        $data['sql_stok_msk']   = $this->db
-                                                       ->where('status', '1')
-                                                       ->where('id_produk', $data['sql_stok']->id)
-                                                       ->where('DATE(tgl_simpan)', $tgl)
-                                                       ->like('id_gudang', $id_gdg)
-                                                       ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                       ->order_by('tgl_simpan', 'desc')
-                                                       ->get('v_produk_hist')->result();
-                        
-//                        $data['sql_stok_hist']   = $this->db
-//                                                        ->where('status', '4')
-//                                                        ->where('id_produk', $data['sql_stok']->id)
-//                                                        ->where('id >=', $data['stok_so']->id)
-//                                                        ->where('DATE(tgl_simpan)', $tgl)
-//                                                        ->like('id_gudang', $id_gdg)
-//                                                        ->get('tbl_m_produk_hist')->result();
-//                        $data['sql_stok_msk']   = $this->db
-//                                                       ->where('status', '1')
-//                                                       ->where('id_produk', $data['sql_stok']->id)
-//                                                       ->where('DATE(tgl_simpan)', $tgl)
-//                                                       ->like('id_gudang', $id_gdg)
-//                                                       ->get('tbl_m_produk_hist')->result();
+                        $data['sql_stok_msk'] = $this->db
+                                                     ->where('status', '1')
+                                                     ->where('id_produk', $data['sql_stok']->id)
+                                                     ->where('DATE(tgl_simpan)', $tgl)
+                                                     ->like('id_gudang', $id_gdg)
+                                                     ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                     ->order_by('tgl_simpan', 'desc')
+                                                     ->get('tbl_m_produk_hist')->result();
                     break;
                 
                     case 'per_rentang':
@@ -2143,94 +2059,27 @@ class laporan extends CI_Controller {
                         $data['stok_so']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('status', '6')->where('DATE(tgl_simpan) <=', $tgl_awal)->limit(1)->order_by('id', 'DESC')->get('v_produk_hist')->row();
                         $data['stok_bl']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('status', '1')->where('DATE(tgl_simpan) <=', $tgl_awal)->limit(1)->order_by('id', 'DESC')->get('v_produk_hist')->row();
                         
-//                        if(!empty($data['stok_so'])){
-//                            $data['stok_msk']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('status', '1')->where('DATE(tgl_simpan) >=', $tgl_awal)->where('DATE(tgl_simpan) <=', $tgl_akhir)->like('id_gudang', $id_gdg)->get('v_produk_hist')->row();
-//                            $data['stok_klr']   = $this->db->select_sum('jml')->where('id_produk', $data['sql_stok']->id)->where('id >=', $data['stok_so']->id)->where('status', '4')->where('DATE(tgl_simpan) >=', $tgl_awal)->where('DATE(tgl_simpan) <=', $tgl_akhir)->like('id_gudang', $id_gdg)->get('v_produk_hist')->row()->jml;
-//
-////                          $data['tot_msk']    = $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml;
-//                            $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
-//                            $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
-//                        
-//                            $data['sql_stok_hist']  = $this->db
-////                                                           ->where('status', '4')
-//                                                           ->where('id_produk', $data['sql_stok']->id)
-////                                                           ->where('id >=', $data['stok_so']->id)
-//                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
-//                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-//                                                           ->like('id_gudang', $id_gdg)
-//                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-//                                                           ->order_by('tgl_simpan', 'desc')
-//                                                           ->get('v_produk_hist')->result();
-//
-//                            $data['sql_stok_msk']   = $this->db
-//                                                           ->where('status', '1')
-////                                                           ->where('id_produk', $data['sql_stok']->id)
-//                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
-//                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-//                                                           ->like('id_gudang', $id_gdg)
-//                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-//                                                           ->order_by('tgl_simpan', 'desc')
-//                                                           ->get('v_produk_hist')->result();
-////                        
-////                            $data['sql_stok_hist']  = $this->db
-////                                                           ->where('status', '4')
-////                                                           ->where('id_produk', $data['sql_stok']->id)
-////                                                           ->where('id >=', $data['stok_so']->id)
-////                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
-////                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-////                                                           ->like('id_gudang', $id_gdg)
-////                                                           ->get('tbl_m_produk_hist')->result();
-////
-////                            $data['sql_stok_msk']   = $this->db
-////                                                           ->where('status', '1')
-////                                                           ->where('id_produk', $data['sql_stok']->id)
-////                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
-////                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-////                                                           ->like('id_gudang', $id_gdg)
-////                                                           ->get('tbl_m_produk_hist')->result();
-//                        }else{
-                            $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
-                            $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
-                            
-                            $data['sql_stok_hist']  = $this->db
-                                                           ->where('id_produk', $data['sql_stok']->id)
-//                                                           ->where('id >=', $data['stok_so']->id)
-                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
-                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-                                                           ->where('status !=', '2')
-//                                                           ->where('status !=', '6')
-                                                           ->where('status !=', '8')
-//                                                           ->like('id_gudang', $id_gdg)
-                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                           ->order_by('tgl_simpan', 'asc')
-                                                           ->get('v_produk_hist')->result();
+                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
+                        $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
+                        
+                        $data['sql_stok_hist'] = $this->db
+                                                      ->where('id_produk', $data['sql_stok']->id)
+                                                      ->where('DATE(tgl_masuk) >=', $tgl_awal)
+                                                      ->where('DATE(tgl_masuk) <=', $tgl_akhir)
+                                                      ->where('status !=', '2')
+                                                      ->where('status !=', '8')
+                                                      ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                      ->order_by('tgl_simpan', 'asc')
+                                                      ->get('tbl_m_produk_hist')->result();
 
-                            $data['sql_stok_msk']   = $this->db
-                                                           ->where('status', '1')
-                                                           ->where('id_produk', $data['sql_stok']->id)
-                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
-                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                           ->like('id_gudang', $id_gdg)
-                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                           ->get('v_produk_hist')->result();
-//                        }
-
-//                            foreach ($data['sql_stok_hist'] as $hst){
-//                                $data = array(
-//                                    'id_item'   => $hst->id_produk,
-//                                    'item'      => $hst->produk,
-//                                    'keterangan'=> $hst->keterangan,
-//                                    'd' => ($hst->status == 1 ? $data['stok_so']->jml + $hst->jml: 0),
-////                                    'jml'       => $hst->jml,
-//                                    'k' => ($hst->status == 4 ? $data['stok_so']->jml + $hst->jml: 0),
-//                                    'status'    => $hst->status,
-//                                );
-//                                
-//                                crud::simpan('tbl_trans_stok_tmp', $data);
-//                            }
-//                            echo '<pre>';
-//                            print_r($data['sql_stok_hist']);
-//                            echo '</pre>';
+                        $data['sql_stok_msk'] = $this->db
+                                                     ->where('status', '1')
+                                                     ->where('id_produk', $data['sql_stok']->id)
+                                                     ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                                     ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                                     ->like('id_gudang', $id_gdg)
+                                                     ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                     ->get('tbl_m_produk_hist')->result();
                     break;
                 }
             }
@@ -3861,15 +3710,21 @@ class laporan extends CI_Controller {
             $idp     = $this->input->post('id_pasien');
             $pasien  = $this->input->post('pasien');
             $tipe    = $this->input->post('tipe');
+            $dokter  = $this->input->post('dokter');
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
-
-            $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
+            $tgl_awal = null;
+            $tgl_akhir = null;
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+                }
+            }
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_m_pasien.nama_pgl')
@@ -3878,7 +3733,7 @@ class laporan extends CI_Controller {
                                 ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
                                 ->where('tbl_trans_medcheck.status_hps', '0')
                                 ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan)', $this->tanggalan->tgl_indo_sys($tgl))
+                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan)', $tgl_masuk)
                                 ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                 ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
 //                                ->like('tbl_trans_medcheck.pasien', $pasien)
@@ -3886,15 +3741,15 @@ class laporan extends CI_Controller {
                 
                 # Lempar ke halaman laporan
                 redirect(base_url('laporan/data_icd.php?case=per_tanggal&poli='.$poli.(!empty($pasien) ? '&id_pasien='.$idp.'&pasien='.$pasien : '').(!empty($plat) ? '&plat='.$plat : '').(!empty($tipe) ? '&tipe='.$tipe : '').'&tgl='.$tgl_masuk.'&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
                 $sql = $this->db->select('tbl_m_pasien.nama_pgl')
                                 ->join('tbl_m_icd', 'tbl_m_icd.id=tbl_trans_medcheck_icd.id_icd')
                                 ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_icd.id_medcheck')
                                 ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
                                 ->where('tbl_trans_medcheck.status_hps', '0')
                                 ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) >=', $this->tanggalan->tgl_indo_sys($tgl_awal))
-                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) <=', $this->tanggalan->tgl_indo_sys($tgl_akhir))
+                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) >=', $tgl_awal)
+                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) <=', $tgl_akhir)
                                 ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                 ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
 //                                ->like('tbl_trans_medcheck.pasien', $pasien)
@@ -3922,12 +3777,18 @@ class laporan extends CI_Controller {
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
-
-            $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            // Konversi format tanggal
+            $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
+            $tgl_awal = null;
+            $tgl_akhir = null;
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+                }
+            }
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_m_pasien.nama_pgl')
@@ -3936,7 +3797,7 @@ class laporan extends CI_Controller {
                                 ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
                                 ->where('tbl_trans_medcheck.status_hps', '0')
                                 ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan)', $this->tanggalan->tgl_indo_sys($tgl))
+                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan)', $tgl_masuk)
                                 ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                 ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
 //                                ->like('tbl_trans_medcheck.pasien', $pasien)
@@ -3944,22 +3805,22 @@ class laporan extends CI_Controller {
                 
                 # Lempar ke halaman laporan
                 redirect(base_url('laporan/data_icd.php?case=per_tanggal&poli='.$poli.(!empty($pasien) ? '&id_pasien='.$idp.'&pasien='.$pasien : '').(!empty($plat) ? '&plat='.$plat : '').(!empty($tipe) ? '&tipe='.$tipe : '').'&tgl='.$tgl_masuk.'&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_rtg)) {
                 $sql = $this->db->select('tbl_m_pasien.nama_pgl')
                                 ->join('tbl_m_icd', 'tbl_m_icd.id=tbl_trans_medcheck_icd.id_icd')
                                 ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_icd.id_medcheck')
                                 ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
                                 ->where('tbl_trans_medcheck.status_hps', '0')
                                 ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) >=', $this->tanggalan->tgl_indo_sys($tgl_awal))
-                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) <=', $this->tanggalan->tgl_indo_sys($tgl_akhir))
+                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) >=', $tgl_awal)
+                                ->where('DATE(tbl_trans_medcheck_icd.tgl_simpan) <=', $tgl_akhir)
                                 ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                 ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
 //                                ->like('tbl_trans_medcheck.pasien', $pasien)
                                 ->get('tbl_trans_medcheck_icd');
                 
                 # Lempar ke halaman laporan
-                redirect(base_url('laporan/data_diagnosa.php?case=per_rentang&poli='.$poli.(!empty($pasien) ? '&id_pasien='.$idp.'&pasien='.$pasien : '').(!empty($plat) ? '&plat='.$plat : '').(!empty($tipe) ? '&tipe='.$tipe : '').'&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir . '&jml=' . $sql->num_rows()));
+                redirect(base_url('laporan/data_icd.php?case=per_rentang&poli='.$poli.(!empty($pasien) ? '&id_pasien='.$idp.'&pasien='.$pasien : '').(!empty($plat) ? '&plat='.$plat : '').(!empty($tipe) ? '&tipe='.$tipe : '').'&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir . '&jml=' . $sql->num_rows()));
             }
         }else{
             $errors = $this->ion_auth->messages();
@@ -3978,14 +3839,18 @@ class laporan extends CI_Controller {
             $pasien         = $this->input->post('pasien');
             $tipe           = $this->input->post('tipe');
             $inst           = $this->input->post('instansi');
+            $dokter         = $this->input->post('dokter');
             
             $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-            $sql_doc        = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            
+            if (!empty($dokter)) {
+                $sql_doc    = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            }
 
             $tgl_rentang    = explode('-', $tgl_rtg);
-            $tgl_awal       = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir      = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk      = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_awal       = !empty($tgl_rtg) ? $this->tanggalan->tgl_indo_sys($tgl_rentang[0]) : null;
+            $tgl_akhir      = !empty($tgl_rtg) ? $this->tanggalan->tgl_indo_sys($tgl_rentang[1]) : null;
+            $tgl_masuk      = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.nama, tbl_trans_medcheck_resume_det.id, tbl_trans_medcheck_resume_det.param, tbl_trans_medcheck_resume_det.param_nilai')
@@ -3993,22 +3858,22 @@ class laporan extends CI_Controller {
                                 ->join('tbl_pendaftaran', 'tbl_pendaftaran.id=tbl_trans_medcheck.id_dft')
                                 ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
                                 ->where('tbl_trans_medcheck.tipe', '5')
-                                ->where('DATE(tbl_trans_medcheck_resume_det.tgl_simpan)', $this->tanggalan->tgl_indo_sys($tgl_masuk))
+                                ->where('DATE(tbl_trans_medcheck_resume_det.tgl_simpan)', $tgl_masuk)
                                 ->like('tbl_pendaftaran.id_instansi', $inst, (!empty($inst) ? 'none' : ''))
                                 ->get('tbl_trans_medcheck_resume_det');
                 
                 # Lempar ke halaman laporan
                 redirect(base_url('laporan/data_mcu.php?case=per_tanggal&tgl=' . $tgl_masuk.'&id_instansi='.$inst . '&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_rtg)) {
                 $sql = $this->db->select('tbl_m_pasien.id AS id_pasien, tbl_m_pasien.nama_pgl, tbl_trans_medcheck_resume.id, tbl_trans_medcheck_resume.id_medcheck, tbl_trans_medcheck_resume.id_user, tbl_trans_medcheck_resume.no_surat')
-                                                         ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_resume.id_medcheck')
-                                                         ->join('tbl_pendaftaran', 'tbl_pendaftaran.id=tbl_trans_medcheck.id_dft')
-                                                         ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                                         ->where('tbl_trans_medcheck.tipe', '5')
-                                                         ->where('DATE(tbl_trans_medcheck_resume.tgl_simpan) >=', $this->tanggalan->tgl_indo_sys($tgl_awal))
-                                                         ->where('DATE(tbl_trans_medcheck_resume.tgl_simpan) <=', $this->tanggalan->tgl_indo_sys($tgl_akhir))
-                                                         ->like('tbl_pendaftaran.id_instansi', $inst, (!empty($inst) ? 'none' : ''))
-                                                         ->get('tbl_trans_medcheck_resume');
+                                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_resume.id_medcheck')
+                                ->join('tbl_pendaftaran', 'tbl_pendaftaran.id=tbl_trans_medcheck.id_dft')
+                                ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                                ->where('tbl_trans_medcheck.tipe', '5')
+                                ->where('DATE(tbl_trans_medcheck_resume.tgl_simpan) >=', $tgl_awal)
+                                ->where('DATE(tbl_trans_medcheck_resume.tgl_simpan) <=', $tgl_akhir)
+                                ->like('tbl_pendaftaran.id_instansi', $inst, (!empty($inst) ? 'none' : ''))
+                                ->get('tbl_trans_medcheck_resume');
                 
                 # Lempar ke halaman laporan
                 redirect(base_url('laporan/data_mcu.php?case=per_rentang&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir .'&id_instansi='.$inst . '&jml=' . $sql->num_rows()));
@@ -4076,12 +3941,10 @@ class laporan extends CI_Controller {
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
-
             $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_awal = !empty($tgl_rtg) ? $this->tanggalan->tgl_indo_sys($tgl_rentang[0]) : null;
+            $tgl_akhir = !empty($tgl_rtg) ? $this->tanggalan->tgl_indo_sys($tgl_rentang[1]) : null;
+            $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_trans_medcheck.id')
@@ -4218,17 +4081,30 @@ class laporan extends CI_Controller {
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
-
-            $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            // Convert date formats
+            $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
+            $tgl_awal = null;
+            $tgl_akhir = null;
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+                }
+            }
 
             if (!empty($tgl)) {
-                $sql = $this->db->where('DATE(tgl_bayar)', $tgl_masuk)->where('status_hps', '0')->where('status_bayar', '1')->like('metode', $plat, (!empty($plat) ? 'none' : ''))->like('pasien', $pasien, (!empty($pasien) ? 'none' : ''))->like('tipe', $poli, (!empty($poli) ? 'none' : ''))->get('tbl_trans_medcheck');
+                $sql = $this->db->where('DATE(tgl_bayar)', $tgl_masuk)
+                                ->where('status_hps', '0')
+                                ->where('status_bayar', '1')
+                                ->like('metode', $plat, (!empty($plat) ? 'none' : ''))
+                                ->like('pasien', $pasien, (!empty($pasien) ? 'none' : ''))
+                                ->like('tipe', $poli, (!empty($poli) ? 'none' : ''))
+                                ->get('tbl_trans_medcheck');
+                
                 redirect(base_url('laporan/data_omset_jasa.php?case=per_tanggal&poli='.$poli.(!empty($pasien) ? '&id_pasien='.$idp.'&pasien='.$pasien : '').(!empty($plat) ? '&plat='.$plat : '').'&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
                 $sql = $this->db
                         ->like('pasien', $pasien, (!empty($pasien) ? 'none' : ''))
                         ->like('tipe', $poli, (!empty($poli) ? 'none' : ''))
@@ -4306,19 +4182,24 @@ class laporan extends CI_Controller {
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id_user', $dokter)->get('tbl_m_karyawan')->row();
-
-            $tgl_rentang    = explode('-', $tgl_rtg);
-            $tgl_awal       = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir      = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk      = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
+            $tgl_awal = null;
+            $tgl_akhir = null;
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+                }
+            }
 
             if (!empty($tgl)) {
                 $sql = $this->db->where('DATE(tgl_simpan)', $tgl_masuk)
                                 ->get('v_medcheck_bukti');
                 
                 redirect(base_url('laporan/data_omset_bukti.php?case=per_tanggal&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_rtg) && !empty($tgl_awal) && !empty($tgl_akhir)) {
                 $sql = $this->db->where('DATE(tgl_simpan) >=', $tgl_awal)
                                 ->where('DATE(tgl_simpan) <=', $tgl_akhir)
                                 ->get('v_medcheck_bukti');
@@ -4615,27 +4496,44 @@ class laporan extends CI_Controller {
         if (akses::aksesLogin() == TRUE) {
             $tgl     = $this->input->post('tgl');
             $tgl_rtg = $this->input->post('tgl_rentang');
+            $dokter  = $this->input->post('id_dokter'); // Added missing variable
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            // Only query if dokter is provided
+            $sql_doc = null;
+            if (!empty($dokter)) {
+                $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            }
 
-            $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            // Handle date processing safely
+            $tgl_awal = null;
+            $tgl_akhir = null;
+            $tgl_masuk = null;
+            
+            if (!empty($tgl)) {
+                $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            }
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys(trim($tgl_rentang[0]));
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys(trim($tgl_rentang[1]));
+                }
+            }
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_trans_medcheck.tgl_masuk, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item')
                         ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
                         ->where('tbl_trans_medcheck.status_hps', '0')
                         ->where('tbl_trans_medcheck.status_bayar', '1')
-                        ->where('DATE(tbl_trans_medcheck_det.tgl_simpan)', $tgl)
+                        ->where('DATE(tbl_trans_medcheck_det.tgl_simpan)', $tgl_masuk)
                         ->where('tbl_trans_medcheck_det.status', '4')
                         ->get('tbl_trans_medcheck_det');
                 
                 redirect(base_url('laporan/data_stok_keluar.php?case=per_tanggal&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
                 $sql = $this->db->select('tbl_trans_medcheck.tgl_masuk, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item')
                         ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
                         ->where('tbl_trans_medcheck.status_hps', '0')
@@ -4683,22 +4581,32 @@ class laporan extends CI_Controller {
         if (akses::aksesLogin() == TRUE) {
             $tgl            = $this->input->post('tgl');
             $tgl_rtg        = $this->input->post('tgl_rentang');
+            $dokter         = $this->input->post('dokter');
             
             $pengaturan     = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc        = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            if (!empty($dokter)) {
+                $sql_doc    = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            }
 
-            $tgl_rentang    = explode('-', $tgl_rtg);
-            $tgl_awal       = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir      = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk      = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_masuk      = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
+            $tgl_awal       = null;
+            $tgl_akhir      = null;
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+                }
+            }
 
             if (!empty($tgl)) {
-                $sql = $this->db->where('DATE(tgl_simpan)', $tgl)
+                $sql = $this->db->where('DATE(tgl_simpan)', $tgl_masuk)
                                 ->get('v_laporan_stok');
                 
                 redirect(base_url('laporan/data_stok_mutasi.php?case=per_tanggal&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
+            } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
                 $sql = $this->db
 //                                ->where('DATE(tgl_simpan) >=', $tgl_awal)
 //                                ->where('DATE(tgl_simpan) <=', $tgl_akhir)
@@ -4771,60 +4679,85 @@ class laporan extends CI_Controller {
 
     public function set_data_pasien(){
         if (akses::aksesLogin() == TRUE) {
+            // Ambil parameter dari input
+            $tgl = $this->input->post('tgl');
+            $tgl_rtg = $this->input->post('tgl_rentang');
+            $statusPas = $this->input->post('statusPasien');
+            
+            // Konversi format tanggal
+            $tgl_masuk = !empty($tgl) ? trim($this->tanggalan->tgl_indo_sys($tgl)) : null;
+            $tgl_awal = null;
+            $tgl_akhir = null;
+            
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[0]));
+                    $tgl_akhir = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[1]));
+                }
+            }
+            
             // Menentukan URL dasar
             $redirect_url = 'laporan/data_pasien_st.php';
-
-            // Menyimpan parameter dalam array agar lebih mudah diatur
+            
+            // Menyimpan parameter dalam array
             $params = [];
-
-            // Menentukan case berdasarkan input tanggal
-            if (!empty($tgl) && !empty($tgl_awal) && !empty($tgl_akhir)) {
-                // Jika `tgl` dan `tgl_rentang` terisi, redirect ke `per_tanggal`
+            
+            // Menentukan case dan parameter berdasarkan input tanggal
+            if (!empty($tgl_masuk)) {
+                // Jika tanggal tunggal diisi
                 $params['case'] = 'per_tanggal';
-                $params['tgl'] = $tgl;
-                $params['tgl_awal'] = $tgl_awal;
-                $params['tgl_akhir'] = $tgl_akhir;
+                $params['tgl'] = $tgl_masuk;
+                
+                // Query untuk menghitung jumlah data
+                $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
+                $this->db->from("v_pasien");
+                $this->db->where("DATE(tgl_simpan)", $tgl_masuk);
+                
+                if ($statusPas == "1") {
+                    $this->db->where("jumlah", '1');
+                } elseif ($statusPas == "2") {
+                    $this->db->where("jumlah >", '1');
+                }
+                
+                $jumlah_data = $this->db->get()->num_rows();
+                
             } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
-                // Jika hanya `tgl_rentang` yang terisi, redirect ke `per_rentang`
+                // Jika rentang tanggal diisi
                 $params['case'] = 'per_rentang';
                 $params['tgl_awal'] = $tgl_awal;
                 $params['tgl_akhir'] = $tgl_akhir;
-            } elseif (!empty($tgl)) {
-                // Jika hanya `tgl` yang terisi, redirect ke `per_tanggal`
-                $params['case'] = 'per_tanggal';
-                $params['tgl'] = $tgl;
+                
+                // Query untuk menghitung jumlah data
+                $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
+                $this->db->from("v_pasien");
+                $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
+                $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
+                
+                if ($statusPas == "1") {
+                    $this->db->where("jumlah", '1');
+                } elseif ($statusPas == "2") {
+                    $this->db->where("jumlah >", '1');
+                }
+                
+                $jumlah_data = $this->db->get()->num_rows();
+                
             } else {
-                // **Jika tidak ada filter tanggal sama sekali, langsung redirect ke halaman utama**
+                // Jika tidak ada filter tanggal, redirect ke halaman utama
                 redirect(base_url('laporan/data_pasien_st.php'));
-                exit; // **Pastikan eksekusi berhenti di sini agar tidak lanjut ke kode berikutnya**
+                return;
             }
-
+            
             // Tambahkan parameter status pasien dan jumlah data
-            $params['statusPasien'] = $statusPas;
-            $params['jml'] = !empty($jumlah_data) ? $jumlah_data : 0; // Hindari NULL
-
-            // **Debugging sebelum redirect**
-            if (empty($params['tgl']) && empty($params['tgl_awal']) && empty($params['tgl_akhir'])) {
-                echo "<pre>";
-                echo "ERROR: Semua parameter tanggal kosong!";
-                print_r($params);
-                exit;
-            }
-
-            // **Gabungkan semua parameter ke dalam URL dengan http_build_query**
+            $params['status_pas'] = $statusPas;
+            $params['jml'] = !empty($jumlah_data) ? $jumlah_data : 0;
+            
+            // Gabungkan semua parameter ke dalam URL
             $redirect_url .= '?' . http_build_query($params);
-
-            // **Debugging untuk melihat hasil akhir URL**
-            echo "<pre>";
-            echo "Redirecting to: " . base_url($redirect_url);
-            print_r($params);
-            echo "</pre>";
-            exit;
-
-            // **Redirect ke halaman laporan dengan parameter yang benar**
+            
+            // Redirect ke halaman laporan dengan parameter yang benar
             redirect(base_url($redirect_url));
-            exit; // **Pastikan tidak ada eksekusi kode setelah redirect**
-        }else{
+        } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
@@ -6089,6 +6022,7 @@ class laporan extends CI_Controller {
             $plat       = $this->input->get('plat');
             $case       = $this->input->get('case');
             $hal        = $this->input->get('halaman');
+            $pasien     = $this->input->get('pasien'); // Added missing variable
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
             $grup       = $this->ion_auth->get_users_groups()->row();
@@ -6120,7 +6054,7 @@ class laporan extends CI_Controller {
                                                               ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.metode', $plat, (!empty($plat) ? 'none' : ''))
-                                                              ->like('tbl_trans_medcheck.pasien', $pasien)
+                                                              ->like('tbl_trans_medcheck.pasien', $pasien, (!empty($pasien) ? 'none' : ''))
                                                         ->get('tbl_trans_medcheck_det')->row();
                     break;
 
@@ -6133,7 +6067,7 @@ class laporan extends CI_Controller {
                                                               ->where('tbl_trans_medcheck.status_hps', '0')
                                                               ->where('tbl_trans_medcheck.status_bayar', '1')
                                                               ->where('DATE(tbl_trans_medcheck.tgl_bayar) >=', $tgl_awal)
-                                                              ->where('DATE(tbl_trans_medcheck.tgl_masuk) <=', $tgl_akhir)
+                                                              ->where('DATE(tbl_trans_medcheck.tgl_bayar) <=', $tgl_akhir) // Fixed: changed tgl_masuk to tgl_bayar
                                                               ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.metode', $plat, (!empty($plat) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
@@ -6150,7 +6084,7 @@ class laporan extends CI_Controller {
                                                               ->like('tbl_trans_medcheck.tipe', $tipe, (!empty($tipe) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.id_poli', $poli, (!empty($poli) ? 'none' : ''))
                                                               ->like('tbl_trans_medcheck.metode', $plat, (!empty($plat) ? 'none' : ''))
-                                                              ->like('tbl_trans_medcheck.pasien', $pasien)
+                                                              ->like('tbl_trans_medcheck.pasien', $pasien, (!empty($pasien) ? 'none' : ''))
                                                         ->get('tbl_trans_medcheck_det')->row();
                     break;
             }
@@ -8604,39 +8538,39 @@ class laporan extends CI_Controller {
                     break;
             }
 
-            $objPHPExcel = new PHPExcel();
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
             // Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A4:N4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A4:N4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A4:N4')->getFont()->setBold(TRUE);
-            $objPHPExcel->getActiveSheet()->getRowDimension('4')->setRowHeight(40);
+            $sheet->getStyle('A4:N4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A4:N4')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A4:N4')->getFont()->setBold(TRUE);
+            $sheet->getRowDimension('4')->setRowHeight(40);
 
-            $objPHPExcel->setActiveSheetIndex(0)
-                    ->setCellValue('A4', 'No.')
-                    ->setCellValue('B4', 'TGL')
-                    ->setCellValue('C4', 'TIPE')
-                    ->setCellValue('D4', 'ITEM')
-                    ->setCellValue('E4', 'PASIEN')
-                    ->setCellValue('F4', 'QTY')
-                    ->setCellValue('G4', 'SATUAN')
-                    ->setCellValue('H4', 'HARGA')
-                    ->setCellValue('I4', 'SUBTOTAL');
+            $sheet->setCellValue('A4', 'No.')
+                  ->setCellValue('B4', 'TGL')
+                  ->setCellValue('C4', 'TIPE')
+                  ->setCellValue('D4', 'ITEM')
+                  ->setCellValue('E4', 'PASIEN')
+                  ->setCellValue('F4', 'QTY')
+                  ->setCellValue('G4', 'SATUAN')
+                  ->setCellValue('H4', 'HARGA')
+                  ->setCellValue('I4', 'SUBTOTAL');
 
-            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(18);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(35);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(50);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(10);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(10);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(30);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(14);
-            $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(14);
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(18);
+            $sheet->getColumnDimension('C')->setWidth(14);
+            $sheet->getColumnDimension('D')->setWidth(35);
+            $sheet->getColumnDimension('E')->setWidth(50);
+            $sheet->getColumnDimension('F')->setWidth(8);
+            $sheet->getColumnDimension('G')->setWidth(10);
+            $sheet->getColumnDimension('H')->setWidth(10);
+            $sheet->getColumnDimension('I')->setWidth(10);
+            $sheet->getColumnDimension('J')->setWidth(14);
+            $sheet->getColumnDimension('K')->setWidth(14);
+            $sheet->getColumnDimension('L')->setWidth(30);
+            $sheet->getColumnDimension('M')->setWidth(14);
+            $sheet->getColumnDimension('N')->setWidth(14);
 
             if(!empty($sql_omset)){
                 $no    = 1;
@@ -8646,66 +8580,59 @@ class laporan extends CI_Controller {
                     $sql_so     = $this->db->where('id_user', $penjualan->id_dokter)->get('tbl_m_karyawan')->row();
                     $dokter     = $this->db->where('id_user', $penjualan->id_dokter)->get('tbl_m_karyawan')->row();
                     $platform   = $this->db->where('id', $penjualan->metode)->get('tbl_m_platform')->row();
-                    $sub_js     = $remun->remun_nom * $penjualan->jml;
+                    // Get remuneration data if needed
+                    $remun      = $this->db->where('id_item', $penjualan->id_item)->get('tbl_m_remun')->row();
+                    $sub_js     = isset($remun) ? $remun->remun_nom * $penjualan->jml : 0;
                     $total      = $total + $penjualan->subtotal;
                     $subtot     = $penjualan->harga * $penjualan->jml;
 
-                    $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('F'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    $objPHPExcel->getActiveSheet()->getStyle('B'.$cell.':E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('H'.$cell.':I'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                    $objPHPExcel->getActiveSheet()->getStyle('L'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-//                    $objPHPExcel->getActiveSheet()->getStyle('B'.$cell.':J'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-//                    $objPHPExcel->getActiveSheet()->getStyle('K'.$cell.':N'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-//                    $objPHPExcel->getActiveSheet()->setCellValueExplicit('B'.$cell, $val,PHPExcel_Cell_DataType::TYPE_STRING);
-                    $objPHPExcel->getActiveSheet()->getStyle('H'.$cell.':I'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                    $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('F'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('B'.$cell.':E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('H'.$cell.':I'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('L'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('H'.$cell.':I'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
-                    $objPHPExcel->setActiveSheetIndex(0)
-                            ->setCellValue('A'.$cell, $no)
-                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                            ->setCellValue('C'.$cell, 'Stok Keluar')
-                            ->setCellValue('D'.$cell, $penjualan->item)
-                            ->setCellValue('E'.$cell, $penjualan->nama_pgl)
-                            ->setCellValue('F'.$cell, (float)$penjualan->jml)
-                            ->setCellValue('G'.$cell, $penjualan->satuan)
-                            ->setCellValue('H'.$cell, $penjualan->harga)
-                            ->setCellValue('I'.$cell, $penjualan->subtotal);
+                    $sheet->setCellValue('A'.$cell, $no)
+                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                          ->setCellValue('C'.$cell, 'Stok Keluar')
+                          ->setCellValue('D'.$cell, $penjualan->item)
+                          ->setCellValue('E'.$cell, $penjualan->nama_pgl)
+                          ->setCellValue('F'.$cell, (float)$penjualan->jml)
+                          ->setCellValue('G'.$cell, $penjualan->satuan)
+                          ->setCellValue('H'.$cell, $penjualan->harga)
+                          ->setCellValue('I'.$cell, $penjualan->subtotal);
 
                     $no++;
                     $cell++;
                 }
 
-                $sell1     = $cell;
+                $sell1 = $cell;
                 
-                $objPHPExcel->getActiveSheet()->getStyle('L'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
-                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell1.':F'.$sell1.'')->getFont()->setBold(TRUE);
-                $objPHPExcel->getActiveSheet()->getStyle('A'.$sell1.':F'.$sell1)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                $objPHPExcel->setActiveSheetIndex(0)
-                        ->setCellValue('A' . $sell1, '')->mergeCells('A'.$sell1.':K'.$sell1.'')
-                        ->setCellValue('L' . $sell1, $sql_omset_row->jml_gtotal);
+                $sheet->getStyle('I'.$sell1)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                $sheet->getStyle('A'.$sell1.':H'.$sell1.'')->getFont()->setBold(TRUE);
+                $sheet->getStyle('A'.$sell1.':H'.$sell1)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->setCellValue('A'.$sell1, 'TOTAL');
+                $sheet->mergeCells('A'.$sell1.':H'.$sell1.'');
+                $sheet->setCellValue('I'.$sell1, $total);
             }
 
             // Rename worksheet
-            $objPHPExcel->getActiveSheet()->setTitle('Lap Omset');
+            $sheet->setTitle('Lap Omset');
 
             /** Page Setup * */
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-            $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
 
             /* -- Margin -- */
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setTop(0.25);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setRight(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setLeft(0);
-            $objPHPExcel->getActiveSheet()
-                    ->getPageMargins()->setFooter(0);
-
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
 
             /** Page Setup * */
             // Set document properties
-            $objPHPExcel->getProperties()->setCreator("Mikhael Felian Waskito")
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
                     ->setLastModifiedBy($this->ion_auth->user()->row()->username)
                     ->setTitle("Stok")
                     ->setSubject("Aplikasi Bengkel POS")
@@ -8713,22 +8640,14 @@ class laporan extends CI_Controller {
                     ->setKeywords("Pasifik POS")
                     ->setCategory("Untuk mencetak nota dot matrix");
 
-
             ob_end_clean();
-            // Redirect output to a client’s web browser (Excel5)
+            // Redirect output to a client's web browser
             header('Content-Type: application/vnd.ms-excel');
-            // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="data_stok_keluar_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xls"');
+            header('Content-Disposition: attachment;filename="data_stok_keluar_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xlsx"');
+            header('Cache-Control: max-age=0');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-
-            ob_clean();
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
             exit;
         }else{
             $errors = $this->ion_auth->messages();
