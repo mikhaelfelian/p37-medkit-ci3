@@ -45,7 +45,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php echo form_open_multipart(base_url('medcheck/set_cari_medcheck_bayar.php'), 'autocomplete="off"') ?> 
+                                    <?php echo form_open(base_url('medcheck/set_cari_medcheck_bayar.php'), 'autocomplete="off"') ?> 
                                     <tr>
                                         <td></td>
                                         <td><?php echo form_input(array('id' => 'tgl', 'name' => 'tgl', 'class' => 'form-control', 'placeholder' => 'Tgl ...')) ?></td>
@@ -78,9 +78,12 @@
                                                 <td style="width: 150px;"><?php echo anchor(base_url('medcheck/tindakan.php?id=' . general::enkrip($penj->id)), $penj->no_nota, 'class="text-default"') ?></td>
                                                 <td class="text-right" style="width: 150px;"><?php echo general::format_angka($penj->jml_gtotal) ?></td>
                                                 <td style="width: 250px;">
-                                                    <?php echo anchor(base_url('medcheck/invoice/bayar.php?id=' . general::enkrip($penj->id) . '#jml_bayar'), '<i class="fa fa-shopping-cart"></i> Bayar &raquo;', 'class="btn btn-warning btn-flat btn-xs"') . nbs() ?>
+                                                    <?php echo anchor(base_url('medcheck/invoice/bayar.php?id=' . general::enkrip($penj->id) . '#jml_bayar'), '<i class="fa fa-shopping-cart"></i> Bayar &raquo;', 'class="btn btn-warning btn-flat btn-xs" style="width: 75px;"') . nbs() ?>
                                                     <?php echo br(); ?>
-                                                    <?php echo anchor(base_url('medcheck/tambah.php?id=' . general::enkrip($penj->id) . '&status=8&name=Bukti Pembayaran&route=medcheck/data_pemb.php'), '<i class="fa fa-file-upload"></i> Upload &raquo;', 'class="btn btn-warning btn-flat btn-xs"') . nbs() ?>
+                                                    <?php echo anchor(base_url('medcheck/tambah.php?id=' . general::enkrip($penj->id) . '&status=8&name=Bukti Pembayaran&route=medcheck/data_pemb.php'), '<i class="fa fa-file-upload"></i> Upload &raquo;', 'class="btn btn-warning btn-flat btn-xs" style="width: 75px;"') . nbs() ?>
+                                                    <?php echo br(); ?>
+                                                    <?php echo anchor(base_url('medcheck/invoice/print_dm_pdf.php?id=' . general::enkrip($penj->id) . '#jml_bayar'), '<i class="fa fa-file-pdf"></i> PDF Nota&raquo;', 'class="btn btn-success btn-flat btn-xs" style="width: 75px;"') . nbs() ?>
+                                                    <?php echo br(); ?>
                                                     <?php echo general::status_bayar($penj->status_bayar); ?>  
                                                 </td>
                                             </tr>
