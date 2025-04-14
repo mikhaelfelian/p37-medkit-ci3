@@ -41,7 +41,7 @@
                     $jml_hari   = $this->tanggalan->jml_hari($t_awl, $t_akh);
                     ?>
 
-                    <?php echo form_open_multipart(base_url('medcheck/set_medcheck_surat.php'), 'autocomplete="off"') ?>
+                    <?php echo form_open(base_url('medcheck/set_medcheck_surat.php'), 'autocomplete="off"') ?>
                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                     <?php echo form_hidden('status', $st_medrep); ?>
 
@@ -773,10 +773,9 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'trb_tgl_awal',
                                                         'name' => 'trb_tgl_awal',
-                                                        'class' => 'form-control text-middle rounded-0 datepicker',
-                                                        'value' => isset($surat) ? date('d/m/Y', strtotime($surat->trb_tgl_awal)) : '',
-                                                        'placeholder' => 'Tgl Surat ...',
-                                                        'autocomplete' => 'off'
+                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'value' => isset($surat) ? date('d-m-Y', strtotime($surat->trb_tgl_awal)) : '',
+                                                        'placeholder' => 'Tgl Surat ...'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -791,10 +790,9 @@
                                                     <?php echo form_input(array(
                                                         'id' => 'trb_tgl_akhir',
                                                         'name' => 'trb_tgl_akhir',
-                                                        'class' => 'form-control text-middle rounded-0 datepicker',
-                                                        'value' => isset($surat) ? date('d/m/Y', strtotime($surat->trb_tgl_akhir)) : '',
-                                                        'placeholder' => 'Tgl Sembuh ...',
-                                                        'autocomplete' => 'off'
+                                                        'class' => 'form-control text-middle rounded-0',
+                                                        'value' => isset($surat) ? date('d-m-Y', strtotime($surat->trb_tgl_akhir)) : '',
+                                                        'placeholder' => 'Tgl Sembuh ...'
                                                     )) ?>
                                                 </div>
                                             </div>
@@ -1066,6 +1064,46 @@
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
+        // Function to handle form field disabling based on selected surat type
+        function handleFormFieldsDisabling() {
+            // Get the selected surat type
+            var selectedType = $('select[name="tipe_surat"]').val();
+            
+            // Enable all form inputs first
+            $('input:not([type="hidden"]), select, textarea').not('[name="csrf_token_name"]').prop('disabled', false);
+            
+            // Show only the relevant form section based on selected type
+            if (selectedType) {
+                $('.divSurat').hide();
+                $('#' + selectedType).show();
+            } else {
+                $('.divSurat').hide();
+            }
+        }
+        
+        // Run on page load
+        handleFormFieldsDisabling();
+        
+        // Run when surat type changes
+        $('select[name="tipe_surat"]').on('change', function() {
+            handleFormFieldsDisabling();
+        });
+        
+        // Show appropriate form sections based on selected surat type
+        $('select[name="tipe_surat"]').on('change', function() {
+            var id = $(this).val();
+            $('.divSurat').hide();
+            $('#' + id).show();
+        });
+        
+        // Initialize - show the appropriate section based on current selection
+        var currentType = $('select[name="tipe_surat"]').val();
+        if (currentType) {
+            $('.divSurat').hide();
+            $('#' + currentType).show();
+        }
+
+        
         $('#tgl_masuk_sht').datepicker({
             format: 'dd/mm/yyyy',
             autoclose: true
@@ -1159,7 +1197,11 @@
         // Handle tipe_surat change
         $('#tipe_surat').on('change', function () {
             var tipe_surat = $(this).val();
+            // First disable all inputs in all divSurat sections
+            $("div.divSurat").find('input').prop('disabled', true);
+            // Then hide all divSurat sections
             $("div.divSurat").hide();
+            // Finally show the selected section and enable its inputs
             $("#" + tipe_surat).show().find('input').prop('disabled', false);
         });
 
