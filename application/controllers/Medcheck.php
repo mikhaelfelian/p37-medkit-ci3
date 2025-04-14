@@ -16599,6 +16599,7 @@ public function set_medcheck_lab_adm_save() {
             
             // Write HTML to PDF
             $pdf->writeHTML($html, true, false, true, false, '');
+            $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
             
             // Output PDF
             $pdf->Output($sql_pasien->nama_pgl . '_lab_result.pdf', 'I');
@@ -17601,6 +17602,19 @@ public function set_medcheck_lab_adm_save() {
             $sql_dokter         = $this->db->where('id_user', $sql_medc_lab->id_dokter)->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
             $no_rm              = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
+            
+            // Create folder if not exists
+            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
+            if (!file_exists($folder_path)) {
+                mkdir($folder_path, 0777, true);
+            }
+            
+            // Create audiometri subfolder if not exists
+            $audiometri_folder = $folder_path.'/audiometri';
+            if (!file_exists($audiometri_folder)) {
+                mkdir($audiometri_folder, 0777, true);
+            }
+            
             $folder             = realpath('./file/pasien/'.$no_rm);
             $file               = $folder.'/audiometri/'.$sql_medc_lab->nama_file;
 
@@ -17715,14 +17729,8 @@ public function set_medcheck_lab_adm_save() {
             // QR GENERATOR VALIDASI
             $pdf->SetY(-11);
             
-            // Create folder if not exists
-            $folder_path = FCPATH.'/file/pasien/'.strtolower($kode_pasien);
-            if (!file_exists($folder_path)) {
-                mkdir($folder_path, 0777, true);
-            }
-
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
-            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.general::bersih($sql_pasien->nama_pgl);
             
             require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
