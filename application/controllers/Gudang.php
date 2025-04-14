@@ -1345,16 +1345,18 @@ class Gudang extends CI_Controller {
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
-            $this->form_validation->set_rules('kode', 'Kode', 'required');
+            $this->form_validation->set_rules('id_item', 'Item', 'required|trim');
+
 
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = [
-                    'kode'   => form_error('kode'),
+                    'kode'   => form_error('id_item'),
                 ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('gd_toast', 'toastr.error("Form tidak valid, silahkan periksa kembali data yang diinput");');
                 
-                redirect(base_url('gudang/trans_mutasi.php?id='.$id.'&item_id='.$id_item));
+                redirect(base_url((!empty($rute) ? $rute : 'gudang/trans_mutasi.php').'?id='.$id.'&item_id='.$id_item));
             } else {
                 $this->db->trans_begin();
 

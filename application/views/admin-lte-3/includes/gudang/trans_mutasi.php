@@ -136,7 +136,7 @@
                     <?php if (!empty($sess_mut)) { ?>
                         <?php echo form_open(base_url('gudang/cart_mutasi_simpan.php'), 'id="cart_mutasi_form" autocomplete="off"') ?>
                         <?php echo form_hidden('id', $this->input->get('id')); ?>
-                        <?php echo form_hidden('id_item', (!empty($sql_produk) ? general::enkrip($sql_produk->id) : '')); ?>
+                        <?php echo form_hidden('id_item', (!empty($sql_produk->id) ? general::enkrip($sql_produk->id) : '')); ?>
                         <?php echo add_form_protection(); ?>
 
                         <div class="card card-default rounded-0">
