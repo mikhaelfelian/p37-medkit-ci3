@@ -1523,9 +1523,12 @@ class Sdm extends CI_Controller {
             
             $qr_validasi = $folder_path.'/qr-validasi-'.$kode_karyawan.'.png';
             
+            // Load QR library
+            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
+            
             // Generate QR code using QRlib
             $qr_content = 'Saya yang bertandatangan dibawah ini:' . strtoupper($sql_kary->nama);
-            QRcode::png($qr_content, $qr_validasi, 'H', 2, 2);
+            \QRcode::png($qr_content, $qr_validasi, 'H', 2, 2);
             
             $gambar5 = $qr_validasi; 
             
@@ -1678,9 +1681,12 @@ class Sdm extends CI_Controller {
             }
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($sql_kary->id).'.png';
             
+            // Load QR library
+            require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
+            
             // Generate QR code using QRlib
             $qr_content = 'Saya yang bertandatangan dibawah ini:'.strtoupper($sql_kary->nama);
-            QRcode::png($qr_content, $qr_validasi, 'H', 2, 2);
+            \QRcode::png($qr_content, $qr_validasi, QR_ECLEVEL_H, 2, 2);
             
             $gambar5 = $qr_validasi; 
             
