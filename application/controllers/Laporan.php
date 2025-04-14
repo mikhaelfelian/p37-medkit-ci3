@@ -8772,7 +8772,7 @@ class laporan extends CI_Controller {
                 $sheet->setCellValue('A' . $sell1, 'TOTAL')
                       ->mergeCells('A'.$sell1.':G'.$sell1.'')
                       ->setCellValue('H' . $sell1, $total);
-            }
+            } 
 
             // Rename worksheet
             $sheet->setTitle('Lap Obat Laku');
