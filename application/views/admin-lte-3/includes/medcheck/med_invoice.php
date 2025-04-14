@@ -233,6 +233,9 @@
                                             <i class="fa fa-print"></i> Dot Matrix
                                         </button>
                                     <?php } ?>
+                                    <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=12&route=medcheck/invoice/detail.php') ?>'">
+                                        <i class="fa fa-print"></i> Kwitansi
+                                    </button>
                                     <button type="button" class="btn btn-primary" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=8&name=Bukti Pembayaran&route=medcheck/invoice/detail.php') ?>'">
                                         <i class="fa fa-upload"></i> Unggah Bukti
                                     </button>

@@ -10434,6 +10434,7 @@ public function set_medcheck_lab_adm_save() {
             $nominal    = $this->input->post('nominal');
             $ket        = $this->input->post('keterangan');
             $diag       = $this->input->post('diagnosa');
+            $route      = $this->input->post('route');
             
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
@@ -10450,7 +10451,7 @@ public function set_medcheck_lab_adm_save() {
 
                 $this->session->set_flashdata('form_error', $msg_error);
 
-                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
+                redirect(base_url(isset($route) ? $route.'?id='.$id.'&status='.$status.'&route='.$route : 'medcheck/tambah.php?id='.$id.'&status='.$status));
             } else {
                 $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
                 $sql_jml_dp = $this->db->select_sum('nominal')->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_kwi')->row();
@@ -10468,15 +10469,19 @@ public function set_medcheck_lab_adm_save() {
                     'status_kwi'  => $status_kwi,
                 ];
                 
-                $this->db->insert('tbl_trans_medcheck_kwi', $data);
+                try {
+                    $this->db->insert('tbl_trans_medcheck_kwi', $data);
 
-                if ($this->db->affected_rows() > 0) {
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri DP berhasil disimpan !");');
-                } else {
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Entri DP gagal disimpan !");');
+                    if ($this->db->affected_rows() > 0) {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri kuitansi berhasil disimpan !");');
+                    } else {
+                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Entri kuitansi gagal disimpan !");');
+                    }
+                } catch (Exception $e) {
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
                 }
                 
-                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
+                redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.(!empty($route) ? '&route='.$route : '')));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -10498,7 +10503,7 @@ public function set_medcheck_lab_adm_save() {
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Item berhasil di hapus");');
             }
             
-            redirect(base_url((!empty($rute) ? $rute : 'medcheck/tambah.php?'.(!empty($act) ? 'act='.$act.'&' : '').'id='.$id.(!empty($id_kwi) ? '&id_kwi='.$id_kwi.'&' : '').'&status='.$status)));
+            redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.(!empty($rute) ? '&route='.$rute : '').(!empty($act) ? '&act='.$act : '').(!empty($id_kwi) ? '&id_kwi='.$id_kwi : '')));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');

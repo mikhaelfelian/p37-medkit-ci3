@@ -40,6 +40,7 @@
                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                     <?php echo form_hidden('status', $this->input->get('status')); ?>
                                     <?php echo form_hidden('status_kwi', '1'); ?>
+                                    <?php echo form_hidden('route', $this->input->get('route')); ?>
                                     <input type="hidden" id="id_dokter" name="id_dokter">
 
                                     <div class="row">
@@ -95,7 +96,7 @@
                         <div class="card-footer">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)) ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
+                                    <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url(isset($_GET['route']) ? $_GET['route'] . '?id=' . general::enkrip($sql_medc->id) : 'medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)) ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
                                 </div>
                                 <div class="col-lg-6 text-right">
                                     <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>
@@ -143,9 +144,9 @@
                                                 <p><?php echo ucfirst($det->diagnosa); ?></p>
                                             </td>
                                             <td class="text-left">
-                                                <?php echo anchor(base_url('medcheck/set_kwitansi_hps.php?id=' . general::enkrip($sql_medc->id) . '&id_kwi=' . general::enkrip($det->id) . '&status=' . $this->input->get('status')), 'Hapus &raquo;', 'class="btn btn-danger btn-flat btn-xs text-bold" style="width: 70px;" onclick="return confirm(\'Hapus ?\')"') ?>
+                                                <?php echo anchor(base_url('medcheck/set_kwitansi_hps.php?id=' . general::enkrip($sql_medc->id) . '&id_kwi=' . general::enkrip($det->id) . '&status=' . $this->input->get('status') . '&route=' . $this->input->get('route')), 'Hapus &raquo;', 'class="btn btn-danger btn-flat btn-xs text-bold" style="width: 70px;" onclick="return confirm(\'Hapus ?\')"') ?>
                                                 <?php echo br() ?>
-                                                <?php echo anchor(base_url('medcheck/cetak_kwitansi_pdf.php?id=' . general::enkrip($sql_medc->id) . '&id_kwi=' . general::enkrip($det->id) . '&status=' . $this->input->get('status')), 'Cetak &raquo;', 'class="btn btn-warning btn-flat btn-xs text-bold" style="width: 70px;" target="_blank"') ?>
+                                                <?php echo anchor(base_url('medcheck/cetak_kwitansi_pdf.php?id=' . general::enkrip($sql_medc->id) . '&id_kwi=' . general::enkrip($det->id) . '&status=' . $this->input->get('status') . '&route=' . $this->input->get('route')), 'Cetak &raquo;', 'class="btn btn-warning btn-flat btn-xs text-bold" style="width: 70px;" target="_blank"') ?>
                                             </td>
                                         </tr>
                                     <?php } ?>
