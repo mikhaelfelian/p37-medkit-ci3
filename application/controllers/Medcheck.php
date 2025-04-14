@@ -6592,6 +6592,7 @@ class Medcheck extends CI_Controller {
             $tgl_masuk  = $this->input->post('tgl_masuk');
             $no_sample  = $this->input->post('no_sampel');
             $dokter     = $this->input->post('dokter');
+            $dokter_pem = $this->input->post('dokter_pem');
             $ket        = $this->input->post('keterangan');
             $status     = $this->input->post('status');
             $is_cvd     = $this->input->post('status_cvd');
@@ -6622,6 +6623,7 @@ class Medcheck extends CI_Controller {
                         'tgl_masuk'     => $this->tanggalan->tgl_indo_sys($tgl_masuk).' '.date('H:i:s'),
                         'tgl_modif'     => date('Y-m-d H:i:s'),
                         'id_dokter'     => $dokter,
+                        'id_dokter_pem' => $dokter_pem,
                         'no_sample'     => $no_sample,
                         'status_cvd'    => $is_cvd,
                         'ket'           => $ket,
@@ -16485,6 +16487,7 @@ public function set_medcheck_lab_adm_save() {
             $sql_dokter         = $this->db->where('id_user', (!empty($sql_medc_lab->id_dokter) ? $sql_medc_lab->id_dokter : $sql_medc->id_dokter))->get('tbl_m_karyawan')->row();
             $sql_dokter2        = $this->db->where('id_user', '221')->get('tbl_m_karyawan')->row();
             $sql_dokter3        = $this->db->where('id_user', '48167')->get('tbl_m_karyawan')->row();
+            $sql_dokter_pem     = $this->db->where('id_user', (!empty($sql_medc_lab->id_dokter_pem) ? $sql_medc_lab->id_dokter_pem : $sql_medc->id_dokter))->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
@@ -16506,6 +16509,7 @@ public function set_medcheck_lab_adm_save() {
             $data['sql_dokter']         = $sql_dokter;
             $data['sql_dokter2']        = $sql_dokter2;
             $data['sql_dokter3']        = $sql_dokter3;
+            $data['sql_dokter_pem']     = $sql_dokter_pem;
             $data['kode_pasien']        = $kode_pasien;
             $data['gambar1']            = $gambar1;
             $data['gambar2']            = $gambar2;
@@ -16599,7 +16603,6 @@ public function set_medcheck_lab_adm_save() {
             
             // Write HTML to PDF
             $pdf->writeHTML($html, true, false, true, false, '');
-            $pdf->Cell(19, .5, '', 'T', 0, 'L', $fill);
             
             // Output PDF
             $pdf->Output($sql_pasien->nama_pgl . '_lab_result.pdf', 'I');

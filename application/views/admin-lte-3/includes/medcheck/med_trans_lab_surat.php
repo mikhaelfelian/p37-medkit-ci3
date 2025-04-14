@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
-                        <label for="inputEmail3" class="col-sm-4 col-form-label">Dokter</label>
+                        <label for="inputEmail3" class="col-sm-4 col-form-label">Dokter Perujuk</label>
                         <div class="col-sm-6">
                             <select id="dokter" name="dokter" class="form-control rounded-0 select2bs4 <?php echo (!empty($hasError['dokter']) ? ' is-invalid' : '') ?>">
                                 <option value="0">- Dokter -</option>
@@ -45,6 +45,20 @@
                         </div>
                         <div class="col-sm-2">
                             <?php echo anchor(base_url('master/data_aps_tambah.php?act='.$this->input->get('act').'&id_medc='.$this->input->get('id').'&id_lab='.$this->input->get('id_lab').'&status='.$this->input->get('status').'&route=medcheck/tambah.php'), '<i class="fa fa-plus"></i>', 'class="btn btn-primary btn-flat"') ?>
+                        </div>
+                    </div>
+                    <div class="form-group row <?php echo (!empty($hasError['dokter_pemeriksa']) ? 'text-danger' : '') ?>">
+                        <label for="inputEmail3" class="col-sm-4 col-form-label">Dokter Pemeriksa</label>
+                        <div class="col-sm-6">
+                            <select id="dokter_pem" name="dokter_pem" class="form-control rounded-0 select2bs4 <?php echo (!empty($hasError['dokter_pem']) ? ' is-invalid' : '') ?>">
+                                <option value="0">- Dokter -</option>
+                                <?php foreach ($sql_doc as $doctor) { ?>
+                                    <option value="<?php echo $doctor->id_user ?>" <?php echo ($doctor->id_user == $sql_medc_lab_rw->id_dokter_pem ? 'selected' : '') ?>><?php echo ($doctor->status_aps == '1' ? '[APS] ' : '').(!empty($doctor->nama_dpn) ? $doctor->nama_dpn.' ' : '').$doctor->nama.(!empty($doctor->nama_blk) ? ', '.$doctor->nama_blk : '') ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+
                         </div>
                     </div>
                     <div class="form-group row">
