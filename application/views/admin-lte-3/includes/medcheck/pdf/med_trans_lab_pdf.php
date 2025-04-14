@@ -44,7 +44,7 @@ $sess_print = $this->session->userdata('lab_print');
             ?>
             <?php if(strtoupper($sql_kat->keterangan) != strtoupper($det->item)): ?>
             <tr>
-                <td colspan="4"><?php echo $sql_kat->keterangan; ?></td>
+                <td colspan="4" style="font-family: helvetica; font-size: 9pt;"><?php echo $sql_kat->keterangan; ?></td>
             </tr>
             <?php endif; ?>
 
@@ -65,7 +65,7 @@ $sess_print = $this->session->userdata('lab_print');
                 ?>
                 <?php if(strtoupper($sql_lab->row()->item_name) != strtoupper($medc->item)): ?>
                 <tr>
-                    <td colspan="4"><?php echo nbs(1).$medc->item; ?></td>
+                    <td colspan="4" style="font-family: helvetica; font-size: 9pt;"><?php echo nbs(1).$medc->item; ?></td>
                 </tr>
                 <?php endif; ?>
 
@@ -73,8 +73,8 @@ $sess_print = $this->session->userdata('lab_print');
                     <?php foreach ($sql_lab->result() as $lab): ?>
                         <?php //if ($sess_print[$i]['value'] == '1' and $sess_print[$i]['id_lab_hsl'] == $lab->id): ?>
                         <tr>
-                            <td width="40%"><?php echo nbs(2).'- ' . $lab->item_name; ?></td>
-                            <td width="20%"><?php
+                            <td width="40%" style="font-family: helvetica; font-size: 9pt;"><?php echo nbs(2).'- ' . $lab->item_name; ?></td>
+                            <td width="20%" style="font-family: helvetica; font-size: 9pt;"><?php
                             // Check if result should be highlighted in red
                             if ($lab->status_hsl_wrn == 1) {
                                 echo '<span style="color: #F90B0B;">' . $lab->item_hasil . '</span>';
@@ -82,8 +82,8 @@ $sess_print = $this->session->userdata('lab_print');
                                 echo $lab->item_hasil;
                             }
                             ?></td>
-                            <td width="20%"><?php echo $lab->item_value; ?></td>
-                            <td width="20%"><?php echo $lab->item_satuan; ?></td>
+                            <td width="20%" style="font-family: helvetica; font-size: 9pt;"><?php echo $lab->item_value; ?></td>
+                            <td width="20%" style="font-family: helvetica; font-size: 9pt;"><?php echo $lab->item_satuan; ?></td>
                         </tr>
                         <?php // endif; ?>
                     <?php endforeach; ?>
@@ -95,7 +95,7 @@ $sess_print = $this->session->userdata('lab_print');
 
         <?php if (!empty($sql_medc_lab_rw->ket)): ?>
             <tr>
-                <td colspan="4">
+                <td colspan="4" style="font-family: helvetica; font-size: 9pt;">
                     <?php echo $sql_medc_lab_rw->ket; ?>
                 </td>
             </tr>
@@ -106,7 +106,7 @@ $sess_print = $this->session->userdata('lab_print');
                 <td colspan="4"></td>
             </tr>
             <tr>
-                <td colspan="4" style="font-style: italic; font-size: 0.9em; border-top: 1px solid #000;">
+                <td colspan="4" style="font-style: italic; font-size: 0.9em; border-top: 1px solid #000; font-family: helvetica; font-size: 9pt;">
                     * Sudah dilakukan duplo
                 </td>
             </tr>
@@ -115,13 +115,13 @@ $sess_print = $this->session->userdata('lab_print');
 </table>
 <?php if (isset($sql_medc_lab) && $sql_medc_lab->status_cvd == '0' && !empty($sql_medc_lab->ket)): ?>
     <div style="margin-top: 10px;">
-        <p style="font-weight: bold; font-size: 10pt;">Catatan / Note</p>
-        <p style="font-size: 9pt;"><?php echo $sql_medc_lab->ket; ?></p>
+        <p style="font-weight: bold; font-size: 10pt; font-family: helvetica;">Catatan / Note</p>
+        <p style="font-size: 9pt; font-family: helvetica;"><?php echo $sql_medc_lab->ket; ?></p>
     </div>
 <?php elseif (isset($sql_medc_lab) && $sql_medc_lab->status_cvd != '0'): ?>
     <div style="margin-top: 10px;">
-        <p style="font-weight: bold; font-size: 10pt;">Catatan / Note</p>
-        <div style="font-size: 8pt; margin-left: 10px;">
+        <p style="font-weight: bold; font-size: 10pt; font-family: helvetica;">Catatan / Note</p>
+        <div style="font-size: 9pt; margin-left: 10px; font-family: helvetica;">
             <p>1. Hasil positiv berlaku untuk hasil PCR SARS CoV-2 atau Antigen dari Laboratorium Klinik Utama Rawat Inap 
                Esensia. Nilai tersebut tidak dapat dibandingkan dengan CT hasil PCR SARS CoV-2 atau Antigen dari
                laboratorium lain.</p>
@@ -147,52 +147,52 @@ $sess_print = $this->session->userdata('lab_print');
     <br/><br/>
     <table border="0" cellspacing="0">
         <tr>
-            <td  style="font-weight: bold; font-size: 10pt; color: #312AEE; border: 1px solid #312AEE; text-align: center;">
+            <td style="font-weight: bold; font-size: 9pt; color: #312AEE; border: 1px solid #312AEE; text-align: center; font-family: helvetica;">
                 PELAPORAN NILAI KRITIS
             </td>
             <td></td>
         </tr>
         <tr>
-            <td width="25%" style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE;">
+            <td width="25%" style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; font-family: helvetica;">
                 <strong>PETUGAS LABORATORIUM</strong>
             </td>
-            <td width="25%" style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE;">
+            <td width="25%" style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE; font-family: helvetica;">
                 <strong>DPJP</strong>
             </td>
             <td width="50%"></td>
         </tr>
         <tr>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; font-family: helvetica;">
                 <strong>Tanggal</strong>
             </td>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE; font-family: helvetica;">
                 <strong>Tanggal</strong>
             </td>
             <td></td>
         </tr>
         <tr>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; font-family: helvetica;">
                 <strong>Jam</strong>
             </td>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE; font-family: helvetica;">
                 <strong>Jam</strong>
             </td>
             <td></td>
         </tr>
         <tr>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; font-family: helvetica;">
                 <strong>Nama</strong>
             </td>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE; font-family: helvetica;">
                 <strong>Nama</strong>
             </td>
             <td></td>
         </tr>
         <tr>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE; border-bottom: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; border-bottom: 1px solid #312AEE; font-family: helvetica;">
                 <strong>TTD</strong>
             </td>
-            <td style="font-size: 8pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE; border-bottom: 1px solid #312AEE;">
+            <td style="font-size: 9pt; color: #312AEE; border-left: 1px solid #312AEE; border-right: 1px solid #312AEE; border-bottom: 1px solid #312AEE; font-family: helvetica;">
                 <strong>TTD</strong>
             </td>
             <td></td>
@@ -204,12 +204,12 @@ $sess_print = $this->session->userdata('lab_print');
     <table border="0" cellpadding="3" cellspacing="0">
         <tr>
             <td colspan="2" width="55%"></td>
-            <td width="45%" style="text-align: center;">Semarang, <?php echo $this->tanggalan->tgl_indo3($sql_medc_lab->tgl_masuk); ?></td>
+            <td width="45%" style="text-align: center; font-family: helvetica; font-size: 9pt;">Semarang, <?php echo $this->tanggalan->tgl_indo3($sql_medc_lab->tgl_masuk); ?></td>
         </tr>
         <tr>
-            <td width="15%" style="text-align: center;"><strong>Validasi</strong></td>
+            <td width="15%" style="text-align: center; font-family: helvetica; font-size: 9pt;"><strong>Validasi</strong></td>
             <td width="40%" style="text-align: left;"></td>
-            <td width="45%" style="text-align: center;"><strong>Dokter Pemeriksa</strong></td>
+            <td width="45%" style="text-align: center; font-family: helvetica; font-size: 9pt;"><strong>Dokter Pemeriksa</strong></td>
         </tr>
         <tr>
             <td width="15%" style="text-align: center;">                
@@ -270,7 +270,7 @@ $sess_print = $this->session->userdata('lab_print');
         </tr>
         <tr>
             <td colspan="2"></td>
-            <td width="45%" style="text-align: center;">
+            <td width="45%" style="text-align: center; font-family: helvetica; font-size: 9pt;">
                 <?php if (isset($sql_medc_lab) && isset($sql_dokter2)): ?>
                     <?php echo (!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : ''); ?>
                     <br>
@@ -280,4 +280,3 @@ $sess_print = $this->session->userdata('lab_print');
         </tr>
     </table>
 </div>
-
