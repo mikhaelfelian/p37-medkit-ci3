@@ -997,7 +997,6 @@
             } else {
                 $('#inputTglSuratKeluar').show();
             }
-
         });
     });
 </script>
