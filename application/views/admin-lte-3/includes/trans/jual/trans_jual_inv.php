@@ -192,7 +192,7 @@
                                         <i class="fa-solid fa-arrows-rotate"></i><br/>
                                         Batal Faktur
                                     </button>
-                                    <button type="button" class="btn btn-app bg-warning" onclick="window.location='<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=12') ?>'">
+                                    <button type="button" class="btn btn-app bg-warning" onclick="window.location='<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=12&route=pos/trans_jual_inv.php') ?>'">
                                         <i class="fa-solid fa-print"></i><br/>
                                         Buat Kwitansi
                                     </button>
