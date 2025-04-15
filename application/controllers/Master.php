@@ -7388,7 +7388,7 @@ class Master extends CI_Controller {
                     
                     // Delete user account if exists
                     if(!empty($id_user)) {
-                        $this->ion_auth->delete_user(general::dekrip($id_user));
+                $this->ion_auth->delete_user(general::dekrip($id_user)); 
                     }
                     
                     // Delete patient record
@@ -7423,41 +7423,41 @@ class Master extends CI_Controller {
             $hl = $this->input->get('halaman');
             
             try {
-                if(!empty($id)){
-                    $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-                    $sql_pasien     = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
-                    $no_rm          = strtolower($pengaturan->kode_pasien).$sql_pasien->kode;
-                    $email          = $no_rm.'@'.$pengaturan->website; # Format Email
-                    $user           = $no_rm; # Format username pasien menggunakan no rm
-                    $pass2          = ($sql_pasien->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
+            if(!empty($id)){
+                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
+                $sql_pasien     = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
+                $no_rm          = strtolower($pengaturan->kode_pasien).$sql_pasien->kode;
+                $email          = $no_rm.'@'.$pengaturan->website; # Format Email
+                $user           = $no_rm; # Format username pasien menggunakan no rm
+                $pass2          = ($sql_pasien->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
                         
                     $sql_user       = $this->db->select('username')->where('username', $no_rm)->get('tbl_ion_users');
-                    
-                    if($sql_user->num_rows() == 0){
+                
+                if($sql_user->num_rows() == 0){
                         $data_user = [
-                            'email'         => $email,
-                            'first_name'    => $sql_pasien->nama,
-                            'nama'          => $sql_pasien->nama_pgl,
-                            'address'       => $sql_pasien->alamat,
-                            'phone'         => $sql_pasien->kontak,
-                            'birthdate'     => $sql_pasien->tgl_lahir,
-                            'file_name'     => $sql_pasien->file_name,
-                            'username'      => $no_rm,
-                            'tipe'          => '2',
+                        'email'         => $email,
+                        'first_name'    => $sql_pasien->nama,
+                        'nama'          => $sql_pasien->nama_pgl,
+                        'address'       => $sql_pasien->alamat,
+                        'phone'         => $sql_pasien->kontak,
+                        'birthdate'     => $sql_pasien->tgl_lahir,
+                        'file_name'     => $sql_pasien->file_name,
+                        'username'      => $no_rm,
+                        'tipe'          => '2',
                         ];
-                        
-                        # Simpan ke modul user
+                    
+                    # Simpan ke modul user
                         $this->ion_auth->register($user, $pass2, $email, $data_user, ['15']);
-                        
-                        $sql_user_ck = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
-                        $id_user = $sql_user_ck->id;
-                        
+                    
+                    $sql_user_ck = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
+                    $id_user = $sql_user_ck->id;
+                    
                         $this->db->where('id', $sql_pasien->id)->update('tbl_m_pasien', ['id_user' => $id_user]);
                         $this->session->set_flashdata('master_toast', 'toastr.success("Pasien ini sudah bisa log in ke aplikasi");');
-                    }
                 }
-                
-                redirect(base_url('master/data_pasien_det.php?id='.general::enkrip($sql_pasien->id)));
+            }
+            
+            redirect(base_url('master/data_pasien_det.php?id='.general::enkrip($sql_pasien->id)));
             } catch (Exception $e) {
                 $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
                 redirect(base_url('master/data_pasien_det.php?id='.$id));
@@ -7474,77 +7474,77 @@ class Master extends CI_Controller {
             $kd = $this->input->get('kode');
             
             try {
-                if(!empty($id)){
-                    $pengaturan     = $this->db->get('tbl_pengaturan')->row();
-                    $sql_user_ck    = $this->db->where('username', $kd)->get('tbl_ion_users');
-                    $sql_user_ck_rw = $sql_user_ck->row();
-                    $sql_pasien     = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
-                    $no_rm          = strtolower($pengaturan->kode_pasien).$sql_pasien->kode;
-                    $sql_user       = $this->db->select('username')->where('username', $no_rm)->get('tbl_ion_users');
-                    $email          = $no_rm.'@'.$pengaturan->website; # Format Email
-                    $user           = $no_rm; # Format username pasien menggunakan no rm
-                    $pass2          = ($sql_pasien->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
+            if(!empty($id)){
+                $pengaturan     = $this->db->get('tbl_pengaturan')->row();
+                $sql_user_ck    = $this->db->where('username', $kd)->get('tbl_ion_users');
+                $sql_user_ck_rw = $sql_user_ck->row();
+                $sql_pasien     = $this->db->where('id', general::dekrip($id))->get('tbl_m_pasien')->row();
+                $no_rm          = strtolower($pengaturan->kode_pasien).$sql_pasien->kode;
+                $sql_user       = $this->db->select('username')->where('username', $no_rm)->get('tbl_ion_users');
+                $email          = $no_rm.'@'.$pengaturan->website; # Format Email
+                $user           = $no_rm; # Format username pasien menggunakan no rm
+                $pass2          = ($sql_pasien->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_pasien->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
                                 
-                    if($sql_user_ck->num_rows() > 0){                    
-                        # Reset semua id user yang berkaitan
+                if($sql_user_ck->num_rows() > 0){                    
+                    # Reset semua id user yang berkaitan
                         $this->db->where('id', $sql_user->id)->update('tbl_m_pasien', ['id_user' => '0']);
-                        
-                        # Hapus dulu usernya
-                        $this->db->where('id', $sql_user_ck_rw->id)->delete('tbl_ion_users');
                     
+                    # Hapus dulu usernya
+                    $this->db->where('id', $sql_user_ck_rw->id)->delete('tbl_ion_users');
+                
                         $data_user = [
-                            'email'         => $email,
-                            'first_name'    => $sql_pasien->nama,
-                            'nama'          => $sql_pasien->nama_pgl,
-                            'address'       => $sql_pasien->alamat,
-                            'phone'         => $sql_pasien->kontak,
-                            'birthdate'     => $sql_pasien->tgl_lahir,
-                            'file_name'     => $sql_pasien->file_name,
-                            'username'      => $no_rm,
-                            'tipe'          => '2',
+                        'email'         => $email,
+                        'first_name'    => $sql_pasien->nama,
+                        'nama'          => $sql_pasien->nama_pgl,
+                        'address'       => $sql_pasien->alamat,
+                        'phone'         => $sql_pasien->kontak,
+                        'birthdate'     => $sql_pasien->tgl_lahir,
+                        'file_name'     => $sql_pasien->file_name,
+                        'username'      => $no_rm,
+                        'tipe'          => '2',
                         ];
-                        
-                        # Simpan ke modul user
+                    
+                    # Simpan ke modul user
                         $this->ion_auth->register($user, $pass2, $email, $data_user, ['15']);
 
-                        $sql_user_ck    = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
-                        $id_user        = $sql_user_ck->id;
-                        
-                        # Reset jika ada ID user kembar
+                    $sql_user_ck    = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
+                    $id_user        = $sql_user_ck->id;
+                    
+                    # Reset jika ada ID user kembar
                         $this->db->where('id_user', $id_user)->update('tbl_m_pasien', ['id_user' => '0']);
-                        # Update id user pada tabel pasien
+                    # Update id user pada tabel pasien
                         $this->db->where('id', $sql_pasien->id)->update('tbl_m_pasien', ['id_user' => $id_user]);
 
                         $this->session->set_flashdata('master_toast', 'toastr.success("Akses Pasien ini sudah berhasil di reset !");');
                     } else {                    
                         $data_user = [
-                            'email'         => $email,
-                            'first_name'    => $sql_pasien->nama,
-                            'nama'          => $sql_pasien->nama_pgl,
-                            'address'       => $sql_pasien->alamat,
-                            'phone'         => $sql_pasien->kontak,
-                            'birthdate'     => $sql_pasien->tgl_lahir,
-                            'file_name'     => $sql_pasien->file_name,
-                            'username'      => $no_rm,
-                            'tipe'          => '2',
+                        'email'         => $email,
+                        'first_name'    => $sql_pasien->nama,
+                        'nama'          => $sql_pasien->nama_pgl,
+                        'address'       => $sql_pasien->alamat,
+                        'phone'         => $sql_pasien->kontak,
+                        'birthdate'     => $sql_pasien->tgl_lahir,
+                        'file_name'     => $sql_pasien->file_name,
+                        'username'      => $no_rm,
+                        'tipe'          => '2',
                         ];
-                        
-                        # Simpan ke modul user
+                    
+                    # Simpan ke modul user
                         $this->ion_auth->register($user, $pass2, $email, $data_user, ['15']);
-                        
-                        $sql_user_ck = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
-                        $id_user = $sql_user_ck->id;
-                        
-                        # Reset jika ada ID user kembar
+                    
+                    $sql_user_ck = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users')->row();
+                    $id_user = $sql_user_ck->id;
+                    
+                    # Reset jika ada ID user kembar
                         $this->db->where('id_user', $id_user)->update('tbl_m_pasien', ['id_user' => '0']);
-                        # Update id user pada tabel pasien
+                    # Update id user pada tabel pasien
                         $this->db->where('id', $sql_pasien->id)->update('tbl_m_pasien', ['id_user' => $id_user]);
-                        
+                    
                         $this->session->set_flashdata('master_toast', 'toastr.success("Pasien ini sudah bisa log in ke aplikasi");');
-                    }
                 }
-                
-                redirect(base_url('master/data_pasien_det.php?id='.$id));
+            }
+            
+            redirect(base_url('master/data_pasien_det.php?id='.$id));
             } catch (Exception $e) {
                 $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
                 redirect(base_url('master/data_pasien_det.php?id='.$id));
@@ -7574,8 +7574,8 @@ class Master extends CI_Controller {
                     
                     if ($sql_user_ck->num_rows() > 0) {
                         $sql_user_ck_rw = $sql_user_ck->row();
-                        $id_user = $sql_user_ck_rw->id;
-                        
+                    $id_user = $sql_user_ck_rw->id;
+                    
                         // Update user data to reset photo
                         $this->db->where('id', $id_user)->update('tbl_ion_users', [
                             'file_name' => ''
@@ -7899,7 +7899,7 @@ class Master extends CI_Controller {
             redirect();            
         }
     }
-
+    
     public function pdf_data_customer(){
         if (Akses::aksesLogin() == TRUE) {
             $query = $this->input->get('query');
@@ -9523,7 +9523,7 @@ class Master extends CI_Controller {
             redirect();
         }
     }
-
+    
     public function set_cari_icd() {
         if (Akses::aksesLogin() == TRUE) {
             $kode = $this->input->post('kode');
