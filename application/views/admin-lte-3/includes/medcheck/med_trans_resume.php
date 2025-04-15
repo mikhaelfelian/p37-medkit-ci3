@@ -121,7 +121,9 @@
 
         // Select2   
         $('.select2bs4').select2({
-            theme: 'bootstrap4'
+            theme: 'bootstrap4',
+            dropdownCssClass: 'select2-dropdown-bootstrap4 rounded-0',
+            containerCssClass: 'select2-container-bootstrap4 rounded-0',
         });
     });
 </script>

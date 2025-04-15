@@ -9673,6 +9673,7 @@ public function set_medcheck_lab_adm_save() {
             $id_user    = $this->input->post('id_user');
             $status     = $this->input->post('status');
             $dokter_rsm = $this->input->post('dokter_kirim');
+            $dokter_pem = $this->input->post('dokter_pem');
             $no_sample  = $this->input->post('no_sample');
             $saran      = $this->input->post('saran');
             $kesimpulan = $this->input->post('kesimpulan');
@@ -9689,11 +9690,12 @@ public function set_medcheck_lab_adm_save() {
                 $sql_medc_resm = $this->db->where('id', general::dekrip($id_rsm))->get('tbl_trans_medcheck_resume')->row();
 
                 $data = [
-                    'tgl_modif'   => date('Y-m-d H:i:s'),
-                    'id_dokter'   => $dokter_rsm,
-                    'no_sample'   => $no_sample,
-                    'saran'       => $saran,
-                    'kesimpulan'  => $kesimpulan,
+                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                    'id_dokter'     => $dokter_rsm,
+                    'id_dokter_pem' => $dokter_pem,
+                    'no_sample'     => $no_sample,
+                    'saran'         => $saran,
+                    'kesimpulan'    => $kesimpulan,
                 ];
                 
                 $this->db->where('id', $sql_medc_resm->id)->update('tbl_trans_medcheck_resume', $data);
@@ -18483,7 +18485,6 @@ public function set_medcheck_lab_adm_save() {
     public function pdf_medcheck_resume_lab() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
-//            $id                 = $this->input->get('id');
             $id_medcheck        = $this->input->get('id');
             $id_rsm             = $this->input->get('id_resm');
             
@@ -18494,11 +18495,11 @@ public function set_medcheck_lab_adm_save() {
             $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
             $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
             $sql_dokter         = $this->db->where('id_user', $sql_medc_rsm->id_dokter)->get('tbl_m_karyawan')->row();
+            $sql_dokter_pem     = $this->db->where('id_user', $sql_medc_rsm->id_dokter_pem)->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
-            $foto_file          = realpath($sql_pasien->file_name);
             $ck_foto            = (!empty($sql_pasien->file_name) && file_exists(FCPATH.'/'.$sql_pasien->file_name) ? FCPATH.'/'.$sql_pasien->file_name : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
             $foto_pasien        = $ck_foto;
 
@@ -18605,8 +18606,6 @@ public function set_medcheck_lab_adm_save() {
                 $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
                 $pdf->SetFont('Arial', '', '10');
                 $pdf->MultiCell(13, .5, $rsm->param_nilai, '0', 'L');
-//                $pdf->Cell(13, .5, $rsm->param_nilai, '', 0, 'L', $fill);
-//                $pdf->Ln();
             }
             
             $pdf->Ln();
@@ -18632,8 +18631,6 @@ public function set_medcheck_lab_adm_save() {
             // QR GENERATOR VALIDASI
             $qr_validasi = $folder_path.'/qr-validasi-'.strtolower($kode_pasien).'.png';
             $params['data'] = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. '.strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
-            $params['level'] = 'H';
-            $params['size'] = 2;
             
             require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
             \QRcode::png($params['data'], $qr_validasi, QR_ECLEVEL_H, 2, 2);
@@ -18651,7 +18648,7 @@ public function set_medcheck_lab_adm_save() {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar4,2,$getY,2,2);
-            $pdf->Image($gambar5,13.5,$getY,2,2);
+            $pdf->Image($gambar5,14,$getY,2,2);
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
@@ -18666,9 +18663,13 @@ public function set_medcheck_lab_adm_save() {
             
             $pdf->SetFont('Arial', '', '10');
             $pdf->Cell(10.5, .5, '', '0', 0, 'L', $fill);
-            $pdf->Cell(8.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk.' ' : ''), '0', 0, 'C', $fill);
-            $pdf->Ln();
-                    
+            
+            if (isset($sql_dokter_pem) && !empty($sql_dokter_pem)) {
+                $pdf->MultiCell(8.5, .5, (!empty($sql_dokter_pem->nama_dpn) ? $sql_dokter_pem->nama_dpn.' ' : '').$sql_dokter_pem->nama.(!empty($sql_dokter_pem->nama_blk) ? ', '.$sql_dokter_pem->nama_blk.' ' : ''), '0', 'C', $fill);
+            } else {
+                $pdf->MultiCell(8.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk.' ' : ''), '0', 'C', $fill);
+            }
+
             $pdf->SetFillColor(235, 232, 228);
             $pdf->SetTextColor(0);
             $pdf->SetFont('Arial', '', '10');
