@@ -729,6 +729,9 @@ class Pos extends CI_Controller {
                         $sql_gudang_stok = $this->db->where('id_gudang', $stok->id_gudang)
                                                   ->where('id_produk', $stok->id_item)
                                                   ->get('tbl_m_produk_stok')->row();
+
+                        # Lock the row for update to prevent race conditions
+                        $this->db->query("SELECT * FROM tbl_m_produk_stok WHERE id_gudang = {$stok->id_gudang} AND id_produk = {$stok->id_item} FOR UPDATE");
                         
                         if (!$sql_gudang_stok) {
                             continue; // Skip if stock not found
@@ -1017,11 +1020,18 @@ class Pos extends CI_Controller {
                     $this->db->insert('tbl_trans_medcheck', $data);
                     $last_id = crud::last_id();
                     
-                    foreach ($sess_medc_det as $cart){
+                    foreach ($sess_medc_det as $cart){                      
                         $sql_item        = $this->db->where('id', $cart['options']['id_item'])->get('tbl_m_produk')->row();
                         $sql_satuan      = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                         $sql_gudang      = $this->db->where('status', '1')->get('tbl_m_gudang')->row(); 
                         $sql_gudang_stok = $this->db->where('id_gudang', $sql_gudang->id)->where('id_produk', $sql_item->id)->get('tbl_m_produk_stok')->row();
+                                                   
+                        # If no row found, throw an exception
+                        if (empty($sql_gudang_stok)) {
+                            $this->db->trans_rollback();
+                            throw new Exception("Stok tidak ditemukan untuk item ".$sql_item->produk);
+                        }
+                        
                         $jml_akhir       = $sql_item->jml - $cart['qty'];
                         $jml_akhir_stk   = $sql_gudang_stok->jml - $cart['qty'];
                         
@@ -1141,6 +1151,16 @@ class Pos extends CI_Controller {
                         # Ambil data stok dari item dari gudang dan item terkait
                         $sql_gudang_stok    = $this->db->where('id_gudang', $stok->id_gudang)->where('id_produk', $stok->id_item)->get('tbl_m_produk_stok')->row();
                             
+                        # Lock the row for update to prevent race conditions
+                        $this->db->query("SELECT * FROM tbl_m_produk_stok WHERE id_gudang = {$stok->id_gudang} AND id_produk = {$stok->id_item} FOR UPDATE");
+                        
+                        # If no row found, throw an exception
+                        if (empty($sql_gudang_stok)) {
+                            $this->db->trans_rollback();
+                            throw new Exception("Stok tidak ditemukan untuk item dengan ID ".$stok->id_item);
+                        }
+
+                        
                         # Hitung ulang secara live, stok saat ini dikurangi stok yang keluar
                         $stok_akhir         = $sql_gudang_stok->jml - $stok->jml;
 
