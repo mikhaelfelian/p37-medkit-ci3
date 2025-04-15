@@ -2488,7 +2488,8 @@ class Medcheck extends CI_Controller {
                 $data['sql_konsul']         = $this->db->where('id_medcheck', $data['sql_medc']->id)->where('id_parent', '0')->get('tbl_trans_konsul')->result();
                 $data['sql_konsul_rw']      = $this->db->where('id', general::dekrip($id_post))->get('tbl_trans_konsul')->row();
                 $data['sql_antrian']        = $this->db->where('id_medcheck', $data['sql_medc']->id)->get('tr_queue')->result();
-                $data['pengaturan']         = $setting; 
+                $data['pengaturan']         = $setting;
+                
                 $st_medrep                  = (!empty($status) ? $status : $data['sql_medc']->status);
                 $data['st_medrep']          = $st_medrep;
                 
@@ -5600,12 +5601,11 @@ class Medcheck extends CI_Controller {
                             # Recalculate live, current stock minus outgoing stock
                             $stok_akhir = $sql_gudang_stok->jml - $stok->jml;
 
-                            // # Check if stock is sufficient
-                            // if ($stok_akhir < 0) {
-                            //     $this->db->trans_rollback();
-                            //     throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
-                            //     exit;
-                            // }
+                            # Check if stock is sufficient
+                            if ($stok_akhir < 0) {
+                                $this->db->trans_rollback();
+                                throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
+                            }
                             
                             # Collect stock reduction information here
                             $data_stok = [
