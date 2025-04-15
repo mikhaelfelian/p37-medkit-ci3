@@ -81,6 +81,7 @@
                             $data['sql_medc_lab_rw']    = $sql_medc_lab_rw;
                             $data['sql_medc_det']       = $sql_medc_det;
                             $data['sql_det']            = $sql_det;
+                            
                             $this->load->view('admin-lte-3/includes/medcheck/med_trans_lab_hasil', $data);
                             break;
 
@@ -88,6 +89,7 @@
                             $data['sql_medc_lab_rw']    = $sql_medc_lab_rw;
                             $data['sql_medc_det']       = $sql_medc_det;
                             $data['sql_det']            = $sql_det;
+
                             $this->load->view('admin-lte-3/includes/medcheck/med_trans_lab_fisik_index', $data);
                             break;
                     }
