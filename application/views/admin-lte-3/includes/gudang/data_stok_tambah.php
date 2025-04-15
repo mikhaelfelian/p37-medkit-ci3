@@ -330,8 +330,8 @@
                                                             break;
 
                                                             case '9':
-                                                                $nota = $hist->keterangan . ' [' . anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($hist->id_penjualan)), '#' . $hist->no_nota) . ']';
-                                                                break;
+                                                            $nota = $hist->keterangan . ' [' . anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($hist->id_penjualan)), '#' . $hist->no_nota) . ']';
+                                                            break;
                                                     }
 
                                                     $keterangan = (!empty($nota_id) ? (!empty($nota_rw) ? $nota : $hist->keterangan) : $hist->keterangan);
@@ -395,8 +395,8 @@
                                                             break;
 
                                                             case '9':
-                                                                $nota = $hist->keterangan . ' [' . anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($hist->id_penjualan)), '#' . $hist->no_nota) . ']';
-                                                                break;
+                                                            $nota = $hist->keterangan . ' [' . anchor(base_url('gudang/trans_mutasi_det.php?id=' . general::enkrip($hist->id_penjualan)), '#' . $hist->no_nota) . ']';
+                                                            break;
                                                     }
 
                                                     $keterangan = (!empty($nota_id) ? (!empty($nota_rw) ? $nota : $hist->keterangan) : $hist->keterangan);
