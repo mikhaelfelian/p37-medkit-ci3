@@ -5562,34 +5562,6 @@ class Medcheck extends CI_Controller {
                         $sql_item_ref    = $this->db->where('id_produk', $sql_item->id)->get('tbl_m_produk_ref');   
                         $sql_satuan      = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                         $sql_gudang      = $this->db->where('status', '1')->get('tbl_m_gudang')->row();    // Cek gudang aktif dari gudang utama
-
-                        # Item racikan kumpulkan dahulu disini
-                        if (!empty($medc_det->resep)) {                          
-                            foreach (json_decode($medc_det->resep) as $rc) {
-                                $sql_item_rc          = $this->db->where('id', $rc->id_item)->get('tbl_m_produk')->row();
-                                $sql_gudang_stok_rc   = $this->db->where('id_gudang', $sql_gudang->id)
-                                                               ->where('id_produk', $sql_item_rc->id)
-                                                               ->get('tbl_m_produk_stok')
-                                                               ->row();
-                              
-                                # Cek resep Item stockable atau tidak ? 
-                                if ($sql_item_rc->status_subt == '1') {
-                                    $jml_akhir_rc         = $sql_item_rc->jml + $rc->jml;
-                                    $jml_akhir_stk        = $sql_gudang_stok_rc->jml + $rc->jml;
-                                  
-                                    $data_item_rc = [
-                                        'tgl_modif'  => date('Y-m-d H:i:s'),
-                                        'jml'        => ($jml_akhir_rc < 0 ? 0 : (int) $jml_akhir_rc)
-                                    ];
-                                  
-                                    # Hapus ke tabel riwayat produk
-                                    $this->db->where('id_penjualan', $sql_medc->id)
-                                            ->where('id_produk', $sql_item_rc->id)
-                                            ->delete('tbl_m_produk_hist');
-                                }
-                            }
-                        }                      
-                        # -- END OF RACIKAN
                       
                         # Cek Item Produk non resep stockable
                         if ($sql_item->status_subt == '1') {
@@ -5648,6 +5620,12 @@ class Medcheck extends CI_Controller {
                     $sql_medc_stok = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_stok')->result();
                 
                     foreach ($sql_medc_stok as $stok) {
+                        # Get product data
+                        $sql_item = $this->db->where('id', $stok->id_item)->get('tbl_m_produk')->row();
+                        
+                        # Lock the row for update to prevent race conditions
+                        $this->db->query("SELECT * FROM tbl_m_produk_stok WHERE id_gudang = {$stok->id_gudang} AND id_produk = {$stok->id_item} FOR UPDATE");
+                        
                         $sql_gudang_stok = $this->db->where('id_gudang', $stok->id_gudang)
                                                   ->where('id_produk', $stok->id_item)
                                                   ->get('tbl_m_produk_stok')
