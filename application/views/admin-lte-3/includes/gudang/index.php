@@ -162,6 +162,9 @@
                                     src="<?php echo base_url('assets/theme/admin-lte-3/plugins/datatables-buttons/js/dataTables.buttons.min.js'); ?>"></script>
                                 <script
                                     src="<?php echo base_url('assets/theme/admin-lte-3/plugins/datatables-buttons/js/buttons.bootstrap4.min.js'); ?>"></script>
+                                <!-- Excel Export JS -->
+                                <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jszip/jszip.min.js'); ?>"></script>
+                                <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/datatables-buttons/js/buttons.html5.min.js'); ?>"></script>
 
                                 <script>
                                     $(document).ready(function () {
@@ -182,7 +185,19 @@
                                             "info": true,
                                             "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
                                                 "<'row'<'col-sm-12'tr>>" +
-                                                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                                                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
+                                                "<'row'<'col-sm-12'B>>",
+                                            "buttons": [
+                                                {
+                                                    extend: 'excel',
+                                                    text: '<i class="fas fa-file-excel"></i> Export Excel',
+                                                    className: 'btn btn-success mt-2',
+                                                    title: 'Data Stok Minimum',
+                                                    exportOptions: {
+                                                        columns: [0, 1, 2, 3, 4, 5]
+                                                    }
+                                                }
+                                            ],
                                             "language": {
                                                 "search": "Cari:",
                                                 "lengthMenu": "Tampilkan _MENU_ data per halaman",
