@@ -766,7 +766,7 @@ class laporan extends CI_Controller {
                     case 'per_tanggal':
                         // Use prepared query with indexed fields for better performance
                         $this->db->select('id, id_medcheck, id_poli, tipe, tgl_simpan, tgl_bayar, no_rm, pasien, tgl_lahir, tipe, tipe_bayar, SUM(diskon) AS jml_diskon, SUM(potongan) AS jml_potongan, SUM(potongan_poin) AS potongan_poin, SUM(subtotal) AS jml_gtotal')
-                                ->where('status_pkt', '0')
+                                                              ->where('status_pkt', '0')
                                 ->where('DATE(tgl_bayar)', $tgl);
                         
                         if(!empty($tipe)) $this->db->where('tipe', $tipe);
@@ -787,10 +787,10 @@ class laporan extends CI_Controller {
                         // Optimize summary query
                         $this->db->select('SUM(tbl_trans_medcheck_det.diskon) AS jml_diskon, SUM(tbl_trans_medcheck_det.potongan) AS jml_potongan, SUM(tbl_trans_medcheck_det.potongan_poin) AS jml_potongan_poin, SUM(tbl_trans_medcheck_det.subtotal) AS jml_gtotal')
                                 ->from('tbl_trans_medcheck')
-                                ->join('tbl_trans_medcheck_det', 'tbl_trans_medcheck_det.id_medcheck=tbl_trans_medcheck.id', 'right')
-                                ->where('tbl_trans_medcheck.status_hps', '0')
-                                ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('tbl_trans_medcheck_det.status_pkt', '0')
+                                                          ->join('tbl_trans_medcheck_det', 'tbl_trans_medcheck_det.id_medcheck=tbl_trans_medcheck.id', 'right')
+                                                          ->where('tbl_trans_medcheck.status_hps', '0')
+                                                          ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                          ->where('tbl_trans_medcheck_det.status_pkt', '0')
                                 ->where('DATE(tbl_trans_medcheck.tgl_bayar)', $tgl);
                         
                         if(!empty($tipe)) $this->db->where('tbl_trans_medcheck.tipe', $tipe);
@@ -805,8 +805,8 @@ class laporan extends CI_Controller {
                     case 'per_rentang':
                         // Use prepared query with indexed fields for better performance
                         $this->db->select('id, id_medcheck, id_poli, tipe, tgl_simpan, tgl_bayar, no_rm, pasien, tgl_lahir, tipe, tipe_bayar, SUM(diskon) AS jml_diskon, SUM(potongan) AS jml_potongan, SUM(potongan_poin) AS potongan_poin, SUM(subtotal) AS jml_gtotal')
-                                ->where('status_pkt', '0')
-                                ->where('DATE(tgl_bayar) >=', $tgl_awal)
+                                                              ->where('status_pkt', '0')
+                                                              ->where('DATE(tgl_bayar) >=', $tgl_awal)
                                 ->where('DATE(tgl_bayar) <=', $tgl_akhir);
                         
                         if(!empty($tipe)) $this->db->where('tipe', $tipe);
@@ -824,10 +824,10 @@ class laporan extends CI_Controller {
                         // Optimize summary query
                         $this->db->select('SUM(tbl_trans_medcheck_det.diskon) AS jml_diskon, SUM(tbl_trans_medcheck_det.potongan) AS jml_potongan, SUM(tbl_trans_medcheck_det.potongan_poin) AS jml_potongan_poin, SUM(tbl_trans_medcheck_det.subtotal) AS jml_gtotal')
                                 ->from('tbl_trans_medcheck')
-                                ->join('tbl_trans_medcheck_det', 'tbl_trans_medcheck_det.id_medcheck=tbl_trans_medcheck.id', 'right')
-                                ->where('tbl_trans_medcheck.status_hps', '0')
-                                ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('tbl_trans_medcheck_det.status_pkt', '0')
+                                                          ->join('tbl_trans_medcheck_det', 'tbl_trans_medcheck_det.id_medcheck=tbl_trans_medcheck.id', 'right')
+                                                          ->where('tbl_trans_medcheck.status_hps', '0')
+                                                          ->where('tbl_trans_medcheck.status_bayar', '1')
+                                                          ->where('tbl_trans_medcheck_det.status_pkt', '0')
                                 ->where('DATE(tbl_trans_medcheck.tgl_bayar) >=', $tgl_awal)
                                 ->where('DATE(tbl_trans_medcheck.tgl_bayar) <=', $tgl_akhir);
                         
@@ -1942,18 +1942,18 @@ class laporan extends CI_Controller {
                         $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
 
                         $data['sql_stok_hist'] = $this->db
-                                                      ->where('id_produk', $data['sql_stok']->id)
-                                                      ->where('DATE(tgl_simpan)', $tgl)
-                                                      ->like('id_gudang', $id_gdg)
-                                                      ->order_by('tgl_simpan', 'desc')
+                                                        ->where('id_produk', $data['sql_stok']->id)
+                                                        ->where('DATE(tgl_simpan)', $tgl)
+                                                        ->like('id_gudang', $id_gdg)
+                                                        ->order_by('tgl_simpan', 'desc')
                                                       ->get('tbl_m_produk_hist')->result();
                         
                         $data['sql_stok_msk'] = $this->db
-                                                     ->where('status', '1')
-                                                     ->where('id_produk', $data['sql_stok']->id)
-                                                     ->where('DATE(tgl_simpan)', $tgl)
-                                                     ->like('id_gudang', $id_gdg)
-                                                     ->order_by('tgl_simpan', 'desc')
+                                                       ->where('status', '1')
+                                                       ->where('id_produk', $data['sql_stok']->id)
+                                                       ->where('DATE(tgl_simpan)', $tgl)
+                                                       ->like('id_gudang', $id_gdg)
+                                                       ->order_by('tgl_simpan', 'desc')
                                                      ->get('tbl_m_produk_hist')->result();
                     break;
                 
@@ -1963,22 +1963,22 @@ class laporan extends CI_Controller {
                         $data['stok_so']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('id_gudang', $id_gdg)->where('status', '6')->where('DATE(tgl_simpan) <=', $tgl_akhir)->limit(1)->order_by('id', 'DESC')->get('tbl_m_produk_hist')->row();
                         
                         $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk'] + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']);
-                        $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
-                        
+                            $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
+                            
                         $data['sql_stok_hist'] = $this->db
-                                                      ->where('id_produk', $data['sql_stok']->id)
+                                                           ->where('id_produk', $data['sql_stok']->id)
                                                       ->where('DATE(tgl_simpan) >=', $tgl_awal)
                                                       ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                      ->like('id_gudang', $id_gdg)
-                                                      ->order_by('tgl_simpan', 'desc')
+                                                           ->like('id_gudang', $id_gdg)
+                                                           ->order_by('tgl_simpan', 'desc')
                                                       ->get('tbl_m_produk_hist')->result();
 
                         $data['sql_stok_msk'] = $this->db
-                                                     ->where('status', '1')
-                                                     ->where('id_produk', $data['sql_stok']->id)
-                                                     ->where('DATE(tgl_simpan) >=', $tgl_awal)
-                                                     ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                     ->like('id_gudang', $id_gdg)
+                                                           ->where('status', '1')
+                                                           ->where('id_produk', $data['sql_stok']->id)
+                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                                           ->like('id_gudang', $id_gdg)
                                                      ->order_by('tgl_simpan', 'desc')
                                                      ->get('tbl_m_produk_hist')->result();
                     break;
@@ -2036,20 +2036,20 @@ class laporan extends CI_Controller {
                         $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
 
                         $data['sql_stok_hist'] = $this->db
-                                                      ->where('id_produk', $data['sql_stok']->id)
-                                                      ->where('DATE(tgl_simpan)', $tgl)
-                                                      ->like('id_gudang', $id_gdg)
-                                                      ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                      ->order_by('tgl_simpan', 'desc')
+                                                        ->where('id_produk', $data['sql_stok']->id)
+                                                        ->where('DATE(tgl_simpan)', $tgl)
+                                                        ->like('id_gudang', $id_gdg)
+                                                        ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                        ->order_by('tgl_simpan', 'desc')
                                                       ->get('tbl_m_produk_hist')->result();
                         
                         $data['sql_stok_msk'] = $this->db
-                                                     ->where('status', '1')
-                                                     ->where('id_produk', $data['sql_stok']->id)
-                                                     ->where('DATE(tgl_simpan)', $tgl)
-                                                     ->like('id_gudang', $id_gdg)
-                                                     ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                     ->order_by('tgl_simpan', 'desc')
+                                                       ->where('status', '1')
+                                                       ->where('id_produk', $data['sql_stok']->id)
+                                                       ->where('DATE(tgl_simpan)', $tgl)
+                                                       ->like('id_gudang', $id_gdg)
+                                                       ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                       ->order_by('tgl_simpan', 'desc')
                                                      ->get('tbl_m_produk_hist')->result();
                     break;
                 
@@ -2059,26 +2059,26 @@ class laporan extends CI_Controller {
                         $data['stok_so']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('status', '6')->where('DATE(tgl_simpan) <=', $tgl_awal)->limit(1)->order_by('id', 'DESC')->get('v_produk_hist')->row();
                         $data['stok_bl']    = $this->db->where('id_produk', $data['sql_stok']->id)->where('status', '1')->where('DATE(tgl_simpan) <=', $tgl_awal)->limit(1)->order_by('id', 'DESC')->get('v_produk_hist')->row();
                         
-                        $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
-                        $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
-                        
+                            $data['tot_msk']    = ($data['gd_aktif']->status == '1' ? $data['stok_so']->jml + $data['stok_msk']->jml + $data['stok_mts']->jml : $data['stok_so']->jml + $data['stok_msk']->jml);
+                            $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
+                            
                         $data['sql_stok_hist'] = $this->db
-                                                      ->where('id_produk', $data['sql_stok']->id)
-                                                      ->where('DATE(tgl_masuk) >=', $tgl_awal)
-                                                      ->where('DATE(tgl_masuk) <=', $tgl_akhir)
-                                                      ->where('status !=', '2')
-                                                      ->where('status !=', '8')
-                                                      ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
-                                                      ->order_by('tgl_simpan', 'asc')
+                                                           ->where('id_produk', $data['sql_stok']->id)
+                                                           ->where('DATE(tgl_masuk) >=', $tgl_awal)
+                                                           ->where('DATE(tgl_masuk) <=', $tgl_akhir)
+                                                           ->where('status !=', '2')
+                                                           ->where('status !=', '8')
+                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                           ->order_by('tgl_simpan', 'asc')
                                                       ->get('tbl_m_produk_hist')->result();
 
                         $data['sql_stok_msk'] = $this->db
-                                                     ->where('status', '1')
-                                                     ->where('id_produk', $data['sql_stok']->id)
-                                                     ->where('DATE(tgl_simpan) >=', $tgl_awal)
-                                                     ->where('DATE(tgl_simpan) <=', $tgl_akhir)
-                                                     ->like('id_gudang', $id_gdg)
-                                                     ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
+                                                           ->where('status', '1')
+                                                           ->where('id_produk', $data['sql_stok']->id)
+                                                           ->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                                           ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                                           ->like('id_gudang', $id_gdg)
+                                                           ->group_by('tgl_simpan, id_penjualan, id_pembelian, id_pembelian_det, keterangan')
                                                      ->get('tbl_m_produk_hist')->result();
                     break;
                 }
@@ -2684,7 +2684,7 @@ class laporan extends CI_Controller {
                 $config['next_link']             = '&rsaquo;';
                 $config['last_link']             = '&raquo;';
                 $config['anchor_class']          = 'class="page-link"';
-                
+            
                 // Initialize dokter variable to avoid undefined variable error
                 $dokter = $this->input->get('dokter') ?? null;
                 $sql_doc = $dokter ? $this->db->where('id', general::dekrip($dokter))->get('tbl_m_karyawan')->row() : null;
@@ -3384,10 +3384,10 @@ class laporan extends CI_Controller {
                 $sheet->getStyle('A1:E1')->getFont()->setBold(TRUE);
                 
                 $sheet->setCellValue('A1', 'NO')
-                      ->setCellValue('B1', 'TANGGAL')
-                      ->setCellValue('C1', 'NO RM')
-                      ->setCellValue('D1', 'PASIEN')
-                      ->setCellValue('E1', 'KARYAWAN');
+                        ->setCellValue('B1', 'TANGGAL')
+                        ->setCellValue('C1', 'NO RM')
+                        ->setCellValue('D1', 'PASIEN')
+                        ->setCellValue('E1', 'KARYAWAN');
                 
                 $sheet->getColumnDimension('A')->setWidth(7);
                 $sheet->getColumnDimension('B')->setWidth(18);
@@ -3408,10 +3408,10 @@ class laporan extends CI_Controller {
                         $sheet->getStyle('B'.$cell.':E'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                         
                         $sheet->setCellValue('A'.$cell, $no)
-                              ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo($ref->tgl_simpan))
-                              ->setCellValue('C'.$cell, $ref->no_rm)
-                              ->setCellValue('D'.$cell, $ref->nama_pasien)
-                              ->setCellValue('E'.$cell, $ref->nama_karyawan);
+                                ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo($ref->tgl_simpan))
+                                ->setCellValue('C'.$cell, $ref->no_rm)
+                                ->setCellValue('D'.$cell, $ref->nama_pasien)
+                                ->setCellValue('E'.$cell, $ref->nama_karyawan);
                         
                         $no++;
                         $cell++;
@@ -3717,12 +3717,12 @@ class laporan extends CI_Controller {
             $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
             $tgl_awal = null;
             $tgl_akhir = null;
-            
+
             if (!empty($tgl_rtg)) {
-                $tgl_rentang = explode('-', $tgl_rtg);
+            $tgl_rentang = explode('-', $tgl_rtg);
                 if (count($tgl_rentang) == 2) {
-                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
                 }
             }
 
@@ -3781,12 +3781,12 @@ class laporan extends CI_Controller {
             $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
             $tgl_awal = null;
             $tgl_akhir = null;
-            
+
             if (!empty($tgl_rtg)) {
-                $tgl_rentang = explode('-', $tgl_rtg);
+            $tgl_rentang = explode('-', $tgl_rtg);
                 if (count($tgl_rentang) == 2) {
-                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
                 }
             }
 
@@ -3866,14 +3866,14 @@ class laporan extends CI_Controller {
                 redirect(base_url('laporan/data_mcu.php?case=per_tanggal&tgl=' . $tgl_masuk.'&id_instansi='.$inst . '&jml=' . $sql->num_rows()));
             } elseif (!empty($tgl_rtg)) {
                 $sql = $this->db->select('tbl_m_pasien.id AS id_pasien, tbl_m_pasien.nama_pgl, tbl_trans_medcheck_resume.id, tbl_trans_medcheck_resume.id_medcheck, tbl_trans_medcheck_resume.id_user, tbl_trans_medcheck_resume.no_surat')
-                                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_resume.id_medcheck')
-                                ->join('tbl_pendaftaran', 'tbl_pendaftaran.id=tbl_trans_medcheck.id_dft')
-                                ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                ->where('tbl_trans_medcheck.tipe', '5')
+                                                         ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_resume.id_medcheck')
+                                                         ->join('tbl_pendaftaran', 'tbl_pendaftaran.id=tbl_trans_medcheck.id_dft')
+                                                         ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                                                         ->where('tbl_trans_medcheck.tipe', '5')
                                 ->where('DATE(tbl_trans_medcheck_resume.tgl_simpan) >=', $tgl_awal)
                                 ->where('DATE(tbl_trans_medcheck_resume.tgl_simpan) <=', $tgl_akhir)
-                                ->like('tbl_pendaftaran.id_instansi', $inst, (!empty($inst) ? 'none' : ''))
-                                ->get('tbl_trans_medcheck_resume');
+                                                         ->like('tbl_pendaftaran.id_instansi', $inst, (!empty($inst) ? 'none' : ''))
+                                                         ->get('tbl_trans_medcheck_resume');
                 
                 # Lempar ke halaman laporan
                 redirect(base_url('laporan/data_mcu.php?case=per_rentang&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir .'&id_instansi='.$inst . '&jml=' . $sql->num_rows()));
@@ -4085,12 +4085,12 @@ class laporan extends CI_Controller {
             $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
             $tgl_awal = null;
             $tgl_akhir = null;
-            
+
             if (!empty($tgl_rtg)) {
-                $tgl_rentang = explode('-', $tgl_rtg);
+            $tgl_rentang = explode('-', $tgl_rtg);
                 if (count($tgl_rentang) == 2) {
-                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
                 }
             }
 
@@ -4290,17 +4290,17 @@ class laporan extends CI_Controller {
 
             if (!empty($tgl)) {
                 $sql = $this->db->select('tbl_trans_beli_det.kode')
-                                ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
-                                ->where('DATE(tbl_trans_beli.tgl_masuk)', $tgl_masuk)
-                                ->get('tbl_trans_beli_det');
+                        ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
+                        ->where('DATE(tbl_trans_beli.tgl_masuk)', $tgl_masuk)
+                        ->get('tbl_trans_beli_det');
                 
                 redirect(base_url('laporan/data_stok_masuk.php?case=per_tanggal&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
             } elseif ($tgl_rtg) {
                 $sql = $this->db->select('tbl_trans_beli_det.kode')
-                                ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
-                                ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $tgl_awal)
-                                ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $tgl_akhir)
-                                ->get('tbl_trans_beli_det');
+                        ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
+                        ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $tgl_awal)
+                        ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $tgl_akhir)
+                        ->get('tbl_trans_beli_det');
                 redirect(base_url('laporan/data_stok_masuk.php?case=per_rentang&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir . '&jml=' . $sql->num_rows()));
             }
         } else {
@@ -4503,7 +4503,7 @@ class laporan extends CI_Controller {
             // Only query if dokter is provided
             $sql_doc = null;
             if (!empty($dokter)) {
-                $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
+            $sql_doc = $this->db->where('id', $dokter)->get('tbl_m_karyawan')->row();
             }
 
             // Handle date processing safely
@@ -4512,7 +4512,7 @@ class laporan extends CI_Controller {
             $tgl_masuk = null;
             
             if (!empty($tgl)) {
-                $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
             }
             
             if (!empty($tgl_rtg)) {
@@ -4699,10 +4699,10 @@ class laporan extends CI_Controller {
             
             // Menentukan URL dasar
             $redirect_url = 'laporan/data_pasien_st.php';
-            
+
             // Menyimpan parameter dalam array
             $params = [];
-            
+
             // Menentukan case dan parameter berdasarkan input tanggal
             if (!empty($tgl_masuk)) {
                 // Jika tanggal tunggal diisi
@@ -4747,14 +4747,14 @@ class laporan extends CI_Controller {
                 redirect(base_url('laporan/data_pasien_st.php'));
                 return;
             }
-            
+
             // Tambahkan parameter status pasien dan jumlah data
             $params['status_pas'] = $statusPas;
             $params['jml'] = !empty($jumlah_data) ? $jumlah_data : 0;
             
             // Gabungkan semua parameter ke dalam URL
             $redirect_url .= '?' . http_build_query($params);
-            
+
             // Redirect ke halaman laporan dengan parameter yang benar
             redirect(base_url($redirect_url));
         } else {
@@ -5124,15 +5124,15 @@ class laporan extends CI_Controller {
             $sheet->getStyle('A4:J4')->getFont()->setBold(TRUE);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'Tgl')
-                  ->setCellValue('C4', 'No. Faktur')
-                  ->setCellValue('D4', 'Dokter')
-                  ->setCellValue('E4', 'Tindakan')
-                  ->setCellValue('F4', 'Pasien')
-                  ->setCellValue('G4', 'Jml')
-                  ->setCellValue('H4', 'Harga')
-                  ->setCellValue('I4', 'Remunerasi')
-                  ->setCellValue('J4', 'Subtotal');
+                    ->setCellValue('B4', 'Tgl')
+                    ->setCellValue('C4', 'No. Faktur')
+                    ->setCellValue('D4', 'Dokter')
+                    ->setCellValue('E4', 'Tindakan')
+                    ->setCellValue('F4', 'Pasien')
+                    ->setCellValue('G4', 'Jml')
+                    ->setCellValue('H4', 'Harga')
+                    ->setCellValue('I4', 'Remunerasi')
+                    ->setCellValue('J4', 'Subtotal');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(20);
@@ -5161,15 +5161,15 @@ class laporan extends CI_Controller {
                     $sheet->getStyle('H'.$cell.':J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                          ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
-                          ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
-                          ->setCellValue('E'.$cell, $penjualan->item)
-                          ->setCellValue('F'.$cell, $penjualan->nama_pgl)
-                          ->setCellValue('G'.$cell, $penjualan->jml)
-                          ->setCellValue('H'.$cell, $penjualan->harga)
-                          ->setCellValue('I'.$cell, $remun)
-                          ->setCellValue('J'.$cell, $penjualan->remun_subtotal);
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                            ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
+                            ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
+                            ->setCellValue('E'.$cell, $penjualan->item)
+                            ->setCellValue('F'.$cell, $penjualan->nama_pgl)
+                            ->setCellValue('G'.$cell, $penjualan->jml)
+                            ->setCellValue('H'.$cell, $penjualan->harga)
+                            ->setCellValue('I'.$cell, $remun)
+                            ->setCellValue('J'.$cell, $penjualan->remun_subtotal);
                     
                     $no++;
                     $cell++;
@@ -5269,15 +5269,15 @@ class laporan extends CI_Controller {
             $sheet->getStyle('A4:J4')->getFont()->setBold(TRUE);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'Tgl')
-                  ->setCellValue('C4', 'No. Faktur')
-                  ->setCellValue('D4', 'Dokter')
-                  ->setCellValue('E4', 'Tindakan')
-                  ->setCellValue('F4', 'Pasien')
-                  ->setCellValue('G4', 'Jml')
-                  ->setCellValue('H4', 'Harga')
-                  ->setCellValue('I4', 'Apresiasi')
-                  ->setCellValue('J4', 'Subtotal');
+                    ->setCellValue('B4', 'Tgl')
+                    ->setCellValue('C4', 'No. Faktur')
+                    ->setCellValue('D4', 'Dokter')
+                    ->setCellValue('E4', 'Tindakan')
+                    ->setCellValue('F4', 'Pasien')
+                    ->setCellValue('G4', 'Jml')
+                    ->setCellValue('H4', 'Harga')
+                    ->setCellValue('I4', 'Apresiasi')
+                    ->setCellValue('J4', 'Subtotal');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(20);
@@ -5306,15 +5306,15 @@ class laporan extends CI_Controller {
                     $sheet->getStyle('H'.$cell.':J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                          ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
-                          ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
-                          ->setCellValue('E'.$cell, $penjualan->item)
-                          ->setCellValue('F'.$cell, $penjualan->nama_pgl)
-                          ->setCellValue('G'.$cell, $penjualan->jml)
-                          ->setCellValue('H'.$cell, $penjualan->harga)
-                          ->setCellValue('I'.$cell, $apres)
-                          ->setCellValue('J'.$cell, $penjualan->apres_subtotal);
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                            ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
+                            ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
+                            ->setCellValue('E'.$cell, $penjualan->item)
+                            ->setCellValue('F'.$cell, $penjualan->nama_pgl)
+                            ->setCellValue('G'.$cell, $penjualan->jml)
+                            ->setCellValue('H'.$cell, $penjualan->harga)
+                            ->setCellValue('I'.$cell, $apres)
+                            ->setCellValue('J'.$cell, $penjualan->apres_subtotal);
                     
                     $no++;
                     $cell++;
@@ -5443,10 +5443,10 @@ class laporan extends CI_Controller {
             $sheet->getStyle('A1:G1')->getFont()->setBold(TRUE);
 
             $sheet->setCellValue('A1', 'NO')
-                  ->setCellValue('B1', 'NO SURAT')
-                  ->setCellValue('C1', 'NAMA')
-                  ->setCellValue('D1', 'ALASAN')
-                  ->setCellValue('E1', 'WAKTU');
+                    ->setCellValue('B1', 'NO SURAT')
+                    ->setCellValue('C1', 'NAMA')
+                    ->setCellValue('D1', 'ALASAN')
+                    ->setCellValue('E1', 'WAKTU');
 
             $sheet->getColumnDimension('A')->setWidth(7);
             $sheet->getColumnDimension('B')->setWidth(18);
@@ -5465,10 +5465,10 @@ class laporan extends CI_Controller {
                     $sheet->getStyle('B'.$cell.':D'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                     
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, (!empty($cuti->no_surat) ? $cuti->no_surat : ''))
-                          ->setCellValue('C'.$cell, (!empty($cuti->nama_dpn) ? $cuti->nama_dpn.' ' : '').$cuti->nama.(!empty($cuti->nama_blk) ? ', '.$cuti->nama_blk : ''))
-                          ->setCellValue('D'.$cell, $cuti->keterangan)
-                          ->setCellValue('E'.$cell, $this->tanggalan->jml_hari($cuti->tgl_masuk, $cuti->tgl_keluar).' Hari');
+                            ->setCellValue('B'.$cell, (!empty($cuti->no_surat) ? $cuti->no_surat : ''))
+                            ->setCellValue('C'.$cell, (!empty($cuti->nama_dpn) ? $cuti->nama_dpn.' ' : '').$cuti->nama.(!empty($cuti->nama_blk) ? ', '.$cuti->nama_blk : ''))
+                            ->setCellValue('D'.$cell, $cuti->keterangan)
+                            ->setCellValue('E'.$cell, $this->tanggalan->jml_hari($cuti->tgl_masuk, $cuti->tgl_keluar).' Hari');
 
                     $no++;
                     $cell++;
@@ -6681,7 +6681,7 @@ class laporan extends CI_Controller {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
-    } 
+    }
 
     public function xls_data_omset_zahir(){
         if (akses::aksesLogin() == TRUE) {
@@ -7627,19 +7627,19 @@ class laporan extends CI_Controller {
             $sheet->getStyle('A1:I1')->getFont()->setBold(TRUE);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'Tgl')
-                  ->setCellValue('C4', 'Pasien')
-                  ->setCellValue('D4', 'Tipe')
-                  ->setCellValue('E4', 'Dokter')
-                  ->setCellValue('F4', 'No. Faktur')
-                  ->setCellValue('G4', 'Qty')
-                  ->setCellValue('H4', 'Kode')
-                  ->setCellValue('I4', 'Item')
-                  ->setCellValue('J4', 'Group')
-                  ->setCellValue('K4', 'Harga')
-                  ->setCellValue('L4', 'Subtotal')
-                  ->setCellValue('M4', 'Jasa Dokter')
-                  ->setCellValue('N4', 'Total Jasa');
+                    ->setCellValue('B4', 'Tgl')
+                    ->setCellValue('C4', 'Pasien')
+                    ->setCellValue('D4', 'Tipe')
+                    ->setCellValue('E4', 'Dokter')
+                    ->setCellValue('F4', 'No. Faktur')
+                    ->setCellValue('G4', 'Qty')
+                    ->setCellValue('H4', 'Kode')
+                    ->setCellValue('I4', 'Item')
+                    ->setCellValue('J4', 'Group')
+                    ->setCellValue('K4', 'Harga')
+                    ->setCellValue('L4', 'Subtotal')
+                    ->setCellValue('M4', 'Jasa Dokter')
+                    ->setCellValue('N4', 'Total Jasa');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(20);
@@ -7680,19 +7680,19 @@ class laporan extends CI_Controller {
                     }
                     
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                          ->setCellValue('C'.$cell, $penjualan->nama_pgl)
-                          ->setCellValue('D'.$cell, general::status_rawat2($penjualan->tipe))
-                          ->setCellValue('E'.$cell, $dokter->nama)
-                          ->setCellValue('F'.$cell, $penjualan->no_rm)
-                          ->setCellValue('G'.$cell, (float)$penjualan->jml)
-                          ->setCellValue('H'.$cell, $item->kode)
-                          ->setCellValue('I'.$cell, $penjualan->item.(!empty($penjualan->resep) ? $rsp : ''))
-                          ->setCellValue('J'.$cell, $penjualan->kategori)
-                          ->setCellValue('K'.$cell, $penjualan->harga)
-                          ->setCellValue('L'.$cell, $subtot)
-                          ->setCellValue('M'.$cell, $remun_nom)
-                          ->setCellValue('N'.$cell, $remun->remun_subtotal);
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                            ->setCellValue('C'.$cell, $penjualan->nama_pgl)
+                            ->setCellValue('D'.$cell, general::status_rawat2($penjualan->tipe))
+                            ->setCellValue('E'.$cell, $dokter->nama)
+                            ->setCellValue('F'.$cell, $penjualan->no_rm)
+                            ->setCellValue('G'.$cell, (float)$penjualan->jml)
+                            ->setCellValue('H'.$cell, $item->kode)
+                            ->setCellValue('I'.$cell, $penjualan->item.(!empty($penjualan->resep) ? $rsp : ''))
+                            ->setCellValue('J'.$cell, $penjualan->kategori)
+                            ->setCellValue('K'.$cell, $penjualan->harga)
+                            ->setCellValue('L'.$cell, $subtot)
+                            ->setCellValue('M'.$cell, $remun_nom)
+                            ->setCellValue('N'.$cell, $remun->remun_subtotal);
 
                     $no++;
                     $cell++;
@@ -7705,7 +7705,7 @@ class laporan extends CI_Controller {
                 $sheet->getStyle('A'.$sell1.':F'.$sell1)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $sheet->setCellValue('A' . $sell1, '')
                       ->mergeCells('A'.$sell1.':K'.$sell1)
-                      ->setCellValue('L' . $sell1, $sql_omset_row->jml_gtotal);
+                        ->setCellValue('L' . $sell1, $sql_omset_row->jml_gtotal);
             }
 
             // Rename worksheet
@@ -8548,14 +8548,14 @@ class laporan extends CI_Controller {
             $sheet->getRowDimension('4')->setRowHeight(40);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'TGL')
-                  ->setCellValue('C4', 'TIPE')
-                  ->setCellValue('D4', 'ITEM')
-                  ->setCellValue('E4', 'PASIEN')
-                  ->setCellValue('F4', 'QTY')
-                  ->setCellValue('G4', 'SATUAN')
-                  ->setCellValue('H4', 'HARGA')
-                  ->setCellValue('I4', 'SUBTOTAL');
+                    ->setCellValue('B4', 'TGL')
+                    ->setCellValue('C4', 'TIPE')
+                    ->setCellValue('D4', 'ITEM')
+                    ->setCellValue('E4', 'PASIEN')
+                    ->setCellValue('F4', 'QTY')
+                    ->setCellValue('G4', 'SATUAN')
+                    ->setCellValue('H4', 'HARGA')
+                    ->setCellValue('I4', 'SUBTOTAL');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(18);
@@ -8594,14 +8594,14 @@ class laporan extends CI_Controller {
                     $sheet->getStyle('H'.$cell.':I'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                          ->setCellValue('C'.$cell, 'Stok Keluar')
-                          ->setCellValue('D'.$cell, $penjualan->item)
-                          ->setCellValue('E'.$cell, $penjualan->nama_pgl)
-                          ->setCellValue('F'.$cell, (float)$penjualan->jml)
-                          ->setCellValue('G'.$cell, $penjualan->satuan)
-                          ->setCellValue('H'.$cell, $penjualan->harga)
-                          ->setCellValue('I'.$cell, $penjualan->subtotal);
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                            ->setCellValue('C'.$cell, 'Stok Keluar')
+                            ->setCellValue('D'.$cell, $penjualan->item)
+                            ->setCellValue('E'.$cell, $penjualan->nama_pgl)
+                            ->setCellValue('F'.$cell, (float)$penjualan->jml)
+                            ->setCellValue('G'.$cell, $penjualan->satuan)
+                            ->setCellValue('H'.$cell, $penjualan->harga)
+                            ->setCellValue('I'.$cell, $penjualan->subtotal);
 
                     $no++;
                     $cell++;
@@ -8772,7 +8772,7 @@ class laporan extends CI_Controller {
                 $sheet->setCellValue('A' . $sell1, 'TOTAL')
                       ->mergeCells('A'.$sell1.':G'.$sell1.'')
                       ->setCellValue('H' . $sell1, $total);
-            } 
+            }
 
             // Rename worksheet
             $sheet->setTitle('Lap Obat Laku');
@@ -8858,10 +8858,10 @@ class laporan extends CI_Controller {
             $sheet->getRowDimension('4')->setRowHeight(40);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'ITEM')
-                  ->setCellValue('C4', 'STOK MASUK')
-                  ->setCellValue('D4', 'STOK KELUAR')
-                  ->setCellValue('E4', 'STOK SISA');
+                    ->setCellValue('B4', 'ITEM')
+                    ->setCellValue('C4', 'STOK MASUK')
+                    ->setCellValue('D4', 'STOK KELUAR')
+                    ->setCellValue('E4', 'STOK SISA');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(35);
@@ -8880,10 +8880,10 @@ class laporan extends CI_Controller {
 //                    $sheet->getStyle('C'.$cell.':E'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
 
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $stok->item)
-                          ->setCellValue('C'.$cell, $stok->stok)
-                          ->setCellValue('D'.$cell, $stok->laku)
-                          ->setCellValue('E'.$cell, $stok->sisa_stok);
+                            ->setCellValue('B'.$cell, $stok->item)
+                            ->setCellValue('C'.$cell, $stok->stok)
+                            ->setCellValue('D'.$cell, $stok->laku)
+                            ->setCellValue('E'.$cell, $stok->sisa_stok);
 
                     $no++;
                     $cell++;
@@ -9024,14 +9024,14 @@ class laporan extends CI_Controller {
             $sheet->getRowDimension('6')->setRowHeight(36);
 
             $sheet->setCellValue('A6', 'No.')
-                  ->setCellValue('B6', 'TGL')
-                  ->setCellValue('C6', 'ID')
-                  ->setCellValue('D6', 'PASIEN')
-                  ->setCellValue('E6', 'ITEM')
-                  ->setCellValue('F6', 'QTY')
-                  ->setCellValue('G6', 'SATUAN')
-                  ->setCellValue('H6', 'HARGA')
-                  ->setCellValue('I6', 'SUBTOTAL');
+                    ->setCellValue('B6', 'TGL')
+                    ->setCellValue('C6', 'ID')
+                    ->setCellValue('D6', 'PASIEN')
+                    ->setCellValue('E6', 'ITEM')
+                    ->setCellValue('F6', 'QTY')
+                    ->setCellValue('G6', 'SATUAN')
+                    ->setCellValue('H6', 'HARGA')
+                    ->setCellValue('I6', 'SUBTOTAL');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(16);
@@ -9056,14 +9056,14 @@ class laporan extends CI_Controller {
                     $sheet->getStyle('H'.$cell.':I'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
-                          ->setCellValue('C'.$cell, $penjualan->no_rm)
-                          ->setCellValue('D'.$cell, $penjualan->nama_pgl)
-                          ->setCellValue('E'.$cell, $penjualan->item)
-                          ->setCellValue('F'.$cell, (float)$penjualan->jml)
-                          ->setCellValue('G'.$cell, $penjualan->satuan)
-                          ->setCellValue('H'.$cell, $penjualan->harga)
-                          ->setCellValue('I'.$cell, $subtot);
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                            ->setCellValue('C'.$cell, $penjualan->no_rm)
+                            ->setCellValue('D'.$cell, $penjualan->nama_pgl)
+                            ->setCellValue('E'.$cell, $penjualan->item)
+                            ->setCellValue('F'.$cell, (float)$penjualan->jml)
+                            ->setCellValue('G'.$cell, $penjualan->satuan)
+                            ->setCellValue('H'.$cell, $penjualan->harga)
+                            ->setCellValue('I'.$cell, $subtot);
 
                     $no++;
                     $cell++;
@@ -9171,11 +9171,11 @@ class laporan extends CI_Controller {
             $sheet->getRowDimension('4')->setRowHeight(40);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'TGL')
-                  ->setCellValue('C4', 'ITEM')
-                  ->setCellValue('D4', 'KETERANGAN')
-                  ->setCellValue('E4', 'STOK MASUK')
-                  ->setCellValue('F4', 'STOK KELUAR');
+                    ->setCellValue('B4', 'TGL')
+                    ->setCellValue('C4', 'ITEM')
+                    ->setCellValue('D4', 'KETERANGAN')
+                    ->setCellValue('E4', 'STOK MASUK')
+                    ->setCellValue('F4', 'STOK KELUAR');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(18);
@@ -9192,11 +9192,11 @@ class laporan extends CI_Controller {
                     $sql_nota_dt = $this->db->where('id', $hist->id_pembelian_det)->get('tbl_trans_beli_det')->row();
                     
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($hist->tgl_masuk))
-                          ->setCellValue('C'.$cell, $hist->produk)
-                          ->setCellValue('D'.$cell, $hist->keterangan.(!empty($sql_nota_dt->kode_batch) ? ' / ['.$sql_nota_dt->kode_batch.']' : ''))
-                          ->setCellValue('E'.$cell, ($hist->status == '1' || $hist->status == '2' || $hist->status == '6' ? (float)$hist->jml : '0'))
-                          ->setCellValue('F'.$cell, ($hist->status == '4' ? (float)$hist->jml : '0'));
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($hist->tgl_masuk))
+                            ->setCellValue('C'.$cell, $hist->produk)
+                            ->setCellValue('D'.$cell, $hist->keterangan.(!empty($sql_nota_dt->kode_batch) ? ' / ['.$sql_nota_dt->kode_batch.']' : ''))
+                            ->setCellValue('E'.$cell, ($hist->status == '1' || $hist->status == '2' || $hist->status == '6' ? (float)$hist->jml : '0'))
+                            ->setCellValue('F'.$cell, ($hist->status == '4' ? (float)$hist->jml : '0'));
 
                     $no++;
                     $cell++;
@@ -9296,11 +9296,11 @@ class laporan extends CI_Controller {
             $sheet->getRowDimension('4')->setRowHeight(40);
 
             $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'TGL')
-                  ->setCellValue('C4', 'ITEM')
-                  ->setCellValue('D4', 'KETERANGAN')
-                  ->setCellValue('E4', 'STOK MASUK')
-                  ->setCellValue('F4', 'STOK KELUAR');
+                    ->setCellValue('B4', 'TGL')
+                    ->setCellValue('C4', 'ITEM')
+                    ->setCellValue('D4', 'KETERANGAN')
+                    ->setCellValue('E4', 'STOK MASUK')
+                    ->setCellValue('F4', 'STOK KELUAR');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(18);
@@ -9317,11 +9317,11 @@ class laporan extends CI_Controller {
                     $sql_nota_dt = $this->db->where('id', $hist->id_pembelian_det)->get('tbl_trans_beli_det')->row();
                     
                     $sheet->setCellValue('A'.$cell, $no)
-                          ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($hist->tgl_masuk))
-                          ->setCellValue('C'.$cell, $hist->produk)
-                          ->setCellValue('D'.$cell, $hist->keterangan.(!empty($sql_nota_dt->kode_batch) ? ' / ['.$sql_nota_dt->kode_batch.']' : ''))
-                          ->setCellValue('E'.$cell, ($hist->status == '1' || $hist->status == '2' || $hist->status == '6' ? (float)$hist->jml : '0'))
-                          ->setCellValue('F'.$cell, ($hist->status == '4' ? (float)$hist->jml : '0'));
+                            ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($hist->tgl_masuk))
+                            ->setCellValue('C'.$cell, $hist->produk)
+                            ->setCellValue('D'.$cell, $hist->keterangan.(!empty($sql_nota_dt->kode_batch) ? ' / ['.$sql_nota_dt->kode_batch.']' : ''))
+                            ->setCellValue('E'.$cell, ($hist->status == '1' || $hist->status == '2' || $hist->status == '6' ? (float)$hist->jml : '0'))
+                            ->setCellValue('F'.$cell, ($hist->status == '4' ? (float)$hist->jml : '0'));
 
                     $no++;
                     $cell++;
