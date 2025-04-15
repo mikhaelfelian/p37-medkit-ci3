@@ -5453,7 +5453,7 @@ class Medcheck extends CI_Controller {
                                 'jml_satuan'    => (int)($stok->jml_satuan ?? 1),
                                 'satuan'        => $sql_sat->satuanBesar,
                                 'nominal'       => (float)$sql_det->subtotal ?? 0,
-                                'status'        => '4'
+                                'status'        => '4' 
                             ];
 
                             # Save to product history table
