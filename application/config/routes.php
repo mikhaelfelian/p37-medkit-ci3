@@ -621,6 +621,7 @@ $route['medcheck/json_item.php']                        = "medcheck/json_item";
 $route['medcheck/json_icd.php']                         = "medcheck/json_icd";
 
 $route['medcheck/set_master_pasien.php']                = "medcheck/set_master_pasien";
+$route['medcheck/set_master_aps.php']                   = "medcheck/set_master_aps";
 
 // route['medcheck/cetak_audiometri.php'] = 'medcheck/cetak_audiometri'; 
 /* --- Medcheck --- */

@@ -22304,4 +22304,101 @@ public function set_medcheck_lab_adm_save() {
             ]);
         }
     }
+
+    public function set_master_aps() {
+        if (Akses::aksesLogin() == TRUE) {
+            $nik          = $this->input->post('nik');
+            $kode         = $this->input->post('kode');
+            $nama_dpn     = $this->input->post('nama_dpn');
+            $nama         = $this->input->post('nama');
+            $nama_blk     = $this->input->post('nama_blk');
+            $jns_klm      = $this->input->post('jns_klm');
+            $no_hp        = $this->input->post('no_hp');
+            $no_rmh       = $this->input->post('no_rmh');
+            $alamat       = $this->input->post('alamat');
+            $alamat_dom   = $this->input->post('alamat_dom');
+            $tgl_lahir    = $this->input->post('tgl_lahir');
+            $tmp_lahir    = $this->input->post('tmp_lahir');
+            $kota         = $this->input->post('kota');
+            $jabatan      = $this->input->post('jabatan');
+            $act          = $this->input->post('act');
+            $id_medc      = $this->input->post('id_medc');
+            $id_lab       = $this->input->post('id_lab');
+            $status       = $this->input->post('status');
+            $rute         = $this->input->post('route');
+            
+            $pengaturan   = $this->db->get('tbl_pengaturan')->row();
+
+            $this->form_validation->set_rules('nama', 'Nama', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => [
+                        'nama' => form_error('nama')
+                    ]
+                ]);
+                return;
+            }
+            
+            try {
+                $sql_num    = $this->db->select('COUNT(*) AS jml')->where('status_aps', '1')->get('tbl_m_karyawan')->row()->jml + 1;
+                $kode_no    = sprintf('%05d', $sql_num);
+                
+                $user       = 'aps'.$kode_no;
+                $email      = 'aps'.$kode_no.'@'.$pengaturan->website;
+                $pass2      = 'admin1234';
+                $grup       = '10';
+                
+                $data_user = [
+                    'id_app'        => $pengaturan->id_app,
+                    'first_name'    => $nama,
+                    'nama_dpn'      => $nama_dpn,
+                    'nama_blk'      => $nama_blk,
+                    'username'      => $user,
+                    'password'      => $pass2,
+                    'tipe'          => '1',
+                ];
+                
+                $this->ion_auth->register($user, $pass2, $email, $data_user, [$grup]);
+                $last_id_user = $this->db->where('username', $user)->get('tbl_ion_users')->row()->id;
+
+                $data_kary = [
+                    'id_user'           => (!empty($last_id_user) ? $last_id_user : '0'),
+                    'id_user_group'     => '10',
+                    'tgl_simpan'        => date('Y-m-d H:i:s'),
+                    'kode'              => $user,
+                    'nama'              => $nama,
+                    'nama_dpn'          => $nama_dpn,
+                    'nama_blk'          => $nama_blk,
+                    'alamat'            => $alamat,
+                    'no_hp'             => $no_hp,
+                    'jns_klm'           => $jns_klm,
+                    'status_aps'        => '1'
+                ];
+
+                $this->db->insert('tbl_m_karyawan', $data_kary);
+                $last_id = crud::last_id();
+
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Data dokter APS berhasil dibuat!',
+                    'id' => general::enkrip($last_id),
+                    'data' => $data_kary,
+                    'redirect' => base_url((!empty($rute) ? $rute.'?act='.$act.'&id='.$id_medc.'&id_lab='.$id_lab.'&status='.$status : 'master/data_aps_tambah.php?id='.general::enkrip($last_id)))
+                ]);
+            } catch (Exception $e) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Authentifikasi gagal, silahkan login ulang!'
+            ]);
+        }
+    }
 }
