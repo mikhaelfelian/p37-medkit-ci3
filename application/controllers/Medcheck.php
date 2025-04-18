@@ -5627,10 +5627,10 @@ class Medcheck extends CI_Controller {
                         $this->db->query("SELECT * FROM tbl_m_produk_stok WHERE id_gudang = {$stok->id_gudang} AND id_produk = {$stok->id_item} FOR UPDATE");
                         
                         $sql_gudang_stok = $this->db->where('id_gudang', $stok->id_gudang)
-                                                  ->where('id_produk', $stok->id_item)
-                                                  ->get('tbl_m_produk_stok')
-                                                  ->row();
-                        $stok_akhir = $sql_gudang_stok->jml + $stok->jml;
+                                                    ->where('id_produk', $stok->id_item)
+                                                    ->get('tbl_m_produk_stok')
+                                                    ->row();
+                        $stok_akhir      = $sql_gudang_stok->jml + $stok->jml;
                     
                         $data_stok = [
                             'tgl_modif' => date('Y-m-d H:i:s'),
@@ -16337,7 +16337,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetAutoPageBreak(TRUE, 7);
             
             // Set font to helvetica instead of Arial to avoid font definition errors
-            $pdf->SetFont('helvetica', '', 9);
+            $pdf->SetFont('times', '', 9);
             
             // Add a page
             $pdf->AddPage();
@@ -16348,54 +16348,75 @@ public function set_medcheck_lab_adm_save() {
 
 
             // Patient information block
-            $pdf->SetFont('helvetica', '', '9');
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'No. Pemeriksaan', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(4.5, .5, $sql_medc_lab->no_lab, '0', 0, 'L', $fill);
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(2.5, .5, 'No. RM', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(8, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, '0', 0, 'L', $fill);
             $pdf->Ln();
             
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'No. Sampel', '0', 0, 'L', $fill); 
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(4.5, .5, $sql_medc_lab->no_sample, '0', 0, 'L', $fill);
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(2.5, .5, 'Nama Name', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(8, .5, general::bersih($sql_pasien->nama_pgl).' ('.$sql_pasien->jns_klm.')', '0', 0, 'L', $fill);
             $pdf->Ln();
             
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill);
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(2.5, .5, 'NIK', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(8, .5, $sql_pasien->nik, '0', 0, 'L', $fill);
             $pdf->Ln();
             
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'Poli', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(4.5, .5, $sql_poli->lokasi, '0', 0, 'L', $fill);
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(2.5, .5, 'Tgl Lahir', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->Cell(8, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), '0', 0, 'L', $fill);
             $pdf->Ln();
             
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'Alamat', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->MultiCell(15.5, .5, (!empty($sql_pasien->alamat) ? general::bersih($sql_pasien->alamat) : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
             
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->MultiCell(15.5, .5, $sql_pasien->no_hp.(!empty($sql_pasien->no_telp) ? ' / '.$sql_pasien->no_telp : ''), '0', 'L');
             
+            $pdf->SetFont('calibrib', '', '10');
             $pdf->Cell(3, .5, 'Dokter Pengirim', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('calibri', '', '10');
             $pdf->MultiCell(15.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '0', 'L');
             $pdf->Ln();
             
             // Reset font for content
-            $pdf->SetFont('helvetica', '', 9);
+            $pdf->SetFont('calibri', '', 9);
             
             // Get HTML content from view
             ob_start();
