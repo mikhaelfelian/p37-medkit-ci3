@@ -16432,12 +16432,12 @@ public function set_medcheck_lab_adm_save() {
                 ),
                 'tr' => array(0 => array(), 1 => array()),
                 'td' => array(
-                    0 => array('border' => 1, 'padding' => 1),
-                    1 => array('border' => 1, 'padding' => 1)
+                    0 => array('border' => 0, 'padding' => 1),
+                    1 => array('border' => 0, 'padding' => 1)
                 ),
                 'th' => array(
-                    0 => array('border' => 1, 'padding' => 1),
-                    1 => array('border' => 1, 'padding' => 1)
+                    0 => array('border' => 0, 'padding' => 1),
+                    1 => array('border' => 0, 'padding' => 1)
                 )
             );
             

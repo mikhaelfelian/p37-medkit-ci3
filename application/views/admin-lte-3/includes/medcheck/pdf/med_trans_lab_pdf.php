@@ -87,7 +87,7 @@ $sess_print = $this->session->userdata('lab_print');
 
                 <?php if (!empty($sql_lab)): ?>
                     <?php foreach ($sql_lab->result() as $lab): ?>
-                        <?php //if ($sess_print[$i]['value'] == '1' and $sess_print[$i]['id_lab_hsl'] == $lab->id): ?>
+                        <?php if (!isset($sess_print[$i]) || (isset($sess_print[$i]) && $sess_print[$i]['value'] == '1' && $sess_print[$i]['id_lab_hsl'] == $lab->id)): ?>
                         <tr>
                             <td width="40%" style="font-size: 9pt;">
                                 <?php echo nbs(2) . '- ' . $lab->item_name; ?>
@@ -103,7 +103,8 @@ $sess_print = $this->session->userdata('lab_print');
                             <td width="20%" style="font-size: 9pt;"><?php echo $lab->item_value; ?></td>
                             <td width="20%" style="font-size: 9pt;"><?php echo $lab->item_satuan; ?></td>
                         </tr>
-                        <?php //endif; ?>
+                        <?php endif; ?>
+                        <?php $i++; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
 
