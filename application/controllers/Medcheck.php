@@ -16423,9 +16423,26 @@ public function set_medcheck_lab_adm_save() {
             $this->load->view('admin-lte-3/includes/medcheck/pdf/med_trans_lab_pdf', $data);
             $html = ob_get_contents();
             ob_end_clean();
-
             
-            // Write HTML to PDF
+            // Set table display options to ensure table lines are always visible
+            $tagvs = array(
+                'table' => array(
+                    0 => array('n' => 0, 'left' => 0, 'right' => 0, 'top' => 0, 'bottom' => 0, 'width' => 0),
+                    1 => array('n' => 0, 'left' => 0, 'right' => 0, 'top' => 0, 'bottom' => 0, 'width' => 0)
+                ),
+                'tr' => array(0 => array(), 1 => array()),
+                'td' => array(
+                    0 => array('border' => 1, 'padding' => 1),
+                    1 => array('border' => 1, 'padding' => 1)
+                ),
+                'th' => array(
+                    0 => array('border' => 1, 'padding' => 1),
+                    1 => array('border' => 1, 'padding' => 1)
+                )
+            );
+            
+            // Apply table styles and write HTML to PDF
+            $pdf->setHtmlVSpace($tagvs);
             $pdf->writeHTML($html, true, false, true, false, '');
             
             // Output PDF
