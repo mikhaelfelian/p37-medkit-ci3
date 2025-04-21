@@ -17373,7 +17373,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(7.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
-            $pdf->Cell(7.5, .5, $sql_dokter->nik, '', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, $sql_dokter->sip, '', 0, 'L', $fill);
             $pdf->Ln();
             
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
