@@ -49,7 +49,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label class="control-label">Tanggal Rentang</label>
                                         <div class="input-group mb-3">
                                             <div class="input-group-append">
@@ -57,7 +57,7 @@
                                             </div>
                                             <?php echo form_input(array('id' => 'tgl_rentang', 'name' => 'tgl_rentang', 'class' => 'form-control text-middle' . (!empty($hasError['pasien']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => '02/15/2022 - 02/15/2022 ...', 'value' => (isset($_GET['tgl_awal']) ? $this->tanggalan->tgl_indo2($_GET['tgl_awal']) : ''))) ?>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -92,8 +92,9 @@
                                 <?php
                                 $uri        = substr($this->uri->segment(2), 0, -4);
                                 $case       = $this->input->get('case');
-                                $tg         = $this->input->get('tgl');
-                                $bl         = $this->input->get('bln');
+                                $tgl        = explode('-', $this->input->get('tgl'));
+                                $tg         = $tgl[0];
+                                $bl         = $tgl[1];
 
                                 switch ($case) {
                                     default:

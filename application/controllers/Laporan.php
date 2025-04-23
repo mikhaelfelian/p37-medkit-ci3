@@ -2642,9 +2642,10 @@ class laporan extends CI_Controller {
     
     public function data_pasien(){
         if (akses::aksesLogin() == TRUE) {
+            $tgl                = explode('-', $this->input->get('tgl'));
             $jml                = $this->input->get('jml');
-            $tgl                = $this->input->get('tgl');
-            $bln                = $this->input->get('bln');
+            $tgl                = $tgl[0];
+            $bln                = $tgl[1];
             $hal                = $this->input->get('halaman');
             $case               = $this->input->get('case');
             $pengaturan         = $this->db->get('tbl_pengaturan')->row();
@@ -4698,21 +4699,22 @@ class laporan extends CI_Controller {
             }
             
             // Menentukan URL dasar
-            $redirect_url = 'laporan/data_pasien_st.php';
+            $redirect_url = 'laporan/data_pasien.php';
 
             // Menyimpan parameter dalam array
             $params = [];
 
             // Menentukan case dan parameter berdasarkan input tanggal
-            if (!empty($tgl_masuk)) {
-                // Jika tanggal tunggal diisi
+            if (!empty($tgl)) {
+                // Jika tanggal tunggal diisi (format MM-DD)
                 $params['case'] = 'per_tanggal';
-                $params['tgl'] = $tgl_masuk;
+                $params['tgl'] = $tgl;
                 
-                // Query untuk menghitung jumlah data
+                // Query untuk mencari pasien berdasarkan bulan dan tanggal lahir
                 $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
                 $this->db->from("v_pasien");
-                $this->db->where("DATE(tgl_simpan)", $tgl_masuk);
+                $this->db->where("MONTH(tgl_lahir)", substr($tgl, 3, 2)); // Bulan (MM)
+                $this->db->where("DAY(tgl_lahir)", substr($tgl, 0, 2));   // Tanggal (DD)
                 
                 if ($statusPas == "1") {
                     $this->db->where("jumlah", '1');
@@ -4744,7 +4746,7 @@ class laporan extends CI_Controller {
                 
             } else {
                 // Jika tidak ada filter tanggal, redirect ke halaman utama
-                redirect(base_url('laporan/data_pasien_st.php'));
+                redirect(base_url('laporan/data_pasien.php'));
                 return;
             }
 
