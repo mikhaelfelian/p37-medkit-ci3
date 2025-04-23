@@ -20579,8 +20579,8 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(2.5, 0.35, '-'.general::format_angka($jml_diskon), '', 0, 'R', $fill);
             $pdf->Ln();
             $pdf->Cell(5.5, 0.35, 'Poin : '.($sql_pasien_poin->jml_poin <= 0 ? 0 : (float)$sql_pasien_poin->jml_poin), '', 0, 'L', $fill);
-            $pdf->Cell(3, 0.35, 'Ongkir', '', 0, 'R', $fill);
-            $pdf->Cell(2.5, 0.35, general::format_angka($jml_ongkir), '', 0, 'R', $fill);
+            $pdf->Cell(3, 0.35, 'Pot. Poin', '', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, general::format_angka($sql_medc->jml_potongan_poin), '', 0, 'R', $fill);
             $pdf->Ln();
             $pdf->Cell(5.5, 0.35, '', '', 0, 'L', $fill);
             $pdf->Cell(3, 0.35, 'Harus dibayar', '', 0, 'R', $fill);
