@@ -16501,7 +16501,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Cell(4, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, '', '0', 0, 'C', $fill);
             $pdf->Cell(5.5, .5, '2. dr. YENI JAMILAH, Sp.MK', '', 0, 'L', $fill);
-            $pdf->Ln();
+            $pdf->Ln(); 
             
             # Blok ID PASIEN
             $pdf->SetFont('Arial', '', '9');
