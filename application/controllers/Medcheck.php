@@ -22141,6 +22141,18 @@ public function set_medcheck_lab_adm_save() {
 
                 $nama_pgl = (!empty($sql_gelar->gelar) ? $sql_gelar->gelar.' ' : '').$nama;
 
+                // Update password in ion_auth if user exists
+                if (!empty($sql_pasien->id_user)) {
+                    // Set password to patient's birth date
+                    $password = $this->tanggalan->tgl_indo_sys($tgl_lahir);
+                    
+                    // Use Ion Auth to update the password
+                    $this->ion_auth->update($sql_pasien->id_user, [
+                        'password' => $password
+                    ]);
+                    
+                }
+
                 
                 // Prepare data for tbl_m_pasien
                 $data_pasien = [
