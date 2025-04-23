@@ -388,8 +388,9 @@
                                         <span class="input-group-text rounded-0"><i class="fas fa-calendar"></i></span>
                                     </div>
                                     <input type="date" id="tgl_lahir" name="tgl_lahir" class="form-control rounded-0"
-                                        value="<?php echo date('m/d/Y', strtotime($sql_pasien->tgl_lahir)) ?>"
-                                        placeholder="mm/dd/yyyy"> 
+                                        value="<?php echo date('Y-m-d', strtotime($sql_pasien->tgl_lahir)) ?>"
+                                        placeholder="mm/dd/yyyy">
+
                                 </div>
                             </div>
                             <div class="form-group">
