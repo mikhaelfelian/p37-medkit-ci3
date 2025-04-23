@@ -389,7 +389,7 @@
                                     </div>
                                     <input type="date" id="tgl_lahir" name="tgl_lahir" class="form-control rounded-0"
                                         value="<?php echo date('m/d/Y', strtotime($sql_pasien->tgl_lahir)) ?>"
-                                        placeholder="dd-mm-yyyy">
+                                        placeholder="dd-mm-yyyy"> 
                                 </div>
                             </div>
                             <div class="form-group">
