@@ -251,11 +251,11 @@
                     id: "<?php echo general::enkrip($sql_cuti->id) ?>",
                     status: status_prtk,
                     catatan: ket,
-                    ttd: signature
+                    ttd: signature,
+                    <?php echo $this->security->get_csrf_token_name(); ?>: "<?php echo $this->security->get_csrf_hash(); ?>"
                 },
                 method: "POST",
                 success: function (data) {
-//                    toastr.success("TTD Berhasil disimpan");
                     window.location.href='<?php echo base_url('sdm/data_cuti_det.php?id='.$this->input->get('id').'&route=sdm/data_cuti_list.php?tipe=1') ?>';
                 }
             });
