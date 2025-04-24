@@ -1722,11 +1722,13 @@ class laporan extends CI_Controller {
                         if (isset($jml)) {
                             $data['sql_stok'] = $this->db->select('*')
                                             ->where('status_subt', '0')
+                                            ->where('status_hps', '0')
                                             ->limit($config['per_page'], $hal)
                                             ->get('tbl_m_produk')->result();
                         } else {
                             $data['sql_stok'] = $this->db->select('*')
                                             ->where('status_subt', '0')
+                                            ->where('status_hps', '0')
                                             ->limit($config['per_page'])
                                             ->get('tbl_m_produk')->result();
                         }
@@ -1738,11 +1740,13 @@ class laporan extends CI_Controller {
                         if (isset($jml)) {
                             $data['sql_stok'] = $this->db->select('*')
                                             ->where('status_subt', '1')
+                                            ->where('status_hps', '0')
                                             ->limit($config['per_page'], $hal)
                                             ->get('tbl_m_produk')->result();
                         } else {
                             $data['sql_stok'] = $this->db->select('*')
                                             ->where('status_subt', '1')
+                                            ->where('status_hps', '0')
                                             ->limit($config['per_page'])
                                             ->get('tbl_m_produk')->result();
                         }
@@ -1753,10 +1757,12 @@ class laporan extends CI_Controller {
                 
                         if (isset($jml)) {
                             $data['sql_stok'] = $this->db->select('*')
+                            ->where('status_hps', '0')
                                             ->limit($config['per_page'], $hal)
                                             ->get('tbl_m_produk')->result();
                         } else {
                             $data['sql_stok'] = $this->db->select('*')
+                            ->where('status_hps', '0')
                                             ->limit($config['per_page'])
                                             ->get('tbl_m_produk')->result();
                         }
@@ -8013,19 +8019,22 @@ class laporan extends CI_Controller {
             switch ($tipe) {
                 case '0' :
                     $sql_stok = $this->db
-                             ->where('status_subt', '0')
-                             ->get('tbl_m_produk')->result();
+                                     ->where('status_subt', '0')
+                                     ->where('status_hps', '0')
+                                     ->get('tbl_m_produk')->result();
                     break;
                 
                 case '1' :
                     $sql_stok = $this->db
-                             ->where('status_subt', '1')
-                             ->get('tbl_m_produk')->result();
+                                     ->where('status_subt', '1')
+                                     ->where('status_hps', '0')
+                                     ->get('tbl_m_produk')->result();
                     break;
 
                 case '2' :
                     $sql_stok = $this->db
-                             ->get('tbl_m_produk')->result();
+                                     ->where('status_hps', '0')
+                                     ->get('tbl_m_produk')->result();
                     break;
             }
                             
