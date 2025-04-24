@@ -112,7 +112,6 @@
                                 }
                                 ?>
                                 <?php echo $btn_ctk ?>
-                                <!--<button class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo $uri_xls2 ?>'"><i class="fas fa-file-excel"></i> Data Pasien</button>-->
                                 <?php echo br(); ?>
                                 <?php echo $this->session->flashdata('medcheck'); ?>
                                 <table class="table table-striped">
