@@ -222,6 +222,9 @@
                                         <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_dm_ranap.php?id=' . general::enkrip($sql_medc->id)) ?>'">
                                             <i class="fa fa-print"></i> Dot Matrix
                                         </button>
+                                        <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_dm_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
+                                            <i class="fa fa-print"></i> Dot Matrix PDF
+                                        </button>
                                     <?php } else { ?>
                                         <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
                                             <i class="fa fa-print"></i> Nota PDF
@@ -232,7 +235,11 @@
                                         <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_dm_ranap.php?id=' . general::enkrip($sql_medc->id)) ?>'">
                                             <i class="fa fa-print"></i> Dot Matrix
                                         </button>
+                                        <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_dm_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
+                                            <i class="fa fa-print"></i> Dot Matrix PDF
+                                        </button>
                                     <?php } ?>
+                                    <br/><br/>  
                                     <button type="button" class="btn btn-success" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=12&route=medcheck/invoice/detail.php') ?>'">
                                         <i class="fa fa-print"></i> Kwitansi
                                     </button>
