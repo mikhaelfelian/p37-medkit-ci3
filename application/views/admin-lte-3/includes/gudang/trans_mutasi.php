@@ -104,7 +104,7 @@
                                             <?php } ?>
                                         </select>
                                     </div>
-                                </div>
+                                </div> 
                             <?php endif; ?>
                             <div class="form-group row">
                                 <label for="inputEmail3" class="col-sm-4 col-form-label">Keterangan</label>
