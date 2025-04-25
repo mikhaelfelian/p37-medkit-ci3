@@ -2836,21 +2836,13 @@ class Gudang extends CI_Controller {
             
             // Mutasi Info
             $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell(4, 0.6, 'No. Mutasi', 0, 0);
+            $pdf->Cell(4, 0.6, 'No. Permintaan', 0, 0);
             $pdf->Cell(0.5, 0.6, ':', 0, 0);
             $pdf->Cell(14.5, 0.6, $data_mutasi->no_nota, 0, 1);
             
             $pdf->Cell(4, 0.6, 'Tanggal', 0, 0);
             $pdf->Cell(0.5, 0.6, ':', 0, 0);
-            $pdf->Cell(14.5, 0.6, date('d-m-Y', strtotime($data_mutasi->tgl_simpan)), 0, 1);
-            
-            $pdf->Cell(4, 0.6, 'Gudang Asal', 0, 0);
-            $pdf->Cell(0.5, 0.6, ':', 0, 0);
-            $pdf->Cell(14.5, 0.6, $gudang_asal->gudang, 0, 1);
-            
-            $pdf->Cell(4, 0.6, 'Gudang Tujuan', 0, 0);
-            $pdf->Cell(0.5, 0.6, ':', 0, 0);
-            $pdf->Cell(14.5, 0.6, $gudang_tujuan->gudang, 0, 1);
+            $pdf->Cell(14.5, 0.6, $this->tanggalan->tgl_indo5($data_mutasi->tgl_simpan), 0, 1);
             
             $pdf->Cell(4, 0.6, 'Keterangan', 0, 0);
             $pdf->Cell(0.5, 0.6, ':', 0, 0);
@@ -2873,14 +2865,15 @@ class Gudang extends CI_Controller {
                 $produk = $this->db->where('kode', $item->kode)->get('tbl_m_produk')->row();
                 $satuan = $this->db->where('id', $produk->id_satuan)->get('tbl_m_satuan')->row();
                 
-                $pdf->Cell(1, 0.7, $no++, 1, 0, 'C');
-                $pdf->Cell(3, 0.7, $item->kode, 1, 0, 'L');
-                $pdf->Cell(8, 0.7, $item->produk, 1, 0, 'L');
-                $pdf->Cell(2, 0.7, $item->jml, 1, 0, 'C');
-                $pdf->Cell(2, 0.7, $satuan->satuanBesar, 1, 0, 'C');
-                $pdf->Cell(3, 0.7, $item->keterangan, 1, 1, 'L');
+                $pdf->Cell(1, 0.7, $no++, 'LR', 0, 'C');
+                $pdf->Cell(3, 0.7, $item->kode, 'LR', 0, 'L');
+                $pdf->Cell(8, 0.7, $item->produk, 'LR', 0, 'L');
+                $pdf->Cell(2, 0.7, $item->jml, 'LR', 0, 'C');
+                $pdf->Cell(2, 0.7, $satuan->satuanBesar, 'LR', 0, 'C');
+                $pdf->Cell(3, 0.7, $item->keterangan, 'LR', 1, 'L');
             }
             
+            $pdf->Cell(19, 0.6, '', 'T', 0, 'C');
             // Signatures
             $pdf->Ln(1.5);
             $pdf->Cell(6.3, 0.6, 'Dibuat Oleh,', 0, 0, 'C');
