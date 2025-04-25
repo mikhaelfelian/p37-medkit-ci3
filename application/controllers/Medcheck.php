@@ -2339,10 +2339,12 @@ class Medcheck extends CI_Controller {
                     'tipe_rawat'        => (!empty($tipe_rwt) ? $tipe_rwt : '0'),
                 ];
 
-                try {
-                    // Start database transaction
-                    $this->db->trans_begin();
-                    
+                // pre($data);
+
+                // Start database transaction
+                $this->db->trans_begin();
+
+                try {                    
                     // Check for form resubmission
                     if (check_form_submitted($this->input->post('form_id'))) {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya");');

@@ -103,7 +103,9 @@
                                     <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo (!empty($_GET['route']) ? base_url($_GET['route']) : base_url('gudang/data_mutasi.php')) ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    
+                                    <a href="<?php echo base_url('gudang/pdf_mutasi.php?id='.general::enkrip($sql_penj->id)); ?>" class="btn btn-danger btn-flat" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> Cetak PDF
+                                    </a>
                                 </div>
                             </div>
                         </div>

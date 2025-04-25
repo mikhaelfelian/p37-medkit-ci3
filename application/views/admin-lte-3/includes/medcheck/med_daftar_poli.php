@@ -48,7 +48,7 @@
                     class="form-control rounded-0 select2bs4 <?php echo (!empty($hasError['dokter']) ? ' is-invalid' : '') ?>">
                     <option value="">- Dokter -</option>
                     <?php foreach ($sql_doc as $doctor) { ?>
-                        <option value="<?php echo $doctor->id ?>" <?php echo (!empty($sql_dft_id->id_dokter) ? ($doctor->id_user == $sql_dft_id->id_dokter ? 'selected' : '') : (($doctor->id == $this->session->flashdata('dokter') ? 'selected' : ''))) ?>>
+                        <option value="<?php echo $doctor->id_user ?>" <?php echo (!empty($sql_dft_id->id_dokter) ? ($doctor->id_user == $sql_dft_id->id_dokter ? 'selected' : '') : (($doctor->id == $this->session->flashdata('dokter') ? 'selected' : ''))) ?>>
                             <?php echo (!empty($doctor->nama_dpn) ? $doctor->nama_dpn . ' ' : '') . strtoupper($doctor->nama) . (!empty($doctor->nama_blk) ? ', ' . $doctor->nama_blk : '') ?>
                         </option>
                     <?php } ?>
@@ -60,9 +60,6 @@
                 <select id="dokter" name="dokter"
                     class="form-control rounded-0 select2bs4 <?php echo (!empty($hasError['dokter']) ? ' is-invalid' : '') ?>">
                     <option value="">- Dokter -</option>
-                    <!-- <?php // foreach ($sql_doc as $doctor) { ?> -->
-                    <!--<option value="<?php // echo $doctor->id ?>" <?php // echo (!empty($sql_dft_id->id_dokter) ? ($doctor->id == $sql_dft_id->id_dokter ? 'selected' : '') : (($doctor->id == $this->session->flashdata('dokter') ? 'selected' : ''))) ?>><?php echo (!empty($doctor->nama_dpn) ? $doctor->nama_dpn . ' ' : '') . strtoupper($doctor->nama) . (!empty($doctor->nama_blk) ? ', ' . $doctor->nama_blk : '') ?></option>-->
-                    <?php // } ?>
                 </select>
             </div>
         <?php } ?>

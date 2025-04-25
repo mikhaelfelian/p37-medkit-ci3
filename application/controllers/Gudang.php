@@ -13,7 +13,6 @@ class Gudang extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->library('cart'); 
-        // $this->load->library('fpdf');
         $this->load->library('Excel');
         $this->load->model('Gudang_model');
     }
@@ -2802,6 +2801,106 @@ class Gudang extends CI_Controller {
             }
         } else {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!")');
+            redirect();
+        }
+    }
+
+    public function pdf_mutasi() {
+        if (akses::aksesLogin() == TRUE) {
+            $id = $this->input->get('id');
+            
+            if (empty($id)) {
+                $this->session->set_flashdata('gd_toast', 'toastr.error("ID mutasi tidak ditemukan");');
+                redirect(base_url('gudang/trans_mutasi_list.php'));
+            }
+            
+            // Load data
+            $data_mutasi     = $this->db->where('id', general::dekrip($id))->get('tbl_trans_mutasi')->row();
+            $data_mutasi_det = $this->db->where('id_mutasi', $data_mutasi->id)->get('tbl_trans_mutasi_det')->result();
+            $gudang_asal     = $this->db->where('id', $data_mutasi->id_gd_asal)->get('tbl_m_gudang')->row();
+            $gudang_tujuan   = $this->db->where('id', $data_mutasi->id_gd_tujuan)->get('tbl_m_gudang')->row();
+            $user            = $this->ion_auth->user($data_mutasi->id_user)->row();
+            $setting         = $this->db->get('tbl_pengaturan')->row();
+            
+            // Create PDF
+            require_once APPPATH . 'third_party/fpdf/fpdf.php';
+            
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', 'A4');
+            $pdf->SetAutoPageBreak('auto', 7);
+            $pdf->SetMargins(1, 0.35, 1);
+            $pdf->header = 0;
+            $pdf->addPage('', '', false);
+                        
+            // Title
+            $pdf->SetFont('Arial', 'B', 12);
+            $pdf->Cell(19, 1, 'FORM PERMINTAAN STOK', 0, 1, 'C');
+            $pdf->Ln(0.5);
+            
+            // Mutasi Info
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(4, 0.6, 'No. Mutasi', 0, 0);
+            $pdf->Cell(0.5, 0.6, ':', 0, 0);
+            $pdf->Cell(14.5, 0.6, $data_mutasi->no_nota, 0, 1);
+            
+            $pdf->Cell(4, 0.6, 'Tanggal', 0, 0);
+            $pdf->Cell(0.5, 0.6, ':', 0, 0);
+            $pdf->Cell(14.5, 0.6, date('d-m-Y', strtotime($data_mutasi->tgl_simpan)), 0, 1);
+            
+            $pdf->Cell(4, 0.6, 'Gudang Asal', 0, 0);
+            $pdf->Cell(0.5, 0.6, ':', 0, 0);
+            $pdf->Cell(14.5, 0.6, $gudang_asal->gudang, 0, 1);
+            
+            $pdf->Cell(4, 0.6, 'Gudang Tujuan', 0, 0);
+            $pdf->Cell(0.5, 0.6, ':', 0, 0);
+            $pdf->Cell(14.5, 0.6, $gudang_tujuan->gudang, 0, 1);
+            
+            $pdf->Cell(4, 0.6, 'Keterangan', 0, 0);
+            $pdf->Cell(0.5, 0.6, ':', 0, 0);
+            $pdf->Cell(14.5, 0.6, $data_mutasi->keterangan, 0, 1);
+            $pdf->Ln(0.5);
+            
+            // Table Header
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->Cell(1, 0.8, 'No', 1, 0, 'C');
+            $pdf->Cell(3, 0.8, 'Kode', 1, 0, 'C');
+            $pdf->Cell(8, 0.8, 'Nama Barang', 1, 0, 'C');
+            $pdf->Cell(2, 0.8, 'Jumlah', 1, 0, 'C');
+            $pdf->Cell(2, 0.8, 'Satuan', 1, 0, 'C');
+            $pdf->Cell(3, 0.8, 'Keterangan', 1, 1, 'C');
+            
+            // Table Content
+            $pdf->SetFont('Arial', '', 10);
+            $no = 1;
+            foreach ($data_mutasi_det as $item) {
+                $produk = $this->db->where('kode', $item->kode)->get('tbl_m_produk')->row();
+                $satuan = $this->db->where('id', $produk->id_satuan)->get('tbl_m_satuan')->row();
+                
+                $pdf->Cell(1, 0.7, $no++, 1, 0, 'C');
+                $pdf->Cell(3, 0.7, $item->kode, 1, 0, 'L');
+                $pdf->Cell(8, 0.7, $item->produk, 1, 0, 'L');
+                $pdf->Cell(2, 0.7, $item->jml, 1, 0, 'C');
+                $pdf->Cell(2, 0.7, $satuan->satuanBesar, 1, 0, 'C');
+                $pdf->Cell(3, 0.7, $item->keterangan, 1, 1, 'L');
+            }
+            
+            // Signatures
+            $pdf->Ln(1.5);
+            $pdf->Cell(6.3, 0.6, 'Dibuat Oleh,', 0, 0, 'C');
+            $pdf->Cell(6.3, 0.6, '', 0, 0, 'C');
+            $pdf->Cell(6.3, 0.6, 'Diterima Oleh,', 0, 1, 'C');
+            
+            $pdf->Ln(2);
+            
+            $pdf->Cell(6.3, 0.6, '('.$this->ion_auth->user($data_mutasi->id_user)->row()->first_name.')', 0, 0, 'C');
+            $pdf->Cell(6.3, 0.6, '', 0, 0, 'C');
+            $pdf->Cell(6.3, 0.6, '('.$this->ion_auth->user($data_mutasi->id_user_terima)->row()->first_name.')', 0, 1, 'C');
+            
+            // Output PDF
+            $pdf->Output('Mutasi_' . $data_mutasi->no_nota . '.pdf', 'I');
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
     }

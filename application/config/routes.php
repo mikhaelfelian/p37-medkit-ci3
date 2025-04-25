@@ -308,6 +308,7 @@ $route['gudang/set_cari_mutasi.php']                    = "gudang/set_cari_mutas
 $route['gudang/set_cari_stok.php']                      = "gudang/set_cari_stok";
 $route['gudang/set_cari_stok_tambah.php']               = "gudang/set_cari_stok_tambah";
 $route['gudang/pdf_data_stok.php']                      = "gudang/pdf_data_stok";
+$route['gudang/pdf_mutasi.php']                         = "gudang/pdf_mutasi";
 $route['gudang/json_item.php']                          = "gudang/json_item";
 /* --- GUDANG --- */
 
