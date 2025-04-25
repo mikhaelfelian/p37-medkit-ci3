@@ -43,6 +43,14 @@
         </a>
     </li>
     <li class="nav-item">
+        <a href="<?php echo base_url('laporan/data_referensi.php') ?>" class="nav-link">
+            <i class="nav-icon fas fa-book"></i>
+            <p>
+                Data Item Referensi
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
         <a href="<?php echo base_url('laporan/data_stok_pers.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-file-lines"></i>
             <p>Data Stok Persediaan</p>

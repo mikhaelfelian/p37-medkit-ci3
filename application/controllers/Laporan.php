@@ -2645,6 +2645,76 @@ class laporan extends CI_Controller {
             redirect();
         }
     }
+
+    public function data_referensi(){
+        if (akses::aksesLogin() == TRUE) {
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            $data['pengaturan'] = $pengaturan;
+            
+            $data['hasError'] = $this->session->flashdata('form_error');
+            
+            $tipe = $this->input->get('tipe');
+            
+            switch ($tipe) {
+                case '0':
+                    $data['sql_referensi'] = $this->db
+                                            ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                            (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
+                                            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
+                                            ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
+                                            ->where('tbl_m_produk.status_subt', '0')
+                                            ->where('tbl_m_produk.status_hps', '0')
+                                            ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
+                                            ->group_by('tbl_m_produk.id')
+                                            ->order_by('tbl_m_produk.produk', 'ASC')
+                                            ->get('tbl_m_produk')->result();
+                    break;
+                
+                case '1':
+                    $data['sql_referensi'] = $this->db
+                                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                                    (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
+                                                    ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
+                                                    ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
+                                                    ->where('tbl_m_produk.status_subt', '')
+                                                    ->where('tbl_m_produk.status_hps', '0')
+                                                    ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
+                                                    ->group_by('tbl_m_produk.id')
+                                                    ->order_by('tbl_m_produk.produk', 'ASC')
+                                                    ->get('tbl_m_produk')->result();
+                    break;
+                
+                case '2':
+                    $data['sql_referensi'] = $this->db
+                                                  ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                                        (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
+                                                  ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
+                                                  ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
+                                                  ->where('tbl_m_produk.status_hps', '0')
+                                                  ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
+                                                  ->group_by('tbl_m_produk.id')
+                                                  ->order_by('tbl_m_produk.produk', 'ASC')
+                                                  ->get('tbl_m_produk')->result();
+                    break;
+            }
+            
+            /* Sidebar Menu */
+            $data['sidebar'] = 'admin-lte-3/includes/laporan/sidebar_lap';
+            /* --- Sidebar Menu --- */
+            
+            /* Load view tampilan */
+            $this->load->view('admin-lte-3/1_atas', $data);
+            $this->load->view('admin-lte-3/2_header', $data);
+            $this->load->view('admin-lte-3/3_navbar', $data);
+            $this->load->view('admin-lte-3/includes/laporan/data_referensi', $data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
     
     public function data_pasien(){
         if (akses::aksesLogin() == TRUE) {
@@ -3472,8 +3542,177 @@ class laporan extends CI_Controller {
             redirect();
         }
     }
-    
-    
+
+    public function xls_data_referensi() {
+        if (akses::aksesLogin() == TRUE) {
+            $tipe = $this->input->get('tipe');
+            
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            // Set column width
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(40);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(10);
+            
+            // Set header style
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => 'FFCCCCCC',
+                    ],
+                ],
+            ];
+            
+            // Set header
+            $sheet->setCellValue('A1', 'No.');
+            $sheet->setCellValue('B1', 'Kode');
+            $sheet->setCellValue('C1', 'Nama Item');
+            $sheet->setCellValue('D1', 'Kategori');
+            $sheet->setCellValue('E1', 'Satuan');
+            $sheet->setCellValue('F1', 'Harga Beli');
+            $sheet->setCellValue('G1', 'Harga Jual');
+            $sheet->setCellValue('H1', 'Stok');
+            
+            $sheet->getStyle('A1:H1')->applyFromArray($styleArray);
+            
+            // Get data based on tipe
+            switch ($tipe) {
+                case '0':
+                    $sql_referensi = $this->db
+                                    ->select('tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                    (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
+                                    ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
+                                    ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
+                                    ->where('tbl_m_produk.status_subt', '0')
+                                    ->where('tbl_m_produk.status_hps', '0')
+                                    ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
+                                    ->group_by('tbl_m_produk.id')
+                                    ->order_by('tbl_m_produk.produk', 'ASC')
+                                    ->get('tbl_m_produk')->result();
+                    break;
+                
+                case '1':
+                    $sql_referensi = $this->db
+                                    ->select('tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                    (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
+                                    ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
+                                    ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
+                                    ->where('tbl_m_produk.status_subt', '')
+                                    ->where('tbl_m_produk.status_hps', '0')
+                                    ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
+                                    ->group_by('tbl_m_produk.id')
+                                    ->order_by('tbl_m_produk.produk', 'ASC')
+                                    ->get('tbl_m_produk')->result();
+                    break;
+                
+                case '2':
+                    $sql_referensi = $this->db
+                                    ->select('tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                    (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
+                                    ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
+                                    ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
+                                    ->where('tbl_m_produk.status_hps', '0')
+                                    ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
+                                    ->group_by('tbl_m_produk.id')
+                                    ->order_by('tbl_m_produk.produk', 'ASC')
+                                    ->get('tbl_m_produk')->result();
+                    break;
+            }
+            
+            // Fill data
+            $row = 2;
+            $no = 1;
+            
+            foreach ($sql_referensi as $data) {
+                $sheet->setCellValue('A' . $row, $no++);
+                $sheet->setCellValue('B' . $row, $data->kode);
+                $sheet->setCellValue('C' . $row, $data->nama_produk);
+                $sheet->setCellValue('D' . $row, $data->kategori);
+                $sheet->setCellValue('E' . $row, $data->satuan);
+                $sheet->setCellValue('F' . $row, $data->harga_beli);
+                $sheet->setCellValue('G' . $row, $data->harga_jual);
+                $sheet->setCellValue('H' . $row, $data->stok);
+                
+                // Set alignment for numeric columns
+                $sheet->getStyle('F' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('G' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('H' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                
+                $row++;
+            }
+            
+            // Set border for all data
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            
+            $sheet->getStyle('A1:H' . ($row - 1))->applyFromArray($styleArray);
+            
+            // Rename worksheet
+            $sheet->setTitle('Data Item Referensi');
+            
+            // Page Setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+            
+            // Margin
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0.25);
+            $sheet->getPageMargins()->setLeft(0.25);
+            $sheet->getPageMargins()->setBottom(0.25);
+            
+            // Set document properties
+            $spreadsheet->getProperties()->setCreator("Data Item Referensi Report")
+                    ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                    ->setTitle("Data Item Referensi")
+                    ->setSubject("Data Item Referensi Report")
+                    ->setDescription("Kunjungi http://tigerasoft.co.id")
+                    ->setKeywords("Data Item Referensi Report")
+                    ->setCategory("Data Item Referensi Report");
+            
+            ob_end_clean();
+            // Redirect output to a client's web browser (Excel)
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_item_referensi.xlsx"');
+            
+            // If you're serving to IE over SSL, then the following may be needed
+            header('Expires: Mon, 15 Feb 1992 05:00:00 GMT'); // Date in the past
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+            header('Pragma: public'); // HTTP/1.0
+            
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+            exit;
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
     
     public function set_data_cuti(){
         if (akses::aksesLogin() == TRUE) {

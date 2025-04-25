@@ -976,6 +976,13 @@ $route['laporan/data_stok_keluar_laku.php']             = "laporan/data_stok_kel
 $route['laporan/set_data_stok_keluar_laku.php']         = "laporan/set_data_stok_keluar_laku";
 $route['laporan/xls_data_stok_keluar_laku.php']         = "laporan/xls_data_stok_keluar_laku";
 
+// Laporan Data Referensi
+$route['laporan/data_referensi.php']                    = "laporan/data_referensi";
+$route['laporan/set_data_referensi.php']                = "laporan/set_data_referensi";
+$route['laporan/xls_data_referensi.php']                = "laporan/xls_data_referensi";
+$route['laporan/pdf_data_referensi.php']                = "laporan/pdf_data_referensi";
+
+
 // Laporan Stok Mutasi
 $route['laporan/data_stok_mutasi.php']                  = "laporan/data_stok_mutasi";
 $route['laporan/set_data_stok_mutasi.php']              = "laporan/set_data_stok_mutasi";

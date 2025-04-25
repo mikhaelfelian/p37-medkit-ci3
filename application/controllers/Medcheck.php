@@ -6824,6 +6824,9 @@ class Medcheck extends CI_Controller {
                         'tgl_modif'   => date('Y-m-d H:i:s'),
                         'ket'         => $ket,
                     ];
+
+                    $this->db->where('id', $sql_medc_spiro->id)->update('tbl_trans_medcheck_lab_spiro', $data_spiro);
+
                     
                     # Ambil data kategori spirometri
                     foreach ($hasil as $key => $spiro){
