@@ -2846,8 +2846,7 @@ class Gudang extends CI_Controller {
             
             $pdf->Cell(4, 0.6, 'Keterangan', 0, 0);
             $pdf->Cell(0.5, 0.6, ':', 0, 0);
-            $pdf->Cell(14.5, 0.6, $data_mutasi->keterangan, 0, 1);
-            $pdf->Ln(0.5);
+            $pdf->MultiCell(14.5, 0.6, $data_mutasi->keterangan, 0, 'L');
             
             // Table Header
             $pdf->SetFont('Arial', 'B', 10);
