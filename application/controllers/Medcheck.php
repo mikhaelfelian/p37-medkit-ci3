@@ -17385,7 +17385,7 @@ public function set_medcheck_lab_adm_save() {
 
             $data_file = [
                 'tgl_modif' => date('Y-m-d H:i:s'),
-                'file_name' => strtolower($sql_pasien->nama_pgl). '_'. $date_part . '.pdf',
+                'file_name' => strtolower('file/pasien/'.$kode_pasien.'/hasil_lab_'.$clean_name. $date_part).'.pdf',
             ];
             $this->db->where('id', $sql_medc_lab->id)->update('tbl_trans_medcheck_lab', $data_file);
 
