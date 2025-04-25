@@ -2811,7 +2811,7 @@ class Gudang extends CI_Controller {
             
             if (empty($id)) {
                 $this->session->set_flashdata('gd_toast', 'toastr.error("ID mutasi tidak ditemukan");');
-                redirect(base_url('gudang/trans_mutasi_list.php'));
+                redirect(base_url('gudang/data_mutasi.php'));
             }
             
             // Load data
