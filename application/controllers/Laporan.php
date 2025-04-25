@@ -2658,10 +2658,8 @@ class laporan extends CI_Controller {
             switch ($tipe) {
                 case '0':
                     $data['sql_referensi'] = $this->db
-                                            ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                            ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
                                             (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
-                                            ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
-                                            ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
                                             ->where('tbl_m_produk.status_subt', '0')
                                             ->where('tbl_m_produk.status_hps', '0')
                                             ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
@@ -2672,10 +2670,8 @@ class laporan extends CI_Controller {
                 
                 case '1':
                     $data['sql_referensi'] = $this->db
-                                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
                                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
-                                                    ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
-                                                    ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
                                                     ->where('tbl_m_produk.status_subt', '')
                                                     ->where('tbl_m_produk.status_hps', '0')
                                                     ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
@@ -2686,10 +2682,8 @@ class laporan extends CI_Controller {
                 
                 case '2':
                     $data['sql_referensi'] = $this->db
-                                                  ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_kategori.kategori, tbl_m_satuan.satuanTerkecil as satuan, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                                  ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
                                                         (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
-                                                  ->join('tbl_m_kategori', 'tbl_m_kategori.id = tbl_m_produk.id_kategori')
-                                                  ->join('tbl_m_satuan', 'tbl_m_satuan.id = tbl_m_produk.id_satuan')
                                                   ->where('tbl_m_produk.status_hps', '0')
                                                   ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
                                                   ->group_by('tbl_m_produk.id')
