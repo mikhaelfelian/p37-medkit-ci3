@@ -2822,16 +2822,6 @@ class Gudang extends CI_Controller {
             $user            = $this->ion_auth->user($data_mutasi->id_user)->row();
             $setting         = $this->db->get('tbl_pengaturan')->row();
             
-            // Create PDF
-            // Fix the path to the FPDF library
-            $fpdf_path = APPPATH . 'third_party/fpdf/fpdf.php';
-            if (!file_exists($fpdf_path)) {
-                $this->session->set_flashdata('gd_toast', 'toastr.error("FPDF library not found. Please check the path.");');
-                redirect(base_url('gudang/trans_mutasi_list.php'));
-            }
-            
-            require_once $fpdf_path;
-            
             $this->load->library('MedPDF');
             $pdf = new MedPDF('P', 'cm', 'A4');
             $pdf->SetAutoPageBreak('auto', 7);
