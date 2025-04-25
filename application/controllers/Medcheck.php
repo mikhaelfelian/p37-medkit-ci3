@@ -6813,58 +6813,56 @@ class Medcheck extends CI_Controller {
                 $sql_medc_spiro = $this->db->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_lab_spiro')->row(); 
                 $hasil          = $_POST['hsl_ukur'];
                 
-                /* Transaksi Database */
-                $this->db->query('SET autocommit = 0;');
-                $this->db->trans_start();
+                // Begin transaction
+                $this->db->trans_begin();
                 
-                $data_spiro = [
-                    'tgl_modif'   => date('Y-m-d H:i:s'),
-                    'ket'         => $ket,
-                ];
-                
-                # Update masukkan hasil pemeriksaan
-                $this->db->where('id', $sql_medc_spiro->id)->update('tbl_trans_medcheck_lab_spiro', $data_spiro);
-                
-                # Hapus dahulu data yang sudah ada di tabel hasil
-                $this->db->where('id_lab_spiro', $sql_medc_spiro->id)->delete('tbl_trans_medcheck_lab_spiro_hsl');
-                
-                # Ambil data kategori spirometri
-                foreach ($hasil as $key => $spiro){
-                    $spiro_id   = general::dekrip($key);
-                    $sql_spiro  = $this->db->where('id', $spiro_id)->get('tbl_m_kategori_spiro')->row();
+                try {
                     
-                    $data = [
-                        'tgl_simpan'        => $sql_medc_spiro->tgl_masuk,
-                        'tgl_modif'         => date('Y-m-d H:i:s'),
-                        'id_medcheck'       => $sql_medc->id,
-                        'id_lab_spiro'      => $sql_medc_spiro->id,
-                        'id_lab_spiro_kat'  => $sql_spiro->id,
-                        'id_user'           => $this->ion_auth->user()->row()->id,
-                        'item_name'         => $sql_spiro->kategori,
-                        'item_value'        => $hasil[$key],
-                        'item_value2'       => $_POST['hsl_pred'][$key],
-                        'item_value3'       => $_POST['hsl_pred2'][$key],
+                    $data_spiro = [
+                        'tgl_modif'   => date('Y-m-d H:i:s'),
+                        'ket'         => $ket,
                     ];
-
-                    # Masukkan ke tabel hasil spirometri
-                    $this->db->insert('tbl_trans_medcheck_lab_spiro_hsl', $data);
-                }
-                
-                # Cek status transact MySQL
-                if ($this->db->trans_status() === FALSE) {
-                    # Rollback jika gagal
-                    $this->db->trans_rollback();
-
-                    # Tampilkan pesan error
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Spirometri gagal disimpan !");');
-                } else {
-                    $this->db->trans_complete();
                     
-                    # Tampilkan pesan sukses jika sudah berhasil commit
+                    # Ambil data kategori spirometri
+                    foreach ($hasil as $key => $spiro){
+                        $spiro_id   = $key;
+                        $sql_spiro  = $this->db->where('id', $spiro_id)->get('tbl_m_kategori_spiro')->row();
+                        
+                        $data = [
+                            'tgl_simpan'        => $sql_medc_spiro->tgl_masuk,
+                            'tgl_modif'         => date('Y-m-d H:i:s'),
+                            'id_medcheck'       => $sql_medc->id,
+                            'id_lab_spiro'      => $sql_medc_spiro->id,
+                            'id_lab_spiro_kat'  => $sql_spiro->id,
+                            'id_user'           => $this->ion_auth->user()->row()->id,
+                            'item_name'         => $sql_spiro->kategori,
+                            'item_value'        => $hasil[$key],
+                            'item_value2'       => $_POST['hsl_pred'][$key],
+                            'item_value3'       => $_POST['hsl_pred2'][$key],
+                        ];
+    
+                        # Masukkan ke tabel hasil spirometri
+                        $this->db->insert('tbl_trans_medcheck_lab_spiro_hsl', $data);
+                    }
+                    
+                    # Check if transaction successful
+                    if ($this->db->trans_status() === FALSE) {
+                        throw new Exception("Spirometri gagal disimpan!");
+                    }
+                    
+                    # Commit transaction
+                    $this->db->trans_commit();
+                    
+                    # Tampilkan pesan sukses
                     $this->session->set_flashdata('medcheck_toast', 'toastr.success("Spirometri berhasil disimpan !");');
+                    
+                } catch (Exception $e) {
+                    # Rollback transaction
+                    $this->db->trans_rollback();
+                    
+                    # Tampilkan pesan error
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("'.$e->getMessage().'");');
                 }
-                
-                $this->db->query('SET autocommit = 1;');
                 
                 redirect(base_url('medcheck/tambah.php?act=pen_spirometri_input&id='.$id.'&status='.$status.'&id_lab='.$id_spiro));
             }

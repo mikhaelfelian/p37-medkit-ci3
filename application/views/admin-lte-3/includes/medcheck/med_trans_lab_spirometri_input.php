@@ -13,16 +13,16 @@
             <div class="form-group row">
                 <label for="inputEmail3" class="col-sm-4 col-form-label"><small><?php echo $spiro->kategori ?></small></label>
                 <div class="col-sm-2">
-                    <?php echo form_input(array('id' => 'jml', 'name' => 'hsl_ukur[' . general::enkrip($spiro->id) . ']', 'class' => 'form-control pull-right text-center rounded-0', 'placeholder' => 'Isikan Hasil ...')) ?>
+                    <?php echo form_input(array('id' => 'jml', 'name' => 'hsl_ukur[' . $spiro->id . ']', 'class' => 'form-control pull-right text-center rounded-0', 'placeholder' => 'Isikan Hasil ...')) ?>
                 </div>
                 <div class="col-sm-2">
-                    <?php echo form_input(array('id' => 'jml', 'name' => 'hsl_pred[' . general::enkrip($spiro->id) . ']', 'class' => 'form-control pull-right text-center rounded-0', 'placeholder' => 'Prediksi ...')) ?>
+                    <?php echo form_input(array('id' => 'jml', 'name' => 'hsl_pred[' . $spiro->id. ']', 'class' => 'form-control pull-right text-center rounded-0', 'placeholder' => 'Prediksi ...')) ?>
                 </div>
                 <div class="col-sm-2">
-                    <?php echo form_input(array('id' => 'jml', 'name' => 'hsl_pred2[' . general::enkrip($spiro->id) . ']', 'class' => 'form-control pull-right text-center rounded-0', 'placeholder' => 'Isikan % ...')) ?>
+                    <?php echo form_input(array('id' => 'jml', 'name' => 'hsl_pred2[' . $spiro->id . ']', 'class' => 'form-control pull-right text-center rounded-0', 'placeholder' => 'Isikan % ...')) ?>
                 </div>
                 <div class="col-sm-2">
-                    <?php echo form_input(array('id' => '', 'name' => 'hsl_lln[' . general::enkrip($spiro->id) . ']', 'class' => 'form-control pull-right text-left rounded-0', 'value' => (float)$spiro->jml_lln, 'placeholder' => 'Isikan LLN ...', 'disabled' => 'TRUE')) ?>
+                    <?php echo form_input(array('id' => '', 'name' => 'hsl_lln[' . $spiro->id . ']', 'class' => 'form-control pull-right text-left rounded-0', 'value' => (float)$spiro->jml_lln, 'placeholder' => 'Isikan LLN ...', 'disabled' => 'TRUE')) ?>
                 </div>
             </div>
         <?php } ?>
