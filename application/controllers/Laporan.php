@@ -2672,7 +2672,7 @@ class laporan extends CI_Controller {
                     $data['sql_referensi'] = $this->db
                                                     ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
                                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
-                                                    ->where('tbl_m_produk.status_subt', '')
+                                                    ->where('tbl_m_produk.status_subt', '1')
                                                     ->where('tbl_m_produk.status_hps', '0')
                                                     ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
                                                     ->group_by('tbl_m_produk.id')
