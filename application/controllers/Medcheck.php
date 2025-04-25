@@ -18438,10 +18438,28 @@ public function set_medcheck_lab_adm_save() {
             $pdf->SetFont('Arial', '', '10');
             
             $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+            // Create directory if it doesn't exist
+            $directory = FCPATH . 'file/pasien/'.$kode_pasien.'/';
+            if (!is_dir($directory)) {
+                mkdir($directory, 0777, true);
+            }
             
-            ob_start();
-            $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
-            ob_end_flush();
+            // Generate filename with patient name and date
+            $clean_name = preg_replace('/[^a-zA-Z0-9]/', '', strtolower(str_replace(' ', '', $sql_pasien->nama)));
+            $date_part  = date('dmY', strtotime($sql_medc_rad->tgl_masuk));
+            $filename  = $directory . 'hasil_rad_'.$clean_name . $date_part . '.pdf';
+            
+            $data_file = [
+                'tgl_modif' => date('Y-m-d H:i:s'), 
+                'file_name' => strtolower('file/pasien/'.$kode_pasien.'/hasil_rad_'.$clean_name. $date_part).'.pdf',
+            ];
+            $this->db->where('id', $sql_medc_rad->id)->update('tbl_trans_medcheck_rad', $data_file);
+
+            // Save PDF to file
+            $pdf->Output($filename, 'F');
+            
+            // Also output PDF directly to browser
+            $pdf->Output('hasil_rad_'.$clean_name . $date_part . '.pdf', 'I');
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
