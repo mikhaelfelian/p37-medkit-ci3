@@ -601,6 +601,7 @@ $route['medcheck/surat/hapus_inform.php']               = "medcheck/hapus_medche
 $route['medcheck/surat/cetak_pdf.php']                  = "medcheck/pdf_medcheck_surat";
 $route['medcheck/surat/cetak_pdf_inf.php']              = "medcheck/pdf_medcheck_surat_inform";
 $route['medcheck/surat/cetak_pdf_lab.php']              = "medcheck/pdf_medcheck_lab";
+$route['medcheck/surat/cetak_pdf_lab_d.php']            = "medcheck/pdf_medcheck_lab_download";
 $route['medcheck/surat/cetak_pdf_lab_spiro.php']        = "medcheck/pdf_medcheck_lab_spiro";
 $route['medcheck/surat/cetak_pdf_lab_ekg.php']          = "medcheck/pdf_medcheck_lab_ekg";
 $route['medcheck/cetak_audiometri.php']                 = "medcheck/pdf_medcheck_lab_audio";

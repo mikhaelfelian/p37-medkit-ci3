@@ -6548,7 +6548,7 @@ class Medcheck extends CI_Controller {
                 
                 $this->session->set_userdata('lab_print', $cetak);
                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Hasil lab berhasil disimpan");');
-                redirect(base_url('medcheck/surat/cetak_pdf_lab.php?id='.$id.'&id_lab='.$id_lab));
+                redirect(base_url('medcheck/surat/cetak_pdf_lab_d.php?status_ctk=1&id='.$id.'&id_lab='.$id_lab));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -16940,6 +16940,458 @@ public function set_medcheck_lab_adm_save() {
             ob_start();
             $pdf->Output($sql_pasien->nama_pgl. '.pdf', $type);
             ob_end_flush();
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+
+    public function pdf_medcheck_lab_download() {
+        if (akses::aksesLogin() == TRUE) {
+            $setting            = $this->db->get('tbl_pengaturan')->row();
+            $id_medcheck        = $this->input->get('id');
+            $id_lab             = $this->input->get('id_lab');
+            $status_ctk         = $this->input->get('status_ctk');
+            
+            $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+            $sql_medc_srt       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck_surat')->row(); 
+            $sql_medc_lab       = $this->db->where('id', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab')->row(); 
+            $sql_medc_lab_det   = $this->db->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->where('status', '3')->where('status_hsl', '1')->group_by('id_lab_kat')->get('tbl_trans_medcheck_det')->result(); 
+            $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
+            $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
+            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
+            $sql_dokter         = $this->db->where('id_user', (!empty($sql_medc_lab->id_dokter) ? $sql_medc_lab->id_dokter : $sql_medc->id_dokter))->get('tbl_m_karyawan')->row();
+            $sql_dokter2        = $this->db->where('id_user', '221')->get('tbl_m_karyawan')->row();
+            $sql_dokter3        = $this->db->where('id_user', '48167')->get('tbl_m_karyawan')->row();
+            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $sess_print         = $this->session->userdata('lab_print');
+            $fill               = FALSE; 
+            
+
+
+            $this->load->library('MedLabPDF');
+            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $pdf->SetAutoPageBreak('auto', 6.5);
+            $pdf->SetMargins(1,0.35,1);
+            $pdf->header = 0;
+            $pdf->addPage('','',false);
+            
+            # Gambar Watermark Tengah
+            if(file_exists($gambar2)) {
+                $pdf->Image($gambar2,5,4,15,19);
+            }
+            
+            # Blok Judul
+            $judul              = "HASIL PEMERIKSAAN LABORATORIUM";
+            $judul2             = "Laboratory Result";
+            $pdf->SetFont('Arial', 'B', '13');
+            $pdf->Cell(19, .5, $judul, 0, 1, 'C');
+            $pdf->Ln(0);
+            $pdf->SetFont('Arial', 'Bi', '13');
+            $pdf->Cell(19, .5, $judul2, 'B', 1, 'C');
+            $pdf->Ln();
+            
+            # Blok Dokter Penanggung Jawab
+            $pdf->SetFont('Arial', 'B', '9');
+            $pdf->Cell(9, .5, '', '0', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'Dokter Penanggung Jawab', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->SetFont('Arial', 'B', '9');
+            $pdf->Cell(5.5, .5, '1. dr. ANITA TRI HASTUTI, Sp.PK', '', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(9, .5, '', '0', 0, 'L', $fill);
+            $pdf->Cell(4, .5, '', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, '', '0', 0, 'C', $fill);
+            $pdf->Cell(5.5, .5, '2. dr. YENI JAMILAH, Sp.MK', '', 0, 'L', $fill);
+            $pdf->Ln(); 
+            
+            # Blok ID PASIEN
+            $pdf->SetFont('Arial', '', '9');
+            $pdf->Cell(3, .5, 'No. Pemeriksaan', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(4.5, .5, $sql_medc_lab->no_lab, '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, .5, 'No. RM', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, '0', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(3, .5, 'No. Sampel', '0', 0, 'L', $fill); 
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(4.5, .5, $sql_medc_lab->no_sample, '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, .5, 'Nama Name', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8, .5, general::bersih($sql_pasien->nama_pgl).' ('.$sql_pasien->jns_klm.')', '0', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, .5, 'NIK', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8, .5, $sql_pasien->nik, '0', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(3, .5, 'Poli', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(4.5, .5, $sql_poli->lokasi, '0', 0, 'L', $fill);
+            $pdf->Cell(2.5, .5, 'Tgl Lahir', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->Cell(8, .5, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir).' / '.$this->tanggalan->usia_lkp($sql_pasien->tgl_lahir), '0', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(3, .5, 'Alamat', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->MultiCell(15.5, .5, (!empty($sql_pasien->alamat) ? general::bersih($sql_pasien->alamat) : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
+            $pdf->Cell(3, .5, 'No. HP / Rmh', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->MultiCell(15.5, .5, $sql_pasien->no_hp.(!empty($penj->no_telp) ? ' / '.$penj->no_telp : ''), '0', 'L');
+            $pdf->Cell(3, .5, 'Dokter Pengirim', '0', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
+            $pdf->MultiCell(15.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '0', 'L');
+            $pdf->Ln();
+            
+            $fill = FALSE;
+            $pdf->SetFont('Arial', 'B', '9');
+            $pdf->Cell(6, .5, 'PEMERIKSAAN', 'T', 0, 'L', $fill);
+            $pdf->Cell(5, .5, 'HASIL', 'T', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'NILAI RUJUKAN', 'T', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'SATUAN', 'T', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Arial', 'Bi', '9');
+            $pdf->Cell(6, .5, 'EXAMINATION', 'B', 0, 'L', $fill);
+            $pdf->Cell(5, .5, 'RESULT', 'B', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'REFERENCE VALUE', 'B', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'MEASURE', 'B', 0, 'L', $fill);
+            $pdf->Ln();
+            
+            # Jika status cetak 1, maka akan di cetak semua
+            # Pilihan ini untuk mengakomodir ePasien supaya bisa mencetak hasil
+            # Jika status cetak tidak ada, maka untuk perawat bisa memilih item yg di cetak
+
+            foreach ($sql_medc_lab_det as $det) {
+                $sql_kat = $this->db->where('id', $det->id_lab_kat)->get('tbl_m_kategori')->row();
+                $sql_det = $this->db->where('status_hsl', '1')
+                                   ->where('id_medcheck', $det->id_medcheck)
+                                   ->where('id_lab', $det->id_lab)
+                                   ->where('id_lab_kat', $det->id_lab_kat)
+                                   ->get('tbl_trans_medcheck_det')
+                                   ->result();
+
+                if (!empty($det->id_lab_kat)) {
+                    $pdf->SetFont('Arial', 'Bi', '9');
+                    $pdf->Cell(19, .5, $sql_kat->keterangan, '', 0, 'L', $fill);
+                    $pdf->Ln();
+                } else {
+                    $pdf->Ln(0);
+                }
+
+                foreach ($sql_det as $medc) {
+                    $sql_lab_rws = $this->db->where('id_medcheck', $medc->id_medcheck)->get('tbl_trans_medcheck_lab');
+                    
+                    if ($sql_lab_rws->num_rows() > 1) {
+                        $sql_lab = $this->db->where('id_medcheck', $medc->id_medcheck)
+                                           ->where('id_lab', general::dekrip($this->input->get('id_lab')))
+                                           ->where('id_item', $medc->id_item)
+                                           ->get('tbl_trans_medcheck_lab_hsl')
+                                           ->result();
+                    } else {
+                        $sql_lab = $this->db->where('id_medcheck', $medc->id_medcheck)
+                                           ->where('id_item', $medc->id_item)
+                                           ->get('tbl_trans_medcheck_lab_hsl')
+                                           ->result();
+                    }
+
+                    $pdf->SetFont('Arial', '', '8');
+
+                    if (!empty($det->id_lab_kat)) {
+                        $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+                    }
+
+                    $pdf->Cell(18.5, .5, $medc->item, '', 0, 'L', $fill);
+                    $pdf->Ln();
+
+                    foreach ($sql_lab as $lab) {
+                        # Jika warna hasil di tandai merah
+                        if ($lab->status_hsl_wrn == 1) {
+                            $pdf->SetTextColor(249, 11, 11);
+                        }
+
+                        $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+                        $pdf->Cell(6, .5, ' - ' . html_entity_decode($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                        $pdf->Cell(4.5, .5, html_entity_decode($lab->item_hasil, ENT_NOQUOTES, 'utf-8') . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                        
+                        $x = $pdf->GetX();
+                        $y = $pdf->GetY();                           
+                        $pdf->MultiCell(4.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
+                        $pdf->SetXY($x + 5, $y);                            
+                        $pdf->Cell(3.5, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+                        $pdf->Ln();
+                        
+                        # Jika warna hasil di tandai merah
+                        if ($lab->status_hsl_wrn == 1) {
+                            $pdf->SetTextColor(0, 0, 0);
+                        }
+                    }
+                }
+            }
+            
+            $pdf->SetFont('Arial', 'i', '8');
+            $pdf->Ln();
+            $pdf->Cell(19, .5, ($sql_medc_lab->status_duplo == '1' ? '* Sudah dilakukan duplo' : ''), 'T', 0, 'L', $fill);
+            $pdf->Ln();
+            
+            // Keterangan Hasil Lab selain template covid
+            if ($sql_medc_lab->status_cvd == '0' AND !empty($sql_medc_lab->ket)) {
+                $pdf->SetFont('Arial', 'B', '10');
+                $pdf->Cell(19, .5, 'Catatan / Note', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', '', '9');
+                $pdf->MultiCell(6, .5, $sql_medc_lab->ket, '0', 'L');
+            }elseif($sql_medc_lab->status_cvd != '0'){
+                $pdf->SetFont('Arial', 'B', '10');
+                $pdf->Cell(19, .5, 'Catatan / Note', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', '', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '1.', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Hasil positiv berlaku untuk hasil PCR SARS CoV-2 atau Antigen dari Laboratorium Klinik Utama Rawat Inap', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Esensia. Nilai tersebut tidak dapat dibandingkan dengan CT hasil PCR SARS CoV-2 atau Antigen dari', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'laboratorium lain.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', 'i', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Positive results apply to PCR results for SARS CoV-2 or Antigens from the Esensia Inpatient Main', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Clinical Laboratory. This value cannot be compared with CT PCR results from SARS CoV-2 or Antigens from', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'other laboratories.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', '', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '2.', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Kondisi tersebut hanya menggambarkan kondisi saat pengambilan sampel.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', 'i', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'These conditions only describe the conditions at the time of sampling.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', '', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '3.', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Bila hasil positif dan terdapat gejala klinis, segera konsultasikan ke faskes.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', 'i', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'These conditions only describe the conditions at the time of sampling.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', '', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '4.', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'Bila hasil negatif tidak selalu berarti pasien tidak terinfeksi SARS CoV-2, dan perlu dilakukan', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'pemeriksaan secara berkala.', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Arial', 'i', '8');
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);              
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);             
+                $pdf->Cell(18, .5, 'A negative results  does not necessarily mean that the patient is not infected with SARS-CoV-2, and', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);
+                $pdf->Cell(.5, .5, '', '', 0, 'C', $fill);
+                $pdf->Cell(18, .5, 'periodic examinations need to be carried out.', '', 0, 'L', $fill);
+                $pdf->Ln();
+            }
+           
+            // QR GENERATOR VALIDASI
+            // Load QR library
+            require_once APPPATH.'third_party/phpqrcode/qrlib.php';
+            
+            $qr_validasi = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $validasi_text = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            
+            // Create directory if it doesn't exist
+            $dir = dirname($qr_validasi);
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            
+            // Generate QR code using QRlib
+            \QRcode::png($validasi_text, $qr_validasi, QR_ECLEVEL_H, 2);
+            
+            $gambar4 = $qr_validasi;         
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $dokter_text = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            
+            // Create directory if it doesn't exist
+            $dir = dirname($qr_dokter);
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            
+            // Generate QR code using QRlib
+            \QRcode::png($dokter_text, $qr_dokter, QR_ECLEVEL_H, 2);
+            
+            $gambar5 = $qr_dokter;
+            
+            # Gambar VALIDASI
+            $getY = $pdf->GetY() + 1;
+            $pdf->Image($gambar4,2,$getY,2,2);
+            $pdf->Image($gambar5,12.5,$getY,2,2);
+            
+            
+            $pdf->SetFont('Arial', '', '10');
+            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, '', '0', 0, 'C', $fill);
+//            $pdf->Cell(7, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_lab->tgl_masuk), '', 0, 'L', $fill);
+            $pdf->Cell(7, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_lab->tgl_masuk), '', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Cell(4, .5, 'Validasi', '0', 0, 'C', $fill);            
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetDrawColor(49, 42, 238);
+                $pdf->SetTextColor(49, 42, 238);
+                $pdf->SetFont('Arial', 'B', '8');
+                $pdf->Cell(6.5, .5, 'PELAPORAN NILAI KRITIS', '1', 0, 'C', $fill);
+                $pdf->SetTextColor(0,0,0);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }            
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Cell(.5, .5, '', '0', 0, 'C', $fill);
+            $pdf->Cell(7, .5, (!empty($ket) ? $ket : 'Dokter Pemeriksa'), '0', 0, 'L', $fill);
+            $pdf->Ln();            
+            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);            
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetFont('Arial', 'B', '6');
+                $pdf->SetTextColor(49, 42, 238);
+                $pdf->Cell(3.25, .5, 'PETUGAS LABORATORIUM', '1', 0, 'L', $fill);
+                $pdf->Cell(3.25, .5, 'DPJP', '1', 0, 'L', $fill);
+                $pdf->SetTextColor(0,0,0);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }
+            
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Ln();
+            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
+            
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetFont('Arial', 'B', '6');
+                $pdf->SetTextColor(49, 42, 238);
+                $pdf->Cell(3.25, .5, 'Tanggal', 'L', 0, 'L', $fill);
+                $pdf->Cell(3.25, .5, 'Tanggal', 'LR', 0, 'L', $fill);
+                $pdf->SetTextColor(0,0,0);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Ln();
+            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetFont('Arial', 'B', '6');
+                $pdf->SetTextColor(49, 42, 238);
+                $pdf->Cell(3.25, .5, 'Jam', 'L', 0, 'L', $fill);
+                $pdf->Cell(3.25, .5, 'Jam', 'LR', 0, 'L', $fill);
+                $pdf->SetTextColor(0,0,0);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Ln();
+            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetFont('Arial', 'B', '6');
+                $pdf->SetTextColor(49, 42, 238);
+                $pdf->Cell(3.25, .5, 'Nama', 'L', 0, 'L', $fill);
+                $pdf->Cell(3.25, .5, 'Nama', 'LR', 0, 'L', $fill);
+                $pdf->SetTextColor(0,0,0);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Ln();            
+            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetFont('Arial', 'B', '6');
+                $pdf->SetTextColor(49, 42, 238);
+                $pdf->Cell(3.25, .5, 'TTD', 'L', 0, 'L', $fill);
+                $pdf->Cell(3.25, .5, 'TTD', 'LR', 0, 'L', $fill);
+                $pdf->SetTextColor(0,0,0);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }
+            $pdf->SetFont('Arial', '', '10');
+            $pdf->Cell(.5, .5, '', '0', 0, 'C', $fill);
+            
+            # JIka status APS = 1, maka ganti dr anita
+            if($sql_dokter->status_aps == '1'){
+                $pdf->Cell(7, .5, (!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : ''), '', 0, 'L', $fill);
+            }else{
+                $pdf->Cell(7, .5, (!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : ''), '', 0, 'L', $fill);
+            }
+            
+            $pdf->Ln();
+            $pdf->Cell(4, .5, '', '0', 0, 'C', $fill);
+            # Jika hasil normal, maka muncul nilai kritis
+            if($sql_medc_lab->status_normal == '1'){
+                $pdf->SetFont('Arial', 'B', '6');
+                $pdf->Cell(3.25, .5, '', 'LB', 0, 'L', $fill);
+                $pdf->Cell(3.25, .5, '', 'LRB', 0, 'L', $fill);
+            }else{                
+                $pdf->Cell(6.5, .5, '', '', 0, 'C', $fill);
+            }
+            $pdf->SetFont('Arial', '', '10');
+            $pdf->Cell(.5, .5, '', '0', 0, 'C', $fill);
+            $pdf->Cell(7, .5, $sql_dokter2->nik, '', 0, 'L', $fill);
+            $pdf->Ln();
+            
+            $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+            // Create directory if it doesn't exist
+            $directory = FCPATH . 'file/pasien/'.$kode_pasien.'/';
+            if (!is_dir($directory)) {
+                mkdir($directory, 0777, true);
+            }
+            
+            // Generate filename with patient name and date
+            $clean_name = preg_replace('/[^a-zA-Z0-9]/', '', strtolower(str_replace(' ', '', $sql_pasien->nama)));
+            $date_part  = date('dmY', strtotime($sql_medc_lab->tgl_masuk));
+            $filename  = $directory . 'hasil_lab_'.$clean_name . $date_part . '.pdf';
+            
+            
+            $status_ctk = $this->input->get('status_ctk');
+
+            $data_file = [
+                'tgl_modif' => date('Y-m-d H:i:s'),
+                'file_name' => strtolower($sql_pasien->nama_pgl). '_'. $date_part . '.pdf',
+            ];
+            $this->db->where('id', $sql_medc_lab->id)->update('tbl_trans_medcheck_lab', $data_file);
+
+            // Output PDF directly to browser with headers that force download
+            $pdf->Output($filename, 'F');
+            redirect(base_url('medcheck/surat/cetak_pdf_lab.php?id='.$id_medcheck.'&id_lab='.$id_lab));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
