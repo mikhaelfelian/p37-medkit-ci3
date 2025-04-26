@@ -3592,7 +3592,7 @@ class laporan extends CI_Controller {
             switch ($tipe) {
                 case '0':
                     $sql_referensi = $this->db
-                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan,
+                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan, tbl_m_produk.id_kategori,
                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
                                     ->where('tbl_m_produk.status_subt', '0')
                                     ->where('tbl_m_produk.status_hps', '0')
@@ -3604,7 +3604,7 @@ class laporan extends CI_Controller {
                 
                 case '1':
                     $sql_referensi = $this->db
-                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan,
+                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan, tbl_m_produk.id_kategori,
                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
                                     ->where('tbl_m_produk.status_subt', '1')
                                     ->where('tbl_m_produk.status_hps', '0')
@@ -3616,7 +3616,7 @@ class laporan extends CI_Controller {
                 
                 case '2':
                     $sql_referensi = $this->db
-                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan,
+                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan, tbl_m_produk.id_kategori,
                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
                                     ->where('tbl_m_produk.status_hps', '0')
                                     ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
@@ -3657,11 +3657,17 @@ class laporan extends CI_Controller {
                 
                 // Add item references indented below the main item
                 foreach ($item_refs as $item_ref) {
+                    $item_refd          = $this->db->where('id', $item_ref->id_produk_item)->get('tbl_m_produk')->row();
+                    // Get satuan for the product
+                    $item_satuan_ref    = $this->db->where('id', $item_refd->id_satuan)->get('tbl_m_satuan')->row();
+                    // Get product data first to get the id_kategori
+                    $item_kat_ref       = $this->db->where('id', $item_refd->id_kategori)->get('tbl_m_kategori')->row();
+
                     $sheet->setCellValue('A' . $row, '');
-                    $sheet->setCellValue('B' . $row, '');
+                    $sheet->setCellValue('B' . $row, $item_ref->kode);
                     $sheet->setCellValue('C' . $row, '- ' . $item_ref->item);
-                    $sheet->setCellValue('D' . $row, $item_kat->keterangan);
-                    $sheet->setCellValue('E' . $row, $item_satuan->satuanBesar);
+                    $sheet->setCellValue('D' . $row, $item_kat_ref->keterangan);
+                    $sheet->setCellValue('E' . $row, $item_satuan_ref->satuanBesar);
                     $sheet->setCellValue('F' . $row, '');
                     $sheet->setCellValue('G' . $row, '');
                     $sheet->setCellValue('H' . $row, '');
