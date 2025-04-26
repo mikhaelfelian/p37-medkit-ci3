@@ -3592,7 +3592,7 @@ class laporan extends CI_Controller {
             switch ($tipe) {
                 case '0':
                     $sql_referensi = $this->db
-                                    ->select('tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan,
                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
                                     ->where('tbl_m_produk.status_subt', '0')
                                     ->where('tbl_m_produk.status_hps', '0')
@@ -3604,7 +3604,7 @@ class laporan extends CI_Controller {
                 
                 case '1':
                     $sql_referensi = $this->db
-                                    ->select('tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan,
                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
                                     ->where('tbl_m_produk.status_subt', '1')
                                     ->where('tbl_m_produk.status_hps', '0')
@@ -3616,7 +3616,7 @@ class laporan extends CI_Controller {
                 
                 case '2':
                     $sql_referensi = $this->db
-                                    ->select('tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, 
+                                    ->select('tbl_m_produk.id, tbl_m_produk.kode, tbl_m_produk.produk as nama_produk, tbl_m_produk.harga_beli, tbl_m_produk.harga_jual, tbl_m_produk.id_satuan,
                                     (SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) as stok')
                                     ->where('tbl_m_produk.status_hps', '0')
                                     ->where('(SELECT COUNT(id) FROM tbl_m_produk_ref WHERE tbl_m_produk_ref.id_produk = tbl_m_produk.id AND tbl_m_produk_ref.id_produk > 0) >', 0)
@@ -3630,12 +3630,20 @@ class laporan extends CI_Controller {
             $row = 2;
             $no = 1;
             
-            foreach ($sql_referensi as $data) {
+            foreach ($sql_referensi as $data) {                
+                // Get item references
+                $item_refs      = $this->db->where('id_produk', $data->id)->get('tbl_m_produk_ref')->result();
+                // Get satuan for the product
+                $item_satuan    = $this->db->where('id', $data->id_satuan)->get('tbl_m_satuan')->row();
+                // Get product data first to get the id_kategori
+                $item_kat       = $this->db->where('id', $data->id_kategori)->get('tbl_m_kategori')->row();
+                
+                // Add main item
                 $sheet->setCellValue('A' . $row, $no++);
                 $sheet->setCellValue('B' . $row, $data->kode);
                 $sheet->setCellValue('C' . $row, $data->nama_produk);
-                $sheet->setCellValue('D' . $row, $data->kategori);
-                $sheet->setCellValue('E' . $row, $data->satuan);
+                $sheet->setCellValue('D' . $row, $item_kat->keterangan);
+                $sheet->setCellValue('E' . $row, $item_satuan->satuanBesar);
                 $sheet->setCellValue('F' . $row, $data->harga_beli);
                 $sheet->setCellValue('G' . $row, $data->harga_jual);
                 $sheet->setCellValue('H' . $row, $data->stok);
@@ -3646,6 +3654,20 @@ class laporan extends CI_Controller {
                 $sheet->getStyle('H' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 
                 $row++;
+                
+                // Add item references indented below the main item
+                foreach ($item_refs as $item_ref) {
+                    $sheet->setCellValue('A' . $row, '');
+                    $sheet->setCellValue('B' . $row, '');
+                    $sheet->setCellValue('C' . $row, '- ' . $item_ref->item);
+                    $sheet->setCellValue('D' . $row, $item_kat->keterangan);
+                    $sheet->setCellValue('E' . $row, $item_satuan->satuanBesar);
+                    $sheet->setCellValue('F' . $row, '');
+                    $sheet->setCellValue('G' . $row, '');
+                    $sheet->setCellValue('H' . $row, '');
+                    
+                    $row++;
+                }
             }
             
             // Set border for all data
