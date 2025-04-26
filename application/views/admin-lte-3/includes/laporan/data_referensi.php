@@ -92,7 +92,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             <th>Nama Item</th>
                                             <th>Kategori</th>
                                             <th>Satuan</th>
-                                            <th class="text-right">Harga Beli</th>
                                             <th class="text-right">Harga Jual</th>
                                         </tr>
                                     </thead>
@@ -101,6 +100,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         if (!empty($sql_referensi)) {
                                             $no = 1;
                                             foreach ($sql_referensi as $row) {
+                                                // Get kategori name
+                                                $item_kat = $this->db->where('id', $row->id_kategori)->get('tbl_m_kategori')->row();
+                                                // Get satuan name
+                                                $item_sat = $this->db->where('id', $row->id_satuan)->get('tbl_m_satuan')->row();
                                                 ?>
                                                 <tr>
                                                     <td class="text-center" style="width: 10px">
@@ -113,13 +116,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                                         <b><?php echo $row->nama_produk; ?></b>
                                                     </td>
                                                     <td class="text-left">
-                                                        <?php echo $row->kategori; ?>
+                                                        <?php echo $item_kat->keterangan; ?>
                                                     </td>
                                                     <td class="text-left">
-                                                        <?php echo $row->satuan; ?>
-                                                    </td>
-                                                    <td class="text-right" style="width: 100px;">
-                                                        <?php echo general::format_angka($row->harga_beli); ?>
+                                                        <?php echo $item_sat->satuanBesar; ?>
                                                     </td>
                                                     <td class="text-right" style="width: 100px;">
                                                         <?php echo general::format_angka($row->harga_jual); ?>
@@ -128,7 +128,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             <?php } 
                                         } else { ?>
                                             <tr>
-                                                <td colspan="8" class="text-center">Tidak ada data</td>
+                                                <td colspan="7" class="text-center">Tidak ada data</td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
