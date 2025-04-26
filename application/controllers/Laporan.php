@@ -3548,12 +3548,10 @@ class laporan extends CI_Controller {
             // Set column width
             $sheet->getColumnDimension('A')->setWidth(5);
             $sheet->getColumnDimension('B')->setWidth(15);
-            $sheet->getColumnDimension('C')->setWidth(40);
+            $sheet->getColumnDimension('C')->setWidth(70);
             $sheet->getColumnDimension('D')->setWidth(20);
             $sheet->getColumnDimension('E')->setWidth(15);
             $sheet->getColumnDimension('F')->setWidth(15);
-            $sheet->getColumnDimension('G')->setWidth(15);
-            $sheet->getColumnDimension('H')->setWidth(10);
             
             // Set header style
             $styleArray = [
@@ -3562,11 +3560,6 @@ class laporan extends CI_Controller {
                 ],
                 'alignment' => [
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ],
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    ],
                 ],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -3582,11 +3575,9 @@ class laporan extends CI_Controller {
             $sheet->setCellValue('C1', 'Nama Item');
             $sheet->setCellValue('D1', 'Kategori');
             $sheet->setCellValue('E1', 'Satuan');
-            $sheet->setCellValue('F1', 'Harga Beli');
-            $sheet->setCellValue('G1', 'Harga Jual');
-            $sheet->setCellValue('H1', 'Stok');
+            $sheet->setCellValue('F1', 'Harga Jual');
             
-            $sheet->getStyle('A1:H1')->applyFromArray($styleArray);
+            $sheet->getStyle('A1:F1')->applyFromArray($styleArray);
             
             // Get data based on tipe
             switch ($tipe) {
@@ -3637,6 +3628,12 @@ class laporan extends CI_Controller {
                 $item_satuan    = $this->db->where('id', $data->id_satuan)->get('tbl_m_satuan')->row();
                 // Get product data first to get the id_kategori
                 $item_kat       = $this->db->where('id', $data->id_kategori)->get('tbl_m_kategori')->row();
+
+                $sheet->getStyle('A'.$row.':B'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('C'.$row.':D'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle('E'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('F'.$row)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                 
                 // Add main item
                 $sheet->setCellValue('A' . $row, $no++);
@@ -3644,14 +3641,10 @@ class laporan extends CI_Controller {
                 $sheet->setCellValue('C' . $row, $data->nama_produk);
                 $sheet->setCellValue('D' . $row, $item_kat->keterangan);
                 $sheet->setCellValue('E' . $row, $item_satuan->satuanBesar);
-                $sheet->setCellValue('F' . $row, $data->harga_beli);
-                $sheet->setCellValue('G' . $row, $data->harga_jual);
-                $sheet->setCellValue('H' . $row, $data->stok);
+                $sheet->setCellValue('F' . $row, $data->harga_jual);
                 
                 // Set alignment for numeric columns
                 $sheet->getStyle('F' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                $sheet->getStyle('G' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                $sheet->getStyle('H' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 
                 $row++;
                 
@@ -3663,14 +3656,17 @@ class laporan extends CI_Controller {
                     // Get product data first to get the id_kategori
                     $item_kat_ref       = $this->db->where('id', $item_refd->id_kategori)->get('tbl_m_kategori')->row();
 
+                    $sheet->getStyle('A'.$row.':B'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                    $sheet->getStyle('C'.$row.':D'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle('E'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
                     $sheet->setCellValue('A' . $row, '');
                     $sheet->setCellValue('B' . $row, $item_ref->kode);
                     $sheet->setCellValue('C' . $row, '- ' . $item_ref->item);
                     $sheet->setCellValue('D' . $row, $item_kat_ref->keterangan);
                     $sheet->setCellValue('E' . $row, $item_satuan_ref->satuanBesar);
                     $sheet->setCellValue('F' . $row, '');
-                    $sheet->setCellValue('G' . $row, '');
-                    $sheet->setCellValue('H' . $row, '');
                     
                     $row++;
                 }
@@ -3685,7 +3681,7 @@ class laporan extends CI_Controller {
                 ],
             ];
             
-            $sheet->getStyle('A1:H' . ($row - 1))->applyFromArray($styleArray);
+            $sheet->getStyle('A1:F' . ($row - 1))->applyFromArray($styleArray);
             
             // Rename worksheet
             $sheet->setTitle('Data Item Referensi');
@@ -3705,7 +3701,7 @@ class laporan extends CI_Controller {
                     ->setLastModifiedBy($this->ion_auth->user()->row()->username)
                     ->setTitle("Data Item Referensi")
                     ->setSubject("Data Item Referensi Report")
-                    ->setDescription("Kunjungi http://tigerasoft.co.id")
+                    ->setDescription("Kunjungi http://tigerasoft.com")
                     ->setKeywords("Data Item Referensi Report")
                     ->setCategory("Data Item Referensi Report");
             
