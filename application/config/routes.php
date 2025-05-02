@@ -1082,6 +1082,28 @@ $route['pos/set_pelanggan_simpan.php']                  = "Pos/set_pelanggan_sim
 $route['pos/json_customer.php']                         = "Pos/json_customer";
 $route['pos/json_item.php']                             = "Pos/json_item";
 
+// Lab routes
+$route['pos/lab/index.php']                             = "PosLab/Index";
+$route['pos/lab/data_pelanggan_tambah.php']             = "PosLab/data_pelanggan_tambah";
+$route['pos/lab/trans_jual.php']                        = "PosLab/trans_jual";
+$route['pos/lab/trans_jual_inv.php']                    = "PosLab/trans_jual_invoice";
+$route['pos/lab/trans_jual_inv_print_dm.php']           = "PosLab/trans_jual_invoice_print_dm";
+$route['pos/lab/trans_jual_list.php']                   = "PosLab/trans_jual_list";
+$route['pos/lab/trans_jual_simpan.php']                 = "PosLab/trans_jual_simpan";
+$route['pos/lab/trans_jual_hapus.php']                  = "PosLab/trans_jual_hapus";
+$route['pos/lab/set_trans_jual.php']                    = "PosLab/set_trans_jual";
+$route['pos/lab/set_trans_jual_proses.php']             = "PosLab/set_trans_jual_proses";
+$route['pos/lab/set_trans_jual_upd.php']                = "PosLab/set_trans_jual_upd";
+$route['pos/lab/set_trans_jual_upd_proses.php']         = "PosLab/set_trans_jual_upd_proses";
+$route['pos/lab/set_trans_jual_simpan_item.php']        = "PosLab/set_trans_jual_simpan_item";
+$route['pos/lab/set_trans_jual_hapus_item.php']         = "PosLab/set_trans_jual_hapus_item";
+$route['pos/lab/set_trans_jual_batal.php']              = "PosLab/set_trans_jual_batal";
+$route['pos/lab/set_trans_jual_batal_post.php']         = "PosLab/set_trans_jual_batal_posting";
+$route['pos/lab/set_trans_jual_cari.php']               = "PosLab/set_trans_jual_cari";
+$route['pos/lab/set_pelanggan_simpan.php']              = "PosLab/set_pelanggan_simpan";
+$route['pos/lab/json_customer.php']                     = "PosLab/json_customer";
+$route['pos/lab/json_item.php']                         = "PosLab/json_item";
+
 /* -- e-PASIEN -- */
 $route['pasien/login.php']                              = "Pasien/login";
 $route['pasien/logout.php']                             = "Pasien/logout";
