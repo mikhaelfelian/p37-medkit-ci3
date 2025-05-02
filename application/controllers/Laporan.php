@@ -2493,6 +2493,149 @@ class laporan extends CI_Controller {
             redirect();
         }
     }
+
+    public function data_stok_opname(){
+        if (akses::aksesLogin() == TRUE) {
+            $jml        = $this->input->get('jml');
+            $tgl        = $this->input->get('tgl');
+            $tgl_awal   = $this->input->get('tgl_awal');
+            $tgl_akhir  = $this->input->get('tgl_akhir');
+            $case       = $this->input->get('case');
+            $hal        = $this->input->get('halaman');
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            
+            if($jml > 0){
+                $data['hasError'] = $this->session->flashdata('form_error');
+                
+                // Config Pagination
+                $config['base_url']              = base_url('laporan/data_stok_opname.php?case='.$case.(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : '').(!empty($jml) ? '&jml='.$jml : ''));
+                $config['total_rows']            = $jml;
+                
+                $config['query_string_segment']  = 'halaman';
+                $config['page_query_string']     = TRUE;
+                $config['per_page']              = $pengaturan->jml_item;
+                $config['num_links']             = 3;
+                
+                $config['first_tag_open']        = '<li class="page-item">';
+                $config['first_tag_close']       = '</li>';
+                
+                $config['prev_tag_open']         = '<li class="page-item">';
+                $config['prev_tag_close']        = '</li>';
+                
+                $config['num_tag_open']          = '<li class="page-item">';
+                $config['num_tag_close']         = '</li>';
+                
+                $config['next_tag_open']         = '<li class="page-item">';
+                $config['next_tag_close']        = '</li>';
+                
+                $config['last_tag_open']         = '<li class="page-item">';
+                $config['last_tag_close']        = '</li>';
+                
+                $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+                $config['cur_tag_close']         = '</b></a></li>';
+                
+                $config['first_link']            = '&laquo;';
+                $config['prev_link']             = '&lsaquo;';
+                $config['next_link']             = '&rsaquo;';
+                $config['last_link']             = '&raquo;';
+                $config['anchor_class']          = 'class="page-link"';
+                
+                $this->db->select('tbl_util_so.id, tbl_util_so.tgl_simpan, tbl_util_so.id_user, tbl_util_so.uuid, tbl_util_so.keterangan, tbl_util_so_det.id_produk, tbl_util_so_det.kode, tbl_util_so_det.produk, tbl_util_so_det.jml, tbl_util_so_det.jml_sys, tbl_util_so_det.jml_satuan, tbl_util_so_det.keterangan as keterangan_so');
+                $this->db->from('tbl_util_so');
+                $this->db->join('tbl_util_so_det', 'tbl_util_so_det.id_so = tbl_util_so.id');
+                
+                switch ($case){
+                    case 'per_tanggal':
+                        if(!empty($hal)){
+                            $this->db->where('DATE(tbl_util_so.tgl_simpan)', $tgl);
+                            $this->db->limit($config['per_page'], $hal);
+                            $data['sql_so'] = $this->db->get()->result();
+                        }else{
+                            $this->db->where('DATE(tbl_util_so.tgl_simpan)', $tgl);
+                            $this->db->limit($config['per_page']);
+                            $data['sql_so'] = $this->db->get()->result();                          
+                        }
+                        break;
+                    
+                    case 'per_rentang':
+                        if(!empty($hal)){
+                            $this->db->where('DATE(tbl_util_so.tgl_simpan) >=', $tgl_awal);
+                            $this->db->where('DATE(tbl_util_so.tgl_simpan) <=', $tgl_akhir);
+                            $this->db->limit($config['per_page'], $hal);
+                            $data['sql_so'] = $this->db->get()->result();
+                        }else{
+                            $this->db->where('DATE(tbl_util_so.tgl_simpan) >=', $tgl_awal);
+                            $this->db->where('DATE(tbl_util_so.tgl_simpan) <=', $tgl_akhir);
+                            $this->db->limit($config['per_page']);
+                            $data['sql_so'] = $this->db->get()->result();
+                        }
+                        break;
+                }
+                
+                // Initializing Config Pagination
+                $this->pagination->initialize($config);
+                
+                // Pagination Data
+                $data['total_rows'] = $config['total_rows'];
+                $data['PerPage']    = $config['per_page'];
+                $data['pagination'] = $this->pagination->create_links();
+            }
+            
+            /* Sidebar Menu */
+            $data['sidebar']    = 'admin-lte-3/includes/laporan/sidebar_lap';
+            /* --- Sidebar Menu --- */
+            
+            /* Load view tampilan */
+            $this->load->view('admin-lte-3/1_atas', $data);
+            $this->load->view('admin-lte-3/2_header', $data);
+            $this->load->view('admin-lte-3/3_navbar', $data);
+            $this->load->view('admin-lte-3/includes/laporan/data_stok_opname', $data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+    
+    public function set_data_stok_opname(){
+        if (akses::aksesLogin() == TRUE) {
+            $tgl        = $this->input->post('tgl');
+            $tgl_rtg    = $this->input->post('tgl_rentang');
+            $case       = $this->input->post('case');
+
+            // Determine case based on input
+            if (!empty($tgl)) {
+                $case = 'per_tanggal';
+                $tgl = $this->tanggalan->tgl_indo_sys($tgl);
+            } else {
+                $case = 'per_rentang';
+                // Parse date range
+                $tg = explode(' - ', $tgl_rtg);
+                $tgl_awal = $this->tanggalan->tgl_indo_sys($tg[0]);
+                $tgl_akhir = $this->tanggalan->tgl_indo_sys($tg[1]);
+            }
+            
+            switch ($case){
+                case 'per_tanggal':
+                    $jml = $this->db->where('DATE(tgl_simpan)', $tgl)->get('tbl_util_so')->num_rows();
+                    redirect('laporan/data_stok_opname.php?case='.$case.'&tgl='.$tgl.'&jml='.$jml);
+                    break;
+                
+                case 'per_rentang':
+                    $jml = $this->db->where('DATE(tgl_simpan) >=', $tgl_awal)
+                                    ->where('DATE(tgl_simpan) <=', $tgl_akhir)
+                                    ->get('tbl_util_so')->num_rows();
+                    redirect('laporan/data_stok_opname.php?case='.$case.'&tgl_awal='.$tgl_awal.'&tgl_akhir='.$tgl_akhir.'&jml='.$jml);
+                    break;
+            }
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
     
     public function data_stok_keluar_resep(){
         if (akses::aksesLogin() == TRUE) {
@@ -10789,6 +10932,126 @@ class laporan extends CI_Controller {
             $writer->save('php://output');
             exit;
         } else {
+            $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
+            redirect();
+        }
+    }
+
+    public function xls_data_stok_opname() {
+        if (akses::aksesLogin() == TRUE) {
+            // Get parameters
+            $tgl = $this->input->get('tgl');
+            $tgl_awal = $this->input->get('tgl_awal');
+            $tgl_akhir = $this->input->get('tgl_akhir');
+            $case = $this->input->get('case');
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            
+            // Create new Spreadsheet object
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            // Set header styles
+            $sheet->getStyle('A1:I1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:I1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+            
+            // Set headers
+            $sheet->setCellValue('A1', 'NO')
+                  ->setCellValue('B1', 'TANGGAL')
+                  ->setCellValue('C1', 'KODE')
+                  ->setCellValue('D1', 'PRODUK')
+                  ->setCellValue('E1', 'JML FISIK')
+                  ->setCellValue('F1', 'JML SISTEM')
+                  ->setCellValue('G1', 'SELISIH')
+                  ->setCellValue('H1', 'SATUAN')
+                  ->setCellValue('I1', 'KETERANGAN');
+            
+            // Set column widths
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(15);
+            $sheet->getColumnDimension('D')->setWidth(40);
+            $sheet->getColumnDimension('E')->setWidth(12);
+            $sheet->getColumnDimension('F')->setWidth(12);
+            $sheet->getColumnDimension('G')->setWidth(12);
+            $sheet->getColumnDimension('H')->setWidth(10);
+            $sheet->getColumnDimension('I')->setWidth(25);
+            
+            // Query data
+            $this->db->select('tbl_util_so.id, tbl_util_so.tgl_simpan, tbl_util_so.id_user, tbl_util_so.uuid, tbl_util_so.keterangan, tbl_util_so_det.id_produk, tbl_util_so_det.kode, tbl_util_so_det.produk, tbl_util_so_det.jml, tbl_util_so_det.jml_sys, tbl_util_so_det.jml_satuan, tbl_util_so_det.keterangan as keterangan_so');
+            $this->db->from('tbl_util_so');
+            $this->db->join('tbl_util_so_det', 'tbl_util_so_det.id_so = tbl_util_so.id');
+            
+            switch ($case) {
+                case 'per_tanggal':
+                    $this->db->where('DATE(tbl_util_so.tgl_simpan)', $tgl);
+                    break;
+                
+                case 'per_rentang':
+                    $this->db->where('DATE(tbl_util_so.tgl_simpan) >=', $tgl_awal);
+                    $this->db->where('DATE(tbl_util_so.tgl_simpan) <=', $tgl_akhir);
+                    break;
+            }
+            
+            $data_so = $this->db->get()->result();
+            
+            // Fill data rows
+            $no = 1;
+            $cell = 2;
+            
+            foreach ($data_so as $so) {
+                $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('B'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('E'.$cell.':H'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                
+                $sheet->setCellValue('A'.$cell, $no)
+                      ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo($so->tgl_simpan))
+                      ->setCellValue('C'.$cell, $so->kode)
+                      ->setCellValue('D'.$cell, $so->produk)
+                      ->setCellValue('E'.$cell, $so->jml)
+                      ->setCellValue('F'.$cell, $so->jml_sys)
+                      ->setCellValue('G'.$cell, ($so->jml - $so->jml_sys))
+                      ->setCellValue('H'.$cell, $so->jml_satuan)
+                      ->setCellValue('I'.$cell, $so->keterangan_so);
+                
+                $no++;
+                $cell++;
+            }
+            
+            // Rename worksheet
+            $sheet->setTitle('STOK OPNAME');
+            
+            // Page setup
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+            
+            // Margins
+            $sheet->getPageMargins()->setTop(0.25);
+            $sheet->getPageMargins()->setRight(0);
+            $sheet->getPageMargins()->setLeft(0);
+            $sheet->getPageMargins()->setBottom(0);
+            
+            // Document properties
+            $spreadsheet->getProperties()->setCreator("Mikhael Felian Waskito")
+                        ->setLastModifiedBy($this->ion_auth->user()->row()->username)
+                        ->setTitle("Laporan Stok Opname")
+                        ->setSubject("Laporan Stok Opname")
+                        ->setDescription("Kunjungi http://tigerasoft.co.id");
+            
+            // Clean output buffer
+            ob_end_clean();
+            
+            // Set headers for download
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="data_stok_opname_'.(isset($_GET['filename']) ? $_GET['filename'] : 'lap').'.xlsx"');
+            header('Cache-Control: max-age=0');
+            
+            // Create Excel writer and output file
+            $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+            exit;
+        } else {
+            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
