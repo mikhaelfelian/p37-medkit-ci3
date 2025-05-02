@@ -112,7 +112,7 @@
                                                     <?php echo br(); ?>
                                                     <small><i><b><?php echo general::status_dft($penj->status_dft) ?></b></i></small>
                                                 </td>
-                                                <td style="width: 50px;"><?php echo ($penj->no_antrian > 0) ? sprintf('%03d', $penj->no_antrian) : sprintf('%03d', $penj->no_urut) ?></td>
+                                                <td style="width: 50px;"><?php echo $penj->no_antrian; // ($penj->no_antrian > 0) ? sprintf('%03d', $penj->no_antrian) : sprintf('%03d', $penj->no_urut) ?></td>
                                                 <td style="width: 700px;">
                                                     <b><?php echo $penj->nama_pgl ?></b>
                                                     <?php echo br() ?>
