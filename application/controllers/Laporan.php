@@ -2713,18 +2713,33 @@ class laporan extends CI_Controller {
     public function data_pasien(){
         if (akses::aksesLogin() == TRUE) {
             $tgl                = explode('-', $this->input->get('tgl'));
-            $jml                = $this->input->get('jml');
             $tgl                = $tgl[0];
             $bln                = $tgl[1];
+            $bulan              = $this->input->get('bulan');
             $hal                = $this->input->get('halaman');
             $case               = $this->input->get('case');
             $pengaturan         = $this->db->get('tbl_pengaturan')->row();
-            
-            if($jml > 0){
+
+            // Count based on case
+            switch ($case) {
+                case 'per_bulan':
+                    $jml = $this->db->select("tbl_m_pasien.id")
+                                    ->where('tbl_m_pasien.no_hp !=', '')
+                                    ->where("MONTH(tbl_m_pasien.tgl_lahir)", $bulan)
+                                    ->from("tbl_m_pasien")
+                                    ->count_all_results();
+                    break;
+
+                default:
+                    $jml = $this->db->where('tbl_m_pasien.no_hp !=', '')->from('tbl_m_pasien')->count_all_results();
+                    break;
+            }
+
+            if (!empty($jml)) {
                 $data['hasError'] = $this->session->flashdata('form_error');
                 
                 // Config Pagination
-                $config['base_url']              = base_url('laporan/data_pasien.php?case='.$case.(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($bln) ? '&bln='.$bln : '').(!empty($jml) ? '&jml='.$jml : ''));
+                $config['base_url']              = base_url('laporan/data_pasien.php?case='.$case.(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($bulan) ? '&bulan='.$bulan : ''));
                 $config['total_rows']            = $jml;
                 
                 $config['query_string_segment']  = 'halaman';
@@ -2764,17 +2779,11 @@ class laporan extends CI_Controller {
                     default:
                         if (!empty($hal)) {
                             $data['sql_pasien']     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
-    //                                                            ->where('tbl_m_pasien.no_hp !=', '')
-    //                                                            ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
-    //                                                            ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
                                                                 ->limit($config['per_page'], $hal)
                                                                 ->order_by('tbl_m_pasien.nama', 'ASC') 
                                                                 ->get('tbl_m_pasien')->result();                            
                         }else{
                             $data['sql_pasien']     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
-    //                                                            ->where('tbl_m_pasien.no_hp !=', '')
-    //                                                            ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
-    //                                                            ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
                                                                 ->limit($config['per_page'])
                                                                 ->order_by('tbl_m_pasien.nama', 'ASC') 
                                                                 ->get('tbl_m_pasien')->result();                            
@@ -2786,6 +2795,15 @@ class laporan extends CI_Controller {
                                                             ->where('tbl_m_pasien.no_hp !=', '')
                                                             ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
                                                             ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
+                                                            ->limit($config['per_page'], $hal)
+                                                            ->order_by('tbl_m_pasien.nama', 'ASC') 
+                                                            ->get('tbl_m_pasien')->result();
+                        break;
+
+                    case 'per_bulan':
+                        $data['sql_pasien']     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
+                                                            ->where('tbl_m_pasien.no_hp !=', '')
+                                                            ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bulan)
                                                             ->limit($config['per_page'], $hal)
                                                             ->order_by('tbl_m_pasien.nama', 'ASC') 
                                                             ->get('tbl_m_pasien')->result();
@@ -3550,8 +3568,9 @@ class laporan extends CI_Controller {
             $sheet->getColumnDimension('B')->setWidth(15);
             $sheet->getColumnDimension('C')->setWidth(70);
             $sheet->getColumnDimension('D')->setWidth(20);
-            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('E')->setWidth(10);
             $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(20);
             
             // Set header style
             $styleArray = [
@@ -3574,10 +3593,11 @@ class laporan extends CI_Controller {
             $sheet->setCellValue('B1', 'Kode');
             $sheet->setCellValue('C1', 'Nama Item');
             $sheet->setCellValue('D1', 'Kategori');
-            $sheet->setCellValue('E1', 'Satuan');
-            $sheet->setCellValue('F1', 'Harga Jual');
+            $sheet->setCellValue('E1', 'Stok');
+            $sheet->setCellValue('F1', 'Satuan');
+            $sheet->setCellValue('G1', 'Harga Jual');
             
-            $sheet->getStyle('A1:F1')->applyFromArray($styleArray);
+            $sheet->getStyle('A1:G1')->applyFromArray($styleArray);
             
             // Get data based on tipe
             switch ($tipe) {
@@ -3628,20 +3648,23 @@ class laporan extends CI_Controller {
                 $item_satuan    = $this->db->where('id', $data->id_satuan)->get('tbl_m_satuan')->row();
                 // Get product data first to get the id_kategori
                 $item_kat       = $this->db->where('id', $data->id_kategori)->get('tbl_m_kategori')->row();
+                // Get stok all gudang
+                $stok           = $this->db->select('SUM(jml) as stok')->where('id_produk', $data->id)->get('tbl_m_produk_stok')->row();
 
                 $sheet->getStyle('A'.$row.':B'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $sheet->getStyle('C'.$row.':D'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 $sheet->getStyle('E'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                $sheet->getStyle('F'.$row)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                $sheet->getStyle('G'.$row)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                 
                 // Add main item
                 $sheet->setCellValue('A' . $row, $no++);
                 $sheet->setCellValue('B' . $row, $data->kode);
                 $sheet->setCellValue('C' . $row, $data->nama_produk);
                 $sheet->setCellValue('D' . $row, $item_kat->keterangan);
-                $sheet->setCellValue('E' . $row, $item_satuan->satuanBesar);
-                $sheet->setCellValue('F' . $row, $data->harga_jual);
+                $sheet->setCellValue('E' . $row, $stok->stok);
+                $sheet->setCellValue('F' . $row, $item_satuan->satuanBesar);
+                $sheet->setCellValue('G' . $row, $data->harga_jual);
                 
                 // Set alignment for numeric columns
                 $sheet->getStyle('F' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
@@ -3655,18 +3678,19 @@ class laporan extends CI_Controller {
                     $item_satuan_ref    = $this->db->where('id', $item_refd->id_satuan)->get('tbl_m_satuan')->row();
                     // Get product data first to get the id_kategori
                     $item_kat_ref       = $this->db->where('id', $item_refd->id_kategori)->get('tbl_m_kategori')->row();
+                    // Get stok all gudang
+                    $stok_ref           = $this->db->select('SUM(jml) as stok')->where('id_produk', $item_refd->id)->get('tbl_m_produk_stok')->row();
 
-                    $sheet->getStyle('A'.$row.':B'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-                    $sheet->getStyle('C'.$row.':D'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                     $sheet->getStyle('E'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                     $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-
+                    
                     $sheet->setCellValue('A' . $row, '');
                     $sheet->setCellValue('B' . $row, $item_ref->kode);
                     $sheet->setCellValue('C' . $row, '- ' . $item_ref->item);
                     $sheet->setCellValue('D' . $row, $item_kat_ref->keterangan);
-                    $sheet->setCellValue('E' . $row, $item_satuan_ref->satuanBesar);
-                    $sheet->setCellValue('F' . $row, '');
+                    $sheet->setCellValue('E' . $row, $stok_ref->stok);
+                    $sheet->setCellValue('F' . $row, $item_satuan_ref->satuanBesar);
+                    $sheet->setCellValue('G' . $row, '');
                     
                     $row++;
                 }
@@ -4938,20 +4962,21 @@ class laporan extends CI_Controller {
     public function set_data_pasien(){
         if (akses::aksesLogin() == TRUE) {
             // Ambil parameter dari input
-            $tgl = $this->input->post('tgl');
-            $tgl_rtg = $this->input->post('tgl_rentang');
-            $statusPas = $this->input->post('statusPasien');
+            $tgl        = $this->input->post('tgl');
+            $tgl_rtg    = $this->input->post('tgl_rentang');
+            $statusPas  = $this->input->post('statusPasien');
+            $bulan      = $this->input->post('bulan');
             
             // Konversi format tanggal
-            $tgl_masuk = !empty($tgl) ? trim($this->tanggalan->tgl_indo_sys($tgl)) : null;
-            $tgl_awal = null;
-            $tgl_akhir = null;
+            $tgl_masuk  = !empty($tgl) ? trim($this->tanggalan->tgl_indo_sys($tgl)) : null;
+            $tgl_awal   = null;
+            $tgl_akhir  = null;
             
             if (!empty($tgl_rtg)) {
                 $tgl_rentang = explode('-', $tgl_rtg);
                 if (count($tgl_rentang) == 2) {
-                    $tgl_awal = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[0]));
-                    $tgl_akhir = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[1]));
+                    $tgl_awal   = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[0]));
+                    $tgl_akhir  = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[1]));
                 }
             }
             
@@ -4964,52 +4989,24 @@ class laporan extends CI_Controller {
             // Menentukan case dan parameter berdasarkan input tanggal
             if (!empty($tgl)) {
                 // Jika tanggal tunggal diisi (format MM-DD)
-                $params['case'] = 'per_tanggal';
-                $params['tgl'] = $tgl;
-                
-                // Query untuk mencari pasien berdasarkan bulan dan tanggal lahir
-                $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
-                $this->db->from("v_pasien");
-                $this->db->where("MONTH(tgl_lahir)", substr($tgl, 3, 2)); // Bulan (MM)
-                $this->db->where("DAY(tgl_lahir)", substr($tgl, 0, 2));   // Tanggal (DD)
-                
-                if ($statusPas == "1") {
-                    $this->db->where("jumlah", '1');
-                } elseif ($statusPas == "2") {
-                    $this->db->where("jumlah >", '1');
-                }
-                
-                $jumlah_data = $this->db->get()->num_rows();
-                
+                $params['case']         = 'per_tanggal';
+                $params['tgl']          = $tgl;
             } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
                 // Jika rentang tanggal diisi
-                $params['case'] = 'per_rentang';
-                $params['tgl_awal'] = $tgl_awal;
-                $params['tgl_akhir'] = $tgl_akhir;
-                
-                // Query untuk menghitung jumlah data
-                $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
-                $this->db->from("v_pasien");
-                $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
-                $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
-                
-                if ($statusPas == "1") {
-                    $this->db->where("jumlah", '1');
-                } elseif ($statusPas == "2") {
-                    $this->db->where("jumlah >", '1');
-                }
-                
-                $jumlah_data = $this->db->get()->num_rows();
-                
-            } else {
+                $params['case']         = 'per_rentang';
+                $params['tgl_awal']     = $tgl_awal;
+                $params['tgl_akhir']    = $tgl_akhir;
+            } elseif (!empty($bulan)) {
+                $params['case']         = 'per_bulan';
+                $params['bulan']        = $bulan;
+            } else {    
                 // Jika tidak ada filter tanggal, redirect ke halaman utama
                 redirect(base_url('laporan/data_pasien.php'));
                 return;
             }
 
-            // Tambahkan parameter status pasien dan jumlah data
-            $params['status_pas'] = $statusPas;
-            $params['jml'] = !empty($jumlah_data) ? $jumlah_data : 0;
+            // Tambahkan parameter status pasien
+            $params['status_pas']       = $statusPas;
             
             // Gabungkan semua parameter ke dalam URL
             $redirect_url .= '?' . http_build_query($params);
@@ -8293,22 +8290,22 @@ class laporan extends CI_Controller {
             $sheet = $spreadsheet->getActiveSheet();
 
             // Header Tabel Nota
-            $sheet->getStyle('A4:L4')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('A4:L4')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-            $sheet->getStyle('A4:L4')->getFont()->setBold(TRUE);
+            $sheet->getStyle('A1:L1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A1:L1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+            $sheet->getStyle('A1:L1')->getFont()->setBold(TRUE);
 
-            $sheet->setCellValue('A4', 'No.')
-                  ->setCellValue('B4', 'Tgl')
-                  ->setCellValue('C4', 'Kategori')
-                  ->setCellValue('D4', 'Kode')
-                  ->setCellValue('E4', 'Item')
-                  ->setCellValue('F4', 'Jml')
-                  ->setCellValue('G4', 'Harga')
-                  ->setCellValue('H4', 'Nilai Stok')
-                  ->setCellValue('I4', 'Remun Perc')
-                  ->setCellValue('J4', 'Remun Nom')
-                  ->setCellValue('K4', 'Apres Perc')
-                  ->setCellValue('L4', 'Apres Nom');
+            $sheet->setCellValue('A1', 'No.')
+                  ->setCellValue('B1', 'Tgl')
+                  ->setCellValue('C1', 'Kategori')
+                  ->setCellValue('D1', 'Kode')
+                  ->setCellValue('E1', 'Item')
+                  ->setCellValue('F1', 'Jml')
+                  ->setCellValue('G1', 'Harga')
+                  ->setCellValue('H1', 'Nilai Stok')
+                  ->setCellValue('I1', 'Remun Perc')
+                  ->setCellValue('J1', 'Remun Nom')
+                  ->setCellValue('K1', 'Apres Perc')
+                  ->setCellValue('L1', 'Apres Nom');
 
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(19);
@@ -8325,7 +8322,7 @@ class laporan extends CI_Controller {
 
             if(!empty($sql_stok)){
                 $no    = 1;
-                $cell  = 5;
+                $cell  = 2;
                 $total = 0;
                 foreach ($sql_stok as $item){
                     $sql_kat    = $this->db->where('id', $item->id_kategori)->get('tbl_m_kategori')->row();
