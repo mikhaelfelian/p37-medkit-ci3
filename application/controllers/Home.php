@@ -106,6 +106,7 @@ class home extends CI_Controller {
             $this->db->select('DATE_FORMAT(tgl_simpan, "%Y-%m") as month, COUNT(*) as visit_count');
             $this->db->from('tbl_trans_medcheck');
             $this->db->where('YEAR(tgl_simpan)', $current_year);
+            $this->db->where('status_bayar', '1');
             $this->db->where('status_hps', '0');
             $this->db->group_by('DATE_FORMAT(tgl_simpan, "%Y-%m")');
             $this->db->order_by('month', 'ASC');
@@ -115,6 +116,7 @@ class home extends CI_Controller {
             $this->db->select('COUNT(*) as total');
             $this->db->from('tbl_trans_medcheck');
             $this->db->where('YEAR(tgl_simpan)', $current_year);
+            $this->db->where('status_bayar', '1');
             $this->db->where('status_hps', '0');
             $current_year_total = $this->db->get()->row()->total;
             
@@ -122,6 +124,7 @@ class home extends CI_Controller {
             $this->db->select('COUNT(*) as total');
             $this->db->from('tbl_trans_medcheck');
             $this->db->where('YEAR(tgl_simpan)', $current_year - 1);
+            $this->db->where('status_bayar', '1');
             $this->db->where('status_hps', '0');
             $previous_year_total = $this->db->get()->row()->total;
             
@@ -148,9 +151,6 @@ class home extends CI_Controller {
             
             // Debug: Log the query and results
             $last_query = $this->db->last_query();
-            log_message('debug', 'Patient visits query: ' . $last_query);
-            log_message('debug', 'Monthly visits: ' . json_encode($monthly_visits));
-            log_message('debug', 'Current year total: ' . $current_year_total);
             
             // Prepare response data
             $data = [
