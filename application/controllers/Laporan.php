@@ -3649,7 +3649,7 @@ class laporan extends CI_Controller {
                 // Get product data first to get the id_kategori
                 $item_kat       = $this->db->where('id', $data->id_kategori)->get('tbl_m_kategori')->row();
                 // Get stok all gudang
-                $stok           = $this->db->select('SUM(jml) as stok')->where('id_produk', $data->id)->get('tbl_m_produk_stok')->row();
+                $stok           = $this->db->where('id_produk', $data->id)->get('tbl_m_produk_ref')->row();
 
                 $sheet->getStyle('A'.$row.':B'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $sheet->getStyle('C'.$row.':D'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
@@ -3662,8 +3662,8 @@ class laporan extends CI_Controller {
                 $sheet->setCellValue('B' . $row, $data->kode);
                 $sheet->setCellValue('C' . $row, $data->nama_produk);
                 $sheet->setCellValue('D' . $row, $item_kat->keterangan);
-                $sheet->setCellValue('E' . $row, $stok->stok);
-                $sheet->setCellValue('F' . $row, $item_satuan->satuanBesar);
+                $sheet->setCellValue('E' . $row, '');
+                $sheet->setCellValue('F' . $row, '');
                 $sheet->setCellValue('G' . $row, $data->harga_jual);
                 
                 // Set alignment for numeric columns
@@ -3679,7 +3679,7 @@ class laporan extends CI_Controller {
                     // Get product data first to get the id_kategori
                     $item_kat_ref       = $this->db->where('id', $item_refd->id_kategori)->get('tbl_m_kategori')->row();
                     // Get stok all gudang
-                    $stok_ref           = $this->db->select('SUM(jml) as stok')->where('id_produk', $item_refd->id)->get('tbl_m_produk_stok')->row();
+                    $stok_ref           = $this->db->where('id', $item_refd->id)->get('tbl_m_produk_ref')->row();
 
                     $sheet->getStyle('E'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                     $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
@@ -3688,7 +3688,7 @@ class laporan extends CI_Controller {
                     $sheet->setCellValue('B' . $row, $item_ref->kode);
                     $sheet->setCellValue('C' . $row, '- ' . $item_ref->item);
                     $sheet->setCellValue('D' . $row, $item_kat_ref->keterangan);
-                    $sheet->setCellValue('E' . $row, $stok_ref->stok);
+                    $sheet->setCellValue('E' . $row, $item_ref->jml);
                     $sheet->setCellValue('F' . $row, $item_satuan_ref->satuanBesar);
                     $sheet->setCellValue('G' . $row, '');
                     
