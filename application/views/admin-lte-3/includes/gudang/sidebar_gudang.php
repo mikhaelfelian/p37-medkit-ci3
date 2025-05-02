@@ -108,6 +108,7 @@
         </a>
     </li>
 <?php } elseif (akses::hakPerawat() == TRUE) { ?>
+    <li class="nav-header">INVENTORI</li>
     <li class="nav-item">
         <a href="<?php echo base_url('gudang/trans_mutasi.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-truck"></i>
@@ -133,6 +134,15 @@
         </a>
     </li>
 <?php }elseif(akses::hakAnalis() == TRUE){ ?>
+    <li class="nav-header">INVENTORI</li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('gudang/data_stok_list.php') ?>" class="nav-link">
+            <i class="nav-icon fas fa-box-open"></i>
+            <p>
+                Data Stok
+            </p>
+        </a>
+    </li>
     <li class="nav-item">
         <a href="<?php echo base_url('gudang/trans_mutasi.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-truck"></i>
