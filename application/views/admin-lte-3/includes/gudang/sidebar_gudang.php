@@ -142,7 +142,7 @@
                 Data Stok
             </p>
         </a>
-    </li>
+    </li> 
     <li class="nav-item">
         <a href="<?php echo base_url('gudang/trans_mutasi.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-truck"></i>
