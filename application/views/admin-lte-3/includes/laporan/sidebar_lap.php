@@ -62,6 +62,12 @@
             <p>Data Resep</p>
         </a>
     </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('laporan/data_stok_opname.php') ?>" class="nav-link">
+            <i class="nav-icon fa fa-file-lines"></i>
+            <p>Data Stok Opname</p>
+        </a>
+    </li>
     <!--    <li class="nav-header text-bold">LAPORAN PEMBELIAN</li>
         <li class="nav-item">
             <a href="<?php echo base_url('laporan/data_pembelian.php') ?>" class="nav-link">
