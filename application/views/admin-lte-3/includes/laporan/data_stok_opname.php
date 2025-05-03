@@ -118,6 +118,7 @@
                                         <tr>
                                             <th>No.</th>
                                             <th>Tanggal</th>
+                                            <th>Gudang</th>
                                             <th>Kode</th>
                                             <th>Produk</th>
                                             <th class="text-center">Jumlah Fisik</th> 
@@ -138,6 +139,9 @@
                                                     </td>
                                                     <td class="text-left">
                                                         <?php echo $this->tanggalan->tgl_indo($so->tgl_simpan); ?>
+                                                    </td>
+                                                    <td class="text-left">
+                                                        <?php echo $so->gudang; ?>
                                                     </td>
                                                     <td class="text-left">
                                                         <?php echo $so->kode; ?>
