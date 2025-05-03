@@ -144,7 +144,7 @@
                                                     </td>
                                                     <td class="text-left">
                                                         <b><?php echo anchor(base_url('gudang/data_stok_tambah.php?id='.general::enkrip($so->id_produk)), $so->produk, 'target="_blank"'); ?></b>
-                                                    </td>
+                                                    </td> 
                                                     <td class="text-center">
                                                         <?php echo general::format_angka($so->jml); ?>
                                                     </td>

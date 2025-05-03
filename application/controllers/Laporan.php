@@ -10,7 +10,7 @@ class laporan extends CI_Controller {
     //put your code here
     function __construct() {
         parent::__construct();
-        $this->load->library('Excel');
+        $this->load->library('Excel'); 
     }
     
     public function index() {
