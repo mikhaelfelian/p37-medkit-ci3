@@ -5111,16 +5111,30 @@ class Medcheck extends CI_Controller {
                 $jml_gtotal     = ceil($sql_medc_det->subtotal);
                 
                 # Transactional Database
-                $this->db->trans_begin();
-                
+                $this->db->trans_begin();                
+
+                // Create a cache lock to prevent concurrent processing
+                $lock_key = 'medcheck_posting_' . general::dekrip($id);
+                $cache = $this->cache->file;
+
                 try {
                     // Get form ID and check for double submission
                     $form_id = $this->input->post('form_id');
                     if (check_form_submitted($form_id)) {
                         throw new Exception('Form sudah disubmit sebelumnya!');
                     }
+                    
+                    // Check if there's already a lock
+                    if ($cache->get($lock_key)) {
+                        throw new Exception('Transaksi sedang diproses, mohon tunggu sebentar');
+                    }
+                    
+                    // Set lock for 30 seconds
+                    $cache->save($lock_key, true, 30);
 
                     if(empty($sql_medc_det->subtotal)){
+                        // Release lock before throwing exception
+                        $cache->delete($lock_key);
                         throw new Exception('Tidak ada item yang di posting');
                     }
 
@@ -5158,6 +5172,8 @@ class Medcheck extends CI_Controller {
                                 # Check if stock is sufficient
                                 if ($jml_akhir_stk < 0) {
                                     $this->db->trans_rollback();
+                                    // Release lock before throwing exception
+                                    $cache->delete($lock_key);
                                     throw new Exception("- Stok tidak mencukupi untuk item ".$medc_det->item.". Stok tersedia: ".$sql_gudang_stok->jml);
                                 }
                                 
@@ -5206,6 +5222,9 @@ class Medcheck extends CI_Controller {
                                         if ($jml_akhir_reff_stk < 0) {
                                             // Rollback transaction
                                             $this->db->trans_rollback();
+                                            
+                                            // Release lock before throwing exception
+                                            $cache->delete($lock_key);
                                             
                                             // Throw exception with error message
                                             throw new Exception("Stok tidak mencukupi untuk item referensi {$sql_item_rf->produk}. Stok tersedia: {$sql_gudang_stok->jml}");
@@ -5392,6 +5411,8 @@ class Medcheck extends CI_Controller {
                             # If no row found, throw an exception
                             if (empty($sql_gudang_stok)) {
                                 $this->db->trans_rollback();
+                                // Release lock before throwing exception
+                                $cache->delete($lock_key);
                                 throw new Exception("Stok tidak ditemukan untuk item ".$stok->item);
                             }
                             
@@ -5401,6 +5422,8 @@ class Medcheck extends CI_Controller {
                             # Check if stock is sufficient
                             if ($stok_akhir < 0) {
                                 $this->db->trans_rollback();
+                                // Release lock before throwing exception
+                                $cache->delete($lock_key);
                                 throw new Exception("Stok tidak mencukupi untuk item ".$stok->item.". Stok tersedia: {$sql_gudang_stok->jml}");
                             }
                             
@@ -5464,6 +5487,8 @@ class Medcheck extends CI_Controller {
                     }else{
                         // Rollback the transaction since the transaction has already been processed
                         $this->db->trans_rollback();
+                        // Release lock before throwing exception
+                        $cache->delete($lock_key);
                         throw new Exception('Transaksi sudah pernah di proses !!');
                     }
                     
@@ -5484,6 +5509,8 @@ class Medcheck extends CI_Controller {
                     if ($this->db->trans_status() === FALSE) {
                         # Rollback transaction if any query failed
                         $this->db->trans_rollback();
+                        // Release lock
+                        $cache->delete($lock_key);
 
                         // Return JSON response for failure
                         header('Content-Type: application/json');
@@ -5492,6 +5519,8 @@ class Medcheck extends CI_Controller {
                     } else {
                         # Commit the transaction if all queries were executed successfully
                         $this->db->trans_commit();
+                        // Release lock
+                        $cache->delete($lock_key);
 
                         // Return JSON response for success
                         header('Content-Type: application/json');
@@ -5501,6 +5530,13 @@ class Medcheck extends CI_Controller {
                 } catch (Exception $e) {
                     # Rollback
                     $this->db->trans_rollback();
+                    
+                    // Release lock if it exists
+                    $cache = $this->cache->file;
+                    $lock_key = 'medcheck_process_' . general::dekrip($id);
+                    if ($cache->get($lock_key)) {
+                        $cache->delete($lock_key);
+                    }
                     
                     // Return JSON response for exception
                     header('Content-Type: application/json');
