@@ -113,7 +113,7 @@
                                                     <small><i><b><?php echo general::status_dft($penj->status_dft) ?></b></i></small>
                                                 </td> 
                                                 <td style="width: 50px;"><?php echo sprintf('%03d', $penj->no_urut) ?></td>
-                                                <td style="width: 700px;">
+                                                <td style="width: 700px;"> 
                                                     <b><?php echo $penj->nama_pgl ?></b>
                                                     <?php echo br() ?>
                                                     <small><i><?php echo (!empty($penj->alamat) || $penj->alamat != 0 ? $penj->alamat : (!empty($penj->alamat_dom) || $penj->alamat_dom != 0 ? $penj->alamat_dom : '-')); ?></i></small>
