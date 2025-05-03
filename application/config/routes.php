@@ -1085,7 +1085,7 @@ $route['pos/set_trans_jual_batal_post.php']             = "Pos/set_trans_jual_ba
 $route['pos/set_trans_jual_cari.php']                   = "Pos/set_trans_jual_cari";
 $route['pos/set_pelanggan_simpan.php']                  = "Pos/set_pelanggan_simpan";
 $route['pos/json_customer.php']                         = "Pos/json_customer";
-$route['pos/json_item.php']                             = "Pos/json_item";
+$route['pos/json_item.php']                             = "Pos/json_item"; 
 
 // Lab routes
 $route['pos/lab/index.php']                             = "PosLab/Index";
