@@ -10960,22 +10960,22 @@ class laporan extends CI_Controller {
                   ->setCellValue('B1', 'TANGGAL')
                   ->setCellValue('C1', 'KODE')
                   ->setCellValue('D1', 'PRODUK')
-                  ->setCellValue('E1', 'JML FISIK')
-                  ->setCellValue('F1', 'JML SISTEM')
+                  ->setCellValue('E1', 'JUMLAH FISIK')
+                  ->setCellValue('F1', 'JUMLAH SISTEM')
                   ->setCellValue('G1', 'SELISIH')
-                  ->setCellValue('H1', 'SATUAN')
-                  ->setCellValue('I1', 'KETERANGAN');
+                  ->setCellValue('H1', 'KETERANGAN')
+                  ->setCellValue('I1', 'PETUGAS');
             
             // Set column widths
             $sheet->getColumnDimension('A')->setWidth(5);
             $sheet->getColumnDimension('B')->setWidth(15);
             $sheet->getColumnDimension('C')->setWidth(15);
             $sheet->getColumnDimension('D')->setWidth(40);
-            $sheet->getColumnDimension('E')->setWidth(12);
-            $sheet->getColumnDimension('F')->setWidth(12);
-            $sheet->getColumnDimension('G')->setWidth(12);
-            $sheet->getColumnDimension('H')->setWidth(10);
-            $sheet->getColumnDimension('I')->setWidth(25);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(10);
+            $sheet->getColumnDimension('H')->setWidth(25);
+            $sheet->getColumnDimension('I')->setWidth(15);
             
             // Query data
             $this->db->select('tbl_util_so.id, tbl_util_so.tgl_simpan, tbl_util_so.id_user, tbl_util_so.uuid, tbl_util_so.keterangan, tbl_util_so_det.id_produk, tbl_util_so_det.kode, tbl_util_so_det.produk, tbl_util_so_det.jml, tbl_util_so_det.jml_sys, tbl_util_so_det.jml_satuan, tbl_util_so_det.keterangan as keterangan_so');
@@ -11002,7 +11002,12 @@ class laporan extends CI_Controller {
             foreach ($data_so as $so) {
                 $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle('B'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('E'.$cell.':H'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('E'.$cell.':G'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('I'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                
+                // Get user name
+                $user = $this->db->where('id', $so->id_user)->get('tbl_ion_users')->row();
+                $petugas = isset($user->first_name) ? $user->first_name : '';
                 
                 $sheet->setCellValue('A'.$cell, $no)
                       ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo($so->tgl_simpan))
@@ -11011,8 +11016,8 @@ class laporan extends CI_Controller {
                       ->setCellValue('E'.$cell, $so->jml)
                       ->setCellValue('F'.$cell, $so->jml_sys)
                       ->setCellValue('G'.$cell, ($so->jml - $so->jml_sys))
-                      ->setCellValue('H'.$cell, $so->jml_satuan)
-                      ->setCellValue('I'.$cell, $so->keterangan_so);
+                      ->setCellValue('H'.$cell, $so->keterangan)
+                      ->setCellValue('I'.$cell, $petugas);
                 
                 $no++;
                 $cell++;
