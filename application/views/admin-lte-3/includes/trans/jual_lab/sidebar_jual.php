@@ -1,4 +1,4 @@
-<li class="nav-header">PENJUALAN</li>
+<li class="nav-header">PENJUALAN (BHP)</li>
 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakFarmasi() == TRUE) { ?>
     <li class="nav-item">
         <a href="<?php echo base_url('pos/lab/set_trans_jual.php') ?>" class="nav-link">
