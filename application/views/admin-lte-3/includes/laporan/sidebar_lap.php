@@ -60,7 +60,7 @@
         <a href="<?php echo base_url('laporan/data_stok_keluar_resep.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-file-lines"></i>
             <p>Data Resep</p>
-        </a>
+        </a>  
     </li>
     <li class="nav-item">
         <a href="<?php echo base_url('laporan/data_stok_opname.php') ?>" class="nav-link">
