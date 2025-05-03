@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <?php echo form_open(base_url('laporan/set_data_stok_opname.php'), 'autocomplete="off"') ?> 
-                    <div class="card card-default">
+                    <div class="card card-default rounded-0">
                         <div class="card-header">
                             <h3 class="card-title">Form Laporan Stok Opname</h3>
                             <div class="card-tools">
