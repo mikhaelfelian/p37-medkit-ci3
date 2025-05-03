@@ -38,6 +38,9 @@
                 <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE) { ?>
                     <li class="nav-item d-none d-sm-inline-block">
                         <a href="<?php echo base_url('pos/index.php') ?>" class="nav-link">Apotik</a>
+                    </li>                    
+                    <li class="nav-item d-none d-sm-inline-block">
+                        <a href="<?php echo base_url('pos/lab/index.php') ?>" class="nav-link">Apotik Lab</a>
                     </li>
                     <li class="nav-item d-none d-sm-inline-block">
                         <a href="<?php echo base_url('sdm/index.php') ?>" class="nav-link">SDM</a>
