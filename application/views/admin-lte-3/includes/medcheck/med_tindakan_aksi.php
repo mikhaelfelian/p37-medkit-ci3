@@ -175,7 +175,7 @@ $jml_hari = $this->tanggalan->jml_hari($t_awl, $t_akh);
         <?php // } ?>
         <a class="btn btn-app bg-danger"
             href="<?php echo base_url('medcheck/hapus.php?id=' . general::enkrip($sql_medc->id)) ?>"
-            onclick="return confirm('Hapus [<?php echo general::enkrip($sql_medc->id) ?>] ?')">
+            onclick="return confirm('Hapus [<?php echo $sql_medc->pasien ?>] ?')">
             <i class="fas fa-trash-alt"></i> Hapus
         </a>
     <?php } elseif (akses::hakFarmasi() == TRUE) { ?>
