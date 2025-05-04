@@ -3003,38 +3003,39 @@ class laporan extends CI_Controller {
                     . (!empty($tgl_awal) ? '&tgl_awal=' . $tgl_awal : '')
                     . (!empty($tgl_akhir) ? '&tgl_akhir=' . $tgl_akhir : '')
                     . (!empty($jml) ? '&jml=' . $jml : '')
+                    . (!empty($statusPas) ? '&status_pas=' . $statusPas : '')
                 );
 
-                $config['total_rows']  = $jml; // Total data yang diambil
-                $config['per_page']    = $pengaturan->jml_item; // Jumlah data per halaman
-                $config['uri_segment'] = 3;
-                $config['page_query_string'] = TRUE;
-                $config['query_string_segment'] = 'halaman';
+                $config['total_rows']            = $jml; // Total data yang diambil
+                $config['per_page']              = $pengaturan->jml_item; // Jumlah data per halaman
+                $config['uri_segment']           = 3;
+                $config['page_query_string']     = TRUE;
+                $config['query_string_segment']  = 'halaman';
 
                 // **Tampilan Pagination**
-            $config['first_tag_open']        = '<li class="page-item">';
-            $config['first_tag_close']       = '</li>';
-            
-            $config['prev_tag_open']         = '<li class="page-item">';
-            $config['prev_tag_close']        = '</li>';
-            
-            $config['num_tag_open']          = '<li class="page-item">';
-            $config['num_tag_close']         = '</li>';
-            
-            $config['next_tag_open']         = '<li class="page-item">';
-            $config['next_tag_close']        = '</li>';
-            
-            $config['last_tag_open']         = '<li class="page-item">';
-            $config['last_tag_close']        = '</li>';
-            
-            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
-            
-            $config['first_link']            = '&laquo;';
-            $config['prev_link']             = '&lsaquo;';
-            $config['next_link']             = '&rsaquo;';
-            $config['last_link']             = '&raquo;';
-            $config['anchor_class']          = 'class="page-link"';
+                $config['first_tag_open']        = '<li class="page-item">';
+                $config['first_tag_close']       = '</li>';
+                
+                $config['prev_tag_open']         = '<li class="page-item">';
+                $config['prev_tag_close']        = '</li>';
+                
+                $config['num_tag_open']          = '<li class="page-item">';
+                $config['num_tag_close']         = '</li>';
+                
+                $config['next_tag_open']         = '<li class="page-item">';
+                $config['next_tag_close']        = '</li>';
+                
+                $config['last_tag_open']         = '<li class="page-item">';
+                $config['last_tag_close']        = '</li>';
+                
+                $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+                $config['cur_tag_close']         = '</b></a></li>';
+                
+                $config['first_link']            = '&laquo;';
+                $config['prev_link']             = '&lsaquo;';
+                $config['next_link']             = '&rsaquo;';
+                $config['last_link']             = '&raquo;';
+                $config['anchor_class']          = 'class="page-link"';
 
                 // **Inisialisasi Pagination**
                 $this->pagination->initialize($config);
