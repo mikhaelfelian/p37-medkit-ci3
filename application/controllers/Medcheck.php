@@ -12466,8 +12466,7 @@ public function set_medcheck_lab_adm_save() {
                     # Release lock
                     $this->cache->file->delete($cache_key);
                     
-                    redirect(base_url('medcheck/retur.php?id='.$id));
-                    
+                    redirect(base_url('medcheck/retur.php?id='.$id));                    
                 } catch (Exception $e) {
                     # Release lock if exists
                     if (isset($cache_key) && isset($this->cache) && is_object($this->cache)) {
