@@ -4243,7 +4243,7 @@ class Medcheck extends CI_Controller {
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
             return;
-        }
+        } 
     
         // Verify POST request
         if ($this->input->method() !== 'post') {
