@@ -4253,27 +4253,7 @@ class Medcheck extends CI_Controller {
         }
     
         $id = $this->input->post('dft');
-        $process_token = $this->input->post('process_token');
         
-        // Verify process token
-        $stored_token = $this->session->userdata('process_token_'.general::dekrip($id));
-        if (empty($stored_token) || $stored_token !== $process_token) {
-            $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Invalid or expired request!");');
-            redirect('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d'));
-            return;
-        }
-        
-        // Remove the token immediately to prevent reuse
-        $this->session->unset_userdata('process_token_'.general::dekrip($id));
-    
-        // Get form ID and check for double submission
-        $form_id = $this->input->post('form_id');
-        if (check_form_submitted($form_id)) {
-            $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Form sudah disubmit sebelumnya!");');
-            redirect('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d'));
-            return;
-        }
-    
         if(empty($id)) {
             $this->session->set_flashdata('medcheck_toast', 'toastr.error("ID pendaftaran tidak ditemukan!");');
             redirect('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d'));
@@ -4281,219 +4261,231 @@ class Medcheck extends CI_Controller {
         }
     
         // Use cache-based lock with unique request identifier
-        $lock_key = 'patient_processing_' . $id . '_' . $process_token;
+        $lock_key = 'patient_processing_' . $id;
         $this->load->driver('cache');
         
-        if (!$this->cache->file->get($lock_key)) {
-            // Set lock for 5 minutes
-            $this->cache->file->save($lock_key, true, 300);
+        $this->db->trans_begin();
+        
+        try {        
+            // Check if process is already running
+            if ($this->cache->file->get($lock_key)) {
+                $this->db->trans_rollback();
+                $this->cache->file->delete($lock_key);
+
+                throw new Exception("Proses sedang berlangsung, mohon tunggu...");
+            }
             
-            $this->db->trans_begin();
+            // Set lock for 30 seconds
+            if (!$this->cache->file->save($lock_key, true, 30)) {
+                $this->db->trans_rollback();
+                $this->cache->file->delete($lock_key);
+                
+                throw new Exception("Gagal membuat lock, silahkan coba lagi!");
+            }
             
-            try {
+            // Data Pengaturan here
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            $sql_dft    = $this->db->where('id', general::dekrip($id))->get('tbl_pendaftaran')->row();
+            $sql_cek    = $this->db->where('nik', $sql_dft->nik)->where('nama', $sql_dft->nama)->where('alamat', $sql_dft->alamat)->get('tbl_m_pasien');
+            $sql_num    = $this->db->order_by('id', 'DESC')->limit(1)->get('tbl_m_pasien')->row();
+            $num        = $sql_num->id + 1;
+            
+            $data_pas = [
+                'tgl_simpan'        => $sql_dft->tgl_simpan,
+                'tgl_modif'         => $sql_dft->tgl_simpan,
+                'id_gelar'          => $sql_dft->id_gelar,
+                'id_kategori'       => '1',
+                'id_pekerjaan'      => $sql_dft->id_pekerjaan,
+                'kode_dpn'          => $pengaturan->kode_pasien,
+                'nik'               => $sql_dft->nik,
+                'nama'              => $sql_dft->nama,
+                'nama_pgl'          => $this->general->bersih($sql_dft->nama_pgl),
+                'tmp_lahir'         => $sql_dft->tmp_lahir,
+                'tgl_lahir'         => $sql_dft->tgl_lahir,
+                'jns_klm'           => $sql_dft->jns_klm,
+                'no_hp'             => $sql_dft->kontak,
+                'no_telp'           => $sql_dft->kontak_rmh,
+                'alamat'            => general::bersih($sql_dft->alamat),     // (!empty($sql_dft->alamat) || $sql_dft->alamat != 0 ? $sql_dft->alamat : ''),
+                'alamat_dom'        => $sql_dft->alamat_dom, // (!empty($sql_dft->alamat_dom) || $sql_dft->alamat_dom != 0 ? $sql_dft->alamat_dom : ''),
+                'instansi'          => (!empty($sql_dft->instansi) || $sql_dft->instansi !='-' ? $sql_dft->instansi : ''),
+                'instansi_alamat'   => (!empty($sql_dft->instansi_alamat) || $sql_dft->instansi_alamat !='-' ? $sql_dft->instansi_alamat : ''),                  
+                'alergi'            => $sql_dft->alergi,                  
+                'status'            => '1',
+                'status_pas'        => $sql_dft->status,
+            ];
+            
+            if($sql_dft->status == '2'){
+                // Nek kembar, wajib tendang su
+                if($sql_cek->num_rows() > 0){
+                    $pasien_id  = $sql_cek->row()->id;
+                    $id_user    = $sql_cek->row()->id_user;
+                    $sql_poin   = $this->db->where('id_pasien', $pasien_id)->get('tbl_m_pasien_poin');
 
-                // Data Pengaturan here
-                $pengaturan = $this->db->get('tbl_pengaturan')->row();
-                $sql_dft    = $this->db->where('id', general::dekrip($id))->get('tbl_pendaftaran')->row();
-                $sql_cek    = $this->db->where('nik', $sql_dft->nik)->where('nama', $sql_dft->nama)->where('alamat', $sql_dft->alamat)->get('tbl_m_pasien');
-                $sql_num    = $this->db->order_by('id', 'DESC')->limit(1)->get('tbl_m_pasien')->row();
-                $num        = $sql_num->id + 1;
-                
-                $data_pas = [
-                    'tgl_simpan'        => $sql_dft->tgl_simpan,
-                    'tgl_modif'         => $sql_dft->tgl_simpan,
-                    'id_gelar'          => $sql_dft->id_gelar,
-                    'id_kategori'       => '1',
-                    'id_pekerjaan'      => $sql_dft->id_pekerjaan,
-                    'kode_dpn'          => $pengaturan->kode_pasien,
-                    'nik'               => $sql_dft->nik,
-                    'nama'              => $sql_dft->nama,
-                    'nama_pgl'          => $this->general->bersih($sql_dft->nama_pgl),
-                    'tmp_lahir'         => $sql_dft->tmp_lahir,
-                    'tgl_lahir'         => $sql_dft->tgl_lahir,
-                    'jns_klm'           => $sql_dft->jns_klm,
-                    'no_hp'             => $sql_dft->kontak,
-                    'no_telp'           => $sql_dft->kontak_rmh,
-                    'alamat'            => general::bersih($sql_dft->alamat),     // (!empty($sql_dft->alamat) || $sql_dft->alamat != 0 ? $sql_dft->alamat : ''),
-                    'alamat_dom'        => $sql_dft->alamat_dom, // (!empty($sql_dft->alamat_dom) || $sql_dft->alamat_dom != 0 ? $sql_dft->alamat_dom : ''),
-                    'instansi'          => (!empty($sql_dft->instansi) || $sql_dft->instansi !='-' ? $sql_dft->instansi : ''),
-                    'instansi_alamat'   => (!empty($sql_dft->instansi_alamat) || $sql_dft->instansi_alamat !='-' ? $sql_dft->instansi_alamat : ''),                  
-                    'alergi'            => $sql_dft->alergi,                  
-                    'status'            => '1',
-                    'status_pas'        => $sql_dft->status,
-                ];
-                
-                if($sql_dft->status == '2'){
-                    // Nek kembar, wajib tendang su
-                    if($sql_cek->num_rows() > 0){
-                        $pasien_id  = $sql_cek->row()->id;
-                        $id_user    = $sql_cek->row()->id_user;
-                        $sql_poin   = $this->db->where('id_pasien', $pasien_id)->get('tbl_m_pasien_poin');
-
-                        # Update data pasien
-                        $this->db->where('id', $pasien_id)->update('tbl_m_pasien', $data_pas);
-                        
-                        # cek udah ada param poin belum, kalo belum buat parameternya
-                        if($sql_poin->num_rows() == 0){
-                            $data_poin = [
-                                'id_pasien'     => $pasien_id,
-                                'tgl_simpan'    => date('Y-m-d H:i:s'),
-                                'jml_poin'      => 0,
-                                'jml_poin_nom'  => 0,
-                                'status'        => '1',
-                            ];
-
-                            $this->db->insert('tbl_m_pasien_poin', $data_poin);
-                        }
-
-                        $last_id = $pasien_id;
-                    }else{
-                        $this->db->insert('tbl_m_pasien', $data_pas);
-                        $last_id = crud::last_id();
-                                        
+                    # Update data pasien
+                    $this->db->where('id', $pasien_id)->update('tbl_m_pasien', $data_pas);
+                    
+                    # cek udah ada param poin belum, kalo belum buat parameternya
+                    if($sql_poin->num_rows() == 0){
                         $data_poin = [
-                            'id_pasien'     => $last_id,
+                            'id_pasien'     => $pasien_id,
                             'tgl_simpan'    => date('Y-m-d H:i:s'),
                             'jml_poin'      => 0,
                             'jml_poin_nom'  => 0,
                             'status'        => '1',
                         ];
-                        
+
                         $this->db->insert('tbl_m_pasien_poin', $data_poin);
                     }
+
+                    $last_id = $pasien_id;
                 }else{
-                    $sql_pas = $this->db->where('id', $sql_dft->id_pasien)->get('tbl_m_pasien')->row();                    
-                    $this->db->where('id', $sql_pas->id)->update('tbl_m_pasien', $data_pas);
-                    $last_id = $sql_pas->id;
-                }
-                
-                # Config File Foto Pasien
-                $dir                = FCPATH.'/';
-                $kode               = sprintf('%05d', $last_id);
-                $no_rm              = strtolower($pengaturan->kode_pasien).$kode;
-                $path               = 'file/pasien/'.$no_rm.'/';
-                
-                # Buat Folder Untuk Foto Pasien
-                if(!file_exists($dir.$path)){
-                    mkdir($dir.$path, 0777, true);
-                }
-                
-                # Simpan foto dari kamera ke dalam format file *.png dari base64
-                if (!empty($sql_dft->file_base64)) {
-                    $filename           = $path.'profile_'.$kode.'.png';
-                    general::base64_to_jpeg($sql_dft->file_base64, $dir.$filename);
-                }
-                
-                # Simpan foto dari kamera ke dalam format file *.png dari base64 KTP / ID PASIEN
-                if (!empty($sql_dft->file_base64_id)) {
-                    $filename_id        = $path.'ID_'.$kode.'.png';
-                    general::base64_to_jpeg($sql_dft->file_base64_id, $dir.$filename_id);
-                }
-                
-                # Integrasi data pasien untuk akses login pasien
-                $sql_user       = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users');
-                $sql_user_rw    = $sql_user->row();
-                $email          = $no_rm.'@'.$pengaturan->website; # Format Email
-                $user           = $no_rm; # Format username pasien menggunakan no rm
-                $pass2          = ($sql_dft->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_dft->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
-                
-                # Cek username tersebut sudah pernah di pakai atau belum
-                if($sql_user->num_rows() == 0){
-                    $data_user = [
-                        'email'         => $email,
-                        'first_name'    => $sql_dft->nama,
-                        'nama'          => $sql_dft->nama_pgl,
-                        'address'       => $sql_dft->alamat,
-                        'phone'         => $sql_dft->kontak,
-                        'birthdate'     => $sql_dft->tgl_lahir,
-                        'file_name'     => (file_exists($filename) ? $filename : ''),
-                        'username'      => $no_rm,
-                        'tipe'          => '2',
+                    $this->db->insert('tbl_m_pasien', $data_pas);
+                    $last_id = crud::last_id();
+                                    
+                    $data_poin = [
+                        'id_pasien'     => $last_id,
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'jml_poin'      => 0,
+                        'jml_poin_nom'  => 0,
+                        'status'        => '1',
                     ];
                     
-                    # Simpan ke modul user
-                    $this->ion_auth->register($user, $pass2, $email, $data_user, array('15'));
-                    
-                    $sql_user_ck = $this->db->select('id, username')->where('username', $user)->get('tbl_ion_users')->row();
-                    $id_user = $sql_user_ck->id;
-                }else{
-                    $data_user = [
-                        'email'         => $email,
-                        'first_name'    => $sql_dft->nama,
-                        'nama'          => $sql_dft->nama_pgl,
-                        'address'       => $sql_dft->alamat,
-                        'phone'         => $sql_dft->kontak,
-                        'birthdate'     => $sql_dft->tgl_lahir,
-                        'file_name'     => (file_exists($filename) ? $filename : ''),
-                        'username'      => $no_rm,
-                        'password'      => $pass2,
-                        'tipe'          => '2',
-                    ];
-                    
-                    $this->ion_auth->update($id_user, $data_user);
-                    $id_user = $sql_user_rw->id;                    
+                    $this->db->insert('tbl_m_pasien_poin', $data_poin);
                 }
-                
-                # Simpan ID User dari tabel ion_users ke tabel pasien
-                $data_pas_upd = [
-                    'id_user' => $id_user,
-                    'kode'    => $kode,
+            }else{
+                $sql_pas = $this->db->where('id', $sql_dft->id_pasien)->get('tbl_m_pasien')->row();                    
+                $this->db->where('id', $sql_pas->id)->update('tbl_m_pasien', $data_pas);
+                $last_id = $sql_pas->id;
+            }
+            
+            # Config File Foto Pasien
+            $dir                = FCPATH.'/';
+            $kode               = sprintf('%05d', $last_id);
+            $no_rm              = strtolower($pengaturan->kode_pasien).$kode;
+            $path               = 'file/pasien/'.$no_rm.'/';
+            
+            # Buat Folder Untuk Foto Pasien
+            if(!file_exists($dir.$path)){
+                mkdir($dir.$path, 0777, true);
+            }
+            
+            # Simpan foto dari kamera ke dalam format file *.png dari base64
+            if (!empty($sql_dft->file_base64)) {
+                $filename           = $path.'profile_'.$kode.'.png';
+                general::base64_to_jpeg($sql_dft->file_base64, $dir.$filename);
+            }
+            
+            # Simpan foto dari kamera ke dalam format file *.png dari base64 KTP / ID PASIEN
+            if (!empty($sql_dft->file_base64_id)) {
+                $filename_id        = $path.'ID_'.$kode.'.png';
+                general::base64_to_jpeg($sql_dft->file_base64_id, $dir.$filename_id);
+            }
+            
+            # Integrasi data pasien untuk akses login pasien
+            $sql_user       = $this->db->select('id, username')->where('username', $no_rm)->get('tbl_ion_users');
+            $sql_user_rw    = $sql_user->row();
+            $email          = $no_rm.'@'.$pengaturan->website; # Format Email
+            $user           = $no_rm; # Format username pasien menggunakan no rm
+            $pass2          = ($sql_dft->tgl_lahir == '0000-00-00' ? $user : $this->tanggalan->tgl_indo8($sql_dft->tgl_lahir)); # Format kata sandi pasien menggunakan tanggal lahir dd-mm-yyyy jika tanggal lahir kosong maka passwordnya sama dengan username
+            
+            # Cek username tersebut sudah pernah di pakai atau belum
+            if($sql_user->num_rows() == 0){
+                $data_user = [
+                    'email'         => $email,
+                    'first_name'    => $sql_dft->nama,
+                    'nama'          => $sql_dft->nama_pgl,
+                    'address'       => $sql_dft->alamat,
+                    'phone'         => $sql_dft->kontak,
+                    'birthdate'     => $sql_dft->tgl_lahir,
+                    'file_name'     => (file_exists($filename) ? $filename : ''),
+                    'username'      => $no_rm,
+                    'tipe'          => '2',
                 ];
                 
-                $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_pas_upd); 
+                # Simpan ke modul user
+                $this->ion_auth->register($user, $pass2, $email, $data_user, array('15'));
+                
+                $sql_user_ck = $this->db->select('id, username')->where('username', $user)->get('tbl_ion_users')->row();
+                $id_user = $sql_user_ck->id;
+            }else{
+                $data_user = [
+                    'email'         => $email,
+                    'first_name'    => $sql_dft->nama,
+                    'nama'          => $sql_dft->nama_pgl,
+                    'address'       => $sql_dft->alamat,
+                    'phone'         => $sql_dft->kontak,
+                    'birthdate'     => $sql_dft->tgl_lahir,
+                    'file_name'     => (file_exists($filename) ? $filename : ''),
+                    'username'      => $no_rm,
+                    'password'      => $pass2,
+                    'tipe'          => '2',
+                ];
+                
+                $this->ion_auth->update($id_user, $data_user);
+                $id_user = $sql_user_rw->id;                    
+            }
+            
+            # Simpan ID User dari tabel ion_users ke tabel pasien
+            $data_pas_upd = [
+                'id_user' => $id_user,
+                'kode'    => $kode,
+            ];
+            
+            $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_pas_upd); 
 
-                    
-                # Cek File Foto Pasien
-                if (!empty($sql_dft->file_base64)) {
-                    # Data File
-                    $data_file = [
-                        'file_name'     => (file_exists($filename) ? $filename : ''),
-                        'file_type'     => (file_exists($filename) || file_exists($filename_id) ? 'image/png' : ''),
-                        'file_ext'      => (file_exists($filename) || file_exists($filename_id) ? '.png' : ''),
-                    ];
+                
+            # Cek File Foto Pasien
+            if (!empty($sql_dft->file_base64)) {
+                # Data File
+                $data_file = [
+                    'file_name'     => (file_exists($filename) ? $filename : ''),
+                    'file_type'     => (file_exists($filename) || file_exists($filename_id) ? 'image/png' : ''),
+                    'file_ext'      => (file_exists($filename) || file_exists($filename_id) ? '.png' : ''),
+                ];
 
-                    # Simpan File Gambar ke tabel
-                    $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_file);
-                    
-                    # Hapus gambar pada pendaftaran supaya tidak penuh
-                    $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', ['file_base64'=>'']);
-                }
-                    
-                # Cek File ID
-                if (!empty($sql_dft->file_base64_id)) {
-                    # Data File
-                    $data_file_id = [
-                        'file_name_id'  => (file_exists($filename_id) ? $filename_id : ''),
-                    ];
+                # Simpan File Gambar ke tabel
+                $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_file);
+                
+                # Hapus gambar pada pendaftaran supaya tidak penuh
+                $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', ['file_base64'=>'']);
+            }
+                
+            # Cek File ID
+            if (!empty($sql_dft->file_base64_id)) {
+                # Data File
+                $data_file_id = [
+                    'file_name_id'  => (file_exists($filename_id) ? $filename_id : ''),
+                ];
 
-                    # Simpan File Gambar ke tabel
-                    $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_file_id);
-                    
-                    # Hapus gambar pada pendaftaran supaya tidak penuh
-                    $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', ['file_base64_id'=>'']);
-                }
+                # Simpan File Gambar ke tabel
+                $this->db->where('id', $last_id)->update('tbl_m_pasien', $data_file_id);
                 
-                if ($this->db->trans_status() === FALSE) {
-                    throw new Exception("Database transaction failed");
-                }
-                
-                $this->db->trans_commit();
-                
-                // Clear the lock
-                $this->cache->file->delete($lock_key);
-                
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pasien sudah disimpan!");');
-                redirect(base_url('medcheck/tambah.php?dft_pas='.general::enkrip($last_id).'&dft_id='.general::enkrip($sql_dft->id)));
-            } catch (Exception $e) {
+                # Hapus gambar pada pendaftaran supaya tidak penuh
+                $this->db->where('id', $sql_dft->id)->update('tbl_pendaftaran', ['file_base64_id'=>'']);
+            }
+            
+            if ($this->db->trans_status() === FALSE) {
                 $this->db->trans_rollback();
                 $this->cache->file->delete($lock_key);
-                
-                log_message('error', 'Patient processing error: ' . $e->getMessage());
-                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data pasien gagal disimpan: ' . $e->getMessage() . '");');
-                redirect('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d'));
+                throw new Exception("Database transaction failed");
             }
-        } else {
-            $this->session->set_flashdata('medcheck_toast', 'toastr.warning("Proses sedang berlangsung, mohon tunggu...");');
+            
+            $this->db->trans_commit();
+            
+            // Clear the lock
+            $this->cache->file->delete($lock_key);
+            
+            $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data pasien sudah disimpan!");');
+            redirect(base_url('medcheck/tambah.php?dft_pas='.general::enkrip($last_id).'&dft_id='.general::enkrip($sql_dft->id)));
+        } catch (Exception $e) {
+            // Roll back transaction
+            $this->db->trans_rollback();
+            
+            // Delete cache lock
+            $this->cache->file->delete($lock_key);
+            
+            log_message('error', 'Patient processing error: ' . $e->getMessage());
+            $this->session->set_flashdata('medcheck_toast', 'toastr.error("Data pasien gagal disimpan: ' . $e->getMessage() . '");');
             redirect('medcheck/data_pendaftaran.php?filter_tgl=' . date('Y-m-d'));
         }
     }
