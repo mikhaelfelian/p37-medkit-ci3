@@ -54,12 +54,17 @@ jobs:
 
             elif [ "${{ github.event.inputs.mode }}" = "commit-sha" ]; then
               git fetch origin
+              git reset --hard
+              git clean -fd
               git checkout ${{ github.event.inputs.ref }}
 
             elif [ "${{ github.event.inputs.mode }}" = "revert-all" ]; then
               git reset --hard HEAD~1
+              git clean -fd
 
             elif [ "${{ github.event.inputs.mode }}" = "revert-sha" ]; then
+              git reset --hard
+              git clean -fd
               git checkout ${{ github.event.inputs.ref }}
 
             else
