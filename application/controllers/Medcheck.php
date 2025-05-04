@@ -12460,11 +12460,10 @@ public function set_medcheck_lab_adm_save() {
                         throw new Exception("Data retur gagal disimpan!");
                     } else {
                         $this->db->trans_commit();
+                        # Delete cache after successful commit
+                        $this->cache->file->delete($cache_key);
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data retur berhasil disimpan!");');
                     }
-                    
-                    # Release lock
-                    $this->cache->file->delete($cache_key);
                     
                     redirect(base_url('medcheck/retur.php?id='.$id));                    
                 } catch (Exception $e) {
