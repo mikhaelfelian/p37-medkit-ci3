@@ -5471,7 +5471,7 @@ class Medcheck extends CI_Controller {
                                 'id_user'       => $this->ion_auth->user()->row()->id,
                                 'id_penjualan'  => $sql_medc->id,
                                 'no_nota'       => $no_nota,
-                                'kode'          => $stok->item_kode ?? '',
+                                'kode'          => $sql_item->kode ?? '',
                                 'produk'        => $stok->item,
                                 'keterangan'    => $sql_medc->pasien.(!empty($stok->keterangan) ? ' - REFERENCE ITEM' : ''),
                                 'jml'           => (int)$stok->jml,
@@ -12394,14 +12394,36 @@ public function set_medcheck_lab_adm_save() {
                 $this->session->set_flashdata('form_error', $msg_error);
 
                 redirect(base_url('medcheck/retur.php?id='.$id.'&item_id='.$id_item.'&id_produk='.$id_item));
-            } else {
-                try {
-                    $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
-                    $sql_medc_det   = $this->db->where('id', general::dekrip($id_item))->get('tbl_trans_medcheck_det')->row();
-                    $sql_item       = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
-                    $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                    $jml_akhir      = (int)$sql_medc_det->jml - $jml;
+            } else {    
+                $sql_medc       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
+                $sql_medc_det   = $this->db->where('id', general::dekrip($id_item))->get('tbl_trans_medcheck_det')->row();
+                $sql_item       = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
+                $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
+                                
+                # Lock cache to prevent concurrent updates
+                $this->load->driver('cache');
+                $cache_key = 'medcheck_retur_' . $sql_medc_det->id;
+
+                # Start Transaction
+                $this->db->trans_begin();
+
+                try {                    
+                    # Cek apakah sudah terkunci
+                    if ($this->cache->file->get($cache_key) === 'locked') {
+                        throw new Exception("Transaksi sedang diproses, silahkan coba beberapa saat lagi!");
+                    }
                     
+                    # Set lock
+                    if (!$this->cache->file->save($cache_key, 'locked', 30)) {
+                        throw new Exception("Gagal membuat lock, silahkan coba ulangi.");
+                    }
+                    
+                    $jml_akhir = (int)$sql_medc_det->jml - $jml;
+
+                    if($jml_akhir < 0){
+                        throw new Exception("Item <b>{$sql_item->produk}</b> pada no {$no_urut}, maksimal retur hanya <b>".(float)$sql_medc_det->jml."</b> !!");
+                    }
+                
                     $disk1          = $sql_medc_det->harga - ((isset($sql_medc_det->disk1) && $sql_medc_det->disk1 > 0) ? (($sql_medc_det->disk1 / 100) * $sql_medc_det->harga) : 0);
                     $disk2          = $disk1 - ((isset($sql_medc_det->disk2) && $sql_medc_det->disk2 > 0) ? (($sql_medc_det->disk2 / 100) * $disk1) : 0);
                     $disk3          = $disk2 - ((isset($sql_medc_det->disk3) && $sql_medc_det->disk3 > 0) ? (($sql_medc_det->disk3 / 100) * $disk2) : 0);
@@ -12425,14 +12447,7 @@ public function set_medcheck_lab_adm_save() {
                         'tgl_modif'         => date('Y-m-d H:i:s'),
                         'jml'               => $jml_akhir,
                         'subtotal'          => $subtotal
-                    ];
-
-                    if($jml_akhir < 0){
-                        throw new Exception("Item <b>{$sql_item->produk}</b> pada no {$no_urut}, maksimal retur hanya <b>".(float)$sql_medc_det->jml."</b> !!");
-                    }
-                    
-                    # Start Transaction
-                    $this->db->trans_begin();
+                    ];                        
 
                     # Kurangi Jumlah yang ada di medcheck det
                     $this->db->where('id', $sql_medc_det->id)->update('tbl_trans_medcheck_det', $data_det);
@@ -12448,8 +12463,22 @@ public function set_medcheck_lab_adm_save() {
                         $this->session->set_flashdata('medcheck_toast', 'toastr.success("Data retur berhasil disimpan!");');
                     }
                     
-                    redirect(base_url('medcheck/retur.php?id='.$id));                    
+                    # Release lock
+                    $this->cache->file->delete($cache_key);
+                    
+                    redirect(base_url('medcheck/retur.php?id='.$id));
+                    
                 } catch (Exception $e) {
+                    # Release lock if exists
+                    if (isset($cache_key) && isset($this->cache) && is_object($this->cache)) {
+                        $this->cache->file->delete($cache_key);
+                    }
+                    
+                    # Rollback transaction if active
+                    if (isset($this->db) && is_object($this->db) && $this->db->trans_status() !== FALSE) {
+                        $this->db->trans_rollback();
+                    }
+                    
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('medcheck/retur.php?id='.$id));
                 }
