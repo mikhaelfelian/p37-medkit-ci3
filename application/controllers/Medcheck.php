@@ -8686,7 +8686,7 @@ public function set_medcheck_lab_adm_save() {
             $trb_tgl_akhir  = $this->input->post('trb_tgl_akhir');
             $tht_tgl        = $this->input->post('tht_tgl');
             $tht_lt_kanan   = $this->input->post('tht_lt_kanan');
-            $tht_lt_kiri        = $this->input->post('tht_lt_kiri');
+            $tht_lt_kiri    = $this->input->post('tht_lt_kiri');
             $tht_membran_kanan = $this->input->post('tht_membran_kanan');
             $tht_membran_kiri  = $this->input->post('tht_membran_kiri');
             $tht_mukosa_kanan  = $this->input->post('tht_mukosa_kanan');
@@ -8839,7 +8839,7 @@ public function set_medcheck_lab_adm_save() {
                     'tb'                    => (float)general::format_angka_db($tb),
                     'td'                    => $td,
                     'bb'                    => (float)general::format_angka_db($bb),
-                    'bw'                    => ($bw == '+' ? '+' : '-'),
+                    'bw'                    => ($bw == '1' ? '+' : '-'),
                     'bw_ket'                => (!empty($bw_ket) ? $bw_ket : ''),
                     'jml_hari'              => (float)$jml_hari,
                     'hasil'                 => (!empty($hasil) ? $hasil : '0'),
