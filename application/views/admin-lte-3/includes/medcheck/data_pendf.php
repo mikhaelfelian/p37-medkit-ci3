@@ -149,10 +149,10 @@
                                                         <form id="form_<?php echo $penj->id; ?>" method="POST" action="<?php echo base_url('medcheck/set_pasien.php'); ?>" style="display:inline;">
                                                             <?php 
                                                             // Get CSRF token from database session
-                                                            $csrf = array(
+                                                            $csrf = [
                                                                 'name' => $this->security->get_csrf_token_name(),
                                                                 'hash' => $this->security->get_csrf_hash()
-                                                            );
+                                                            ];
                                                             ?>
                                                             <input type="hidden" name="<?php echo $csrf['name']; ?>" value="<?php echo $csrf['hash']; ?>" />
                                                             <?php echo add_form_protection(); ?>

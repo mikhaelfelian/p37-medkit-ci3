@@ -9074,7 +9074,7 @@ public function set_medcheck_lab_adm_save() {
                     'tb'                => (float)general::format_angka_db($tb),
                     'td'                => $td,
                     'bb'                => (float)general::format_angka_db($bb),
-                    'bw'                => ($bw == '+' ? '+' : '-'),
+                    'bw'                => ($bw == '1' ? '+' : '-'),
                     'bw_ket'            => (!empty($bw_ket) ? $bw_ket : ''),
                     'jml_hari'          => (float)$jml_hari,
                     'hasil'             => (!empty($hasil) ? $hasil : '0'),
