@@ -40,7 +40,7 @@
                         <a href="<?php echo base_url('pos/index.php') ?>" class="nav-link">Apotik</a>
                     </li>                    
                     <!-- <li class="nav-item d-none d-sm-inline-block">
-                        <a href="<?php echo base_url('pos/lab/index.php') ?>" class="nav-link">Apotik Lab</a>
+                        <a href="<?php // echo base_url('pos/lab/index.php') ?>" class="nav-link">Apotik Lab</a>
                     </li> -->
                     <li class="nav-item d-none d-sm-inline-block">
                         <a href="<?php echo base_url('sdm/index.php') ?>" class="nav-link">SDM</a>
