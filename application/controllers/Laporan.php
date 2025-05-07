@@ -2958,13 +2958,27 @@ class laporan extends CI_Controller {
                         break;
                     
                     case 'per_tanggal':
-                        $data['sql_pasien']     = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
-                                                            ->where('tbl_m_pasien.no_hp !=', '')
-                                                            ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
-                                                            ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
-                                                            ->limit($config['per_page'], $hal)
-                                                            ->order_by('tbl_m_pasien.nama', 'ASC') 
-                                                            ->get('tbl_m_pasien')->result();
+                        // Format day and month with leading zeros if needed
+                        $tgl = sprintf('%02d', $tgl);
+                        $bln = sprintf('%02d', $bln);
+                        
+                        // Get the search date from the input (format: DD-MM)
+                        $search_date = $this->input->get('tgl');
+                        if (!empty($search_date) && strpos($search_date, '-') !== false) {
+                            $date_parts = explode('-', $search_date);
+                            if (count($date_parts) >= 2) {
+                                $tgl = sprintf('%02d', $date_parts[0]);
+                                $bln = sprintf('%02d', $date_parts[1]);
+                            }
+                        }
+                        
+                        $data['sql_pasien'] = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
+                                                        ->where('tbl_m_pasien.no_hp !=', '')
+                                                        ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
+                                                        ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
+                                                        ->limit($config['per_page'], $hal)
+                                                        ->order_by('tbl_m_pasien.nama', 'ASC') 
+                                                        ->get('tbl_m_pasien')->result();
                         break;
 
                     case 'per_bulan':
@@ -9790,15 +9804,38 @@ class laporan extends CI_Controller {
             $jml        = $this->input->get('jml');
             $tgl        = $this->input->get('tgl');
             $bln        = $this->input->get('bln');
+            $bulan      = $this->input->get('bulan');
             $case       = $this->input->get('case');
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
             
             switch ($case) {
                 case 'per_tanggal':
+                    // Format day and month with leading zeros if needed
+                    $tgl = sprintf('%02d', $tgl);
+                    $bln = sprintf('%02d', $bln);
+                    
+                    // Get the search date from the input (format: DD-MM)
+                    $search_date = $this->input->get('tgl');
+                    if (!empty($search_date) && strpos($search_date, '-') !== false) {
+                        $date_parts = explode('-', $search_date);
+                        if (count($date_parts) >= 2) {
+                            $tgl = sprintf('%02d', $date_parts[0]);
+                            $bln = sprintf('%02d', $date_parts[1]);
+                        }
+                    }
+                    
                     $sql_pasien = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
                                           ->where('tbl_m_pasien.no_hp !=', '')
                                           ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
                                           ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
+                                          ->order_by('tbl_m_pasien.nama', 'ASC') 
+                                          ->get('tbl_m_pasien')->result();
+                    break;
+                    
+                case 'per_bulan':
+                    $sql_pasien = $this->db->select('tbl_m_pasien.id, tbl_m_pasien.kode_dpn, tbl_m_pasien.kode, tbl_m_pasien.nama, tbl_m_pasien.no_hp, tbl_m_pasien.tgl_lahir, DAY(tbl_m_pasien.tgl_lahir) AS hari, MONTH(tbl_m_pasien.tgl_lahir) AS bulan')
+                                          ->where('tbl_m_pasien.no_hp !=', '')
+                                          ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bulan)
                                           ->order_by('tbl_m_pasien.nama', 'ASC') 
                                           ->get('tbl_m_pasien')->result();
                     break;
