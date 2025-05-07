@@ -18531,7 +18531,7 @@ public function set_medcheck_lab_adm_save() {
             $pdf->Output($filename, 'F');
             
             // Also output PDF directly to browser
-            $pdf->Output('hasil_rad_'.$clean_name . $date_part . '.pdf', 'I');
+            $pdf->Output($sql_medc->pasien.'-RADIOLOGI-' . $date_part . '.pdf', 'I');
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
