@@ -102,7 +102,8 @@
                     <?php echo form_close() ?> 
                 </div>
             </div>
-            <?php if ($_GET['jml'] > 0) { ?><div class="row">
+            <?php if (!empty($sql_remun)) { ?>
+                <div class="row">
                     <div class="col-md-12">
                         <div class="card card-default">
                             <div class="card-header">
