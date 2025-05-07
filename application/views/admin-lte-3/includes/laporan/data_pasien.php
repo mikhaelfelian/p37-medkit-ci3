@@ -162,7 +162,10 @@
                                                         <small><?php echo '[' . $this->tanggalan->usia($pasien->tgl_lahir) . ']'; ?></small>
                                                     </td>
                                                     <td class="text-center">
-                                                        <?php echo $this->tanggalan->tgl_indo2($pasien->tgl_lahir) ?>
+                                                        <?php 
+                                                        $tgl_lahir = explode('-', $pasien->tgl_lahir);
+                                                        echo '<b>' . $tgl_lahir[2] . '-' . $tgl_lahir[1] . '</b>-' . $tgl_lahir[0]; 
+                                                        ?>
                                                     </td>
                                                     <td class="text-left"><?php echo $pasien->no_hp ?></td>
                                                 </tr>
