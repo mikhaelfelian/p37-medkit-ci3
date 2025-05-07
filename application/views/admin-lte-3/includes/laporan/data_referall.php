@@ -31,8 +31,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <form action="<?= base_url('laporan/set_data_referall.php'); ?>" method="post"
-                                class="form-horizontal">
+                            <?= form_open('laporan/set_data_referall.php', ['class' => 'form-horizontal']); ?>
                                 <div class="form-group row">
                                     <label for="tanggal" class="col-sm-2 col-form-label">Tanggal Rentang</label>
                                     <div class="col-sm-10">
@@ -55,7 +54,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             Cari</button>
                                     </div>
                                 </div>
-                            </form>
+                            <?= form_close(); ?>
                         </div>
                         <!-- /.card-body -->
                     </div>

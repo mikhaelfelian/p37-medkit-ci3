@@ -1320,17 +1320,28 @@ class laporan extends CI_Controller {
             if(!empty($jml)){
                 $jml_hal = $jml;
             }else{
-                $jml_hal = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                                ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
-                                ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
-                                ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
-                                ->where('tbl_trans_medcheck_det.status !=', '4')
-                                ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                                ->get('tbl_trans_medcheck_det')->num_rows();
+                $query = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
+                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                        ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                        ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                        ->where('tbl_trans_medcheck.status_bayar', '1')
+                        ->where('tbl_trans_medcheck_det.status !=', '4');
+                
+                // Add dokter filter if provided
+                if(!empty($dokter)) {
+                    $query->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter));
+                }
+                
+                // Add date filters if provided
+                if(!empty($tgl_awal) && !empty($tgl_akhir)) {
+                    $query->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal);
+                    $query->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir);
+                } else if(!empty($tgl)) {
+                    $query->where('DATE(tbl_trans_medcheck_det.tgl_masuk)', $tgl);
+                }
+                
+                $query->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC');
+                $jml_hal = $query->get('tbl_trans_medcheck_det')->num_rows();
             }
             
             $data['sql_doc']    = $this->db->where('id_user_group', '10')->get('tbl_m_karyawan')->result();
@@ -1340,7 +1351,7 @@ class laporan extends CI_Controller {
             $data['hasError'] = $this->session->flashdata('form_error');
             
             // Config Pagination
-            $config['base_url']              = base_url('laporan/data_omset_dokter.php?case='.$case.(!empty($dokter) ? '&dokter='.$dokter : '').(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : '').(!empty($jml_hal) ? '&jml='.$jml_hal : ''));
+            $config['base_url']              = base_url('laporan/data_omset_dokter.php?case='.$case.(!empty($dokter) ? '&id_dokter='.$dokter : '').(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : '').(!empty($jml_hal) ? '&jml='.$jml_hal : ''));
             $config['total_rows']            = $jml_hal;
             
             $config['query_string_segment']  = 'halaman';
@@ -1376,39 +1387,51 @@ class laporan extends CI_Controller {
             $config['last_link']             = '&raquo;';
             $config['attributes']            = ['class' => 'page-link'];
         
-            $sql_doc = $this->db->where('id', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
+            $data['sql_penj'] = [];
             
             switch ($case){
                 case 'per_tanggal':
-                    $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                        ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                        ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                        ->where('tbl_trans_medcheck.status_bayar', '1')
-                        ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
-                        ->where('DATE(tbl_trans_medcheck_det.tgl_masuk)', $tgl)
-                        ->where('tbl_trans_medcheck_det.status !=', '4')
-                        ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                        ->limit($config['per_page'], $hal ?? 0)
-                        ->get('tbl_trans_medcheck_det')->result();
+                    if(!empty($tgl)) {
+                        $query = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
+                            ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                            ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                            ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                            ->where('tbl_trans_medcheck.status_bayar', '1')
+                            ->where('DATE(tbl_trans_medcheck_det.tgl_masuk)', $tgl)
+                            ->where('tbl_trans_medcheck_det.status !=', '4');
+                        
+                        if(!empty($dokter)) {
+                            $query->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter));
+                        }
+                        
+                        $data['sql_penj'] = $query->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                            ->limit($config['per_page'], $hal ?? 0)
+                            ->get('tbl_trans_medcheck_det')->result();
+                    }
                     break;
                 
                 case 'per_rentang':
-                    $data['sql_penj'] = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                        ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                        ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                        ->where('tbl_trans_medcheck.status_bayar', '1')
-                        ->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter))
-                        ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
-                        ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
-                        ->where('tbl_trans_medcheck_det.status !=', '4')
-                        ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                        ->limit($config['per_page'], $hal ?? 0)
-                        ->get('tbl_trans_medcheck_det')->result();
+                    if(!empty($tgl_awal) && !empty($tgl_akhir)) {
+                        $query = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
+                            ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
+                            ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
+                            ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
+                            ->where('tbl_trans_medcheck.status_bayar', '1')
+                            ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
+                            ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
+                            ->where('tbl_trans_medcheck_det.status !=', '4');
+                        
+                        if(!empty($dokter)) {
+                            $query->where('tbl_trans_medcheck_det.id_dokter', general::dekrip($dokter));
+                        }
+                        
+                        $data['sql_penj'] = $query->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
+                            ->limit($config['per_page'], $hal ?? 0)
+                            ->get('tbl_trans_medcheck_det')->result();
+                    }
                     break;
             }
-            
+
             // Initializing Config Pagination
             $this->pagination->initialize($config);
 
@@ -1606,14 +1629,14 @@ class laporan extends CI_Controller {
                         if(!empty($hal)){
                             $data['sql_pembelian']     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli.jml_dpp, tbl_trans_beli.ppn, tbl_trans_beli.jml_ppn, tbl_trans_beli.jml_diskon, tbl_trans_beli.jml_gtotal, tbl_m_supplier.nama')
                                                               ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
-                                                              ->where('DATE(tbl_trans_beli.tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl))
+                                                              ->where('DATE(tbl_trans_beli.tgl_masuk)', $tgl)
                                                               ->like('tbl_m_supplier.nama', $sql_supp->nama)
                                                               ->limit($config['per_page'], $hal)
                                                               ->get('tbl_trans_beli')->result();                           
                         }else{
                             $data['sql_pembelian']     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli.jml_dpp, tbl_trans_beli.ppn, tbl_trans_beli.jml_ppn, tbl_trans_beli.jml_diskon, tbl_trans_beli.jml_gtotal, tbl_m_supplier.nama')
                                                               ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
-                                                              ->where('DATE(tbl_trans_beli.tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl))
+                                                              ->where('DATE(tbl_trans_beli.tgl_masuk)', $tgl)
                                                               ->like('tbl_m_supplier.nama', $sql_supp->nama)
                                                               ->limit($config['per_page'])
                                                               ->get('tbl_trans_beli')->result();
@@ -1624,16 +1647,16 @@ class laporan extends CI_Controller {
                         if(!empty($hal)){
                             $data['sql_pembelian']     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli.jml_dpp, tbl_trans_beli.ppn, tbl_trans_beli.jml_ppn, tbl_trans_beli.jml_diskon, tbl_trans_beli.jml_gtotal, tbl_m_supplier.nama')
                                                               ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
-                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $this->tanggalan->tgl_indo_sys($tgl_awal))
-                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $this->tanggalan->tgl_indo_sys($tgl_akhir))
+                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $tgl_awal)
+                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $tgl_akhir)
                                                               ->like('tbl_m_supplier.nama', $sql_supp->nama)
                                                               ->limit($config['per_page'], $hal)
                                                               ->get('tbl_trans_beli')->result();                             
                         }else{
                             $data['sql_pembelian']     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli.jml_dpp, tbl_trans_beli.ppn, tbl_trans_beli.jml_ppn, tbl_trans_beli.jml_diskon, tbl_trans_beli.jml_gtotal, tbl_m_supplier.nama')
                                                               ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
-                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $this->tanggalan->tgl_indo_sys($tgl_awal))
-                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $this->tanggalan->tgl_indo_sys($tgl_akhir))
+                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $tgl_awal)
+                                                              ->where('DATE(tbl_trans_beli.tgl_masuk) <=', $tgl_akhir)
                                                               ->like('tbl_m_supplier.nama', $sql_supp->nama)
                                                               ->limit($config['per_page'])
                                                               ->get('tbl_trans_beli')->result();  
@@ -3577,7 +3600,7 @@ class laporan extends CI_Controller {
 
     public function set_data_referall(){
         if (akses::aksesLogin() == TRUE) {
-            echo $tanggal = $this->input->post('tanggal');
+            $tanggal = $this->input->post('tanggal');
             $case = $this->input->get('case');
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
@@ -4561,39 +4584,23 @@ class laporan extends CI_Controller {
             
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
 
-            $sql_doc = $this->db->where('id_user', $dokter)->get('tbl_m_karyawan')->row();
+            // Convert date formats
+            $tgl_masuk = !empty($tgl) ? $this->tanggalan->tgl_indo_sys($tgl) : null;
+            $tgl_awal = null;
+            $tgl_akhir = null;
 
-            $tgl_rentang = explode('-', $tgl_rtg);
-            $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
-            $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
-            $tgl_masuk = $this->tanggalan->tgl_indo_sys($tgl);
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+                if (count($tgl_rentang) == 2) {
+                    $tgl_awal = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+                    $tgl_akhir = $this->tanggalan->tgl_indo_sys($tgl_rentang[1]);
+                }
+            }
 
             if (!empty($tgl)) {
-                $sql = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                                ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('tbl_trans_medcheck_det.id_dokter', $dokter)
-                                ->where('DATE(tbl_trans_medcheck_det.tgl_masuk)', $tgl_masuk)
-                                ->where('tbl_trans_medcheck_det.status !=', '4')
-                                ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                                ->get('tbl_trans_medcheck_det');
-                redirect(base_url('laporan/data_omset_dokter.php?case=per_tanggal&dokter='.general::enkrip($dokter).'&tgl=' . $tgl_masuk . '&jml=' . $sql->num_rows()));
-            } elseif ($tgl_rtg) {
-                $sql = $this->db->select('tbl_trans_medcheck.id, tbl_trans_medcheck.tipe_bayar, tbl_trans_medcheck.tgl_simpan, tbl_trans_medcheck.no_rm, tbl_trans_medcheck.no_nota, tbl_trans_medcheck.tipe, tbl_m_pasien.nama_pgl, tbl_m_pasien.tgl_lahir, tbl_m_pasien.alamat, tbl_m_pasien.alamat_dom, tbl_m_pasien.instansi, tbl_m_pasien.instansi_alamat, tbl_trans_medcheck_det.id AS id_medcheck_det, tbl_trans_medcheck_det.kode, tbl_trans_medcheck_det.item, tbl_trans_medcheck_det.harga, tbl_trans_medcheck_det.jml, tbl_trans_medcheck_det.subtotal')
-                                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id=tbl_trans_medcheck_det.id_medcheck')
-                                ->join('tbl_m_pasien', 'tbl_m_pasien.id=tbl_trans_medcheck.id_pasien')
-                                ->join('tbl_m_kategori', 'tbl_m_kategori.id=tbl_trans_medcheck_det.id_item_kat')
-                                ->where('tbl_trans_medcheck.status_bayar', '1')
-                                ->where('tbl_trans_medcheck_det.id_dokter', $dokter)
-                                ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) >=', $tgl_awal)
-                                ->where('DATE(tbl_trans_medcheck_det.tgl_masuk) <=', $tgl_akhir)
-                                ->where('tbl_trans_medcheck_det.status !=', '4')
-                                ->order_by('tbl_trans_medcheck_det.tgl_simpan', 'ASC')
-                                ->get('tbl_trans_medcheck_det');
-                
-                redirect(base_url('laporan/data_omset_dokter.php?case=per_rentang&dokter='.general::enkrip($dokter).'&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir . '&jml=' . $sql->num_rows()));
+                redirect(base_url('laporan/data_omset_dokter.php?case=per_tanggal&dokter='.general::enkrip($dokter).'&tgl=' . $tgl_masuk));
+            } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
+                redirect(base_url('laporan/data_omset_dokter.php?case=per_rentang&dokter='.general::enkrip($dokter).'&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir));
             }
         }else{
             $errors = $this->ion_auth->messages();

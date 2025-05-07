@@ -268,7 +268,7 @@
 
         $('#tgl_rentang').daterangepicker({
             locale: {
-                format: 'DD/MM/YYYY',
+                format: 'MM/DD/YYYY',
             }
         })
     });
