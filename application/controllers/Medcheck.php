@@ -9204,7 +9204,7 @@ public function set_medcheck_lab_adm_save() {
                     'status'            => '2',
                     ];
                 
-                $this->db->insert('tbl_trans_medcheck_file', $data_file_ifc);
+                    $this->db->insert('tbl_trans_medcheck_file', $data_file_ifc);
                 
                     # Check transaction status
                     if ($this->db->trans_status() === FALSE) {
@@ -12233,9 +12233,19 @@ public function set_medcheck_lab_adm_save() {
                     redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status.'&id_produk='.$id_item.'&harga='.(float)$hrg));
                 }
             } else {
+                # Start Transact SQL
+                $this->db->trans_begin();
+
                 try {
-                    // Check if cache library is loaded
-                    if (!isset($this->cache) || !is_object($this->cache)) {
+                    // Get form ID and check for double submission
+                    $form_id = $this->input->post('form_id');
+                    if (check_form_submitted($form_id)) {
+                        throw new Exception("Form sudah disubmit sebelumnya!");
+                    }
+                    
+                    // Check if cache driver is loaded properly
+                    if (!isset($this->cache) || !isset($this->cache->file)) {
+                        // Load cache driver if not already loaded
                         $this->load->driver('cache', array('adapter' => 'file'));
                     }
 
@@ -12247,9 +12257,6 @@ public function set_medcheck_lab_adm_save() {
 
                     // Set lock for 30 seconds
                     $this->cache->save($lock_key, true, 30);
-
-                    # Start Transact SQL
-                    $this->db->trans_begin();
 
                     $sql_medc    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row();
                     $sql_item    = $this->db->where('id', general::dekrip($id_item))->get('tbl_m_produk')->row();
@@ -12302,7 +12309,7 @@ public function set_medcheck_lab_adm_save() {
                         'status'        => (!empty($status_itm) ? $status_itm : $sql_item->status),
                         'status_hsl'    => (!empty($status_hsl) ? $status_hsl : '0'),
                     ];
-                
+
                     # Cek apakah sudah di posting atau belum ?
                     # Kalau sudah yg bisa input hny rad, lab, dokter
                     if ($sql_medc->status < 5) {
@@ -12329,19 +12336,26 @@ public function set_medcheck_lab_adm_save() {
                                 $this->session->set_flashdata('medcheck_toast', 'toastr.success("Entri data berhasil!");');
                             }
                         } else {
+                            $this->db->trans_rollback();
                             throw new Exception("Transaksi ini sudah diposting, sehingga tidak diperbolehkan menambah entrian.");
                         }
+                    }
+                    
+                    // Release the lock if cache is loaded
+                    if (isset($lock_key) && isset($this->cache) && is_object($this->cache)) {
+                        $this->cache->delete($lock_key);
                     }
                 } catch (Exception $e) {
                     if (isset($this->db) && $this->db->trans_status() !== NULL) {
                         $this->db->trans_rollback();
                     }
-                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
-                } finally {
+                    
                     // Release the lock if cache is loaded
                     if (isset($lock_key) && isset($this->cache) && is_object($this->cache)) {
                         $this->cache->delete($lock_key);
                     }
+                    
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
                 }
 
                 if (!empty($rute)) {
