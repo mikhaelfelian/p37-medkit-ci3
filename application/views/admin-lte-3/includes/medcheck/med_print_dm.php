@@ -168,8 +168,8 @@ margin: 10;*/
             <?php 
                 $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
                 $jml_ongkir     = $sql_medc->jml_ongkir;
-                $jml_total      = $sql_medc->jml_total + $sql_medc_sum->diskon + $sql_medc_sum->potongan; // + $sql_medc_sum->potongan_poin;
-                $jml_diskon     = $jml_total - ($sql_medc_sum->diskon + $sql_medc_sum->potongan); // $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
+                $jml_total      = $sql_medc_sum->subtotal + $sql_medc_sum->diskon + $sql_medc_sum->potongan; // + $sql_medc_sum->potongan_poin;
+                $jml_diskon     = $jml_total - $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
                 
                 // Fix for division by zero error
                 $diskon = 0;
@@ -183,7 +183,7 @@ margin: 10;*/
                 <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px; border-top: 1px dashed #000;"><?php echo $sql_platform->platform ?></td>
                 <td colspan="2" style="text-align: right; font-weight: bold; font-size: 11px; border-top: 1px dashed #000;">Grand Total</td>
                 <td style="text-align: center; font-size: 11px; font-weight: bold; border-top: 1px dashed #000;">Rp.</td>
-                <td style="text-align: right; font-weight: bold; font-size: 11px; border-top: 1px dashed #000;"><?php echo general::format_angka($jml_total); ?></td>
+                <td style="text-align: right; font-weight: bold; font-size: 11px; border-top: 1px dashed #000;"><?php echo general::format_angka($sql_medc->jml_total); ?></td>
             </tr>            
             <tr>
                 <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px;">PARAF</td>
