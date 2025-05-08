@@ -115,9 +115,6 @@ margin: 10;*/
                 <?php $sql_kat = $this->db->where('id', $det->id_item_kat)->get('tbl_m_kategori')->row(); ?>
                 <?php $sql_det = $this->db->where('id_medcheck', $det->id_medcheck)->where('id_item_kat', $det->id_item_kat)->where('status_pkt', '0')->where('jml >=', '0')->get('tbl_trans_medcheck_det')->result(); ?>
                 <tr>
-                    <!--<th style="text-align: left; font-size: 11px;"></th>-->
-                    <!--<th style="text-align: left; border-top: 1px dashed #000; border-bottom: 1px dashed #000;"></th>-->
-                    <!--<th style="text-align: left; border-top: 1px dashed #000; border-bottom: 1px dashed #000;">Tgl</th>-->
                     <th style="text-align: left; font-size: 11px;" colspan="6"><?php echo $sql_kat->keterangan . ' (' . $sql_kat->kategori . ')'; ?></th>
                 </tr>
                 <?php $subtotal = 0; ?>
@@ -151,8 +148,6 @@ margin: 10;*/
                             <td style="text-align: center; font-size: 11px;"><?php echo (float) $racikan->jml; ?></td>
                             <td style="text-align: center; font-size: 11px;">Rp.</td>
                             <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($racikan->subtotal); ?></td>
-                            <!--<td style="text-align: center; font-size: 11px;"></td>-->
-                            <!--<td style="text-align: right; font-size: 11px;"><?php // echo general::format_angka($medc->subtotal);  ?></td>-->
                         </tr>
                     <?php } ?>
                     <?php $subtotal += $total_item; ?>

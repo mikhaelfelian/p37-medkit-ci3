@@ -6004,242 +6004,242 @@ class Medcheck extends CI_Controller {
                 // Begin transaction
                 $this->db->trans_begin();
                 
-                    try {
-                        /* Kalo pembayaran kurang */
-                        if ($sql_cek->status_bayar > 1) {
-                            $jml_tot_bayar  = (float)$sql_cek->jml_bayar + $jml_bayar;
-                            $jml_tot_biaya  = (float)$sql_cek->jml_biaya + (float)$jml_biaya;
-                            $jml_tot_gtot   = (float)$sql_cek->jml_gtotal + (float)$jml_biaya;
-                            $jml_sisa_bayar = (float)$sql_cek->jml_kurang - $jml_bayar;
-                            $jml_sisa_kmbli = $jml_tot_bayar - (float)$sql_cek->jml_gtotal;
-        
-                            if ($jml_sisa_bayar <= 0) {
-                                $trans = [
-                                    'id_kasir'          => $this->ion_auth->user()->row()->id,
-                                    'tgl_bayar'         => $tgl_bayar.' '.date('H:i:s'),
-                                    'tgl_modif'         => date('Y-m-d H:i:s'),
-                                    'jml_ongkir'        => (float)$jml_ongkir,
-                                    'jml_potongan_poin' => (float)$jml_pot_poin,
-                                    'jml_gtotal'        => (float)$jml_tot_gtot,
-                                    'jml_bayar'         => $jml_tot_bayar,
-                                    'jml_kurang'        => (int)($jml_sisa_bayar < 0 ? 0 : $jml_sisa_bayar),
-                                    'jml_kembali'       => (int)($jml_sisa_kmbli < 0 ? 0 : $jml_sisa_kmbli),
-                                    'jml_poin'          => floor($jml_poin),
-                                    'jml_poin_nom'      => (float)$jml_poin_nom,
-                                    'status_bayar'      => '1',
-                                    'status_nota'       => '3',
-                                    'metode'            => $metode_byr,
+                try {
+                    /* Kalo pembayaran kurang */
+                    if ($sql_cek->status_bayar > 1) {
+                        $jml_tot_bayar  = (float)$sql_cek->jml_bayar + $jml_bayar;
+                        $jml_tot_biaya  = (float)$sql_cek->jml_biaya + (float)$jml_biaya;
+                        $jml_tot_gtot   = (float)$sql_cek->jml_gtotal + (float)$jml_biaya;
+                        $jml_sisa_bayar = (float)$sql_cek->jml_kurang - $jml_bayar;
+                        $jml_sisa_kmbli = $jml_tot_bayar - (float)$sql_cek->jml_gtotal;
+    
+                        if ($jml_sisa_bayar <= 0) {
+                            $trans = [
+                                'id_kasir'          => $this->ion_auth->user()->row()->id,
+                                'tgl_bayar'         => $tgl_bayar.' '.date('H:i:s'),
+                                'tgl_modif'         => date('Y-m-d H:i:s'),
+                                'jml_ongkir'        => (float)$jml_ongkir,
+                                'jml_potongan_poin' => (float)$jml_pot_poin,
+                                'jml_gtotal'        => (float)$jml_tot_gtot,
+                                'jml_bayar'         => $jml_tot_bayar,
+                                'jml_kurang'        => (int)($jml_sisa_bayar < 0 ? 0 : $jml_sisa_bayar),
+                                'jml_kembali'       => (int)($jml_sisa_kmbli < 0 ? 0 : $jml_sisa_kmbli),
+                                'jml_poin'          => floor($jml_poin),
+                                'jml_poin_nom'      => (float)$jml_poin_nom,
+                                'status_bayar'      => '1',
+                                'status_nota'       => '3',
+                                'metode'            => $metode_byr,
+                            ];
+                            
+                            # Update ketersediaan kamar jika rawat inap
+                            if ($sql_cek->tipe == '3') {
+                                $sql_medc_kamar = $this->db->where('id_medcheck', $sql_cek->id)->get('tbl_trans_medcheck_kamar')->row();
+                                $sql_kamar      = $this->db->where('id', $sql_medc_kamar->id_kamar)->get('tbl_m_kamar')->row();
+                                $jml            = (int)$sql_kamar->jml - 1;
+                                
+                                $trans_kamar = [
+                                    'tgl_modif' => date('Y-m-d H:i:s'),
+                                    'jml'       => $jml
                                 ];
                                 
-                                # Update ketersediaan kamar jika rawat inap
-                                if ($sql_cek->tipe == '3') {
-                                    $sql_medc_kamar = $this->db->where('id_medcheck', $sql_cek->id)->get('tbl_trans_medcheck_kamar')->row();
-                                    $sql_kamar      = $this->db->where('id', $sql_medc_kamar->id_kamar)->get('tbl_m_kamar')->row();
-                                    $jml            = (int)$sql_kamar->jml - 1;
-                                    
-                                    $trans_kamar = [
-                                        'tgl_modif' => date('Y-m-d H:i:s'),
-                                        'jml'       => $jml
-                                    ];
-                                    
-                                    # Update jumlah kamar terpakainya
-                                    $this->db->where('id', $sql_kamar->id)->update('tbl_m_kamar', $trans_kamar);
-                                    
-                                    # Update status kamar terpakai menjadi inaktif
-                                    $this->db->where('id_medcheck', $sql_cek->id)->update('tbl_trans_medcheck_kamar', ['status' => '0']);
-                                }
-        
-                                # Update Nota Penjualan grand total perhitungan
-                                $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
+                                # Update jumlah kamar terpakainya
+                                $this->db->where('id', $sql_kamar->id)->update('tbl_m_kamar', $trans_kamar);
                                 
-                                # POIN AKAN BERTAMBAH KETIKA TIPE BAYAR UMUM
-                                if ($sql_cek->tipe_bayar == '1' || $sql_cek->tipe_bayar == '0') {
-                                    # Hitung ulang data poin dengan aman
-                                    $poin = 0;
-                                    if ((float)$pengaturan->jml_poin > 0) {
-                                        $poin = (float)$jml_pot_poin / (float)$pengaturan->jml_poin;
-                                    }
-                                    $poin_sisa      = ((float)$sql_poin->jml_poin - floor($poin)) + floor($jml_poin);
-                                    $poin_sisa_tot  = $poin_sisa * (float)$pengaturan->jml_poin;
+                                # Update status kamar terpakai menjadi inaktif
+                                $this->db->where('id_medcheck', $sql_cek->id)->update('tbl_trans_medcheck_kamar', ['status' => '0']);
+                            }
+    
+                            # Update Nota Penjualan grand total perhitungan
+                            $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
+                            
+                            # POIN AKAN BERTAMBAH KETIKA TIPE BAYAR UMUM
+                            if ($sql_cek->tipe_bayar == '1' || $sql_cek->tipe_bayar == '0') {
+                                # Hitung ulang data poin dengan aman
+                                $poin = 0;
+                                if ((float)$pengaturan->jml_poin > 0) {
+                                    $poin = (float)$jml_pot_poin / (float)$pengaturan->jml_poin;
+                                }
+                                $poin_sisa      = ((float)$sql_poin->jml_poin - floor($poin)) + floor($jml_poin);
+                                $poin_sisa_tot  = $poin_sisa * (float)$pengaturan->jml_poin;
 
-                                    $data_poin = [
-                                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                                        'jml_poin'      => floor($poin_sisa),
-                                        'jml_poin_nom'  => (float)$poin_sisa_tot,                        
-                                    ];
-
-                                    $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
-                                }
-                                
-                                # Simpan ke platfom pembayaran
-                                $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
-                                
-                                if ($this->db->trans_status() === FALSE) {
-                                    $this->db->trans_rollback();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
-                                    redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
-                                } else {
-                                    $this->db->trans_commit();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dibayar");');
-                                    redirect(base_url('medcheck/invoice/detail.php?id='.general::enkrip($no_nota).'#jml_bayar')); 
-                                }
-                            } else {
-                                $trans = [
-                                    'tgl_bayar'    => $tgl_bayar.' '.date('H:i:s'),
-                                    'tgl_modif'    => date('Y-m-d H:i:s'),
-                                    'jml_ongkir'   => (float)$jml_ongkir,
-                                    'jml_gtotal'   => (float)$jml_tot_gtot,
-                                    'jml_bayar'    => $jml_tot_bayar,
-                                    'jml_kurang'   => (int)$jml_sisa_bayar,
-                                    'jml_poin'     => floor($jml_poin),
-                                    'jml_poin_nom' => (float)$jml_poin_nom,
-                                    'metode'       => $metode_byr,
+                                $data_poin = [
+                                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                                    'jml_poin'      => floor($poin_sisa),
+                                    'jml_poin_nom'  => (float)$poin_sisa_tot,                        
                                 ];
-        
-                                # update nota
-                                $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
-                                
-                                # Simpan ke platfom pembayaran
-                                $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
-                                
-                                if ($this->db->trans_status() === FALSE) {
-                                    $this->db->trans_rollback();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
-                                } else {
-                                    $this->db->trans_commit();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dibayar");');
-                                }
+
+                                $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
+                            }
+                            
+                            # Simpan ke platfom pembayaran
+                            $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
+                            
+                            if ($this->db->trans_status() === FALSE) {
+                                $this->db->trans_rollback();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
                                 redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
+                            } else {
+                                $this->db->trans_commit();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dibayar");');
+                                redirect(base_url('medcheck/invoice/detail.php?id='.general::enkrip($no_nota).'#jml_bayar')); 
                             }
                         } else {
-                            /* Cek Pembayaran jika kurang, otomatis menjadi DP */
-                            if ($jml_bayar < $jml_gtotal) {
-                                $trans = [
-                                    'tgl_bayar'    => $tgl_bayar.' '.date('H:i:s'),
-                                    'tgl_modif'    => date('Y-m-d H:i:s'),
-                                    'jml_ongkir'   => (float)$jml_ongkir,
-                                    'jml_gtotal'   => (float)$gtotal,
-                                    'jml_bayar'    => (float)$jml_bayar,
-                                    'jml_kurang'   => (int)$jml_kurang,
-                                    'jml_poin'     => floor($jml_poin),
-                                    'jml_poin_nom' => (float)$jml_poin_nom,
-                                    'status_bayar' => '2',
-                                    'metode'       => $metode_byr,
+                            $trans = [
+                                'tgl_bayar'    => $tgl_bayar.' '.date('H:i:s'),
+                                'tgl_modif'    => date('Y-m-d H:i:s'),
+                                'jml_ongkir'   => (float)$jml_ongkir,
+                                'jml_gtotal'   => (float)$jml_tot_gtot,
+                                'jml_bayar'    => $jml_tot_bayar,
+                                'jml_kurang'   => (int)$jml_sisa_bayar,
+                                'jml_poin'     => floor($jml_poin),
+                                'jml_poin_nom' => (float)$jml_poin_nom,
+                                'metode'       => $metode_byr,
+                            ];
+    
+                            # update nota
+                            $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
+                            
+                            # Simpan ke platfom pembayaran
+                            $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
+                            
+                            if ($this->db->trans_status() === FALSE) {
+                                $this->db->trans_rollback();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
+                            } else {
+                                $this->db->trans_commit();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dibayar");');
+                            }
+                            redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
+                        }
+                    } else {
+                        /* Cek Pembayaran jika kurang, otomatis menjadi DP */
+                        if ($jml_bayar < $jml_gtotal) {
+                            $trans = [
+                                'tgl_bayar'    => $tgl_bayar.' '.date('H:i:s'),
+                                'tgl_modif'    => date('Y-m-d H:i:s'),
+                                'jml_ongkir'   => (float)$jml_ongkir,
+                                'jml_gtotal'   => (float)$gtotal,
+                                'jml_bayar'    => (float)$jml_bayar,
+                                'jml_kurang'   => (int)$jml_kurang,
+                                'jml_poin'     => floor($jml_poin),
+                                'jml_poin_nom' => (float)$jml_poin_nom,
+                                'status_bayar' => '2',
+                                'metode'       => $metode_byr,
+                            ];
+    
+                            # update nota
+                            $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
+    
+                            # Simpan ke platfom pembayaran
+                            $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
+    
+                            if ($this->db->trans_status() === FALSE) {
+                                $this->db->trans_rollback();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
+                            } else {
+                                $this->db->trans_commit();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Pembayaran DP berhasil");');
+                            }
+                            redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
+                        } else {                            
+                            /* Jika jumlah pembayaran lunas */
+                            $trans = [
+                                'id_kasir'          => $this->ion_auth->user()->row()->id,
+                                'tgl_bayar'         => $tgl_bayar.' '.date('H:i:s'),
+                                'tgl_keluar'        => date('Y-m-d H:i:s'),
+                                'jml_potongan_poin' => (float)$jml_pot_poin,
+                                'jml_subtotal'      => (float)$jml_gtotal,
+                                'jml_gtotal'        => (float)$gtotal,
+                                'jml_bayar'         => (float)$jml_bayar,
+                                'jml_kembali'       => (float)$jml_kembali,
+                                'jml_poin'          => (!empty($jml_poin) ? floor($jml_poin) : 0),
+                                'jml_poin_nom'      => (!empty($jml_poin_nom) ? (float)$jml_poin_nom : 0),
+                                'status_bayar'      => '1',
+                                'status_nota'       => '3',
+                                'metode'            => $metode_byr,
+                            ];
+                            
+                            # Update ketersediaan kamar jika rawat inap
+                            if ($sql_cek->tipe == '3') {
+                                $sql_medc_kamar = $this->db->where('id_medcheck', $sql_cek->id)->get('tbl_trans_medcheck_kamar')->row();
+                                $sql_kamar      = $this->db->where('id', $sql_medc_kamar->id_kamar)->get('tbl_m_kamar')->row();
+                                $jml            = (int)$sql_kamar->jml - 1;
+                                
+                                $trans_kamar = [
+                                    'tgl_modif' => date('Y-m-d H:i:s'),
+                                    'jml'       => $jml
                                 ];
-        
-                                # update nota
-                                $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
-        
-                                # Simpan ke platfom pembayaran
-                                $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
-        
-                                if ($this->db->trans_status() === FALSE) {
-                                    $this->db->trans_rollback();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
-                                } else {
-                                    $this->db->trans_commit();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Pembayaran DP berhasil");');
+                                
+                                # Update jumlah kamar terpakainya
+                                $this->db->where('id', $sql_kamar->id)->update('tbl_m_kamar', $trans_kamar);
+                                
+                                # Update status kamar terpakai menjadi inaktif
+                                $this->db->where('id_medcheck', $sql_cek->id)->update('tbl_trans_medcheck_kamar', ['status' => '0']);
+                            }
+                                
+                            # Update nota
+                            $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
+    
+                            # Simpan ke platfom pembayaran
+                            $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
+                                                
+                            # POIN AKAN BERTAMBAH KETIKA TIPE BAYAR UMUM
+                            if ($sql_cek->tipe_bayar == '1' || $sql_cek->tipe_bayar == '0') {
+                                # Hitung ulang data poin dengan aman
+                                $poin = 0;
+                                if ((float)$pengaturan->jml_poin > 0) {
+                                    $poin = (float)$jml_pot_poin / (float)$pengaturan->jml_poin;
                                 }
+                                $poin_sisa      = ((float)$sql_poin->jml_poin - floor($poin)) + floor($jml_poin);
+                                $poin_sisa_tot  = $poin_sisa * (float)$pengaturan->jml_poin;
+
+                                $data_poin = [
+                                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                                    'jml_poin'      => floor($poin_sisa),
+                                    'jml_poin_nom'  => (float)$poin_sisa_tot,                        
+                                ];
+
+                                $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
+                            }
+                            
+                            # Hitung poin ditiap item dengan aman
+                            $sql_medc_det_poin  = $this->db->where('id_medcheck', $sql_cek->id)->where('status_pkt', '0')->get('tbl_trans_medcheck_det');
+                            $jml_item           = $sql_medc_det_poin->num_rows();
+                            
+                            $poin_item = 0;
+                            if ($jml_item > 0) {
+                                $poin_item = (float)$jml_pot_poin / $jml_item;
+                            }
+                            
+                            foreach ($sql_medc_det_poin->result() as $det) {
+                                $subtotal = (float)$det->subtotal;
+                                
+                                $data_det = [
+                                    'tgl_modif'     => date('Y-m-d H:i:s'),
+                                    'potongan_poin' => $poin_item,
+                                    'subtotal'      => $subtotal
+                                ];
+                                
+                                $this->db->where('id', $det->id)->update('tbl_trans_medcheck_det', $data_det);
+                            }
+                            
+                            if ($this->db->trans_status() === FALSE) {
+                                $this->db->trans_rollback();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
                                 redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
-                            } else {                            
-                                /* Jika jumlah pembayaran lunas */
-                                $trans = [
-                                    'id_kasir'          => $this->ion_auth->user()->row()->id,
-                                    'tgl_bayar'         => $tgl_bayar.' '.date('H:i:s'),
-                                    'tgl_keluar'        => date('Y-m-d H:i:s'),
-                                    'jml_potongan_poin' => (float)$jml_pot_poin,
-                                    'jml_subtotal'      => (float)$jml_gtotal,
-                                    'jml_gtotal'        => (float)$gtotal,
-                                    'jml_bayar'         => (float)$jml_bayar,
-                                    'jml_kembali'       => (float)$jml_kembali,
-                                    'jml_poin'          => (!empty($jml_poin) ? floor($jml_poin) : 0),
-                                    'jml_poin_nom'      => (!empty($jml_poin_nom) ? (float)$jml_poin_nom : 0),
-                                    'status_bayar'      => '1',
-                                    'status_nota'       => '3',
-                                    'metode'            => $metode_byr,
-                                ];
-                                
-                                # Update ketersediaan kamar jika rawat inap
-                                if ($sql_cek->tipe == '3') {
-                                    $sql_medc_kamar = $this->db->where('id_medcheck', $sql_cek->id)->get('tbl_trans_medcheck_kamar')->row();
-                                    $sql_kamar      = $this->db->where('id', $sql_medc_kamar->id_kamar)->get('tbl_m_kamar')->row();
-                                    $jml            = (int)$sql_kamar->jml - 1;
-                                    
-                                    $trans_kamar = [
-                                        'tgl_modif' => date('Y-m-d H:i:s'),
-                                        'jml'       => $jml
-                                    ];
-                                    
-                                    # Update jumlah kamar terpakainya
-                                    $this->db->where('id', $sql_kamar->id)->update('tbl_m_kamar', $trans_kamar);
-                                    
-                                    # Update status kamar terpakai menjadi inaktif
-                                    $this->db->where('id_medcheck', $sql_cek->id)->update('tbl_trans_medcheck_kamar', ['status' => '0']);
-                                }
-                                    
-                                # Update nota
-                                $this->db->where('id', $no_nota)->update('tbl_trans_medcheck', $trans);
-        
-                                # Simpan ke platfom pembayaran
-                                $this->db->insert('tbl_trans_medcheck_plat', $data_platform);
-                                                    
-                                # POIN AKAN BERTAMBAH KETIKA TIPE BAYAR UMUM
-                                if ($sql_cek->tipe_bayar == '1' || $sql_cek->tipe_bayar == '0') {
-                                    # Hitung ulang data poin dengan aman
-                                    $poin = 0;
-                                    if ((float)$pengaturan->jml_poin > 0) {
-                                        $poin = (float)$jml_pot_poin / (float)$pengaturan->jml_poin;
-                                    }
-                                    $poin_sisa      = ((float)$sql_poin->jml_poin - floor($poin)) + floor($jml_poin);
-                                    $poin_sisa_tot  = $poin_sisa * (float)$pengaturan->jml_poin;
-
-                                    $data_poin = [
-                                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                                        'jml_poin'      => floor($poin_sisa),
-                                        'jml_poin_nom'  => (float)$poin_sisa_tot,                        
-                                    ];
-
-                                    $this->db->where('id', $sql_poin->id)->update('tbl_m_pasien_poin', $data_poin);
-                                }
-                                
-                                # Hitung poin ditiap item dengan aman
-                                $sql_medc_det_poin  = $this->db->where('id_medcheck', $sql_cek->id)->where('status_pkt', '0')->get('tbl_trans_medcheck_det');
-                                $jml_item           = $sql_medc_det_poin->num_rows();
-                                
-                                $poin_item = 0;
-                                if ($jml_item > 0) {
-                                    $poin_item = (float)$jml_pot_poin / $jml_item;
-                                }
-                                
-                                foreach ($sql_medc_det_poin->result() as $det) {
-                                    $subtotal = (float)$det->subtotal;
-                                    
-                                    $data_det = [
-                                        'tgl_modif'     => date('Y-m-d H:i:s'),
-                                        'potongan_poin' => $poin_item,
-                                        'subtotal'      => $subtotal
-                                    ];
-                                    
-                                    $this->db->where('id', $det->id)->update('tbl_trans_medcheck_det', $data_det);
-                                }
-                                
-                                if ($this->db->trans_status() === FALSE) {
-                                    $this->db->trans_rollback();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Transaksi gagal dibayar");');
-                                    redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
-                                } else {
-                                    $this->db->trans_commit();
-                                    $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dibayar");');
-                                    redirect(base_url('medcheck/invoice/detail.php?id='.general::enkrip($no_nota)));
-                                }
+                            } else {
+                                $this->db->trans_commit();
+                                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Transaksi berhasil dibayar");');
+                                redirect(base_url('medcheck/invoice/detail.php?id='.general::enkrip($no_nota)));
                             }
                         }
-                    } catch (Exception $e) {
-                        $this->db->trans_rollback();
-                        $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
-                        log_message('error', 'Medcheck payment error: ' . $e->getMessage());
-                        redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
                     }
+                } catch (Exception $e) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('medcheck_toast', 'toastr.error("Error: ' . $e->getMessage() . '");');
+                    log_message('error', 'Medcheck payment error: ' . $e->getMessage());
+                    redirect(base_url('medcheck/invoice/bayar.php?id='.general::enkrip($no_nota).'#jml_bayar'));
+                }
             }
         } else {
             $errors = $this->ion_auth->messages();
