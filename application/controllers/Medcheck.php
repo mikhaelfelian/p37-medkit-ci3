@@ -21063,14 +21063,21 @@ public function set_medcheck_lab_adm_save() {
                 
                 $subtotal = 0;
                 foreach ($sql_det as $medc) {
-                    $total_item = $medc->subtotal;
-                    $total_hrg  = $medc->subtotal;
-                    $total_disk = $medc->diskon + $medc->potongan;
+                    // Calculate subtotal: (harga - diskon - potongan) * jml
+                    $item_subtotal  = ($medc->harga - $medc->diskon - $medc->potongan) * $medc->jml;
+                    $subtot         = $subtot + $item_subtotal;
+
+                    $total_item     = $item_subtotal;
+                    $total_hrg      = $item_subtotal;
+
+                    $total_item     = $item_subtotal;
+                    $total_hrg      = $item_subtotal;
+                    $total_disk     = $medc->diskon + $medc->potongan;
                     
                     $pdf->Cell(5.5, 0.35, ($medc->status_rc == '1' ? '- ' : '').$medc->item, '', 0, 'L', $fill);
                     $pdf->Cell(1, 0.35, (float)$medc->jml, '', 0, 'C', $fill);
                     $pdf->Cell(2, 0.35, general::format_angka($medc->harga), '', 0, 'R', $fill);
-                    $pdf->Cell(2.5, 0.35, general::format_angka($medc->subtotal), '', 0, 'R', $fill);
+                    $pdf->Cell(2.5, 0.35, general::format_angka($item_subtotal), '', 0, 'R', $fill);
                     $pdf->Ln();
                     
                     if($medc->diskon > 0){
@@ -21106,7 +21113,7 @@ public function set_medcheck_lab_adm_save() {
             
             $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
             $jml_ongkir     = $sql_medc->jml_ongkir;
-            $jml_total      = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->diskon + $sql_medc_det_sum->potongan + $sql_medc_det_sum->potongan_poin;
+            $jml_total      = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->diskon + $sql_medc_det_sum->potongan; // + $sql_medc_det_sum->potongan_poin;
             $jml_diskon     = $jml_total - $sql_medc_det_sum->subtotal;
             $diskon         = ($jml_diskon / $sql_medc->jml_total) * 100;
             $jml_subtotal   = $sql_medc->jml_total + $jml_ongkir - $jml_diskon;
