@@ -122,8 +122,13 @@ margin: 10;*/
                 </tr>
                 <?php $subtotal = 0; ?>
                 <?php foreach ($sql_det as $medc) { ?>
-                    <?php $total_item = $medc->subtotal; ?>
-                    <?php $total_hrg  = $medc->subtotal; ?>
+                    <?php 
+                        // Calculate subtotal: (harga - diskon - potongan) * jml
+                        $item_subtotal = ($medc->harga - $medc->diskon - $medc->potongan) * $medc->jml;
+                        $subtotal = $subtotal + $item_subtotal; 
+                    ?>
+                    <?php $total_item = $subtotal; ?>
+                    <?php $total_hrg  = $subtotal; ?>
                     <?php $total_disk = $medc->diskon + $medc->potongan; ?>
                     <tr>
                         <td style="text-align: left; font-size: 11px;"><?php echo ($medc->status_rc == '1' ? ' -<i>'.$medc->item.'</i>' : $medc->item); ?></td>
@@ -131,7 +136,7 @@ margin: 10;*/
                         <td style="text-align: center; font-size: 11px;">Rp.</td>
                         <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($medc->harga); ?></td>
                         <td style="text-align: center; font-size: 11px;">Rp.</td>
-                        <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($medc->subtotal); ?></td>
+                        <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($subtotal); ?></td>
                     </tr>
                     <tr>
                     <td style="text-align: right; font-size: 11px; font-style: italic;" colspan="2"><?php echo ($medc->disk1 != '0.00' ? 'disk : '.(float)$medc->disk1 : '').($medc->disk2 != '0.00' ? ' + '.(float)$medc->disk2 : '').($medc->disk3 != '0.00' ? ' + '.(float)$medc->disk3 : '').($medc->disk1 != '0.00' || $medc->disk2 != '0.00' || $medc->disk3 != '0.00' ? '%' : '').($medc->potongan > 0 ? ' pot : '.general::format_angka($medc->potongan) : ''); ?></td>

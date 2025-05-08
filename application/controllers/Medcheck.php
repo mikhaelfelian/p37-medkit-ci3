@@ -6212,7 +6212,7 @@ class Medcheck extends CI_Controller {
                                 }
                                 
                                 foreach ($sql_medc_det_poin->result() as $det) {
-                                    $subtotal = (float)$det->subtotal - $poin_item;
+                                    $subtotal = (float)$det->subtotal;
                                     
                                     $data_det = [
                                         'tgl_modif'     => date('Y-m-d H:i:s'),
