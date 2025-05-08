@@ -169,7 +169,7 @@ margin: 10;*/
                 $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
                 $jml_ongkir     = $sql_medc->jml_ongkir;
                 $jml_total      = $sql_medc->jml_total + $sql_medc_sum->diskon + $sql_medc_sum->potongan; // + $sql_medc_sum->potongan_poin;
-                $jml_diskon     = $jml_total - $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
+                $jml_diskon     = $jml_total - ($sql_medc_sum->diskon + $sql_medc_sum->potongan); // $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
                 
                 // Fix for division by zero error
                 $diskon = 0;
