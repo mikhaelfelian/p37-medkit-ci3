@@ -127,8 +127,8 @@ margin: 10;*/
                         $item_subtotal  = ($medc->harga - $medc->diskon - $medc->potongan) * $medc->jml;
                         $subtot         = $subtot + $item_subtotal; 
                     ?>
-                    <?php $total_item = $subtotal; ?>
-                    <?php $total_hrg  = $subtotal; ?>
+                    <?php $total_item = $subtot; ?>
+                    <?php $total_hrg  = $subtot; ?>
                     <?php $total_disk = $medc->diskon + $medc->potongan; ?>
                     <tr>
                         <td style="text-align: left; font-size: 11px;"><?php echo ($medc->status_rc == '1' ? ' -<i>'.$medc->item.'</i>' : $medc->item); ?></td>
