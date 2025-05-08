@@ -2906,7 +2906,7 @@ class transaksi extends CI_Controller {
 //                              ->like('kode',$term)
                               ->or_like('produk',$term)
                               ->where('status_hps','0')
-                              ->limit(10)->get('tbl_m_produk')->result();
+                              ->limit(50)->get('tbl_m_produk')->result();
             
             if(!empty($sql)){
                 foreach ($sql as $sql){
