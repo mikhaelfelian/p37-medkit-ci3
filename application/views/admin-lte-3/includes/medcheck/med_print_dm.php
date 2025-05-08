@@ -177,7 +177,7 @@ margin: 10;*/
                     $diskon = ($jml_diskon / $jml_total) * 100;
                 }
                 
-                $jml_subtotal   = $sql_medc_sum->subtotal + $jml_ongkir - $sql_medc_sum->potongan_poin;
+                $jml_subtotal   = $sql_medc->jml_total - $sql_medc_sum->diskon - $sql_medc_sum->potongan - $sql_medc_sum->potongan_poin; // $sql_medc_sum->subtotal + $jml_ongkir;
             ?>
             <tr>
                 <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px; border-top: 1px dashed #000;"><?php echo $sql_platform->platform ?></td>
