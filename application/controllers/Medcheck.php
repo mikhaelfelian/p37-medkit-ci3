@@ -21116,7 +21116,8 @@ public function set_medcheck_lab_adm_save() {
             $jml_total      = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->diskon + $sql_medc_det_sum->potongan; // + $sql_medc_det_sum->potongan_poin;
             $jml_diskon     = $jml_total - $sql_medc_det_sum->subtotal;
             $diskon         = ($jml_diskon / $sql_medc->jml_total) * 100;
-            $jml_subtotal   = $sql_medc->jml_total + $jml_ongkir - $jml_diskon;
+            // $jml_subtotal   = $sql_medc->jml_total + $jml_ongkir - $jml_diskon;
+            $jml_subtotal   = $sql_medc->jml_total - $sql_medc_det_sum->diskon - $sql_medc_det_sum->potongan - $sql_medc_det_sum->potongan_poin;
 
             $pdf->SetFont('Times', 'B', '8');
             $pdf->Cell(5.5, 0.35, $sql_platform->platform, 'T', 0, 'L', $fill);
