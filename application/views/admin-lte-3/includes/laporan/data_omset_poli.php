@@ -9,8 +9,10 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="<?php echo base_url('dashboard2.php') ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo base_url('laporan/index.php') ?>">Laporan</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo base_url('dashboard2.php') ?>">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="<?php echo base_url('laporan/index.php') ?>">Laporan</a>
+                        </li>
                         <li class="breadcrumb-item active">Data Omset</li>
                     </ol>
                 </div><!-- /.col -->
@@ -24,7 +26,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-8">
-                    <?php echo form_open(base_url('laporan/set_data_omset_poli.php'), 'autocomplete="off"') ?> 
+                    <?php echo form_open(base_url('laporan/set_data_omset_poli.php'), 'autocomplete="off"') ?>
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Form Laporan Omset Per Poli</h3>
@@ -61,29 +63,39 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group <?php echo (!empty($hasError['poli']) ? 'text-danger' : '') ?>">
+                                    <div
+                                        class="form-group <?php echo (!empty($hasError['poli']) ? 'text-danger' : '') ?>">
                                         <label class="control-label">Poli</label>
-                                        <select name="poli" class="form-control select2bs4 <?php echo (!empty($hasError['poli']) ? ' is-invalid' : '') ?>">
+                                        <select name="poli"
+                                            class="form-control select2bs4 <?php echo (!empty($hasError['poli']) ? ' is-invalid' : '') ?>">
                                             <option value="">- Semua Poli -</option>
                                             <?php foreach ($sql_poli as $poli) { ?>
                                                 <option value="<?php echo $poli->id ?>" <?php echo ($_GET['poli'] == $poli->id ? 'selected' : '') ?>><?php echo $poli->lokasi ?></option>
                                             <?php } ?>
                                         </select>
-                                    </div>                                    
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group <?php echo (!empty($hasError['tipe']) ? 'text-danger' : '') ?>">
+                                    <div
+                                        class="form-group <?php echo (!empty($hasError['tipe']) ? 'text-danger' : '') ?>">
                                         <label class="control-label">Tipe</label>
-                                        <select name="tipe" class="form-control <?php echo (!empty($hasError['tipe']) ? ' is-invalid' : '') ?>">
+                                        <select name="tipe"
+                                            class="form-control <?php echo (!empty($hasError['tipe']) ? ' is-invalid' : '') ?>">
                                             <option value="">[Tipe Perawatan]</option>
-                                            <option value="1" <?php echo ($_GET['tipe'] == '1' ? 'selected' : '') ?>>Laborat</option>
-                                            <option value="4" <?php echo ($_GET['tipe'] == '4' ? 'selected' : '') ?>>Radiologi</option>
-                                            <option value="2" <?php echo ($_GET['tipe'] == '2' ? 'selected' : '') ?>>Rawat Jalan</option>
-                                            <option value="3" <?php echo ($_GET['tipe'] == '3' ? 'selected' : '') ?>>Rawat Inap</option>
-                                            <option value="5" <?php echo ($_GET['tipe'] == '5' ? 'selected' : '') ?>>MCU</option>
-                                            <option value="6" <?php echo ($_GET['tipe'] == '6' ? 'selected' : '') ?>>Apotik / Farmasi</option>
+                                            <option value="1" <?php echo ($_GET['tipe'] == '1' ? 'selected' : '') ?>>
+                                                Laborat</option>
+                                            <option value="4" <?php echo ($_GET['tipe'] == '4' ? 'selected' : '') ?>>
+                                                Radiologi</option>
+                                            <option value="2" <?php echo ($_GET['tipe'] == '2' ? 'selected' : '') ?>>Rawat
+                                                Jalan</option>
+                                            <option value="3" <?php echo ($_GET['tipe'] == '3' ? 'selected' : '') ?>>Rawat
+                                                Inap</option>
+                                            <option value="5" <?php echo ($_GET['tipe'] == '5' ? 'selected' : '') ?>>MCU
+                                            </option>
+                                            <option value="6" <?php echo ($_GET['tipe'] == '6' ? 'selected' : '') ?>>
+                                                Apotik / Farmasi</option>
                                         </select>
-                                    </div>                                    
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -105,17 +117,17 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Jenis Item</label>
-                                        <select name="status[]" multiple class="form-control rounded-0">        
-                                            <?php foreach ($sql_kat as $kat){ ?>
+                                        <select name="status[]" multiple class="form-control rounded-0">
+                                            <?php foreach ($sql_kat as $kat) { ?>
                                                 <option value="<?php echo $kat->id; ?>" <?php // echo ($_GET['tipe'] == '1' ? 'selected' : '') ?>><?php echo $kat->keterangan ?></option>
                                             <?php } ?>
-<!--                                            <option value="2" <?php echo ($_GET['status'] == '2' ? 'selected' : '') ?>>Tindakan</option>
+                                            <!--                                            <option value="2" <?php echo ($_GET['status'] == '2' ? 'selected' : '') ?>>Tindakan</option>
                                             <option value="3" <?php echo ($_GET['status'] == '3' ? 'selected' : '') ?>>Laboratorium</option>
                                             <option value="4" <?php echo ($_GET['status'] == '4' ? 'selected' : '') ?>>Farmasi</option>
                                             <option value="5" <?php echo ($_GET['status'] == '5' ? 'selected' : '') ?>>Radiologi</option>
                                             <option value="6" <?php echo ($_GET['status'] == '6' ? 'selected' : '') ?>>Bahan Habis Pakai</option>-->
                                         </select>
-                                    </div>                                  
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -126,15 +138,16 @@
                                 </div>
                                 <div class="col-lg-6 text-right">
                                     <!--<button type="button" class="btn btn-warning btn-flat"><i class="fa fa-undo"></i> Bersih</button>-->
-                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-search"></i> Cari</button>
+                                    <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-search"></i>
+                                        Cari</button>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <?php echo form_close() ?>
                 </div>
             </div>
-            <?php if ($_GET['jml'] > 0) { ?>
+            <?php if ($sql_omset) { ?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card card-default">
@@ -148,14 +161,14 @@
                             </div>
                             <div class="card-body">
                                 <?php
-                                $uri        = substr($this->uri->segment(2), 0, -4);
-                                $case       = $this->input->get('case');
-                                $tgl_awal   = $this->input->get('tgl_awal');
-                                $tgl_akhir  = $this->input->get('tgl_akhir');
-                                $tgl        = $this->input->get('tgl');
-                                $poli       = $this->input->get('poli');
-                                $tipe       = $this->input->get('tipe');
-                                $status     = $this->input->get('status');
+                                $uri = substr($this->uri->segment(2), 0, -4);
+                                $case = $this->input->get('case');
+                                $tgl_awal = $this->input->get('tgl_awal');
+                                $tgl_akhir = $this->input->get('tgl_akhir');
+                                $tgl = $this->input->get('tgl');
+                                $poli = $this->input->get('poli');
+                                $tipe = $this->input->get('tipe');
+                                $status = $this->input->get('status');
 
                                 switch ($case) {
                                     case 'per_tanggal':
@@ -167,7 +180,9 @@
                                         break;
                                 }
                                 ?>
-                                <button class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo $uri_xls ?>'"><i class="fas fa-file-excel"></i> Cetak Excel</button>
+                                <button class="btn btn-success btn-flat"
+                                    onclick="window.location.href = '<?php echo $uri_xls ?>'"><i
+                                        class="fas fa-file-excel"></i> Cetak Excel</button>
                                 <?php echo br(); ?>
                                 <?php echo $this->session->flashdata('medcheck'); ?>
                                 <table class="table table-striped">
@@ -181,48 +196,42 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if (!empty($sql_penj)) { ?>
-<!--                                            <tr>
-                                                <th colspan="3" class="text-right">Total</th>
-                                                <th class="text-right"><?php echo general::format_angka($sql_oms_tot->jml_gtotal) ?></th>
-                                                <th></th>
-                                            </tr>-->
-                                            <?php
-                                            $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
-                                            $total = 0;
-                                            foreach ($sql_penj as $omset) {
-                                                $sql_poli   = $this->db->where('id', $omset->id_poli)->get('tbl_m_poli')->row();
-                                                
-                                                $total      = $total + $omset->jml_gtotal;
-                                                ?>
-                                                <tr>
-                                                    <td class="text-center" style="width: 10px">
-                                                        <?php echo $no++ ?>.
-                                                    </td>
-                                                    <td class="text-left" style="width: 150px;">
-                                                        <?php echo anchor(base_url('medcheck/detail.php?id=' . general::enkrip($omset->id_medcheck) . '&route=laporan/data_omset_poli.php'), '#' . $omset->no_rm, 'class="text-default" target="_blank"') ?>
-                                                        <?php echo br(); ?>
-                                                        <span class="mailbox-read-time float-left"><?php echo $this->tanggalan->tgl_indo5($omset->tgl_simpan); ?></span>
-                                                    </td>
-                                                    <td class="text-left" style="width: 450px;">
-                                                        <b><?php echo $omset->pasien; ?></b>
-                                                        <?php echo br(); ?>
-                                                        <small><i><?php echo (!empty($omset->id_poli) ? $sql_poli->lokasi . ' / ' . general::status_rawat2($omset->tipe) : ''); ?></i></small>
-                                                    </td>
-                                                    <td class="text-right" style="width: 100px;">
-                                                        <?php echo general::format_angka($omset->jml_gtotal); ?>
-                                                    </td>
-                                                    <td class="text-left" style="width: 50px;">
-                                                        <?php echo anchor(base_url('medcheck/invoice/print_dm.php?id=' . general::enkrip($omset->id_medcheck)), '<i class="fas fa-solid fa-print"></i>', 'class="btn btn-warning btn-flat btn-sm" target="_blank"') ?>
-                                                    </td>
-                                                </tr>
-                                            <?php } ?>
+                                        <?php
+                                        $no = (!empty($_GET['halaman']) ? $_GET['halaman'] + 1 : 1);
+                                        $total = 0;
+                                        foreach ($sql_omset as $omset) {
+                                            $sql_poli = $this->db->where('id', $omset->id_poli)->get('tbl_m_poli')->row();
+
+                                            $total = $total + $omset->jml_gtotal;
+                                            ?>
                                             <tr>
-                                                <th colspan="3" class="text-right">Total</th>
-                                                <th class="text-right"><?php echo general::format_angka($total) ?></th>
-                                                <th></th>
+                                                <td class="text-center" style="width: 10px">
+                                                    <?php echo $no++ ?>.
+                                                </td>
+                                                <td class="text-left" style="width: 150px;">
+                                                    <?php echo anchor(base_url('medcheck/detail.php?id=' . general::enkrip($omset->id_medcheck) . '&route=laporan/data_omset_poli.php'), '#' . $omset->no_rm, 'class="text-default" target="_blank"') ?>
+                                                    <?php echo br(); ?>
+                                                    <span
+                                                        class="mailbox-read-time float-left"><?php echo $this->tanggalan->tgl_indo5($omset->tgl_simpan); ?></span>
+                                                </td>
+                                                <td class="text-left" style="width: 450px;">
+                                                    <b><?php echo $omset->pasien; ?></b>
+                                                    <?php echo br(); ?>
+                                                    <small><i><?php echo (!empty($omset->id_poli) ? $sql_poli->lokasi . ' / ' . general::status_rawat2($omset->tipe) : ''); ?></i></small>
+                                                </td>
+                                                <td class="text-right" style="width: 100px;">
+                                                    <?php echo general::format_angka($omset->jml_gtotal); ?>
+                                                </td>
+                                                <td class="text-left" style="width: 50px;">
+                                                    <?php echo anchor(base_url('medcheck/invoice/print_dm.php?id=' . general::enkrip($omset->id_medcheck)), '<i class="fas fa-solid fa-print"></i>', 'class="btn btn-warning btn-flat btn-sm" target="_blank"') ?>
+                                                </td>
                                             </tr>
                                         <?php } ?>
+                                        <tr>
+                                            <th colspan="3" class="text-right">Total</th>
+                                            <th class="text-right"><?php echo general::format_angka($total) ?></th>
+                                            <th></th>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -246,12 +255,14 @@
 <!--Tanggal Rentang-->
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/daterangepicker/daterangepicker.js') ?>"></script>
 <!--<script src="<?php // echo base_url('assets/theme/admin-lte-2/plugins/datepicker/bootstrap-datepicker.js')       ?>"></script>-->
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/daterangepicker/daterangepicker.css'); ?>">
+<link rel="stylesheet"
+    href="<?php echo base_url('assets/theme/admin-lte-3/plugins/daterangepicker/daterangepicker.css'); ?>">
 
 <!-- Select2 -->
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/js/select2.full.min.js') ?>"></script>
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2/css/select2.min.css') ?>">
-<link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
+<link rel="stylesheet"
+    href="<?php echo base_url('assets/theme/admin-lte-3/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') ?>">
 
 <!-- Page script -->
 <script type="text/javascript">
@@ -308,9 +319,9 @@
             // Format the list menu output of the autocomplete
         }).data("ui-autocomplete")._renderItem = function (ul, item) {
             return $("<li></li>")
-                    .data("item.autocomplete", item)
-                    .append("<a>" + item.nik + "</a> <a>(" + item.jns_klm + ")</a></br><a>" + item.nama + "</a></br><a>" + item.alamat + "<br/>--------------------------------------------------------------</a>")
-                    .appendTo(ul);
+                .data("item.autocomplete", item)
+                .append("<a>" + item.nik + "</a> <a>(" + item.jns_klm + ")</a></br><a>" + item.nama + "</a></br><a>" + item.alamat + "<br/>--------------------------------------------------------------</a>")
+                .appendTo(ul);
         };
     });
 </script>

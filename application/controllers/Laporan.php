@@ -949,7 +949,7 @@ class laporan extends CI_Controller {
             $tipe                   = $this->input->get('tipe');
             $tipe_byr               = $this->input->get('tipe_bayar');
             $plat                   = $this->input->get('plat');
-            $jml                    = $this->input->get('jml');
+            $jml                    = 0; // Initialize jml to 0
             $tgl                    = $this->input->get('tgl');
             $tgl_awal               = $this->input->get('tgl_awal');
             $tgl_akhir              = $this->input->get('tgl_akhir');
@@ -967,194 +967,192 @@ class laporan extends CI_Controller {
 
             $data['hasError'] = $this->session->flashdata('form_error');
             
-            // Base query for all cases
-            $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, tm.id_poli AS id_poli, 
-                tm.id_dokter AS id_dokter, tmd.id_item AS id_item, tmd.id_item_kat AS id_item_kat, 
-                tmd.tgl_simpan AS tgl_simpan, tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, 
-                tm.no_akun AS no_akun, tm.no_rm AS no_rm, mp.nama_pgl AS nama_pgl, mp.nama_pgl AS pasien, 
-                mp.tgl_lahir AS tgl_lahir, tmd.kode AS kode, tmd.item AS item, tmd.jml AS jml, 
-                tmd.harga AS harga, tmd.diskon AS diskon, tmd.potongan AS potongan, tmd.potongan_poin AS potongan_poin, 
-                tmd.subtotal AS subtotal, tm.jml_gtotal AS jml_gtotal, tmd.status_pkt AS status_pkt, 
-                tmd.status AS status, tm.tipe AS tipe, tm.tipe_bayar AS tipe_bayar, tm.metode AS metode')
-                ->from('tbl_trans_medcheck_det tmd')
-                ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
-                ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
-                ->where('tm.status_hps', '0')
-                ->where('tm.status_bayar', '1')
-                ->where('tmd.status_pkt', '0');
-            
-            // Apply filters based on case
-            switch ($case) {
-                case 'per_tanggal':
-                    $this->db->where('DATE(tm.tgl_bayar)', $tgl);
-                    
-                    if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
-                    if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
-                    if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
-                    if(!empty($plat)) $this->db->where('tm.metode', $plat);
-                    if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
-                    
-                    // Get total count for pagination
-                    $jml = $this->db->get()->num_rows();
-                    
-                    // Reset query for actual data
-                    $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, tm.id_poli AS id_poli, 
-                        tm.id_dokter AS id_dokter, tmd.id_item AS id_item, tmd.id_item_kat AS id_item_kat, 
-                        tmd.tgl_simpan AS tgl_simpan, tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, 
-                        tm.no_akun AS no_akun, tm.no_rm AS no_rm, mp.nama_pgl AS nama_pgl, mp.nama_pgl AS pasien, 
-                        mp.tgl_lahir AS tgl_lahir, tmd.kode AS kode, tmd.item AS item, tmd.jml AS jml, 
-                        tmd.harga AS harga, tmd.diskon AS diskon, tmd.potongan AS potongan, tmd.potongan_poin AS potongan_poin, 
-                        tmd.subtotal AS subtotal, tm.jml_gtotal AS jml_gtotal, tmd.status_pkt AS status_pkt, 
-                        tmd.status AS status, tm.tipe AS tipe, tm.tipe_bayar AS tipe_bayar, tm.metode AS metode,
-                        SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, SUM(tmd.potongan_poin) AS potongan_poin, 
-                        SUM(tmd.subtotal) AS jml_gtotal')
-                        ->from('tbl_trans_medcheck_det tmd')
-                        ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
-                        ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
-                        ->where('tm.status_hps', '0')
-                        ->where('tm.status_bayar', '1')
-                        ->where('tmd.status_pkt', '0')
-                        ->where('DATE(tm.tgl_bayar)', $tgl);
-                    
-                    if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
-                    if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
-                    if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
-                    if(!empty($plat)) $this->db->where('tm.metode', $plat);
-                    if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
-                    
-                    $this->db->group_by('tm.id_pasien');
-                    $this->db->order_by('tm.id', 'DESC');
-                    $this->db->limit($pengaturan->jml_item, $hal);
-                    
-                    $data['sql_omset'] = $this->db->get()->result();
-                    
-                    // Get summary data
-                    $this->db->select('SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
-                        SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal')
-                        ->from('tbl_trans_medcheck_det tmd')
-                        ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
-                        ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
-                        ->where('tm.status_hps', '0')
-                        ->where('tm.status_bayar', '1')
-                        ->where('tmd.status_pkt', '0')
-                        ->where('DATE(tm.tgl_bayar)', $tgl);
-                    
-                    if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
-                    if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
-                    if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
-                    if(!empty($plat)) $this->db->where('tm.metode', $plat);
-                    if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
-                    
-                    $data['sql_omset_row'] = $this->db->get()->row();
-                    break;
+            // Count total records based on case
+            if(!empty($case)) {
+                // Base query builder for counting records
+                $this->db->select('COUNT(DISTINCT tm.id_pasien) as total')
+                    ->from('tbl_trans_medcheck_det tmd')
+                    ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
+                    ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
+                    ->where('tm.status_hps', '0')
+                    ->where('tm.status_bayar', '1')
+                    ->where('tmd.status_pkt', '0');
                 
-                case 'per_rentang':
+                if($case == 'per_tanggal') {
+                    $this->db->where('DATE(tm.tgl_bayar)', $tgl);
+                } else if($case == 'per_rentang') {
                     $this->db->where('DATE(tm.tgl_bayar) >=', $tgl_awal);
                     $this->db->where('DATE(tm.tgl_bayar) <=', $tgl_akhir);
-                    
-                    if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
-                    if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
-                    if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
-                    if(!empty($plat)) $this->db->where('tm.metode', $plat);
-                    if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
-                    
-                    // Get total count for pagination
-                    $jml = $this->db->get()->num_rows();
-                    
-                    // Reset query for actual data
-                    $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, tm.id_poli AS id_poli, 
-                        tm.id_dokter AS id_dokter, tmd.id_item AS id_item, tmd.id_item_kat AS id_item_kat, 
-                        tmd.tgl_simpan AS tgl_simpan, tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, 
-                        tm.no_akun AS no_akun, tm.no_rm AS no_rm, mp.nama_pgl AS nama_pgl, mp.nama_pgl AS pasien, 
-                        mp.tgl_lahir AS tgl_lahir, tmd.kode AS kode, tmd.item AS item, tmd.jml AS jml, 
-                        tmd.harga AS harga, tmd.diskon AS diskon, tmd.potongan AS potongan, tmd.potongan_poin AS potongan_poin, 
-                        tmd.subtotal AS subtotal, tm.jml_gtotal AS jml_gtotal, tmd.status_pkt AS status_pkt, 
-                        tmd.status AS status, tm.tipe AS tipe, tm.tipe_bayar AS tipe_bayar, tm.metode AS metode,
-                        SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, SUM(tmd.potongan_poin) AS potongan_poin, 
-                        SUM(tmd.subtotal) AS jml_gtotal')
-                        ->from('tbl_trans_medcheck_det tmd')
-                        ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
-                        ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
-                        ->where('tm.status_hps', '0')
-                        ->where('tm.status_bayar', '1')
-                        ->where('tmd.status_pkt', '0')
-                        ->where('DATE(tm.tgl_bayar) >=', $tgl_awal)
-                        ->where('DATE(tm.tgl_bayar) <=', $tgl_akhir);
-                    
-                    if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
-                    if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
-                    if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
-                    if(!empty($plat)) $this->db->where('tm.metode', $plat);
-                    if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
-                    
-                    $this->db->group_by('tm.id_pasien, tm.tgl_masuk');
-                    $this->db->order_by('tm.id', 'DESC');
-                    $this->db->limit($pengaturan->jml_item, $hal);
-                    
-                    $data['sql_omset'] = $this->db->get()->result();
-                    
-                    // Get summary data
-                    $this->db->select('SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
-                        SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal')
-                        ->from('tbl_trans_medcheck_det tmd')
-                        ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
-                        ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
-                        ->where('tm.status_hps', '0')
-                        ->where('tm.status_bayar', '1')
-                        ->where('tmd.status_pkt', '0')
-                        ->where('DATE(tm.tgl_bayar) >=', $tgl_awal)
-                        ->where('DATE(tm.tgl_bayar) <=', $tgl_akhir);
-                    
-                    if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
-                    if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
-                    if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
-                    if(!empty($plat)) $this->db->where('tm.metode', $plat);
-                    if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
-                    
-                    $data['sql_omset_row'] = $this->db->get()->row();
-                    break; 
+                }
+                
+                if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
+                if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
+                if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
+                if(!empty($plat)) $this->db->where('tm.metode', $plat);
+                if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
+                
+                $count_result = $this->db->get()->row();
+                $jml = $count_result->total;
             }
             
-            // Config Pagination
-            $config['base_url']              = base_url('laporan/data_omset.php?case='.$case.(!empty($plat) ? '&plat='.$plat : '').(!empty($poli) ? '&poli='.$poli : '').(!empty($tipe) ? '&tipe='.$tipe : '').(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : '').(!empty($jml) ? '&jml='.$jml : ''));
-            $config['total_rows']            = $jml;
-            
-            $config['query_string_segment']  = 'halaman';
-            $config['page_query_string']     = TRUE;
-            $config['per_page']              = $pengaturan->jml_item;
-            $config['num_links']             = 3;
-            
-            $config['first_tag_open']        = '<li class="page-item">';
-            $config['first_tag_close']       = '</li>';
-            
-            $config['prev_tag_open']         = '<li class="page-item">';
-            $config['prev_tag_close']        = '</li>';
-            
-            $config['num_tag_open']          = '<li class="page-item">';
-            $config['num_tag_close']         = '</li>';
-            
-            $config['next_tag_open']         = '<li class="page-item">';
-            $config['next_tag_close']        = '</li>';
-            
-            $config['last_tag_open']         = '<li class="page-item">';
-            $config['last_tag_close']        = '</li>';
-            
-            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
-            $config['cur_tag_close']         = '</b></a></li>';
-            
-            $config['first_link']            = '&laquo;';
-            $config['prev_link']             = '&lsaquo;';
-            $config['next_link']             = '&rsaquo;';
-            $config['last_link']             = '&raquo;';
-            $config['anchor_class']          = 'class="page-link"';
-            
-            // Initializing Config Pagination
-            $this->pagination->initialize($config);
-            
-            // Pagination Data
-            $data['total_rows'] = $config['total_rows'];
-            $data['PerPage']    = $config['per_page'];
-            $data['pagination'] = $this->pagination->create_links();
+            if($jml > 0) {
+                // Config Pagination
+                $config['base_url']              = base_url('laporan/data_omset.php?case='.$case.(!empty($plat) ? '&plat='.$plat : '').(!empty($poli) ? '&poli='.$poli : '').(!empty($tipe) ? '&tipe='.$tipe : '').(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($tgl_awal) ? '&tgl_awal='.$tgl_awal : '').(!empty($tgl_akhir) ? '&tgl_akhir='.$tgl_akhir : '').(!empty($jml) ? '&jml='.$jml : ''));
+                $config['total_rows']            = $jml;
+                
+                $config['query_string_segment']  = 'halaman';
+                $config['page_query_string']     = TRUE;
+                $config['per_page']              = $pengaturan->jml_item;
+                $config['num_links']             = 3;
+                
+                $config['first_tag_open']        = '<li class="page-item">';
+                $config['first_tag_close']       = '</li>';
+                
+                $config['prev_tag_open']         = '<li class="page-item">';
+                $config['prev_tag_close']        = '</li>';
+                
+                $config['num_tag_open']          = '<li class="page-item">';
+                $config['num_tag_close']         = '</li>';
+                
+                $config['next_tag_open']         = '<li class="page-item">';
+                $config['next_tag_close']        = '</li>';
+                
+                $config['last_tag_open']         = '<li class="page-item">';
+                $config['last_tag_close']        = '</li>';
+                
+                $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+                $config['cur_tag_close']         = '</b></a></li>';
+                
+                $config['first_link']            = '&laquo;';
+                $config['prev_link']             = '&lsaquo;';
+                $config['next_link']             = '&rsaquo;';
+                $config['last_link']             = '&raquo;';
+                $config['anchor_class']          = 'class="page-link"';
+                
+                // Initializing Config Pagination
+                $this->pagination->initialize($config);
+                
+                // Pagination Data
+                $data['total_rows'] = $config['total_rows'];
+                $data['PerPage']    = $config['per_page'];
+                $data['pagination'] = $this->pagination->create_links();
+                
+                // Apply filters based on case
+                switch ($case) {
+                    case 'per_tanggal':
+                        // Prepare base query for summary data
+                        $this->db->select('SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
+                            SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal')
+                            ->from('tbl_trans_medcheck_det tmd')
+                            ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
+                            ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
+                            ->where('tm.status_hps', '0')
+                            ->where('tm.status_bayar', '1')
+                            ->where('tmd.status_pkt', '0')
+                            ->where('DATE(tm.tgl_bayar)', $tgl);
+                        
+                        if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
+                        if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
+                        if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
+                        if(!empty($plat)) $this->db->where('tm.metode', $plat);
+                        if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
+                        
+                        $data['sql_omset_row'] = $this->db->get()->row();
+                        
+                        // Prepare query for paginated data
+                        $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, tm.id_poli AS id_poli, 
+                            tm.id_dokter AS id_dokter, tmd.id_item AS id_item, tmd.id_item_kat AS id_item_kat, 
+                            tmd.tgl_simpan AS tgl_simpan, tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, 
+                            tm.no_akun AS no_akun, tm.no_rm AS no_rm, mp.nama_pgl AS nama_pgl, mp.nama_pgl AS pasien, 
+                            mp.tgl_lahir AS tgl_lahir, tmd.kode AS kode, tmd.item AS item, tmd.jml AS jml, 
+                            tmd.harga AS harga, tmd.diskon AS diskon, tmd.potongan AS potongan, tmd.potongan_poin AS potongan_poin, 
+                            tmd.subtotal AS subtotal, tm.jml_gtotal AS jml_gtotal, tmd.status_pkt AS status_pkt, 
+                            tmd.status AS status, tm.tipe AS tipe, tm.tipe_bayar AS tipe_bayar, tm.metode AS metode,
+                            SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, SUM(tmd.potongan_poin) AS potongan_poin, 
+                            SUM(tmd.subtotal) AS jml_gtotal')
+                            ->from('tbl_trans_medcheck_det tmd')
+                            ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
+                            ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
+                            ->where('tm.status_hps', '0')
+                            ->where('tm.status_bayar', '1')
+                            ->where('tmd.status_pkt', '0')
+                            ->where('DATE(tm.tgl_bayar)', $tgl);
+                        
+                        if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
+                        if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
+                        if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
+                        if(!empty($plat)) $this->db->where('tm.metode', $plat);
+                        if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
+                        
+                        $this->db->group_by('tm.id_pasien');
+                        $this->db->order_by('tm.id', 'DESC');
+                        $this->db->limit($config['per_page'], $hal);
+                        
+                        $data['sql_omset'] = $this->db->get()->result();
+                        break;
+                    
+                    case 'per_rentang':
+                        // Prepare base query for summary data
+                        $this->db->select('SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
+                            SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal')
+                            ->from('tbl_trans_medcheck_det tmd')
+                            ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
+                            ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
+                            ->where('tm.status_hps', '0')
+                            ->where('tm.status_bayar', '1')
+                            ->where('tmd.status_pkt', '0')
+                            ->where('DATE(tm.tgl_bayar) >=', $tgl_awal)
+                            ->where('DATE(tm.tgl_bayar) <=', $tgl_akhir);
+                        
+                        if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
+                        if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
+                        if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
+                        if(!empty($plat)) $this->db->where('tm.metode', $plat);
+                        if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
+                        
+                        $data['sql_omset_row'] = $this->db->get()->row();
+                        
+                        // Prepare query for paginated data
+                        $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, tm.id_poli AS id_poli, 
+                            tm.id_dokter AS id_dokter, tmd.id_item AS id_item, tmd.id_item_kat AS id_item_kat, 
+                            tmd.tgl_simpan AS tgl_simpan, tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, 
+                            tm.no_akun AS no_akun, tm.no_rm AS no_rm, mp.nama_pgl AS nama_pgl, mp.nama_pgl AS pasien, 
+                            mp.tgl_lahir AS tgl_lahir, tmd.kode AS kode, tmd.item AS item, tmd.jml AS jml, 
+                            tmd.harga AS harga, tmd.diskon AS diskon, tmd.potongan AS potongan, tmd.potongan_poin AS potongan_poin, 
+                            tmd.subtotal AS subtotal, tm.jml_gtotal AS jml_gtotal, tmd.status_pkt AS status_pkt, 
+                            tmd.status AS status, tm.tipe AS tipe, tm.tipe_bayar AS tipe_bayar, tm.metode AS metode,
+                            SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, SUM(tmd.potongan_poin) AS potongan_poin, 
+                            SUM(tmd.subtotal) AS jml_gtotal')
+                            ->from('tbl_trans_medcheck_det tmd')
+                            ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
+                            ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
+                            ->where('tm.status_hps', '0')
+                            ->where('tm.status_bayar', '1')
+                            ->where('tmd.status_pkt', '0')
+                            ->where('DATE(tm.tgl_bayar) >=', $tgl_awal)
+                            ->where('DATE(tm.tgl_bayar) <=', $tgl_akhir);
+                        
+                        if(!empty($tipe)) $this->db->where('tm.tipe', $tipe);
+                        if(!empty($tipe_byr)) $this->db->where('tm.tipe_bayar', $tipe_byr);
+                        if(!empty($poli)) $this->db->where('tm.id_poli', $poli);
+                        if(!empty($plat)) $this->db->where('tm.metode', $plat);
+                        if(!empty($pasien)) $this->db->like('mp.nama_pgl', $pasien);
+                        
+                        $this->db->group_by('tm.id_pasien, tm.tgl_masuk');
+                        $this->db->order_by('tm.id', 'DESC');
+                        $this->db->limit($config['per_page'], $hal);
+                        
+                        $data['sql_omset'] = $this->db->get()->result();
+                        break;
+                }
+            } else {
+                // Initialize empty data when no results
+                $data['sql_omset'] = array();
+                $data['sql_omset_row'] = null;
+                $data['total_rows'] = 0;
+                $data['PerPage'] = $pengaturan->jml_item;
+                $data['pagination'] = '';
+            }
             
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/laporan/sidebar_lap';
@@ -1230,7 +1228,7 @@ class laporan extends CI_Controller {
             switch ($case){
                 case 'per_tanggal':
                     if(!empty($hal)){
-                        $data['sql_penj'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
+                        $data['sql_omset'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
                                         tm.id_poli AS id_poli, tm.id_dokter AS id_dokter, tmd.id_item AS id_item, 
                                         tmd.id_item_kat AS id_item_kat, tmd.tgl_simpan AS tgl_simpan, 
                                         tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, tm.no_akun AS no_akun, 
@@ -1255,7 +1253,7 @@ class laporan extends CI_Controller {
                             ->order_by('tmd.id', 'desc')
                             ->get()->result();
                     }else{
-                        $data['sql_penj'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
+                        $data['sql_omset'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
                                         tm.id_poli AS id_poli, tm.id_dokter AS id_dokter, tmd.id_item AS id_item, 
                                         tmd.id_item_kat AS id_item_kat, tmd.tgl_simpan AS tgl_simpan, 
                                         tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, tm.no_akun AS no_akun, 
@@ -1298,7 +1296,7 @@ class laporan extends CI_Controller {
                 
                 case 'per_rentang':
                     if(!empty($jml)){
-                        $data['sql_penj'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
+                        $data['sql_omset'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
                                         tm.id_poli AS id_poli, tm.id_dokter AS id_dokter, tmd.id_item AS id_item, 
                                         tmd.id_item_kat AS id_item_kat, tmd.tgl_simpan AS tgl_simpan, 
                                         tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, tm.no_akun AS no_akun, 
@@ -1323,7 +1321,7 @@ class laporan extends CI_Controller {
                             ->order_by('tmd.id', 'desc')
                             ->get()->result();
                     }else{
-                        $data['sql_penj'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
+                        $data['sql_omset'] = $this->db->select('tmd.id AS id, tm.id AS id_medcheck, tm.id_pasien AS id_pasien, 
                                         tm.id_poli AS id_poli, tm.id_dokter AS id_dokter, tmd.id_item AS id_item, 
                                         tmd.id_item_kat AS id_item_kat, tmd.tgl_simpan AS tgl_simpan, 
                                         tm.tgl_masuk AS tgl_masuk, tm.tgl_bayar AS tgl_bayar, tm.no_akun AS no_akun, 
@@ -3303,8 +3301,31 @@ class laporan extends CI_Controller {
                                     ->count_all_results();
                     break;
 
+                    case 'per_tanggal':
+                        // Format day and month with leading zeros if needed
+                        $tgl = sprintf('%02d', $tgl);
+                        $bln = sprintf('%02d', $bln);
+                        
+                        // Get the search date from the input (format: DD-MM)
+                        $search_date = $this->input->get('tgl');
+                        if (!empty($search_date) && strpos($search_date, '-') !== false) {
+                            $date_parts = explode('-', $search_date);
+                            if (count($date_parts) >= 2) {
+                                $tgl = sprintf('%02d', $date_parts[0]);
+                                $bln = sprintf('%02d', $date_parts[1]);
+                            }
+                        }
+                        
+                        $jml = $this->db->select("tbl_m_pasien.id")
+                                        ->where('tbl_m_pasien.no_hp !=', '')
+                                        ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgl)
+                                        ->where('MONTH(tbl_m_pasien.tgl_lahir)', $bln)
+                                        ->from("tbl_m_pasien")
+                                        ->count_all_results();
+                        break;
+
                 default:
-                    $jml = $this->db->where('tbl_m_pasien.no_hp !=', '')->from('tbl_m_pasien')->count_all_results();
+                    $jml = 0;
                     break;
             }
 
@@ -3312,7 +3333,7 @@ class laporan extends CI_Controller {
                 $data['hasError'] = $this->session->flashdata('form_error');
                 
                 // Config Pagination
-                $config['base_url']              = base_url('laporan/data_pasien.php?case='.$case.(!empty($tgl) ? '&tgl='.$tgl : '').(!empty($bulan) ? '&bulan='.$bulan : ''));
+                $config['base_url']              = base_url('laporan/data_pasien.php?case='.$case.(!empty($tgl) ? '&tgl='.$this->input->get('tgl') : '').(!empty($bulan) ? '&bulan='.$bulan : ''));
                 $config['total_rows']            = $jml;
                 
                 $config['query_string_segment']  = 'halaman';

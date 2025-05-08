@@ -142,7 +142,7 @@
                     <?php echo form_close() ?>
                 </div>
             </div>
-            <?php if ($_GET['jml'] > 0) { ?>
+            <?php if ($sql_omset) { ?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card card-default">
