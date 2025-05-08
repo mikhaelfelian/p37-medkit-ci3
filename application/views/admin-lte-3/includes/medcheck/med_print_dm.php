@@ -124,8 +124,8 @@ margin: 10;*/
                 <?php foreach ($sql_det as $medc) { ?>
                     <?php 
                         // Calculate subtotal: (harga - diskon - potongan) * jml
-                        $item_subtotal = ($medc->harga - $medc->diskon - $medc->potongan) * $medc->jml;
-                        $subtotal = $subtotal + $item_subtotal; 
+                        $item_subtotal  = ($medc->harga - $medc->diskon - $medc->potongan) * $medc->jml;
+                        $subtot         = $subtot + $item_subtotal; 
                     ?>
                     <?php $total_item = $subtotal; ?>
                     <?php $total_hrg  = $subtotal; ?>
@@ -168,7 +168,7 @@ margin: 10;*/
             <?php 
                 $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
                 $jml_ongkir     = $sql_medc->jml_ongkir;
-                $jml_total      = $sql_medc_sum->subtotal + $sql_medc_sum->diskon; // + $sql_medc_sum->potongan + $sql_medc_sum->potongan_poin;
+                $jml_total      = $sql_medc_sum->subtotal + $sql_medc_sum->diskon + $sql_medc_sum->potongan; // + $sql_medc_sum->potongan_poin;
                 $jml_diskon     = $jml_total - $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
                 
                 // Fix for division by zero error
