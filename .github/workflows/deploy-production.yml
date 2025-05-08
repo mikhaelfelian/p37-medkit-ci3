@@ -42,8 +42,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             cd ${{ secrets.DEPLOY_PATH_PROD }}
 
-            echo "📁 Backup database.php"
+            echo "📁 Backup konfigurasi penting"
             cp database/database.php /tmp/database.php
+            cp .php.ini /tmp/php.ini || true
+            cp user.ini /tmp/user.ini || true
 
             echo "🚀 Starting deployment - mode: ${{ github.event.inputs.mode }}"
 
@@ -55,16 +57,16 @@ jobs:
             elif [ "${{ github.event.inputs.mode }}" = "commit-sha" ]; then
               git fetch origin
               git reset --hard
-              git clean -fd
+              git clean -fd -e .php.ini -e user.ini
               git checkout ${{ github.event.inputs.ref }}
 
             elif [ "${{ github.event.inputs.mode }}" = "revert-all" ]; then
               git reset --hard HEAD~1
-              git clean -fd
+              git clean -fd -e .php.ini -e user.ini
 
             elif [ "${{ github.event.inputs.mode }}" = "revert-sha" ]; then
               git reset --hard
-              git clean -fd
+              git clean -fd -e .php.ini -e user.ini
               git checkout ${{ github.event.inputs.ref }}
 
             else
@@ -72,8 +74,10 @@ jobs:
               exit 1
             fi
 
-            echo "♻️ Restore database.php"
+            echo "♻️ Balikin konfigurasi penting njing"
             mv /tmp/database.php database/database.php
+            mv /tmp/php.ini .php.ini || true
+            mv /tmp/user.ini user.ini || true
 
             echo "✅ Deployment finished for mode: ${{ github.event.inputs.mode }}"
           EOF
