@@ -41,8 +41,11 @@
     <!-- AdminLTE -->
     <script src="<?php echo base_url('assets/theme/admin-lte-3/dist/js/adminlte.js'); ?>"></script>
 
-    <!--API Recaptcha-->
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <!-- reCAPTCHA v3 -->
+    <script>
+        var recaptchaSiteKey = '<?php echo $pengaturan->recaptcha_key; ?>';
+    </script>
+    <script src="https://www.google.com/recaptcha/api.js?render=<?php echo $pengaturan->recaptcha_key; ?>"></script>
 
     <!-- Toastr -->
     <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
@@ -63,7 +66,8 @@
                 <?php $msg = $this->session->flashdata('login') ?>
                 <?php $hasError = $this->session->flashdata('form_error'); ?>
 
-                <?php echo form_open(base_url('cek_login.php'), 'autocomplete="off"') ?>
+                <?php echo form_open(base_url('cek_login.php'), 'autocomplete="off" id="loginForm"') ?>
+                <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
                 <div class="input-group mb-3">
                     <?php echo form_input([
                         'name' => 'user',
@@ -97,10 +101,15 @@
                             class="error invalid-feedback"><?php echo $hasError['pass']; ?></span>
                     <?php } ?>
                 </div>
-                <div class="input-group mb-3">
-                    <?php echo $recaptcha; ?>
-                </div>
                 <div class="row">
+                    <div class="col-8">
+                        <div class="icheck-primary">
+                            <?php echo form_checkbox('remember', '1', FALSE, 'id="remember"'); ?>
+                            <label for="remember">
+                                Ingat Saya
+                            </label>
+                        </div>
+                    </div>
                     <!-- /.col -->
                     <div class="col-4">
                         <button type="submit" name="login" value="login_aksi"
@@ -120,6 +129,19 @@
     <script type="text/javascript">
         $(function () {
             <?php echo $this->session->flashdata('login_toast'); ?>
+        });
+
+        // reCAPTCHA v3
+        grecaptcha.ready(function() {
+            // Generate token on form submit
+            $('#loginForm').submit(function(e) {
+                e.preventDefault();
+                grecaptcha.execute(recaptchaSiteKey, {action: 'login'})
+                .then(function(token) {
+                    $('#recaptchaResponse').val(token);
+                    $('#loginForm')[0].submit();
+                });
+            });
         });
     </script>
 </body>
