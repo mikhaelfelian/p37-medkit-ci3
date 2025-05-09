@@ -196,7 +196,7 @@ class home extends CI_Controller {
     }
 
     public function tes2(){
-        // echo '<meta http-equiv="refresh" content="10">'; 
+        echo '<meta http-equiv="refresh" content="10">'; 
         
         $sql = $this->db
                     ->where('status', '2')
@@ -251,7 +251,7 @@ class home extends CI_Controller {
                 'sp'            => '1',
             );
             
-            //crud::update('tbl_trans_medcheck_file', 'id', $item->id, $data);
+            $this->db->where('id', $item->id)->update('tbl_trans_medcheck_file', $data);
             
             echo '<pre>';
             print_r($data);
