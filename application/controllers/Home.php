@@ -195,6 +195,70 @@ class home extends CI_Controller {
         }
     }
 
+    public function tes2(){
+        // echo '<meta http-equiv="refresh" content="10">'; 
+        
+        $sql = $this->db
+                    ->where('status', '2')
+                    //->where('id_rad !=', '0')
+                    // ->where('id_berkas !=', '0')
+                    //->where('id_medcheck_rsm !=', '0')
+                    //->where('id <', '27956')
+                    ->where('DATE(tgl_simpan) <', '2025-04-01')
+                    ->where('sp', '0')
+                    ->order_by('id', 'asc')
+                    ->get('tbl_trans_medcheck_file')->result();
+        
+        foreach ($sql as $item){
+            $fl  = parse_url($item->file_name); // ambil bagian path dan query dari file_name
+            
+            // cek kalau ada query-nya
+            if (!isset($fl['query'])) {
+                continue; // skip kalau gak ada query
+            }
+    
+            parse_str($fl['query'], $prm); // hasilkan array dari query string
+    
+            // array untuk menampung hasil dekripsi
+            $decrypted = [];
+    
+            // loop seluruh parameter di query string dan dekrip isinya
+            foreach ($prm as $key => $val) {
+                if ($key === 'status') {
+                    // jangan dekrip 'status'
+                    $decrypted[$key] = $val;
+                } else {
+                    // dekrip parameter lain
+                    $decrypted[$key] = general::enkrip($val);
+                }
+            }
+    
+            //echo '<pre>';
+            //echo "Original URL: " . $item->file_name . "\n";
+            //echo "Decrypted Params:\n";
+            
+            // Menyusun kembali URL setelah dekripsi
+            $decrypted_url = $fl['path'] . '?' . http_build_query($decrypted);
+    
+            //echo "Reconstructed Decrypted URL: " . $decrypted_url . "\n";
+            //echo '</pre>';	
+    
+            
+            $data = array(
+                // 'file_name'     => $fl['path'].'?id='.general::dekrip($id).'&id_resm='.general::dekrip($id_resm),
+                'file_name'     => $decrypted_url,
+                // 'file_name'     => $item->file_name,
+                'sp'            => '1',
+            );
+            
+            //crud::update('tbl_trans_medcheck_file', 'id', $item->id, $data);
+            
+            echo '<pre>';
+            print_r($data);
+            
+        }
+    }
+
     /**
      * for update date and time display
      * Function to update date and time display
