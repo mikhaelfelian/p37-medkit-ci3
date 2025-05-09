@@ -248,7 +248,7 @@ class home extends CI_Controller {
                 // 'file_name'     => $fl['path'].'?id='.general::dekrip($id).'&id_resm='.general::dekrip($id_resm),
                 'file_name'     => $decrypted_url,
                 // 'file_name'     => $item->file_name,
-                'sp'            => '1',
+                'sp'            => '0',
             );
             
             $this->db->where('id', $item->id)->update('tbl_trans_medcheck_file', $data);
