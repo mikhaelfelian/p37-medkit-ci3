@@ -185,15 +185,14 @@
                                         break;
                                 }
                                 ?>
-                                <!--<button class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo $uri_htm ?>'"><i class="fas fa-file-excel"></i> Excel</button>-->
                                 <button class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo $uri_xls ?>'"><i class="fas fa-file-excel"></i> Excel Global</button>
-                                <!--<button class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo $uri_csv ?>'"><i class="fas fa-file-excel"></i> Excel Zahir</button>-->
                                 <button class="btn btn-success btn-flat" onclick="window.location.href = '<?php echo $uri_xls2 ?>'"><i class="fas fa-file-excel"></i> Excel Zahir</button>
                                 <?php echo br(); ?> 
                                 <?php echo $this->session->flashdata('medcheck'); ?>
+                                <?php $tot          = $sql_omset_row->jml_subtotal; // + $tot_diskon + $sql_omset_row->jml_potongan_poin; ?>
                                 <?php $tot_diskon   = $sql_omset_row->jml_diskon + $sql_omset_row->jml_potongan; ?>
-                                <?php $tot          = $sql_omset_row->jml_gtotal + $tot_diskon + $sql_omset_row->jml_potongan_poin; ?>
-                                
+                                <?php $tot_subtotal = $tot - $tot_diskon; ?>
+
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
@@ -222,7 +221,7 @@
                                             <td class="text-right text-bold"><?php echo general::format_angka($tot) ?></td>
                                             <td class="text-right text-bold"><?php echo general::format_angka($tot_diskon) ?></td>
                                             <td class="text-right text-bold"><?php echo general::format_angka($sql_omset_row->jml_potongan_poin) ?></td>
-                                            <td class="text-right text-bold"><?php echo general::format_angka($sql_omset_row->jml_gtotal) ?></td>
+                                            <td class="text-right text-bold"><?php echo general::format_angka($tot_subtotal) ?></td>
                                             <td class="text-right text-bold"></td>
                                         </tr>
                                         <?php
@@ -281,7 +280,7 @@
                                             <td class="text-right text-bold"><?php echo general::format_angka($tot) ?></td>
                                             <td class="text-right text-bold"><?php echo general::format_angka($tot_diskon) ?></td>
                                             <td class="text-right text-bold"><?php echo general::format_angka($sql_omset_row->jml_potongan_poin) ?></td>
-                                            <td class="text-right text-bold"><?php echo general::format_angka($sql_omset_row->jml_gtotal) ?></td>
+                                            <td class="text-right text-bold"><?php echo general::format_angka($tot_subtotal) ?></td>
                                             <td class="text-right text-bold"></td>
                                         </tr>
                                         <?php } ?>

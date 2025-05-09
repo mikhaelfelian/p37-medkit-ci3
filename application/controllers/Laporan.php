@@ -1041,8 +1041,10 @@ class laporan extends CI_Controller {
                 switch ($case) {
                     case 'per_tanggal':
                         // Prepare base query for summary data
-                        $this->db->select('SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
-                            SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal')
+                        $this->db->select('SUM(tmd.harga) AS jml_harga, SUM(tmd.jml) AS jml_qty, 
+                            SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
+                            SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal, 
+                            SUM(tmd.harga * tmd.jml) AS jml_subtotal')
                             ->from('tbl_trans_medcheck_det tmd')
                             ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
                             ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
