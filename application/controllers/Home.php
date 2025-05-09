@@ -205,7 +205,7 @@ class home extends CI_Controller {
                     //->where('id_medcheck_rsm !=', '0')
                     //->where('id <', '27956')
                     ->where('DATE(tgl_simpan) <', '2025-04-01')
-                    ->where('sp', '0')
+                    ->where('sp', '1')
                     ->order_by('id', 'asc')
                     ->get('tbl_trans_medcheck_file')->result();
         
