@@ -190,8 +190,8 @@
                                 <?php echo br(); ?> 
                                 <?php echo $this->session->flashdata('medcheck'); ?>
                                 <?php $tot          = $sql_omset_row->jml_subtotal; // + $tot_diskon + $sql_omset_row->jml_potongan_poin; ?>
-                                <?php $tot_diskon   = $sql_omset_row->jml_diskon + $sql_omset_row->jml_potongan + $sql_omset_row->jml_potongan_poin; ?>
-                                <?php $tot_subtotal = $tot - $tot_diskon; ?>
+                                <?php $tot_diskon   = $sql_omset_row->jml_diskon + $sql_omset_row->jml_potongan; ?>
+                                <?php $tot_subtotal = $tot - ($sql_omset_row->jml_diskon + $sql_omset_row->jml_potongan + $sql_omset_row->jml_potongan_poin); //$tot - $tot_diskon; ?>
 
                                 <table class="table table-striped">
                                     <thead>
