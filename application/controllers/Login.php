@@ -12,8 +12,8 @@ class Login extends CI_Controller
 
     public function index()
     {
-        if ($this->session->userdata('logged_in') == TRUE):
-            redirect(base_url('dashboard2.php'));
+        if (akses::aksesLogin() == TRUE):
+            redirect(base_url('dashboard.php'));
         else:
             $data['login'] = 'TRUE';
             $this->load->view('admin-lte-3/includes/user/login', $data);
