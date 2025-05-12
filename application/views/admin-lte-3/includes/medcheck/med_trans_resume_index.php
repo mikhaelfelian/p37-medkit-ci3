@@ -50,7 +50,6 @@
                                             <small><?php echo $this->ion_auth->user($rsm->id_user)->row()->first_name; ?></small>
                                         </td>
                                         <td class="text-left" style="width: 90px;">
-                                            <?php // if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakRad() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE) { ?>
                                             <?php echo anchor(base_url('medcheck/tambah.php?act=resm_surat&id=' . general::enkrip($sql_medc->id) . '&id_resm=' . general::enkrip($rsm->id) . '&status=' . $this->input->get('status') . '&route=' . $this->input->get('route')), 'Surat &raquo;', 'class="btn btn-success btn-flat btn-xs text-bold" style="width: 70px;"') ?>
                                             <?php echo anchor(base_url('medcheck/tambah.php?act=' . ($sql_medc->tipe == '3' ? 'resm_input_rnp' : 'resm_input') . '&id=' . general::enkrip($sql_medc->id) . '&id_resm=' . general::enkrip($rsm->id) . '&status=' . $this->input->get('status') . '&route=' . $this->input->get('route')), 'Input &raquo;', 'class="btn btn-warning btn-flat btn-xs text-bold" style="width: 70px;"') ?>
                                             <?php if ($sql_medc->tipe == '3') { ?>
@@ -58,7 +57,6 @@
                                                     <?php echo anchor(base_url('medcheck/set_medcheck_resm_ctk.php?id=' . $this->input->get('id') . '&id_resm=' . general::enkrip($rsm->id)), 'Cetak &raquo;', 'class="btn btn-primary btn-flat btn-xs text-bold" target="_blank" style="width: 70px;"') ?>
                                                 <?php endif; ?>
                                             <?php } ?>
-                                            <?php // } ?>
                                         </td>
                                     </tr>
                                     <?php $no++ ?>
