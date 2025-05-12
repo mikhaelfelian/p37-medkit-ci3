@@ -57,7 +57,7 @@
                                 <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                             </div>
                         </div>
-                        <small class="text-muted">* File yang diijinkan: jpg|png|pdf|jpeg|jfif (Maks. 5MB)</small>
+                        <small class="text-muted">* File yang diijinkan: jpg|png|pdf|jpeg|jfif (Maks. 2MB)</small>
                     </div>
                 </div>
                 <div class="form-group row">

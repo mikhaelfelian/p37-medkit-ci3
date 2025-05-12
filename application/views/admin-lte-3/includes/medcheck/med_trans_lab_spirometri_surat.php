@@ -46,7 +46,6 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <?php echo $sql_medc_lab_spr_rw->status_rokok ?>
                     <div class="form-group <?php echo (!empty($hasError['status_rokok']) ? 'text-danger' : '') ?>">
                         <label for="inputEmail3">Apakah Anda Perokok ?*</label><?php echo br(1) ?>
                         <select id="status_rokok" name="status_rokok" class="form-control rounded-0 <?php echo (!empty($hasError['status_rokok']) ? ' is-invalid' : '') ?>">

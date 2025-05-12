@@ -428,19 +428,21 @@ $route['medcheck/set_medcheck_lab_spr_upd.php']         = "medcheck/set_medcheck
 $route['medcheck/set_medcheck_lab_spr_hsl.php']         = "medcheck/set_medcheck_lab_spiro_upd_hsl";
 $route['medcheck/set_medcheck_lab_spr_hps.php']         = "medcheck/set_medcheck_lab_spiro_hps";
 $route['medcheck/set_medcheck_lab_spr_hps_hsl.php']     = "medcheck/set_medcheck_lab_spiro_hps_hsl";
+$route['medcheck/set_medcheck_lab_spr_cetak.php']       = "medcheck/set_medcheck_lab_spiro_cetak";
 $route['medcheck/set_medcheck_lab_adm_save.php']        = 'medcheck/set_medcheck_lab_adm_save';
 $route['medcheck/set_medcheck_lab_adm_delete.php']      = 'medcheck/set_medcheck_lab_adm_delete';
 $route['medcheck/set_medcheck_lab_ekg.php']             = "medcheck/set_medcheck_lab_ekg";
 $route['medcheck/set_medcheck_lab_ekg_upd.php']         = "medcheck/set_medcheck_lab_ekg_upd";
 $route['medcheck/set_medcheck_lab_ekg_upload.php']      = "medcheck/set_medcheck_lab_ekg_file";
+$route['medcheck/set_medcheck_lab_ekg_cetak.php']       = "medcheck/set_medcheck_lab_ekg_cetak";
 $route['medcheck/lab/hapus.php']                        = "medcheck/set_medcheck_lab_hapus";
 $route['medcheck/lab/hapus_spiro.php']                  = "medcheck/set_medcheck_lab_hapus_spiro";
 $route['medcheck/lab/hapus_ekg.php']                    = "medcheck/set_medcheck_lab_hapus_ekg";
 
 // Laporan routes
-$route['laporan/laporan_referal.php'] = 'laporan/laporan_referal';
-$route['laporan/set_cari_referal.php'] = 'laporan/set_cari_referal';
-$route['laporan/set_bayar_referal.php'] = 'laporan/set_bayar_referal'; 
+$route['laporan/laporan_referal.php']                   = 'laporan/laporan_referal';
+$route['laporan/set_cari_referal.php']                  = 'laporan/set_cari_referal';
+$route['laporan/set_bayar_referal.php']                 = 'laporan/set_bayar_referal'; 
 
 $route['medcheck/set_medcheck_rad.php']                 = "medcheck/set_medcheck_rad";
 $route['medcheck/set_medcheck_rad_upd.php']             = "medcheck/set_medcheck_rad_upd";
@@ -455,6 +457,7 @@ $route['medcheck/set_medcheck_pen_hrv_upd.php']         = "medcheck/set_medcheck
 $route['medcheck/set_medcheck_pen_hrv_pros.php']        = "medcheck/set_medcheck_pen_hrv_proses";
 $route['medcheck/set_medcheck_pen_hrv_stat.php']        = "medcheck/set_medcheck_pen_hrv_status";
 $route['medcheck/set_medcheck_pen_hrv_farm.php']        = "medcheck/set_medcheck_pen_hrv_farm";
+$route['medcheck/set_medcheck_pen_hrv_cetak.php']       = "medcheck/set_medcheck_pen_hrv_cetak";
 $route['medcheck/hrv/hapus.php']                        = "medcheck/set_medcheck_pen_hrv_hapus";
 
 $route['medcheck/set_medcheck_mcu.php']                 = "medcheck/set_medcheck_mcu";
@@ -474,6 +477,7 @@ $route['medcheck/set_medcheck_resm_hsl_upd.php']        = "medcheck/set_medcheck
 $route['medcheck/set_medcheck_resm_hsl2_upd.php']       = "medcheck/set_medcheck_resume_hsl2_upd";
 $route['medcheck/set_medcheck_resm_hsl3_upd.php']       = "medcheck/set_medcheck_resume_hsl3_upd";
 $route['medcheck/set_medcheck_resm_ctk.php']            = "medcheck/set_medcheck_resume_ctk";
+$route['medcheck/set_medcheck_resm_ctk_lab.php']        = "medcheck/set_medcheck_resume_ctk_lab";
 $route['medcheck/set_medcheck_resm_pros.php']           = "medcheck/set_medcheck_resume_proses";
 $route['medcheck/resume/hapus.php']                     = "medcheck/set_medcheck_resume_hapus";
 $route['medcheck/resume/hapus_hsl.php']                 = "medcheck/set_medcheck_resume_hapus_hsl";
@@ -531,6 +535,7 @@ $route['medcheck/data_pen_hrv.php']                     = "medcheck/data_pen_hrv
 
 # Assesment Form Fisik
 $route['medcheck/set_medcheck_ass_fisik.php']           = "medcheck/set_medcheck_ass_fisik";
+$route['medcheck/set_medcheck_ass_fisik_cetak.php']     = "medcheck/set_medcheck_ass_fisik_cetak";
 $route['medcheck/set_medcheck_ass_fisik_upd.php']       = "medcheck/set_medcheck_ass_fisik_upd";
 $route['medcheck/set_medcheck_ass_fisik_hsl.php']       = "medcheck/set_medcheck_ass_fisik_hsl";
 $route['medcheck/set_medcheck_ass_fisik_hsl2.php']      = "medcheck/set_medcheck_ass_fisik_hsl2";

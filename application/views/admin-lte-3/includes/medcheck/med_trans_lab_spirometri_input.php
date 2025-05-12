@@ -91,7 +91,7 @@
             <div class="col-lg-6">
             </div>
             <div class="col-lg-6 text-right">                                 
-                <a href="<?php echo base_url('medcheck/surat/cetak_pdf_lab_spiro.php?id='.$this->input->get('id').'&status='.$this->input->get('status').'&id_lab='.$this->input->get('id_lab')) ?>">
+                <a href="<?php echo base_url('medcheck/set_medcheck_lab_spr_cetak.php?id='.$this->input->get('id').'&status='.$this->input->get('status').'&id_lab='.$this->input->get('id_lab')) ?>">
                     <button type="button" class="btn btn-primary btn-flat"><i class="fa fa-print"></i> Cetak</button>
                 </a>
             </div>

@@ -56,7 +56,7 @@
     <div class="card-footer">
         <div class="row">
             <div class="col-lg-6">
-                <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&status=17') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
+                <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tambah.php?act=resm_fisik&id=' . general::enkrip($sql_medc->id) . '&status=9') ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
             </div>
             <div class="col-lg-6 text-right">                                 
                 <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Simpan</button>

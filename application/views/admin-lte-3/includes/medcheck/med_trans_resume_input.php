@@ -110,7 +110,7 @@
             </div>
             <div class="col-lg-6 text-right">  
                 <?php if (!empty($sql_medc_rsm_dt)) { ?>
-                    <?php echo anchor(base_url('medcheck/surat/cetak_pdf_rsm_lab.php?id='.$this->input->get('id').'&id_resm='.$this->input->get('id_resm')), '<i class="fas fa-print"></i> Cetak', 'class="btn btn-primary btn-flat" target="_blank"') ?>
+                    <?php echo anchor(base_url('medcheck/set_medcheck_resm_ctk_lab.php?id='.$this->input->get('id').'&id_resm='.$this->input->get('id_resm')), '<i class="fas fa-print"></i> Cetak', 'class="btn btn-primary btn-flat" target="_blank"') ?>
                 <?php } ?>
             </div>
         </div>

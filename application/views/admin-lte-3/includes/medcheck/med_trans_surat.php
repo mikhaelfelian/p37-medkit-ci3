@@ -64,7 +64,7 @@
                                                 <option value="4" <?php echo (isset($surat) && $surat->tipe == '4' ? 'selected' : ''); ?>>Surat Kontrol</option>
                                                 <option value="5" <?php echo (isset($surat) && $surat->tipe == '5' ? 'selected' : ''); ?>>Surat Kelahiran</option>
                                                 <option value="6" <?php echo (isset($surat) && $surat->tipe == '6' ? 'selected' : ''); ?>>Surat Kematian</option>
-                                                <option value="7" <?php echo (isset($surat) && $surat->tipe == '7' ? 'selected' : ''); ?>>Surat Covid</option>
+                                                <!-- <option value="7" <?php echo (isset($surat) && $surat->tipe == '7' ? 'selected' : ''); ?>>Surat Covid</option> -->
                                                 <option value="8" <?php echo (isset($surat) && $surat->tipe == '8' ? 'selected' : ''); ?>>Surat Rujukan</option>
                                                 <option value="9" <?php echo (isset($surat) && $surat->tipe == '9' ? 'selected' : ''); ?>>Surat Vaksin</option>
                                                 <option value="10" <?php echo (isset($surat) && $surat->tipe == '10' ? 'selected' : ''); ?>>Surat Kehamilan</option>

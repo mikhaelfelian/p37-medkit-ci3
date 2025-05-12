@@ -52,7 +52,9 @@
                                         <td class="text-left" style="width: 90px;">
                                             <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAnalis() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE) { ?>
                                                 <?php echo anchor(base_url('medcheck/tambah.php?act=pen_hrv_input&id=' . general::enkrip($sql_medc->id) . '&id_pen=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), 'Input &raquo;', 'class="btn btn-warning btn-flat btn-xs text-bold" style="width: 70px;"') ?>
-                                                <?php echo anchor(base_url('medcheck/surat/cetak_pdf_pen_hrv.php?id=' . general::enkrip($sql_medc->id) . '&id_pen=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), 'Cetak &raquo;', 'class="btn btn-primary btn-flat btn-xs text-bold" style="width: 70px;" target="_blank"') ?>
+                                                <?php if($hrv->status == 1) { ?>
+                                                    <?php echo anchor(base_url('medcheck/set_medcheck_pen_hrv_cetak.php?id=' . general::enkrip($sql_medc->id) . '&id_pen=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), 'Cetak &raquo;', 'class="btn btn-primary btn-flat btn-xs text-bold" style="width: 70px;"') ?>
+                                                <?php } ?>
                                             <?php } ?>
                                         </td>
                                     </tr>
