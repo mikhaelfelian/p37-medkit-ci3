@@ -54,6 +54,19 @@
                                 <label class="control-label">Post Location (Satu Sehat)</label>
                                 <?php echo form_input(array('id' => 'postlocation', 'name' => 'postlocation', 'class' => 'form-control rounded-0'.(!empty($hasError['postlocation']) ? ' is-invalid' : ''), 'value' => $lokasi->post_location)) ?>
                             </div>
+                            <div class="form-group">
+                                <label class="control-label">Status</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="status_aktif" value="1" <?php echo ($lokasi->status == '1' || $lokasi->status == '') ? 'checked' : ''; ?>>
+                                        <label class="form-check-label" for="status_aktif">Aktif</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="status_nonaktif" value="0" <?php echo ($lokasi->status == '0') ? 'checked' : ''; ?>>
+                                        <label class="form-check-label" for="status_nonaktif">Nonaktif</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer">
                             <div class="row">

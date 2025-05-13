@@ -1597,15 +1597,16 @@ class Master extends CI_Controller {
             $lokasi        = $this->input->post('lokasi');
             $ket           = $this->input->post('keterangan');
             $postlocation  = $this->input->post('postlocation');
+            $status        = $this->input->post('status');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('lokasi', 'Kategori', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'lokasi'     => form_error('lokasi'),
-                );
+                $msg_error = [
+                    'lokasi' => form_error('lokasi'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_klinik_tambah.php'));
@@ -1617,14 +1618,15 @@ class Master extends CI_Controller {
                         return;
                     }
                     
-                $data_penj = array(
-                    'tgl_simpan' => date('Y-m-d H:i:s'),
-                        'tgl_modif'  => date('Y-m-d H:i:s'),
-                    'kode'       => $kode,
-                    'lokasi'     => $lokasi,
-                    'keterangan' => $ket,
+                    $data_penj = [
+                        'tgl_simpan'    => date('Y-m-d H:i:s'),
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'kode'          => $kode,
+                        'lokasi'        => $lokasi,
+                        'keterangan'    => $ket,
                         'post_location' => $postlocation,
-                    );
+                        'status'        => $status,
+                    ];
                     
                     if (!crud::simpan('tbl_m_poli', $data_penj)) {
                         $this->session->set_flashdata('master_toast', 'toastr.error("Gagal menyimpan data klinik");');
@@ -1632,7 +1634,7 @@ class Master extends CI_Controller {
                     }
                     
                     $this->session->set_flashdata('master_toast', 'toastr.success("Data klinik berhasil disimpan");');
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik disimpan</div>');
+                    $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik disimpan</div>');
                 } catch (Exception $e) {
                     $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('master/data_klinik_tambah.php'));
@@ -1654,6 +1656,7 @@ class Master extends CI_Controller {
             $lokasi        = $this->input->post('lokasi');
             $ket           = $this->input->post('keterangan');
             $postlocation  = $this->input->post('postlocation');
+            $status        = $this->input->post('status');
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
@@ -1661,9 +1664,9 @@ class Master extends CI_Controller {
             $this->form_validation->set_rules('id', 'ID', 'required');
 
             if ($this->form_validation->run() == FALSE) {
-                $msg_error = array(
-                    'lokasi'     => form_error('lokasi'),
-                );
+                $msg_error = [
+                    'lokasi' => form_error('lokasi'),
+                ];
 
                 $this->session->set_flashdata('form_error', $msg_error);
                 redirect(base_url('master/data_klinik_tambah.php?id='.$id));
@@ -1675,13 +1678,14 @@ class Master extends CI_Controller {
                         return;
                     }
                     
-                $data_penj = array(
-                    'tgl_modif'  => date('Y-m-d H:i:s'),
-                    'kode'       => $kode,
-                    'lokasi'     => $lokasi,
-                    'keterangan' => $ket,
+                    $data_penj = [
+                        'tgl_modif'     => date('Y-m-d H:i:s'),
+                        'kode'          => $kode,
+                        'lokasi'        => $lokasi,
+                        'keterangan'    => $ket,
                         'post_location' => $postlocation,
-                    );
+                        'status'        => $status,
+                    ];
                     
                     if (!crud::update('tbl_m_poli', 'id', general::dekrip($id), $data_penj)) {
                         $this->session->set_flashdata('master_toast', 'toastr.error("Gagal mengubah data klinik");');
@@ -1689,7 +1693,7 @@ class Master extends CI_Controller {
                     }
                     
                     $this->session->set_flashdata('master_toast', 'toastr.success("Data klinik berhasil diubah");');
-                $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik diubah</div>');
+                    $this->session->set_flashdata('master', '<div class="alert alert-success">Data klinik diubah</div>');
                 } catch (Exception $e) {
                     $this->session->set_flashdata('master_toast', 'toastr.error("' . $e->getMessage() . '");');
                     redirect(base_url('master/data_klinik_tambah.php?id='.$id));
