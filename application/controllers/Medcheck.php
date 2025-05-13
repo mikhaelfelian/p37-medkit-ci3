@@ -22106,7 +22106,6 @@ class Medcheck extends CI_Controller {
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
-            // $lokasi             = $this->db->where('id', $sql_medc->id_lokasi)->get('tbl_m_lokasi')->row();
             $judul              = "KWITANSI ".strtoupper(general::status_rawat2($sql_medc->tipe));
             
             $this->load->library('MedPDFdm');
