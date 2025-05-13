@@ -23145,6 +23145,15 @@ class Medcheck extends CI_Controller {
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
+
+                    case 'bhp':
+                        $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep, tbl_m_produk.status_racikan')
+                                        ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
+                                        ->where('tbl_m_produk.status', '6')
+                                        ->where('status_hps', '0')
+                                        ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
+                                        ->get('tbl_m_produk')->result();
+                        break;
             }
 
             if(!empty($sql)){
