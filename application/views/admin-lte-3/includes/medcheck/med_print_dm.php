@@ -121,7 +121,7 @@ margin: 10;*/
                 <?php foreach ($sql_det as $medc) { ?>
                     <?php 
                         // Calculate subtotal: (harga - diskon - potongan) * jml
-                        $item_subtotal  = ($medc->harga - $medc->diskon - $medc->potongan) * $medc->jml;
+                        $item_subtotal  = (($medc->harga - $medc->diskon) * $medc->jml) - $medc->potongan;
                         $subtot         = $subtot + $item_subtotal;
                     ?>
                     <?php $total_item = $item_subtotal; ?>
