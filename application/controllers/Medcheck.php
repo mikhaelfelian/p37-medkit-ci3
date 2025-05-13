@@ -22194,7 +22194,7 @@ class Medcheck extends CI_Controller {
                     $pdf->Cell(1, 0.35, (float)$medc->jml, '', 0, 'C', $fill);
                     $pdf->Cell(2, 0.35, general::format_angka($medc->harga), '', 0, 'R', $fill);
                     $pdf->Cell(2.5, 0.35, general::format_angka($item_subtotal), '', 0, 'R', $fill);
-                    $pdf->Ln();
+                    $pdf->Ln(); 
                     
                     if($medc->diskon > 0){
                         $pdf->Cell(5.5, 0.35, ($medc->disk1 != '0.00' ? 'disk : '.(float)$medc->disk1 : '').($medc->disk2 != '0.00' ? ' + '.(float)$medc->disk2 : '').($medc->disk3 != '0.00' ? ' + '.(float)$medc->disk3 : '').($medc->disk1 != '0.00' || $medc->disk2 != '0.00' || $medc->disk3 != '0.00' ? '%' : '').($medc->potongan > 0 ? ' pot : '.general::format_angka($medc->potongan) : ''), '', 0, 'R', $fill);
