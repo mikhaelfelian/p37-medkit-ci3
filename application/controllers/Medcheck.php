@@ -4090,24 +4090,29 @@ class Medcheck extends CI_Controller {
                     $this->db->insert('tbl_trans_medcheck_dokter', $data_dokter);
                 
                     # Masukkan GC ke tabel riwayat berkas
-                    $file_gc = $this->pdf_gc($sql_dft_gc->id, 'F', $pasien);
-                    $data_file_gc = [
-                        'id_medcheck'       => $last_id,
-                        'id_berkas'         => $sql_dft_gc->id,
-                        'id_pasien'         => (!empty($pasien) ? $pasien : '0'),
-                        'id_user'           => $this->ion_auth->user()->row()->id,
-                        'tgl_simpan'        => date('Y-m-d H:i:s'),
-                        'tgl_masuk'         => date('Y-m-d H:i'),
-                        'judul'             => 'SURAT PERSETUJUAN UMUM',
-                        'file_name'         => $file_gc,
-                        'file_ext'          => '.pdf',
-                        'file_type'         => 'application/pdf',
-                        'status'            => '1',
-                    ];
-                
-                    # Jika GC dibuat maka simpan berkas ke tabel berkas
-                    if($sql_dft_gc->id > 0){
-                        $this->db->insert('tbl_trans_medcheck_file', $data_file_gc);
+                    if($sql_dft_gc && $sql_dft_gc->id > 0) {
+                        try {
+                            $file_gc = $this->pdf_gc($sql_dft_gc->id, 'F', $pasien);
+                            $data_file_gc = [
+                                'id_medcheck'       => $last_id,
+                                'id_berkas'         => $sql_dft_gc->id,
+                                'id_pasien'         => (!empty($pasien) ? $pasien : '0'),
+                                'id_user'           => $this->ion_auth->user()->row()->id,
+                                'tgl_simpan'        => date('Y-m-d H:i:s'),
+                                'tgl_masuk'         => date('Y-m-d H:i'),
+                                'judul'             => 'SURAT PERSETUJUAN UMUM',
+                                'file_name'         => $file_gc,
+                                'file_ext'          => '.pdf',
+                                'file_type'         => 'application/pdf',
+                                'status'            => '1',
+                            ];
+                            
+                            # Simpan berkas ke tabel berkas
+                            $this->db->insert('tbl_trans_medcheck_file', $data_file_gc);
+                        } catch (Exception $e) {
+                            // Log error but continue processing
+                            error_log('Error generating PDF: ' . $e->getMessage());
+                        }
                     }
                 
                     # Jika tipe medcheck lab atau radiologi
@@ -4178,7 +4183,7 @@ class Medcheck extends CI_Controller {
 
                         if (!$this->upload->do_upload('fupload')) {
                             // Log error but continue processing
-                            throw new Exception('File upload failed: ' . $this->upload->display_errors());
+                            error_log('File upload failed: ' . $this->upload->display_errors());
                         } else {
                             $f = $this->upload->data();
                         
