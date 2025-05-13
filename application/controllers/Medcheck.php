@@ -5965,47 +5965,49 @@ class Medcheck extends CI_Controller {
                 $sql_medc_det   = $this->db->where('id_medcheck', $sql_cek->id)->get('tbl_trans_medcheck_det');
                 $sql_medc_det_sm= $this->db->select('SUM(potongan_poin) as potongan_poin')->where('id_medcheck', $sql_cek->id)->get('tbl_trans_medcheck_det')->row();
                 $sql_poin       = $this->db->where('id_pasien', $sql_cek->id_pasien)->get('tbl_m_pasien_poin')->row();
-                
-                # Jml Sisa Poin
-                $jml_gtot_poin  = (float)$sql_poin->jml_poin_nom - (float)$jml_pot_poin;
-                
-                $jml_kurang     = $jml_gtotal - $jml_bayar;
-                $jml_kembali    = $jml_bayar - $jml_gtotal;
-                
-                // Calculate discount safely
-                $diskon = 0;
-                if ((float)$sql_cek->jml_total > 0) {
-                    $diskon = number_format((((float)$sql_cek->jml_total - $jml_gtotal) / (float)$sql_cek->jml_total) * 100, 2);
-                }
-                
-                $jml_tot_disk   = (float)$sql_cek->jml_total - $jml_gtotal;
-                $ppn            = ($sql_cek->status_ppn == '1' ? (float)$sql_cek->ppn : 0.0);
-                $jml_ppn        = ($sql_cek->status_ppn == '1' ? ($ppn / 100) * $jml_gtotal : 0.0);
-                $gtotal         = ($sql_cek->status_ppn == '1' ? $jml_gtotal + $jml_ppn : $jml_gtotal);
-                
-                # Calculate points safely
-                $jml_poin = 0;
-                $jml_poin_nom = 0;
-                if ((float)$pengaturan->jml_poin_nom > 0) {
-                    $jml_poin = $jml_gtotal / (float)$pengaturan->jml_poin_nom;
-                    $jml_poin_nom = floor($jml_poin) * (float)$pengaturan->jml_poin;
-                }
-                
-                // Simpan platform pembayaran
-                $data_platform = [
-                    'tgl_simpan'  => $tgl_bayar.' '.date('H:i:s'),
-                    'id_platform' => $metode_byr,
-                    'id_medcheck' => $no_nota,
-                    'no_nota'     => $sql_cek->no_nota,
-                    'platform'    => (!empty($bank) ? $bank : '-'),
-                    'keterangan'  => (!empty($no_kartu) ? $no_kartu : ''),
-                    'nominal'     => (float)$jml_bayar,
-                ];
+                $uuid           = $this->uuid->v4();
                 
                 // Begin transaction
                 $this->db->trans_begin();
                 
-                try {
+                try {                
+                    # Jml Sisa Poin
+                    $jml_gtot_poin  = (float)$sql_poin->jml_poin_nom - (float)$jml_pot_poin;
+                    
+                    $jml_kurang     = $jml_gtotal - $jml_bayar;
+                    $jml_kembali    = $jml_bayar - $jml_gtotal;
+                    
+                    // Calculate discount safely
+                    $diskon = 0;
+                    if ((float)$sql_cek->jml_total > 0) {
+                        $diskon = number_format((((float)$sql_cek->jml_total - $jml_gtotal) / (float)$sql_cek->jml_total) * 100, 2);
+                    }
+                    
+                    $jml_tot_disk   = (float)$sql_cek->jml_total - $jml_gtotal;
+                    $ppn            = ($sql_cek->status_ppn == '1' ? (float)$sql_cek->ppn : 0.0);
+                    $jml_ppn        = ($sql_cek->status_ppn == '1' ? ($ppn / 100) * $jml_gtotal : 0.0);
+                    $gtotal         = ($sql_cek->status_ppn == '1' ? $jml_gtotal + $jml_ppn : $jml_gtotal);
+                    
+                    # Calculate points safely
+                    $jml_poin = 0;
+                    $jml_poin_nom = 0;
+                    if ((float)$pengaturan->jml_poin_nom > 0) {
+                        $jml_poin = $jml_gtotal / (float)$pengaturan->jml_poin_nom;
+                        $jml_poin_nom = floor($jml_poin) * (float)$pengaturan->jml_poin;
+                    }
+                    
+                    // Simpan platform pembayaran
+                    $data_platform = [
+                        'uuid'        => $uuid,
+                        'tgl_simpan'  => $tgl_bayar.' '.date('H:i:s'),
+                        'id_platform' => $metode_byr,
+                        'id_medcheck' => $no_nota,
+                        'no_nota'     => $sql_cek->no_nota,
+                        'platform'    => (!empty($bank) ? $bank : '-'),
+                        'keterangan'  => (!empty($no_kartu) ? $no_kartu : ''),
+                        'nominal'     => (float)$jml_bayar,
+                    ];
+                    
                     /* Kalo pembayaran kurang */
                     if ($sql_cek->status_bayar > 1) {
                         $jml_tot_bayar  = (float)$sql_cek->jml_bayar + $jml_bayar;
