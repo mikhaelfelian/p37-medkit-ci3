@@ -79,7 +79,7 @@
                                                     <?php foreach ($sql_beli_det as $cart) { ?>
                                                         <tr>
                                                             <td class="text-center"><?php echo $no; ?></td>
-                                                            <td class="text-left"><?php echo $cart->produk; ?></td>
+                                                            <td class="text-left"><a href="<?php echo base_url('gudang/data_stok_tambah.php?id='.general::enkrip($cart->id_produk)); ?>" target="_blank"><?php echo $cart->produk; ?></a></td>
                                                             <td class="text-center"><?php echo general::format_angka($cart->jml); ?></td>
                                                             <td class="text-right"><?php echo general::format_angka($cart->harga); ?></td>
                                                             <td class="text-center"><?php echo (!empty($cart->disk1) ? (float)$cart->disk1 : '') // . (!empty($cart->disk2) ? ' + ' . (float)$cart->disk2 : '') . (!empty($cart->disk3) ? ' + ' . (float)$cart->disk3 : ''); ?></td>
