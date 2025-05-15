@@ -1,5 +1,5 @@
 <li class="nav-header">PENJUALAN (BHP)</li>
-<?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakFarmasi() == TRUE) { ?>
+<?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakFarmasi() == TRUE OR akses::hakAnalis() == TRUE) { ?>
     <li class="nav-item">
         <a href="<?php echo base_url('pos/lab/set_trans_jual.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-shopping-cart"></i>
