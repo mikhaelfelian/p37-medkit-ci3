@@ -1157,8 +1157,6 @@ class laporan extends CI_Controller {
                 $data['PerPage'] = $pengaturan->jml_item;
                 $data['pagination'] = '';
             }
-
-            pre($data['sql_omset_row']);
             
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/laporan/sidebar_lap';
