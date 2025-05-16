@@ -971,12 +971,12 @@ class laporan extends CI_Controller {
             if(!empty($case)) {
                 // Base query builder for counting records
                 $this->db->select('COUNT(DISTINCT tm.id_pasien) as total')
-                    ->from('tbl_trans_medcheck_det tmd')
-                    ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
-                    ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
-                    ->where('tm.status_hps', '0')
-                    ->where('tm.status_bayar', '1')
-                    ->where('tmd.status_pkt', '0');
+                        ->from('tbl_trans_medcheck_det tmd')
+                        ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
+                        ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
+                        ->where('tm.status_hps', '0')
+                        ->where('tm.status_bayar', '1')
+                        ->where('tmd.status_pkt', '0');
                 
                 if($case == 'per_tanggal') {
                     $this->db->where('DATE(tm.tgl_bayar)', $tgl);
@@ -1095,8 +1095,10 @@ class laporan extends CI_Controller {
                     
                     case 'per_rentang':
                         // Prepare base query for summary data
-                        $this->db->select('SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
-                            SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal')
+                        $this->db->select('SUM(tmd.harga) AS jml_harga, SUM(tmd.jml) AS jml_qty, 
+                        SUM(tmd.diskon) AS jml_diskon, SUM(tmd.potongan) AS jml_potongan, 
+                        SUM(tmd.potongan_poin) AS jml_potongan_poin, SUM(tmd.subtotal) AS jml_gtotal, 
+                        SUM(tmd.harga * tmd.jml) AS jml_subtotal')
                             ->from('tbl_trans_medcheck_det tmd')
                             ->join('tbl_trans_medcheck tm', 'tmd.id_medcheck = tm.id')
                             ->join('tbl_m_pasien mp', 'tm.id_pasien = mp.id')
@@ -1155,6 +1157,8 @@ class laporan extends CI_Controller {
                 $data['PerPage'] = $pengaturan->jml_item;
                 $data['pagination'] = '';
             }
+
+            pre($data['sql_omset_row']);
             
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/laporan/sidebar_lap';
