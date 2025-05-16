@@ -66,13 +66,13 @@ class home extends CI_Controller {
      */
     public function index() {
         if (akses::aksesLogin() == TRUE) {
-            $data['kmr_label']      = $this->crud->kmr_label();
-            $data['kmr_kaps']       = $this->crud->kmr_kapasitas();
-            $data['sql_kamar']      = $this->db->get('v_trans_kamar')->result();
-            $data['sql_kary_jdwl']  = $this->db->select('tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, tbl_m_poli.lokasi, tbl_m_karyawan_jadwal.hari_1, tbl_m_karyawan_jadwal.hari_2, tbl_m_karyawan_jadwal.hari_3, tbl_m_karyawan_jadwal.hari_4, tbl_m_karyawan_jadwal.hari_5, tbl_m_karyawan_jadwal.hari_6, tbl_m_karyawan_jadwal.hari_7, tbl_m_karyawan_jadwal.waktu')
-                                               ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_m_karyawan_jadwal.id_karyawan')
-                                               ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_m_karyawan_jadwal.id_poli')
-                                               ->get('tbl_m_karyawan_jadwal')->result();
+            // $data['kmr_label']      = $this->crud->kmr_label();
+            // $data['kmr_kaps']       = $this->crud->kmr_kapasitas();
+            // $data['sql_kamar']      = $this->db->get('v_trans_kamar')->result();
+            // $data['sql_kary_jdwl']  = $this->db->select('tbl_m_karyawan.nama_dpn, tbl_m_karyawan.nama, tbl_m_karyawan.nama_blk, tbl_m_poli.lokasi, tbl_m_karyawan_jadwal.hari_1, tbl_m_karyawan_jadwal.hari_2, tbl_m_karyawan_jadwal.hari_3, tbl_m_karyawan_jadwal.hari_4, tbl_m_karyawan_jadwal.hari_5, tbl_m_karyawan_jadwal.hari_6, tbl_m_karyawan_jadwal.hari_7, tbl_m_karyawan_jadwal.waktu')
+            //                                    ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_m_karyawan_jadwal.id_karyawan')
+            //                                    ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_m_karyawan_jadwal.id_poli')
+            //                                    ->get('tbl_m_karyawan_jadwal')->result();
             $data['pengaturan']     = $this->db->get('tbl_pengaturan')->row();
             
             $this->load->view('admin-lte-3/1_atas', $data);
