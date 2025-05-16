@@ -78,7 +78,7 @@ class Login extends CI_Controller
                                 
                 $recaptcha_v3_response = json_decode($recaptcha_v3_result);
 
-                if ($recaptcha_v3_response && $recaptcha_v3_response->success) {
+                // if ($recaptcha_v3_response && $recaptcha_v3_response->success) {
                     $inget_ya = ($inga == '1' ? 'TRUE' : 'FALSE');
                     $login = $this->ion_auth->login($user, $pass, $inget_ya);
                     $user_data = $this->ion_auth->user()->row();
@@ -93,9 +93,9 @@ class Login extends CI_Controller
                         $this->session->set_flashdata('login_toast', 'toastr.success("Anda berhasil login!!");');
                         redirect(base_url('dashboard.php'));
                     }
-                } else {
-                    throw new Exception('Captcha tidak valid!!');
-                }
+                // } else {
+                //     throw new Exception('Captcha tidak valid!!');
+                // }
             } catch (Exception $e) {
                 log_message('error', 'Login Error: ' . $e->getMessage());
                 $this->session->set_flashdata('login_toast', 'toastr.error("' . $e->getMessage() . '");');
