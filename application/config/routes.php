@@ -38,6 +38,7 @@
 | in the URL cannot be matched to a valid route.
 |
 */
+
 $route['default_controller'] 	                        = "login";
 $route['404_override'] 			                        = '';
 $route['translate_uri_dashes'] 	                        = FALSE;
@@ -1149,7 +1150,6 @@ $route['pengaturan/data_user_hapus.php']                = "pengaturan/user_hapus
 $route['profile.php']                                   = "pengaturan/profile";
 $route['set_profile_update.php']                        = "pengaturan/set_profile_update";
 
-
 $route['pengaturan/set_cari_user.php']                  = "pengaturan/set_cari_user";
 $route['pengaturan/set_cari_cabang.php']                = "pengaturan/set_cari_cabang";
 
@@ -1157,7 +1157,6 @@ $route['json_member.php']                               = "transaksi/json_member
 $route['logout.php']                                    = "login/logout";
 
 $route['transaksi/cetak_nota_termal.php']               = "cetak/termal_ctk";
-
 
 $route['medcheck/add_param.php']                        = "medcheck/add_param";
 $route['medcheck/add_param_prod.php']                   = "medcheck/add_param_prod";
