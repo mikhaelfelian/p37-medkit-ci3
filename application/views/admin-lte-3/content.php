@@ -85,107 +85,107 @@
                             </div>
 
                             <script>
-                            $(function() {
-                                'use strict'
+                            // $(function() {
+                            //     'use strict'
                                 
-                                var ticksStyle = {
-                                    fontColor: '#495057',
-                                    fontStyle: 'bold'
-                                }
+                            //     var ticksStyle = {
+                            //         fontColor: '#495057',
+                            //         fontStyle: 'bold'
+                            //     }
 
-                                var mode = 'index';
-                                var intersect = true;
+                            //     var mode = 'index';
+                            //     var intersect = true;
                                 
-                                // Fetch patient visit data from the server
-                                $.ajax({
-                                    url: '<?php echo base_url('home/get_patient_visits'); ?>',
-                                    method: 'GET',
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        // Update the total visits and percentage change
-                                        $('#total-visits').text(new Intl.NumberFormat('id-ID').format(response.total_visits));
+                            //     // Fetch patient visit data from the server
+                            //     $.ajax({
+                            //         url: '<?php //echo base_url('home/get_patient_visits'); ?>',
+                            //         method: 'GET',
+                            //         dataType: 'json',
+                            //         success: function(response) {
+                            //             // Update the total visits and percentage change
+                            //             $('#total-visits').text(new Intl.NumberFormat('id-ID').format(response.total_visits));
                                         
-                                        var percentageChange = response.percentage_change;
-                                        $('#percentage-change').text(percentageChange + '%');
+                            //             var percentageChange = response.percentage_change;
+                            //             $('#percentage-change').text(percentageChange + '%');
                                         
-                                        // Set the appropriate color based on percentage change
-                                        if (percentageChange >= 0) {
-                                            $('#percentage-change').parent().removeClass('text-danger').addClass('text-success');
-                                            $('#percentage-change').parent().find('i').removeClass('fa-arrow-down').addClass('fa-arrow-up');
-                                        } else {
-                                            $('#percentage-change').parent().removeClass('text-success').addClass('text-danger');
-                                            $('#percentage-change').parent().find('i').removeClass('fa-arrow-up').addClass('fa-arrow-down');
-                                        }
+                            //             // Set the appropriate color based on percentage change
+                            //             if (percentageChange >= 0) {
+                            //                 $('#percentage-change').parent().removeClass('text-danger').addClass('text-success');
+                            //                 $('#percentage-change').parent().find('i').removeClass('fa-arrow-down').addClass('fa-arrow-up');
+                            //             } else {
+                            //                 $('#percentage-change').parent().removeClass('text-success').addClass('text-danger');
+                            //                 $('#percentage-change').parent().find('i').removeClass('fa-arrow-up').addClass('fa-arrow-down');
+                            //             }
                                         
-                                        // Initialize the chart with the data from the server
-                                        var $visitorsChart = $('#visitors-chart');
-                                        var visitorsChart = new Chart($visitorsChart, {
-                                            type: 'bar',
-                                            data: {
-                                                labels: response.labels,
-                                                datasets: [{
-                                                    data: response.visit_data,
-                                                    backgroundColor: '#007bff',
-                                                    borderColor: '#007bff',
-                                                    pointRadius: 3,
-                                                    pointBackgroundColor: '#007bff',
-                                                    pointBorderColor: '#007bff',
-                                                    pointHoverBackgroundColor: '#007bff',
-                                                    pointHoverBorderColor: '#007bff',
-                                                    fill: false,
-                                                    label: 'Kunjungan'
-                                                }]
-                                            },
-                                            options: {
-                                                responsive: true,
-                                                maintainAspectRatio: false,
-                                                tooltips: {
-                                                    mode: mode,
-                                                    intersect: intersect
-                                                },
-                                                hover: {
-                                                    mode: mode,
-                                                    intersect: intersect
-                                                },
-                                                legend: {
-                                                    display: false
-                                                },
-                                                scales: {
-                                                    yAxes: [{
-                                                        display: true,
-                                                        gridLines: {
-                                                            display: true,
-                                                            lineWidth: '4px',
-                                                            color: 'rgba(0, 0, 0, .2)',
-                                                            zeroLineColor: 'transparent'
-                                                        },
-                                                        ticks: $.extend({
-                                                            beginAtZero: true,
-                                                            callback: function(value) {
-                                                                if (value >= 1000) {
-                                                                    value /= 1000
-                                                                    value += 'k'
-                                                                }
-                                                                return value
-                                                            }
-                                                        }, ticksStyle)
-                                                    }],
-                                                    xAxes: [{
-                                                        display: true,
-                                                        gridLines: {
-                                                            display: false
-                                                        },
-                                                        ticks: ticksStyle
-                                                    }]
-                                                }
-                                            }
-                                        });
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error('Error fetching patient visit data:', error);
-                                    }
-                                });
-                            });
+                            //             // Initialize the chart with the data from the server
+                            //             var $visitorsChart = $('#visitors-chart');
+                            //             var visitorsChart = new Chart($visitorsChart, {
+                            //                 type: 'bar',
+                            //                 data: {
+                            //                     labels: response.labels,
+                            //                     datasets: [{
+                            //                         data: response.visit_data,
+                            //                         backgroundColor: '#007bff',
+                            //                         borderColor: '#007bff',
+                            //                         pointRadius: 3,
+                            //                         pointBackgroundColor: '#007bff',
+                            //                         pointBorderColor: '#007bff',
+                            //                         pointHoverBackgroundColor: '#007bff',
+                            //                         pointHoverBorderColor: '#007bff',
+                            //                         fill: false,
+                            //                         label: 'Kunjungan'
+                            //                     }]
+                            //                 },
+                            //                 options: {
+                            //                     responsive: true,
+                            //                     maintainAspectRatio: false,
+                            //                     tooltips: {
+                            //                         mode: mode,
+                            //                         intersect: intersect
+                            //                     },
+                            //                     hover: {
+                            //                         mode: mode,
+                            //                         intersect: intersect
+                            //                     },
+                            //                     legend: {
+                            //                         display: false
+                            //                     },
+                            //                     scales: {
+                            //                         yAxes: [{
+                            //                             display: true,
+                            //                             gridLines: {
+                            //                                 display: true,
+                            //                                 lineWidth: '4px',
+                            //                                 color: 'rgba(0, 0, 0, .2)',
+                            //                                 zeroLineColor: 'transparent'
+                            //                             },
+                            //                             ticks: $.extend({
+                            //                                 beginAtZero: true,
+                            //                                 callback: function(value) {
+                            //                                     if (value >= 1000) {
+                            //                                         value /= 1000
+                            //                                         value += 'k'
+                            //                                     }
+                            //                                     return value
+                            //                                 }
+                            //                             }, ticksStyle)
+                            //                         }],
+                            //                         xAxes: [{
+                            //                             display: true,
+                            //                             gridLines: {
+                            //                                 display: false
+                            //                             },
+                            //                             ticks: ticksStyle
+                            //                         }]
+                            //                     }
+                            //                 }
+                            //             });
+                            //         },
+                            //         error: function(xhr, status, error) {
+                            //             console.error('Error fetching patient visit data:', error);
+                            //         }
+                            //     });
+                            // });
                             </script>
                         </div>
                     </div>
