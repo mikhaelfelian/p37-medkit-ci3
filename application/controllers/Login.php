@@ -44,10 +44,10 @@ class Login extends CI_Controller
             redirect(base_url());
         } else {
             try {
-                // Validate recaptcha response
-                if (empty($recaptcha_response)) {
-                    throw new Exception('Captcha response is required');
-                }
+                // // Validate recaptcha response
+                // if (empty($recaptcha_response)) {
+                //     throw new Exception('Captcha response is required');
+                // }
 
                 // Validate credentials
                 if (empty($user) || empty($pass)) {
