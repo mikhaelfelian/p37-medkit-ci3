@@ -43,7 +43,7 @@
 
     <!-- reCAPTCHA v3 -->
     <script>
-        var recaptchaSiteKey = '<?php echo $pengaturan->recaptcha_key; ?>';
+        // var recaptchaSiteKey = '<?php echo $pengaturan->recaptcha_key; ?>';
     </script>
     <!-- <script src="https://www.google.com/recaptcha/api.js?render=<?php echo $pengaturan->recaptcha_key; ?>"></script> -->
 
