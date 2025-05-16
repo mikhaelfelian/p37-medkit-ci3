@@ -23833,21 +23833,22 @@ class Medcheck extends CI_Controller {
                     ]);
                     
                 }
-
                 
                 // Prepare data for tbl_m_pasien
                 $data_pasien = [
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'nik'               => $nik,
-                    'nama'              => strtoupper($nama),
-                    'nama_pgl'          => strtoupper($nama_pgl),
-                    'alamat'            => $alamat,
-                    'alamat_dom'        => $alamat_dom,
-                    'no_hp'             => $no_hp,
-                    'no_rmh'            => $no_rmh,
-                    'jns_klm'           => $jns_klm,
-                    'tgl_lahir'         => $this->tanggalan->tgl_indo_sys($tgl_lahir),
-                    'tmp_lahir'         => $tmp_lahir
+                    'tgl_modif'    => date('Y-m-d H:i:s'),
+                    'id_gelar'     => $gelar,
+                    'id_pekerjaan' => $pekerjaan,
+                    'nik'          => $nik,
+                    'nama'         => $nama,
+                    'nama_pgl'     => strtoupper($nama_pgl),
+                    'tmp_lahir'    => $tmp_lahir,
+                    'tgl_lahir'    => $this->tanggalan->tgl_indo_sys($tgl_lahir),
+                    'jns_klm'      => $jns_klm,
+                    'no_hp'        => $no_hp,
+                    'no_telp'      => $no_rmh,
+                    'alamat'       => $alamat,
+                    'alamat_dom'   => (!empty($alamat_dom) ? $alamat_dom : ''),
                 ];
         
                 # Update tbl_m_pasien
