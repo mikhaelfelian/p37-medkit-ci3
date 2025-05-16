@@ -25,7 +25,7 @@ class Login extends CI_Controller
         // Get form inputs
         $user               = $this->input->post('user');
         $pass               = $this->input->post('pass');
-        // $recaptcha_response = $this->input->post('recaptcha_response');
+        $recaptcha_response = $this->input->post('recaptcha_response');
         $inga               = $this->input->post('remember');
         
         // Get system settings
@@ -44,38 +44,38 @@ class Login extends CI_Controller
             redirect(base_url());
         } else {
             try {
-                // // Validate recaptcha response
-                // if (empty($recaptcha_response)) {
-                //     throw new Exception('Captcha response is required');
-                // }
+                // Validate recaptcha response
+                if (empty($recaptcha_response)) {
+                    throw new Exception('Captcha response is required');
+                }
 
                 // Validate credentials
                 if (empty($user) || empty($pass)) {
                     throw new Exception('Username and password are required');
                 }
 
-                // // Verify reCAPTCHA v3
-                // $recaptcha_v3_url = 'https://www.google.com/recaptcha/api/siteverify';
-                // $recaptcha_v3_data = [
-                //     'secret' => $pengaturan->recaptcha_secret,
-                //     'response' => $recaptcha_response,
-                //     'remoteip' => $_SERVER['REMOTE_ADDR']
-                // ];
+                // Verify reCAPTCHA v3
+                $recaptcha_v3_url = 'https://www.google.com/recaptcha/api/siteverify';
+                $recaptcha_v3_data = [
+                    'secret' => $pengaturan->recaptcha_secret,
+                    'response' => $recaptcha_response,
+                    'remoteip' => $_SERVER['REMOTE_ADDR']
+                ];
 
-                // $recaptcha_v3_options = [
-                //     'http' => [
-                //         'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                //         'method' => 'POST',
-                //         'content' => http_build_query($recaptcha_v3_data)
-                //     ]
-                // ];
+                $recaptcha_v3_options = [
+                    'http' => [
+                        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                        'method' => 'POST',
+                        'content' => http_build_query($recaptcha_v3_data)
+                    ]
+                ];
 
-                // $recaptcha_v3_context = stream_context_create($recaptcha_v3_options);
-                // $recaptcha_v3_result = file_get_contents($recaptcha_v3_url, false, $recaptcha_v3_context);
+                $recaptcha_v3_context = stream_context_create($recaptcha_v3_options);
+                $recaptcha_v3_result = file_get_contents($recaptcha_v3_url, false, $recaptcha_v3_context);
                                 
-                // $recaptcha_v3_response = json_decode($recaptcha_v3_result);
+                $recaptcha_v3_response = json_decode($recaptcha_v3_result);
 
-                // if ($recaptcha_v3_response && $recaptcha_v3_response->success) {
+                if ($recaptcha_v3_response && $recaptcha_v3_response->success) {
                     $inget_ya = ($inga == '1' ? 'TRUE' : 'FALSE');
                     $login = $this->ion_auth->login($user, $pass, $inget_ya);
                     $user_data = $this->ion_auth->user()->row();
@@ -90,9 +90,9 @@ class Login extends CI_Controller
                         $this->session->set_flashdata('login_toast', 'toastr.success("Anda berhasil login!!");');
                         redirect(base_url('dashboard.php'));
                     }
-                // } else {
-                //     throw new Exception('Captcha tidak valid!!');
-                // }
+                } else {
+                    throw new Exception('Captcha tidak valid!!');
+                }
             } catch (Exception $e) {
                 log_message('error', 'Login Error: ' . $e->getMessage());
                 $this->session->set_flashdata('login_toast', 'toastr.error("' . $e->getMessage() . '");');

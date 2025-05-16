@@ -43,9 +43,9 @@
 
     <!-- reCAPTCHA v3 -->
     <script>
-        // var recaptchaSiteKey = '<?php echo $pengaturan->recaptcha_key; ?>';
+        var recaptchaSiteKey = '<?php echo $pengaturan->recaptcha_key; ?>';
     </script>
-    <!-- <script src="https://www.google.com/recaptcha/api.js?render=<?php echo $pengaturan->recaptcha_key; ?>"></script> -->
+    <script src="https://www.google.com/recaptcha/api.js?render=<?php echo $pengaturan->recaptcha_key; ?>"></script>
 
     <!-- Toastr -->
     <link rel="stylesheet" href="<?php echo base_url('assets/theme/admin-lte-3/plugins/toastr/toastr.min.css') ?>">
@@ -131,7 +131,6 @@
             <?php echo $this->session->flashdata('login_toast'); ?>
         });
 
-        /*
         // reCAPTCHA v3
         grecaptcha.ready(function() {
             // Generate token on form submit
@@ -144,7 +143,6 @@
                 });
             });
         });
-        */
     </script>
 </body>
 </html>
