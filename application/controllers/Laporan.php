@@ -2379,10 +2379,10 @@ class laporan extends CI_Controller {
                         $data['tot_klr']    = ($data['gd_aktif']->status == '1' ? $data['stok_klr'] : $data['stok_mts']->jml);
 
                         $data['sql_stok_hist'] = $this->db
-                                                        ->where('id_produk', $data['sql_stok']->id)
-                                                        ->where('DATE(tgl_simpan)', $tgl)
-                                                        ->like('id_gudang', $id_gdg)
-                                                        ->order_by('tgl_simpan', 'desc')
+                                                      ->where('id_produk', $data['sql_stok']->id)
+                                                      ->where('DATE(tgl_simpan)', $tgl)
+                                                      ->like('id_gudang', $id_gdg)
+                                                      ->order_by('tgl_simpan', 'desc')
                                                       ->get('tbl_m_produk_hist')->result();
                         
                         $data['sql_stok_msk'] = $this->db
