@@ -10459,13 +10459,12 @@ class Medcheck extends CI_Controller {
     }
     
     public function set_medcheck_resume_hapus() {
-        if (akses::aksesLogin() == TRUE) {
+        if (Akses::aksesLogin() == TRUE) {
             $id         = $this->input->get('id');
-            $id_pen     = $this->input->get('id_pen');
+            $id_resm    = $this->input->get('item_id');
             $status     = $this->input->get('status');
             $userid     = $this->ion_auth->user()->row()->id;
             
-                
             /* Transaksi Database */
             $this->db->trans_begin();
                 
@@ -10479,12 +10478,12 @@ class Medcheck extends CI_Controller {
                     throw new Exception("Data medcheck tidak ditemukan");
                 }
                 
-                $sql_medc_hrv = $this->db->where('id', general::dekrip($id_pen))->get('tbl_trans_medcheck_pen_hrv')->row();
-                if (!$sql_medc_hrv) {
-                    throw new Exception("Data HRV tidak ditemukan");
+                $sql_medc_resm = $this->db->where('id', general::dekrip($id_resm))->get('tbl_trans_medcheck_resume')->row();
+                if (!$sql_medc_resm) {
+                    throw new Exception("Data resume tidak ditemukan");
                 }
 
-                $sql_file = $this->db->where('id_medcheck', $sql_medc->row()->id)->where('id_berkas', $sql_medc_hrv->id)->get('tbl_trans_medcheck_file')->row();
+                $sql_file = $this->db->where('id_medcheck', $sql_medc->row()->id)->where('id_berkas', $sql_medc_resm->id)->get('tbl_trans_medcheck_file')->row();
 
                 # Hapus berkas sebelumnya
                 if (!empty($sql_file) && !empty($sql_file->file_name)) {
@@ -10496,51 +10495,34 @@ class Medcheck extends CI_Controller {
                     // Delete file record from database
                     $this->db->where('id', $sql_file->id)->delete('tbl_trans_medcheck_file');
                 }
-
-                # Masukkan surat ke tabel riwayat berkas
-                $last_id        = $sql_medc_hrv->id;
-                $judul_surat    = 'HASIL PEMERIKSAAN HRV ('.$sql_medc_hrv->no_lab.')';
-                $file_srt       = $this->pdf_medcheck_pen_hrv($last_id, 'F');
                 
-                $data_file_srt = [
-                    'id_berkas'         => $last_id,
-                    'id_medcheck'       => $sql_medc->row()->id,
-                    'id_pasien'         => $sql_medc->row()->id_pasien,
-                    'id_user'           => $this->ion_auth->user()->row()->id,
-                    'tgl_simpan'        => date('Y-m-d H:i:s'),
-                    'tgl_masuk'         => date('Y-m-d H:i:s'),
-                    'judul'             => $judul_surat,
-                    'file_name'         => $file_srt,
-                    'file_ext'          => '.pdf',
-                    'file_type'         => 'application/pdf',
-                    'status'            => '1',
-                ];
+                # Hapus data resume
+                $this->db->where('id', general::dekrip($id_resm))->delete('tbl_trans_medcheck_resume');
                 
-                # Jika Surat dibuat maka simpan berkas ke tabel berkas
-                if (isset($file_srt) && !empty($file_srt)) {
-                    $this->db->insert('tbl_trans_medcheck_file', $data_file_srt);
-                }
+                # Hapus detail resume
+                $this->db->where('id_resume', general::dekrip($id_resm))->delete('tbl_trans_medcheck_resume_det');
 
                 # Cek status transact MySQL
                 if ($this->db->trans_status() === FALSE) {
                     # Rollback jika gagal
                     $this->db->trans_rollback();
-                    throw new Exception("HRV gagal dicetak!");
+                    throw new Exception("Resume medis gagal dihapus!");
                 }
-                
+
                 $this->db->trans_commit();
+
                 # Tampilkan pesan sukses jika sudah berhasil commit
-                $this->session->set_flashdata('medcheck_toast', 'toastr.success("HRV berhasil dicetak!");');
+                $this->session->set_flashdata('medcheck_toast', 'toastr.success("Resume medis berhasil dihapus!");');
             } catch (Exception $e) {
                 if ($this->db->trans_status() === FALSE) {
                     $this->db->trans_rollback();
                 }
+
                 $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
             }
 
-            redirect(base_url('medcheck/surat/cetak_pdf_pen_hrv.php?id='.$id.'&status='.$status.'&id_pen='.$id_pen));
+            redirect(base_url('medcheck/tambah.php?id='.$id.'&status='.$status));
         } else {
-            $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login_toast', 'toastr.error("Authentifikasi gagal, silahkan login ulang!!");');
             redirect();
         }
@@ -10581,7 +10563,6 @@ class Medcheck extends CI_Controller {
                 } catch (Exception $e) {
                     $this->db->trans_rollback();
                     $this->session->set_flashdata('medcheck_toast', 'toastr.error("' . $e->getMessage() . '");');
-                    log_message('error', 'Medcheck resume delete error: ' . $e->getMessage());
                 }
             }
 
