@@ -13219,11 +13219,17 @@ class Medcheck extends CI_Controller {
                 $sql_medc_ck    = $this->db->where('id', general::dekrip($id_item_det))->get('tbl_trans_medcheck_det');
                 $sql_radg_ck    = $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
                 $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                $harga          = general::format_angka_db($hrg);
-                $potongan       = general::format_angka_db($pot);
-                $potongan_poin  = general::format_angka_db($pot_poin);
-                $jml            = general::format_angka_db($jml);
-                $jml_pot        = $potongan * (int)$jml;
+
+                // Ensure all numeric variables are properly cast to float or int
+                $harga          = (float) general::format_angka_db($hrg);
+                $potongan       = (float) general::format_angka_db($pot);
+                $potongan_poin  = (float) general::format_angka_db($pot_poin);
+                $jml            = (float) general::format_angka_db($jml);
+                $diskon1        = (float) $diskon1;
+                $diskon2        = (float) $diskon2;
+                $diskon3        = (float) $diskon3;
+
+                $jml_pot        = $potongan * $jml;
                 $jml_pot_poin   = $potongan_poin;
                 $dokter         = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
 
