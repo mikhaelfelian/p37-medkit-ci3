@@ -2107,19 +2107,22 @@ class transaksi extends CI_Controller {
                 $this->session->set_flashdata('form_error', $msg_error);
                 $this->session->set_flashdata('trans_toast', 'toastr.error("Validasi form gagal!");');
                 redirect(base_url('transaksi/trans_beli.php?id='.$no_nota));
-            } else {                
+            } else {
+                $sql_brg     = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
+                $sql_satuan  = $this->db->where('id', (!empty($satuan) ? $satuan : $sql_brg->id_satuan))->get('tbl_m_satuan')->row();
+                $sql_beli    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
+                $trans_beli  = $this->session->userdata('trans_beli_edit');
+                $pengaturan  = $this->db->get('tbl_pengaturan')->row();
+
+                # Start Transaction
+                $this->db->trans_begin();
+
                 try {
                     // Get form ID and check for double submission
                     $form_id = $this->input->post('form_id');
                     if (check_form_submitted($form_id)) {
                         throw new Exception('Form sudah disubmit sebelumnya!');
                     }
-
-                    $sql_brg     = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
-                    $sql_satuan  = $this->db->where('id', (!empty($satuan) ? $satuan : $sql_brg->id_satuan))->get('tbl_m_satuan')->row();
-                    $sql_beli    = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
-                    $trans_beli  = $this->session->userdata('trans_beli_edit');
-                    $pengaturan  = $this->db->get('tbl_pengaturan')->row();
 
                     $jml_pcs     = (!empty($sql_satuan->jml) ? $sql_satuan->jml : '1') * $qty;
                     $harga_pcs   = ($harga * $qty) / $jml_pcs;
@@ -2159,26 +2162,23 @@ class transaksi extends CI_Controller {
                         'subtotal'     => (float)$subtotal,
                     ];
                     
-                    # Start Transaksi
-                    $this->db->trans_start();
-                    
                     # Insert into trans_beli_det table
                     $this->db->insert('tbl_trans_beli_det', $data_pemb_det);               
-                    
-                    # Complete Transaction
-                    $this->db->trans_complete();
                     
                     if ($this->db->trans_status() === FALSE) {
                         throw new Exception("Gagal menyimpan data pembelian!");
                     }
                     
+                    $this->db->trans_commit();
+                    
                     $this->session->set_flashdata('trans_toast', 'toastr.success("Data pembelian berhasil disimpan!");');
-                    redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
                     
                 } catch (Exception $e) {
+                    $this->db->trans_rollback();
                     $this->session->set_flashdata('trans_toast', 'toastr.error("' . $e->getMessage() . '");');
-                    redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
                 }
+
+                redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2198,6 +2198,7 @@ class transaksi extends CI_Controller {
             $kode     = $this->input->post('kode');
             $kode2    = $this->input->post('kode_batch');
             $tgl_ed   = $this->input->post('tgl_ed');
+            
             $qty      = general::format_angka_db($this->input->post('jml'));
             $diskon1  = general::format_angka_db($this->input->post('disk1'));
             $diskon2  = general::format_angka_db($this->input->post('disk2'));
@@ -2218,7 +2219,10 @@ class transaksi extends CI_Controller {
                 $this->session->set_flashdata('form_error', $msg_error);
 
                 redirect(base_url('transaksi/beli/trans_beli_edit.php?id='.$no_nota));
-            } else {
+            } else {                    
+                # Start Transaction
+                $this->db->trans_begin();
+
                 try {
                     // Get form ID and check for double submission
                     $form_id = $this->input->post('form_id');
@@ -2270,10 +2274,7 @@ class transaksi extends CI_Controller {
                         'potongan'     => (float)$potongan,
                         'subtotal'     => (float)$subtotal,
                     ];
-                    
-                    # Start Transaction
-                    $this->db->trans_begin();
-                    
+
                     # Update trans_beli_det table
                     $this->db->where('id', general::dekrip($id_det))->update('tbl_trans_beli_det', $data_pemb_det);             
                     
@@ -2286,11 +2287,11 @@ class transaksi extends CI_Controller {
                     $this->db->trans_commit();
                     
                     $this->session->set_flashdata('trans_toast', 'toastr.success("Item : <b>'.$sql_brg->produk.'</b> berhasil diupdate!");');
-                    redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
                 } catch (Exception $e) {
                     $this->session->set_flashdata('trans_toast', 'toastr.error("' . $e->getMessage() . '");');
-                    redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
                 }
+
+                redirect(base_url('transaksi/beli/trans_beli.php?id='.$id));
             }
         } else {
             $errors = $this->ion_auth->messages();
@@ -2332,20 +2333,20 @@ class transaksi extends CI_Controller {
 
                 redirect(base_url('transaksi/beli/trans_beli_edit.php?id='.$no_nota));
             } else {
+                $sql_gudang    = $this->db->where('status', '2')->get('tbl_m_gudang')->row();
+                $sql_item      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
+                $sql_item_stok = $this->db->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
+                $sql_satuan    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
+                $sql_beli      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
+                $sql_beli_det  = $this->db->where('id', general::dekrip($id_det))->get('tbl_trans_beli_det')->row();
+                $sql_supp      = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
+                $trans_beli    = $this->session->userdata('trans_beli_edit');
+                $pengaturan    = $this->db->get('tbl_pengaturan')->row();
+
                 # Start Transaction
                 $this->db->trans_begin();
 
                 try {
-                    $sql_gudang    = $this->db->where('status', '2')->get('tbl_m_gudang')->row();
-                    $sql_item      = $this->db->where('id', general::dekrip($id_brg))->get('tbl_m_produk')->row();
-                    $sql_item_stok = $this->db->where('id_produk', $sql_item->id)->where('id_gudang', $sql_gudang->id)->get('tbl_m_produk_stok')->row();
-                    $sql_satuan    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-                    $sql_beli      = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
-                    $sql_beli_det  = $this->db->where('id', general::dekrip($id_det))->get('tbl_trans_beli_det')->row();
-                    $sql_supp      = $this->db->where('id', $sql_beli->id_supplier)->get('tbl_m_supplier')->row();
-                    $trans_beli    = $this->session->userdata('trans_beli_edit');
-                    $pengaturan    = $this->db->get('tbl_pengaturan')->row();
-
                     if (!$sql_item) {
                         throw new Exception("Data produk tidak ditemukan");
                     }
@@ -2401,6 +2402,7 @@ class transaksi extends CI_Controller {
                     $harga_tot     = $disk3 + $harga_ppn;
                     $subtotal      = ($disk3 * $jml_pcs) - $potongan;
                     $jml_qty       = $qty;
+                    $jml_satuan    = $sql_satuan->jml * $qty;
                     
 
                     $data_pemb_det = [
@@ -2700,9 +2702,6 @@ class transaksi extends CI_Controller {
                                              ->where('id_gudang', $sql_gudang->id)
                                              ->get('tbl_m_produk_stok')
                                              ->row();
-                    if (!$sql_item_stok) {
-                        throw new Exception("Data stok produk tidak ditemukan!");
-                    }
                     
                     # Calculate new stock after removing item
                     $stok_akhir = $sql_item_stok->jml - ($sql_beli_det->jml * $sql_beli_det->jml_satuan);
