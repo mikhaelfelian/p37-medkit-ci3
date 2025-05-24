@@ -16335,7 +16335,7 @@ class Medcheck extends CI_Controller {
                     break;
                                 
                 case '13' :
-                    $judul = "SURAT ".strtoupper(general::tipe_surat($sql_medc_srt->tipe));
+                    $judul = "SURAT".strtoupper(general::tipe_surat($sql_medc_srt->tipe));
 
                     // Blok Judul
                     $pdf->SetFont('Arial', 'B', '14');

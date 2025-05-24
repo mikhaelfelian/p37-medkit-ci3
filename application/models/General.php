@@ -619,7 +619,7 @@ class general extends CI_Model
                 break;
 
             case '13';
-                $str_tipe = 'Keterangan Pemeriksaan';
+                $str_tipe = 'Keterangan Bebas Narkoba';
                 break;
 
             case '14';
