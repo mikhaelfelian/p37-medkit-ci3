@@ -13219,17 +13219,11 @@ class Medcheck extends CI_Controller {
                 $sql_medc_ck    = $this->db->where('id', general::dekrip($id_item_det))->get('tbl_trans_medcheck_det');
                 $sql_radg_ck    = $this->db->where('id_medcheck', general::dekrip($id))->get('tbl_trans_medcheck_rad');
                 $sql_sat        = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
-
-                // Ensure all numeric variables are properly cast to float or int
-                $harga          = (float) general::format_angka_db($hrg);
-                $potongan       = (float) general::format_angka_db($pot);
-                $potongan_poin  = (float) general::format_angka_db($pot_poin);
-                $jml            = (float) general::format_angka_db($jml);
-                $diskon1        = (float) $diskon1;
-                $diskon2        = (float) $diskon2;
-                $diskon3        = (float) $diskon3;
-
-                $jml_pot        = $potongan * $jml;
+                $harga          = general::format_angka_db($hrg);
+                $potongan       = general::format_angka_db($pot);
+                $potongan_poin  = general::format_angka_db($pot_poin);
+                $jml            = general::format_angka_db($jml);
+                $jml_pot        = $potongan * (int)$jml;
                 $jml_pot_poin   = $potongan_poin;
                 $dokter         = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
 
@@ -17389,8 +17383,8 @@ class Medcheck extends CI_Controller {
             
 
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
@@ -17895,8 +17889,8 @@ class Medcheck extends CI_Controller {
             
 
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
@@ -18358,8 +18352,8 @@ class Medcheck extends CI_Controller {
             $judul              = "HASIL ANALISA SPIROGRAM";
             $judul2             = "Spirogram Result";
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', [21.5, 33]);
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 7);
             $pdf->SetMargins(1, 0.35, 1);
             $pdf->header = 0;
@@ -18605,8 +18599,8 @@ class Medcheck extends CI_Controller {
 
             $judul              = "HASIL PEMBACAAN EKG";
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 7);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
@@ -18927,8 +18921,8 @@ class Medcheck extends CI_Controller {
             $judul              = "HASIL PEMBACAAN AUDIOMETRI";
             $judul2             = "Audiogram Result";
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', [21.5, 33]);
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', [21.5, 33]);
             $pdf->SetAutoPageBreak('auto', 7);
             $pdf->SetMargins(1, 0.35, 1);
             $pdf->header = 0;
@@ -19145,8 +19139,8 @@ class Medcheck extends CI_Controller {
             $judul              = "HASIL PEMBACAAN HEART RATE VARIABILITY (HRV)";
             $judul2             = "HRV Result";
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 7);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
