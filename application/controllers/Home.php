@@ -112,27 +112,27 @@ class home extends CI_Controller {
             $current_year = date('Y');
             
             // Get monthly visit data for the current year
-            $this->db->select('DATE_FORMAT(tgl_simpan, "%Y-%m") as month, COUNT(*) as visit_count');
+            $this->db->select('DATE_FORMAT(tgl_bayar, "%Y-%m") as month, COUNT(DISTINCT uuid) as visit_count');
             $this->db->from('tbl_trans_medcheck');
-            $this->db->where('YEAR(tgl_simpan)', $current_year);
+            $this->db->where('YEAR(tgl_bayar)', $current_year);
             $this->db->where('status_bayar', '1');
             $this->db->where('status_hps', '0');
-            $this->db->group_by('DATE_FORMAT(tgl_simpan, "%Y-%m")');
+            $this->db->group_by('DATE_FORMAT(tgl_bayar, "%Y-%m")');
             $this->db->order_by('month', 'ASC');
             $monthly_visits = $this->db->get()->result();
             
             // Get total visits for current year
-            $this->db->select('COUNT(*) as total');
+            $this->db->select('COUNT(DISTINCT uuid) as total');
             $this->db->from('tbl_trans_medcheck');
-            $this->db->where('YEAR(tgl_simpan)', $current_year);
+            $this->db->where('YEAR(tgl_bayar)', $current_year);
             $this->db->where('status_bayar', '1');
             $this->db->where('status_hps', '0');
             $current_year_total = $this->db->get()->row()->total;
             
             // Get total visits for previous year
-            $this->db->select('COUNT(*) as total');
+            $this->db->select('COUNT(DISTINCT uuid) as total');
             $this->db->from('tbl_trans_medcheck');
-            $this->db->where('YEAR(tgl_simpan)', $current_year - 1);
+            $this->db->where('YEAR(tgl_bayar)', $current_year - 1);
             $this->db->where('status_bayar', '1');
             $this->db->where('status_hps', '0');
             $previous_year_total = $this->db->get()->row()->total;
@@ -158,15 +158,21 @@ class home extends CI_Controller {
                 $visit_data[$month] = (int)$visit->visit_count;
             }
             
-            // Debug: Log the query and results
-            $last_query = $this->db->last_query();
+            // Get total omset for the current year
+            $this->db->select_sum('jml_gtotal', 'total_omset');
+            $this->db->from('tbl_trans_medcheck');
+            $this->db->where('YEAR(tgl_bayar)', $current_year);
+            $this->db->where('status_bayar', '1');
+            $this->db->where('status_hps', '0');
+            $total_omset = $this->db->get()->row()->total_omset;
             
             // Prepare response data
             $data = [
-                'total_visits' => $current_year_total,
-                'percentage_change' => $percentage_change,
-                'labels' => $labels,
-                'visit_data' => $visit_data
+                'total_visits'       => $current_year_total,
+                'percentage_change'  => $percentage_change,
+                'labels'             => $labels,
+                'visit_data'         => $visit_data,
+                'total_omset'        => $total_omset
             ];
             echo json_encode($data);
         } catch (Exception $e) {
