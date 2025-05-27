@@ -305,7 +305,7 @@
                                                             <td class="text-center"><?php echo $no; ?></td>
                                                             <td class="text-left">
                                                                 <?php echo (!empty($cart->kode_batch) ? $cart->kode_batch.br() : ''); ?>
-                                                                <?php echo $cart->produk; ?><br/>
+                                                                <?php echo anchor(base_url('gudang/data_stok_tambah.php?id='.general::enkrip($cart->id_produk)), $cart->produk, 'target="_blank"'); ?><br/>
                                                                 <small><b>ED :</b><?php echo $this->tanggalan->tgl_indo($cart->tgl_ed); ?></small><br/>
                                                                 <small><b>HET:</b><?php echo general::format_angka($cart->harga_het); ?></small>
                                                             </td>
@@ -465,6 +465,5 @@
                         .appendTo(ul);
             };
 <?php } ?>
-<?php echo $this->session->flashdata('trans_toast'); ?>
     });
 </script>
