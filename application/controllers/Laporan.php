@@ -6143,55 +6143,53 @@ class laporan extends CI_Controller {
             $id_user    = $this->ion_auth->user()->row()->id;
             $id_grup    = $this->ion_auth->get_users_groups()->row();
 
-            if($jml > 0){
-                $sql_doc = $this->db->where('id_user', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
+            $sql_doc = $this->db->where('id_user', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
+            
+            $this->db->select('tbl_trans_medcheck_remun.id AS id, 
+                              tbl_trans_medcheck_remun.id_dokter AS id_dokter, 
+                              tbl_trans_medcheck_remun.tgl_simpan AS tgl_simpan, 
+                              CONCAT(tbl_m_karyawan.nama_dpn, " ", tbl_m_karyawan.nama) AS dokter, 
+                              tbl_m_karyawan.nama_blk AS dokter_blk, 
+                              tbl_m_poli.lokasi AS poli, 
+                              tbl_trans_medcheck.no_rm AS no_rm, 
+                              tbl_m_pasien.nama_pgl AS nama_pgl, 
+                              tbl_trans_medcheck_det.item AS item, 
+                              tbl_trans_medcheck_det.jml AS jml, 
+                              tbl_trans_medcheck_remun.harga AS harga, 
+                              tbl_trans_medcheck_remun.remun_nom AS remun_nom, 
+                              tbl_trans_medcheck_remun.remun_subtotal AS remun_subtotal, 
+                              tbl_trans_medcheck_remun.remun_perc AS remun_perc, 
+                              tbl_trans_medcheck.tipe AS tipe, 
+                              tbl_m_produk.status AS status_produk')
+                ->from('tbl_trans_medcheck_remun')
+                ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_remun.id_medcheck')
+                ->join('tbl_trans_medcheck_det', 'tbl_trans_medcheck_det.id = tbl_trans_medcheck_remun.id_medcheck_det')
+                ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
+                ->join('tbl_m_poli', 'tbl_m_poli.id = tbl_trans_medcheck.id_poli')
+                ->join('tbl_m_produk', 'tbl_m_produk.id = tbl_trans_medcheck_remun.id_item')
+                ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_remun.id_dokter');
+            
+            switch ($case){
+                case 'per_tanggal':
+                    $this->db->where('DATE(tbl_trans_medcheck_remun.tgl_simpan)', $tgl);
+                    break;
                 
-                $this->db->select('tbl_trans_medcheck_remun.id AS id, 
-                                  tbl_trans_medcheck_remun.id_dokter AS id_dokter, 
-                                  tbl_trans_medcheck_remun.tgl_simpan AS tgl_simpan, 
-                                  CONCAT(tbl_m_karyawan.nama_dpn, " ", tbl_m_karyawan.nama) AS dokter, 
-                                  tbl_m_karyawan.nama_blk AS dokter_blk, 
-                                  tbl_m_poli.lokasi AS poli, 
-                                  tbl_trans_medcheck.no_rm AS no_rm, 
-                                  tbl_m_pasien.nama_pgl AS nama_pgl, 
-                                  tbl_trans_medcheck_det.item AS item, 
-                                  tbl_trans_medcheck_det.jml AS jml, 
-                                  tbl_trans_medcheck_remun.harga AS harga, 
-                                  tbl_trans_medcheck_remun.remun_nom AS remun_nom, 
-                                  tbl_trans_medcheck_remun.remun_subtotal AS remun_subtotal, 
-                                  tbl_trans_medcheck_remun.remun_perc AS remun_perc, 
-                                  tbl_trans_medcheck.tipe AS tipe, 
-                                  tbl_m_produk.status AS status_produk')
-                    ->from('tbl_trans_medcheck_remun')
-                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_remun.id_medcheck')
-                    ->join('tbl_trans_medcheck_det', 'tbl_trans_medcheck_det.id = tbl_trans_medcheck_remun.id_medcheck_det')
-                    ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
-                    ->join('tbl_m_poli', 'tbl_m_poli.id = tbl_trans_medcheck.id_poli')
-                    ->join('tbl_m_produk', 'tbl_m_produk.id = tbl_trans_medcheck_remun.id_item')
-                    ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_remun.id_dokter');
-                
-                switch ($case){
-                    case 'per_tanggal':
-                        $this->db->where('DATE(tbl_trans_medcheck_remun.tgl_simpan)', $tgl);
-                        break;
-                    
-                    case 'per_rentang':
-                        $this->db->where('DATE(tbl_trans_medcheck_remun.tgl_simpan) >=', $tgl_awal);
-                        $this->db->where('DATE(tbl_trans_medcheck_remun.tgl_simpan) <=', $tgl_akhir);
-                        break;
-                }
-                
-                if(!empty($tipe)) {
-                    $this->db->like('tbl_m_produk.status', $tipe);
-                }
-                
-                if(!empty($sql_doc->id_user)) {
-                    $this->db->where('tbl_trans_medcheck_remun.id_dokter', $sql_doc->id_user);
-                }
-                
-                $this->db->order_by('tbl_trans_medcheck_remun.id', 'asc');
-                $sql_remun = $this->db->get()->result();
+                case 'per_rentang':
+                    $this->db->where('DATE(tbl_trans_medcheck_remun.tgl_simpan) >=', $tgl_awal);
+                    $this->db->where('DATE(tbl_trans_medcheck_remun.tgl_simpan) <=', $tgl_akhir);
+                    break;
             }
+            
+            if(!empty($tipe)) {
+                $this->db->like('tbl_m_produk.status', $tipe);
+            }
+            
+            if(!empty($sql_doc->id_user)) {
+                $this->db->where('tbl_trans_medcheck_remun.id_dokter', $sql_doc->id_user);
+            }
+            
+            $this->db->order_by('tbl_trans_medcheck_remun.id', 'asc');
+            $sql_remun = $this->db->get()->result();
 
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -6222,6 +6220,37 @@ class laporan extends CI_Controller {
             $sheet->getColumnDimension('I')->setWidth(14);
             $sheet->getColumnDimension('J')->setWidth(14);
 
+            $no    = 1;
+            $cell  = 5;
+            $total = 0;
+            foreach ($sql_remun as $penjualan){
+                $dokter   = $this->db->where('id_user', $penjualan->id_dokter)->get('tbl_m_karyawan')->row();
+                $remun    = ($penjualan->remun_nom > 0 ? $penjualan->remun_nom : (($penjualan->remun_perc / 100) * $penjualan->harga));
+                $total    = $total + $penjualan->remun_subtotal;
+
+                $sheet->getStyle('A'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('G'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('B'.$cell.':F'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle('H'.$cell.':J'.$cell)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('H'.$cell.':J'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+           
+                $sheet->setCellValue('A'.$cell, $no)
+                        ->setCellValue('B'.$cell, $this->tanggalan->tgl_indo5($penjualan->tgl_simpan))
+                        ->setCellValue('C'.$cell, '#'.$penjualan->no_rm)
+                        ->setCellValue('D'.$cell, (!empty($dokter->nama_dpn) ? $dokter->nama_dpn.' ' : '').$dokter->nama.(!empty($dokter->nama_blk) ? ', '.$dokter->nama_blk : ''))
+                        ->setCellValue('E'.$cell, $penjualan->item)
+                        ->setCellValue('F'.$cell, $penjualan->nama_pgl)
+                        ->setCellValue('G'.$cell, $penjualan->jml)
+                        ->setCellValue('H'.$cell, $penjualan->harga)
+                        ->setCellValue('I'.$cell, $remun)
+                        ->setCellValue('J'.$cell, $penjualan->remun_subtotal);
+                
+                $no++;
+                $cell++;
+            }
+
+            $sell1 = $cell;
+            
             if(!empty($sql_remun)){
                 $no    = 1;
                 $cell  = 5;
