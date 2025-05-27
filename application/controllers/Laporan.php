@@ -6143,11 +6143,9 @@ class laporan extends CI_Controller {
             $id_user    = $this->ion_auth->user()->row()->id;
             $id_grup    = $this->ion_auth->get_users_groups()->row();
 
-            
             if($jml > 0){
                 $sql_doc = $this->db->where('id_user', general::dekrip($dokter))->get('tbl_m_karyawan')->row();
                 
-                // Use the provided SQL query structure
                 $this->db->select('tbl_trans_medcheck_remun.id AS id, 
                                   tbl_trans_medcheck_remun.id_dokter AS id_dokter, 
                                   tbl_trans_medcheck_remun.tgl_simpan AS tgl_simpan, 
