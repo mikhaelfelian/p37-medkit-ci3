@@ -19129,7 +19129,7 @@ class Medcheck extends CI_Controller {
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
             $no_rm              = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
             $no_periksa         = $sql_medc_pen->no_lab;
-            $fill               = FALSE;
+            $fill               = FALSE; 
 
             $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
