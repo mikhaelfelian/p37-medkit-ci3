@@ -17383,8 +17383,8 @@ class Medcheck extends CI_Controller {
             
 
 
-            $this->load->library('MedPDF');
-            $pdf = new MedPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedLabPDF');
+            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
