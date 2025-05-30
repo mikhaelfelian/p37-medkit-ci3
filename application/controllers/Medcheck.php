@@ -17375,13 +17375,11 @@ class Medcheck extends CI_Controller {
             $sql_dokter2        = $this->db->where('id_user', '221')->get('tbl_m_karyawan')->row();
             $sql_dokter3        = $this->db->where('id_user', '48167')->get('tbl_m_karyawan')->row();
             $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
-            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
-            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
-            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $sess_print         = $this->session->userdata('lab_print');
             $fill               = FALSE; 
-            
-
 
             $this->load->library('MedLabPDF');
             $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
@@ -17390,12 +17388,10 @@ class Medcheck extends CI_Controller {
             $pdf->header = 0;
             $pdf->addPage('','',false);
             
-            # Gambar Watermark Tengah
             if(file_exists($gambar2)) {
                 $pdf->Image($gambar2,5,4,15,19);
             }
             
-            # Blok Judul
             $judul              = "HASIL PEMERIKSAAN LABORATORIUM";
             $judul2             = "Laboratory Result";
             $pdf->SetFont('Arial', 'B', '13');
@@ -17405,7 +17401,6 @@ class Medcheck extends CI_Controller {
             $pdf->Cell(19, .5, $judul2, 'B', 1, 'C');
             $pdf->Ln();
             
-            # Blok Dokter Penanggung Jawab
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(9, .5, '', '0', 0, 'L', $fill);
             $pdf->Cell(4, .5, 'Dokter Penanggung Jawab', '0', 0, 'L', $fill);
@@ -17486,7 +17481,7 @@ class Medcheck extends CI_Controller {
                         $pdf->SetFont('Arial', 'Bi', '9');
                         $pdf->Cell(19, .5, $sql_kat->keterangan, '', 0, 'L', $fill);
                         $pdf->Ln();
-                    }else{
+                    } else {
                         $pdf->Ln(0);
                     }
 
@@ -17508,6 +17503,13 @@ class Medcheck extends CI_Controller {
                         $pdf->Ln();
 
                         foreach ($sql_lab as $lab) {
+                            // Remove unknown/invalid characters from satuan
+                            $clean_satuan = preg_replace('/[^\x20-\x7Eµ\/a-zA-Z0-9\.\,\-\_\(\)\[\]\%]/u', '', html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'));
+
+                            // Remove unknown/invalid characters from hasil and value as well, if needed
+                            $clean_hasil = preg_replace('/[^\x20-\x7Eµ\/a-zA-Z0-9\.\,\-\_\(\)\[\]\%]/u', '', html_entity_decode($lab->item_hasil, ENT_NOQUOTES, 'utf-8'));
+                            $clean_value = preg_replace('/[^\x20-\x7Eµ\/a-zA-Z0-9\.\,\-\_\(\)\[\]\%]/u', '', html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'));
+
                             # Jika warna hasil di tandai merah
                             if ($lab->status_hsl_wrn == 1) {
                                 $pdf->SetTextColor(249, 11, 11);
@@ -17515,38 +17517,35 @@ class Medcheck extends CI_Controller {
 
                             $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
                             $pdf->Cell(6, .5, ' - ' . html_entity_decode($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//                            $pdf->Cell(7, .5, '', 'B', 0, 'L', $fill);
-                            $pdf->Cell(4.5, .5, html_entity_decode($lab->item_hasil, ENT_NOQUOTES, 'utf-8') . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-                            
+                            $pdf->Cell(4.5, .5, $clean_hasil . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+
                             $x = $pdf->GetX();
-                            $y = $pdf->GetY();                           
-                            $pdf->MultiCell(4.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
-                            $pdf->SetXY($x + 5, $y);                            
-                            $pdf->Cell(3.5, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                            $pdf->Cell(5.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                            $pdf->Cell(2, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+                            $y = $pdf->GetY();
+                            $pdf->MultiCell(4.5, .5, $clean_value, '', 'L');
+                            $pdf->SetXY($x + 5, $y);
+                            $pdf->Cell(3.5, .5, $clean_satuan, '', 0, 'L', $fill);
                             $pdf->Ln();
-                            
+
                             # Jika warna hasil di tandai merah
                             if ($lab->status_hsl_wrn == 1) {
-                                $pdf->SetTextColor(0,0,0);
+                                $pdf->SetTextColor(0, 0, 0);
                             }
                         }
                     }
                 }
             } else {
                 # Untuk Mencetak dengan pilihan                
-                $sql_medc_lab_det2   = $this->db->where('status', '3')->where('status_ctk', '1')->where('status_hsl', '1')->group_by('id_lab_kat')->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->get('tbl_trans_medcheck_det')->result();
-                
+                $sql_medc_lab_det2 = $this->db->where('status', '3')->where('status_ctk', '1')->where('status_hsl', '1')->group_by('id_lab_kat')->where('id_medcheck', general::dekrip($id_medcheck))->where('id_lab', general::dekrip($id_lab))->get('tbl_trans_medcheck_det')->result();
+
                 $i = 0;
                 foreach ($sql_medc_lab_det2 as $det2) {
                     $sql_kat2 = $this->db->where('id', $det2->id_lab_kat)->get('tbl_m_kategori')->row();
-                    $sql_det2 = $this->db->where('status_ctk', '1')->where('status_hsl', '1')->where('id_medcheck', $det2->id_medcheck)->where('id_lab', $det2->id_lab)->where('id_lab_kat', $det2->id_lab_kat)->get('tbl_trans_medcheck_det')->result();                        
-                    
+                    $sql_det2 = $this->db->where('status_ctk', '1')->where('status_hsl', '1')->where('id_medcheck', $det2->id_medcheck)->where('id_lab', $det2->id_lab)->where('id_lab_kat', $det2->id_lab_kat)->get('tbl_trans_medcheck_det')->result();
+
                     if (!empty($det2->id_lab_kat)) {
                         $pdf->SetFont('Arial', 'Bi', '9');
                         $pdf->Cell(19, .5, $sql_kat2->keterangan, '', 0, 'L', $fill);
-                        $pdf->Ln(); 
+                        $pdf->Ln();
                     }
 
                     foreach ($sql_det2 as $medc2) {
@@ -17560,62 +17559,60 @@ class Medcheck extends CI_Controller {
                         $pdf->SetFont('Arial', '', '8');
 
                         if (!empty($det2->id_lab_kat)) {
-//                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_kat'] == $det->id_lab_kat) {
-                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
-//                            }
+                            $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
                         }
-                        
-                        if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                            $pdf->Cell(18.75, .5, $medc2->item.'' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//                            $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+
+                        if (strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
+                            $pdf->Cell(18.75, .5, $medc2->item . '' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
                             $pdf->Ln(0.45);
                         }
 
                         foreach ($sql_lab2->result() as $lab2) {
-                                $x = $pdf->GetX();
-                                $y = $pdf->GetY();
-                                
-//                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_lab_hsl'] == $lab->id) {
-                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                                    $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
-                                }
-                                
-                                # Jika warna hasil di tandai merah
-                                if($lab2->status_hsl_wrn == 1){
-                                    $pdf->SetTextColor(249,11,11);
-                                }
-                                
-                                $itm_tg     = 0.5; # tinggi cell
-                                $itm_lbr    = 4;
-                                $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
-                                $len        = strlen($lab2->item_hasil);
-                                $itm_spasi  = ($len > 35 ? 0.25 : 0);
-                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
-                                                            
-                                
-                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                }else{
-//                                    $pdf->Cell(.5, .5, '', '1', 0, 'L', $fill);
-                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                }
-                                
-                                $pdf->MultiCell(4.5, $itm_hsl, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-                                $pdf->SetXY($x + 11, $y);
-                                $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                $pdf->SetXY($x + 15, $y);
-                                $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                // $pdf->Ln(0.31);
-                                
-                                # Jika warna hasil di tandai merah
-                                if($lab2->status_hsl_wrn == 1){
-                                    $pdf->SetTextColor(0,0,0);
-                                }
+                            $x = $pdf->GetX();
+                            $y = $pdf->GetY();
+
+                            if (strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
+                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
+                            }
+
+                            // Remove unknown/invalid characters from satuan, hasil, and value
+                            $clean_satuan2 = preg_replace('/[^\x20-\x7Eµ\/a-zA-Z0-9\.\,\-\_\(\)\[\]\%]/u', '', html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'));
+                            $clean_hasil2 = preg_replace('/[^\x20-\x7Eµ\/a-zA-Z0-9\.\,\-\_\(\)\[\]\%]/u', '', html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'));
+                            $clean_value2 = preg_replace('/[^\x20-\x7Eµ\/a-zA-Z0-9\.\,\-\_\(\)\[\]\%]/u', '', html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'));
+
+                            # Jika warna hasil di tandai merah
+                            if ($lab2->status_hsl_wrn == 1) {
+                                $pdf->SetTextColor(249, 11, 11);
+                            }
+
+                            $itm_tg = 0.5; # tinggi cell
+                            $itm_lbr = 4;
+                            $itm_txt = ceil($pdf->GetStringWidth($lab2->item_hasil));
+                            $len = strlen($lab2->item_hasil);
+                            $itm_spasi = ($len > 35 ? 0.25 : 0);
+                            $itm_hsl = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
+
+                            if (strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
+                                $pdf->Cell(6, .5, ' - ' . html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                            } else {
+                                $pdf->Cell(6, .5, ' - ' . html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                            }
+
+                            $pdf->MultiCell(4.5, $itm_hsl, $clean_hasil2, '', 'J');
+                            $pdf->SetXY($x + 11, $y);
+                            $pdf->MultiCell(4, $itm_hsl, $clean_value2, '', 'L');
+                            $pdf->SetXY($x + 15, $y);
+                            $pdf->MultiCell(3.5, $itm_hsl, $clean_satuan2, '', 'L');
+
+                            # Jika warna hasil di tandai merah
+                            if ($lab2->status_hsl_wrn == 1) {
+                                $pdf->SetTextColor(0, 0, 0);
+                            }
                         }
                     }
-                    
+
                     $i++;
-                }                
+                }
             }
             
             $pdf->SetFont('Arial', 'i', '8');
