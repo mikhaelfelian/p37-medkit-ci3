@@ -17479,7 +17479,7 @@ class Medcheck extends CI_Controller {
 
                     if (!empty($det->id_lab_kat)) {
                         $pdf->SetFont('Arial', 'Bi', '9');
-                        $pdf->Cell(19, .5, clean_text($sql_kat->keterangan), '', 0, 'L', $fill);
+                        $pdf->Cell(19, .5, general::bersih($sql_kat->keterangan), '', 0, 'L', $fill);
                         $pdf->Ln();
                     } else {
                         $pdf->Ln(0);
@@ -17499,14 +17499,14 @@ class Medcheck extends CI_Controller {
                             $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
                         }
 
-                        $pdf->Cell(18.5, .5, clean_text($medc->item), '', 0, 'L', $fill);
+                        $pdf->Cell(18.5, .5, general::bersih($medc->item), '', 0, 'L', $fill);
                         $pdf->Ln();
 
                         foreach ($sql_lab as $lab) {
-                            // Clean text using the clean_text function
-                            $clean_satuan = clean_text($lab->item_satuan);
-                            $clean_hasil = clean_text($lab->item_hasil);
-                            $clean_value = clean_text($lab->item_value);
+                            // Clean text using general::bersih function
+                            $clean_satuan = general::bersih($lab->item_satuan);
+                            $clean_hasil = general::bersih($lab->item_hasil);
+                            $clean_value = general::bersih($lab->item_value);
 
                             # Jika warna hasil di tandai merah
                             if ($lab->status_hsl_wrn == 1) {
@@ -17514,7 +17514,7 @@ class Medcheck extends CI_Controller {
                             }
 
                             $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
-                            $pdf->Cell(6, .5, ' - ' . clean_text($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                            $pdf->Cell(6, .5, ' - ' . general::bersih($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
                             $pdf->Cell(4.5, .5, $clean_hasil . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
 
                             $x = $pdf->GetX();
@@ -17542,7 +17542,7 @@ class Medcheck extends CI_Controller {
 
                     if (!empty($det2->id_lab_kat)) {
                         $pdf->SetFont('Arial', 'Bi', '9');
-                        $pdf->Cell(19, .5, clean_text($sql_kat2->keterangan), '', 0, 'L', $fill);
+                        $pdf->Cell(19, .5, general::bersih($sql_kat2->keterangan), '', 0, 'L', $fill);
                         $pdf->Ln();
                     }
 
@@ -17561,7 +17561,7 @@ class Medcheck extends CI_Controller {
                         }
 
                         if (strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                            $pdf->Cell(18.75, .5, clean_text($medc2->item) . '' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                            $pdf->Cell(18.75, .5, general::bersih($medc2->item) . '' . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
                             $pdf->Ln(0.45);
                         }
 
@@ -17573,10 +17573,10 @@ class Medcheck extends CI_Controller {
                                 $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
                             }
 
-                            // Clean text using the clean_text function
-                            $clean_satuan2 = clean_text($lab2->item_satuan);
-                            $clean_hasil2 = clean_text($lab2->item_hasil);
-                            $clean_value2 = clean_text($lab2->item_value);
+                            // Clean text using general::bersih function
+                            $clean_satuan2 = general::bersih($lab2->item_satuan);
+                            $clean_hasil2 = general::bersih($lab2->item_hasil);
+                            $clean_value2 = general::bersih($lab2->item_value);
 
                             # Jika warna hasil di tandai merah
                             if ($lab2->status_hsl_wrn == 1) {
@@ -17591,9 +17591,9 @@ class Medcheck extends CI_Controller {
                             $itm_hsl = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
 
                             if (strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)) {
-                                $pdf->Cell(6, .5, ' - ' . clean_text($lab2->item_name), '', 0, 'L', $fill);
+                                $pdf->Cell(6, .5, ' - ' . general::bersih($lab2->item_name), '', 0, 'L', $fill);
                             } else {
-                                $pdf->Cell(6, .5, ' - ' . clean_text($lab2->item_name), '', 0, 'L', $fill);
+                                $pdf->Cell(6, .5, ' - ' . general::bersih($lab2->item_name), '', 0, 'L', $fill);
                             }
 
                             $pdf->MultiCell(4.5, $itm_hsl, $clean_hasil2, '', 'J');
