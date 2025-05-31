@@ -186,6 +186,7 @@
                                                             "IG & TikTok: klinikesensia\n" .
                                                             "Website: esensia.co.id"
                                                         );
+                                                        
                                                         $wa_link = "https://wa.me/" . preg_replace('/[^0-9]/', '', $pasien->no_hp) . "?text=" . $message;
                                                         ?>
                                                         <a href="<?php echo $wa_link ?>" target="_blank" class="btn btn-success btn-sm">
