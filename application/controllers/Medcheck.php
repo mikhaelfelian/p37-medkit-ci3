@@ -19866,8 +19866,8 @@ class Medcheck extends CI_Controller {
             $judul  = "RESUME MEDICAL CHECKUP";
             $judul2 = "Resume Medical Checkup Result";
             
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 7);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
