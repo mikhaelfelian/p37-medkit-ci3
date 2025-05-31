@@ -21085,51 +21085,52 @@ class Medcheck extends CI_Controller {
             
             # ISI BLOK 13
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(19, .5, 'Pemeriksaan Gigi', 'LR', 0, 'L', $fill);
+            $pdf->Cell(19, .5, 'Pemeriksaan Gigi', '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(3, .5, 'Posisi Gigi Atas', 'L', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Posisi Gigi Atas', '', 0, 'L', $fill);
             
             foreach ($sql_medc_ass13A as $ass13A) {
                 $pdf->Cell(1, .5, $ass13A->item_name, '', 0, 'C', $fill);                
             }
             
-            $pdf->Cell(0, .5, '', 'R', 0, 'L', $fill);
+            $pdf->Cell(0, .5, '', '', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'Kelainan', 'L', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Kelainan', '', 0, 'L', $fill);
             foreach ($sql_medc_ass13A as $ass13A) { 
                 $pdf->SetFont('Arial', 'B', '9');
                 $pdf->Cell(1, .5, $ass13A->item_value2, '', 0, 'C', $fill);
                 
             }
-            $pdf->Cell(0, .5, '', 'R', 0, 'L', $fill);
+            $pdf->Cell(0, .5, '', '', 0, 'L', $fill);
             $pdf->Ln(1);
             $pdf->SetFont('Arial', '', '9');
-            $pdf->Cell(3, .5, 'Posisi Gigi Bawah', 'L', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Posisi Gigi Bawah', '', 0, 'L', $fill);
             
             foreach ($sql_medc_ass13B as $ass13B) {
                 $pdf->Cell(1, .5, $ass13B->item_name, '', 0, 'C', $fill);
                 
             }
             
-            $pdf->Cell(0, .5, '', 'R', 0, 'L', $fill);
+            $pdf->Cell(0, .5, '', '', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'Kelainan', 'L', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Kelainan', '', 0, 'L', $fill);
             foreach ($sql_medc_ass13B as $ass13B) {                
                 $pdf->SetFont('Arial', 'B', '9');
                 $pdf->Cell(1, .5, $ass13B->item_value2, '', 0, 'C', $fill);
             }
-            $pdf->Cell(0, .5, '', 'R', 0, 'L', $fill);
+            
+            $pdf->Cell(0, .5, '', '', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(3, .5, 'Keterangan', 'L', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'Keterangan', '', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
             $pdf->SetFont('Arial', 'i', '9');
             $pdf->Cell(3, .5, '*Caries', '', 0, 'L', $fill);
             $pdf->Cell(3, .5, '*Tanggal', '', 0, 'L', $fill);
             $pdf->Cell(3, .5, '*Impacted', '', 0, 'L', $fill);
             $pdf->Cell(3, .5, '*Palsu', '', 0, 'L', $fill);
-            $pdf->Cell(3, .5, '*Radix', 'R', 0, 'L', $fill);
+            $pdf->Cell(3, .5, '*Radix', '', 0, 'L', $fill);
             $pdf->Ln(1);
             # --- END BLOK 13 --
             // Create folder if it doesn't exist
