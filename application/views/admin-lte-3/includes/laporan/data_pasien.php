@@ -167,7 +167,15 @@
                                                         echo '<b>' . $tgl_lahir[2] . '-' . $tgl_lahir[1] . '</b>-' . $tgl_lahir[0]; 
                                                         ?>
                                                     </td>
-                                                    <td class="text-left"><?php echo $pasien->no_hp ?></td>
+                                                    <td class="text-left">
+                                                        <?php 
+                                                        $message = urlencode("🎉 Selamat Ulang Tahun! 🎉\n\nHai Tn./Nn. " . $pasien->nama . ",\n\nSelamat ulang tahun dari kami Klinik Esensia!\n\nSebagai bentuk apresiasi, kami punya hadiah spesial untuk Anda:\n\n🔹 Diskon Pemeriksaan Laboratorium\n🔹 Gratis Konsultasi dengan Dokter Spesialis Penyakit Dalam (SpPD)\n✨ Berlaku dengan minimal transaksi Rp250.000\n\nPromo hanya berlaku untuk Anda dan bisa digunakan sampai satu bulan setelah menerima pesan ini.\nTunjukkan pesan ini saat datang ke klinik, ya!\n\nTerima kasih sudah menjadi bagian dari Sahabat Sehat Keluarga  💙\n\n📍 Jl. Wolter Monginsidi No.40, Pedurungan Tengah, Kec. Pedurungan, Kota Semarang\nWa              :  088809995150\nIg & TikTok : klinikesensia\nWebsite      : esensia.co.id");
+                                                        $wa_link = "https://wa.me/" . preg_replace('/[^0-9]/', '', $pasien->no_hp) . "?text=" . $message;
+                                                        ?>
+                                                        <a href="<?php echo $wa_link ?>" target="_blank" class="btn btn-success btn-sm">
+                                                            <i class="fab fa-whatsapp"></i> <?php echo $pasien->no_hp ?>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             <?php } ?>
                                         <?php } ?>
