@@ -169,7 +169,23 @@
                                                     </td>
                                                     <td class="text-left">
                                                         <?php 
-                                                        $message = urlencode("🎉 Selamat Ulang Tahun! 🎉\n\nHai Tn./Nn. " . $pasien->nama . ",\n\nSelamat ulang tahun dari kami Klinik Esensia!\n\nSebagai bentuk apresiasi, kami punya hadiah spesial untuk Anda:\n\n🔹 Diskon Pemeriksaan Laboratorium\n🔹 Gratis Konsultasi dengan Dokter Spesialis Penyakit Dalam (SpPD)\n✨ Berlaku dengan minimal transaksi Rp250.000\n\nPromo hanya berlaku untuk Anda dan bisa digunakan sampai satu bulan setelah menerima pesan ini.\nTunjukkan pesan ini saat datang ke klinik, ya!\n\nTerima kasih sudah menjadi bagian dari Sahabat Sehat Keluarga  💙\n\n📍 Jl. Wolter Monginsidi No.40, Pedurungan Tengah, Kec. Pedurungan, Kota Semarang\nWa              :  088809995150\nIg & TikTok : klinikesensia\nWebsite      : esensia.co.id");
+                                                        // Perbaiki icon dan line break agar tampil baik di WhatsApp
+                                                        $message = rawurlencode(
+                                                            "🎉 Selamat Ulang Tahun! 🎉\n\n" .
+                                                            "Hai Tn./Nn. " . $pasien->nama . ",\n\n" .
+                                                            "Selamat ulang tahun dari kami Klinik Esensia!\n\n" .
+                                                            "Sebagai bentuk apresiasi, kami punya hadiah spesial untuk Anda:\n" .
+                                                            "• Diskon Pemeriksaan Laboratorium\n" .
+                                                            "• Gratis Konsultasi dengan Dokter Spesialis Penyakit Dalam (SpPD)\n\n" .
+                                                            "✨ Berlaku dengan minimal transaksi Rp250.000\n\n" .
+                                                            "Promo hanya berlaku untuk Anda dan bisa digunakan sampai satu bulan setelah menerima pesan ini.\n" .
+                                                            "Tunjukkan pesan ini saat datang ke klinik, ya!\n\n" .
+                                                            "Terima kasih sudah menjadi bagian dari Sahabat Sehat Keluarga 💙\n\n" .
+                                                            "📍 Jl. Wolter Monginsidi No.40, Pedurungan Tengah, Kec. Pedurungan, Kota Semarang\n" .
+                                                            "WA: 088809995150\n" .
+                                                            "IG & TikTok: klinikesensia\n" .
+                                                            "Website: esensia.co.id"
+                                                        );
                                                         $wa_link = "https://wa.me/" . preg_replace('/[^0-9]/', '', $pasien->no_hp) . "?text=" . $message;
                                                         ?>
                                                         <a href="<?php echo $wa_link ?>" target="_blank" class="btn btn-success btn-sm">
