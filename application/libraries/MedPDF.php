@@ -34,7 +34,7 @@ class MedPDF extends FPDF {
         $this->MultiCell(8.5, .5, $setting->judul, '0', 'L');
         $this->Ln(0.5);
         $this->SetFont('Courier', 'B', '14');
-        $this->Ln(1.5);
+        $this->Ln(1);
 
         // Gambar Logo Atas 1
         if(file_exists($gambar1)) {
