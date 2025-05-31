@@ -1425,12 +1425,13 @@ class general extends CI_Model
         $print = print_r('</pre>');
         return $print;
     }
-
+    
     public static function bersih($str)
     {
-        $teks = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-        return $teks;
+        // Convert dari UTF-8 ke Windows-1252 (Latin-1), yang didukung oleh FPDF
+        return iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $str);
     }
+    
 
 
     public static function rotateImage($filePath)
