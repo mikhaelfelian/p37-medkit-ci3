@@ -20587,8 +20587,8 @@ class Medcheck extends CI_Controller {
             $judul              = "DAFTAR RIWAYAT KESEHATAN";
             $judul2             = "Laboratory Result";
 
-            $this->load->library('MedLabPDF');
-            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $this->load->library('MedPDF');
+            $pdf = new MedPDF('P', 'cm', array(21.5,33));
             $pdf->SetAutoPageBreak('auto', 5.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
