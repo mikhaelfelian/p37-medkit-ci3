@@ -187,7 +187,11 @@
                                                             "Website: esensia.co.id"
                                                         );
                                                         
-                                                        $wa_link = "https://wa.me/" . preg_replace('/[^0-9]/', '', $pasien->no_hp) . "?text=" . $message;
+                                                        $phone = preg_replace('/[^0-9]/', '', $pasien->no_hp);
+                                                        $phone = ltrim($phone, '0');
+                                                        $phone = '62' . $phone;
+                                                        
+                                                        $wa_link = "https://wa.me/" . $phone . "?text=" . $message;
                                                         ?>
                                                         <a href="<?php echo $wa_link ?>" target="_blank" class="btn btn-success btn-sm">
                                                             <i class="fab fa-whatsapp"></i> <?php echo $pasien->no_hp ?>
