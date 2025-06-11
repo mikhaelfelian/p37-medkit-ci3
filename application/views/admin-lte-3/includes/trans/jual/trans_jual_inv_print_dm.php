@@ -181,7 +181,7 @@ margin: 10;*/
                 <td style="text-align: right; font-weight: bold; font-size: 11px;">-<?php echo general::format_angka($jml_diskon) ?></td>
             </tr>
             <tr>
-                <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px;">Poin : <?php echo ($sql_pasien_poin->jml_poin <= 0 ? 0 : (float)$sql_pasien_poin->jml_poin) ?></td>
+                <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px;">Poin : <?php echo ($sql_pasien_poin->jml_poin <= 0 ? 0 : (float)$sql_pasien_poin->jml_poin_nom) ?></td>
                 <td colspan="2" style="text-align: right; font-weight: bold; font-size: 11px;">Ongkir</td>
                 <td style="text-align: center; font-size: 11px; font-weight: bold;">Rp.</td>
                 <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($jml_ongkir) ?></td>
