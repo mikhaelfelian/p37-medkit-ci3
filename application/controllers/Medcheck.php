@@ -1746,25 +1746,37 @@ class Medcheck extends CI_Controller {
                 $err2 = curl_error($ch2);
                 curl_close($ch2);
 
-                // Save files if requests were successful and content is not empty
-                if ($mp3 !== false && $http_code1 == 200 && !empty($mp3) && strlen($mp3) > 0) {
+                // Debug output for second request
+                echo "HTTP CODE 2: $http_code2\n";
+                echo "cURL ERROR 2: $err2\n";
+                echo "Hasil size 2: ".strlen($mp3_jeneng)." bytes\n";
+
+                // Save first file if response is valid
+                if ($mp3 !== false && $http_code1 == 200 && !empty($mp3)) {
                     if (file_put_contents($file, $mp3) === false) {
                         error_log("Failed to write file: " . $file);
+                        echo "Gagal menyimpan file 1\n";
                     } else {
-                        chmod($file, 0777); // Force file permissions to 777
+                        chmod($file, 0777);
+                        echo "File 1 berhasil disimpan: $file\n";
                     }
                 } else {
                     error_log("Invalid response for first text. HTTP Code: " . $http_code1 . ", Error: " . $err1);
+                    echo "Gagal menyimpan file 1\n";
                 }
 
-                if ($mp3_jeneng !== false && $http_code2 == 200 && !empty($mp3_jeneng) && strlen($mp3_jeneng) > 0) {
+                // Save second file if response is valid
+                if ($mp3_jeneng !== false && $http_code2 == 200 && !empty($mp3_jeneng)) {
                     if (file_put_contents($file2, $mp3_jeneng) === false) {
                         error_log("Failed to write file: " . $file2);
+                        echo "Gagal menyimpan file 2\n";
                     } else {
-                        chmod($file2, 0777); // Force file permissions to 777
+                        chmod($file2, 0777);
+                        echo "File 2 berhasil disimpan: $file2\n";
                     }
                 } else {
                     error_log("Invalid response for second text. HTTP Code: " . $http_code2 . ", Error: " . $err2);
+                    echo "Gagal menyimpan file 2\n";
                 }
             }
 
