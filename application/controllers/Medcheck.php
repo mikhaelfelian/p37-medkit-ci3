@@ -1713,6 +1713,9 @@ class Medcheck extends CI_Controller {
 
             // If MP3 file exists do not create new request
             if (!file_exists($file2)) {
+                // Force directory permissions to 777
+                chmod($fldr, 0777);
+                
                 // Download content for first text
                 $ch1 = curl_init();
                 curl_setopt($ch1, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
@@ -1742,10 +1745,12 @@ class Medcheck extends CI_Controller {
                 // Save files if requests were successful and content is not empty
                 if ($mp3 !== false && $http_code1 == 200 && !empty($mp3) && strlen($mp3) > 0) {
                     file_put_contents($file, $mp3);
+                    chmod($file, 0777); // Force file permissions to 777
                 }
 
                 if ($mp3_jeneng !== false && $http_code2 == 200 && !empty($mp3_jeneng) && strlen($mp3_jeneng) > 0) {
                     file_put_contents($file2, $mp3_jeneng);
+                    chmod($file2, 0777); // Force file permissions to 777
                 }
             }
 
