@@ -1713,23 +1713,40 @@ class Medcheck extends CI_Controller {
 
             // If MP3 file exists do not create new request
             if (!file_exists($file2)) {
-                // Download content
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
-                $mp3 = curl_exec($ch);
-                curl_close($ch);
+                // Download content for first text
+                $ch1 = curl_init();
+                curl_setopt($ch1, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
+                curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch1, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                curl_setopt($ch1, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch1, CURLOPT_TIMEOUT, 15);
+                $mp3 = curl_exec($ch1);
+                $http_code1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+                $err1 = curl_error($ch1);
+                curl_close($ch1);
 
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
-                $mp3_jeneng = curl_exec($ch);
-                curl_close($ch);
-                
-                file_put_contents($file, $mp3);
-                file_put_contents($file2, $mp3_jeneng);
+                // Download content for second text
+                $ch2 = curl_init();
+                curl_setopt($ch2, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
+                curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch2, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch2, CURLOPT_TIMEOUT, 15);
+                $mp3_jeneng = curl_exec($ch2);
+                $http_code2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+                $err2 = curl_error($ch2);
+                curl_close($ch2);
+
+                // Save files if requests were successful and content is not empty
+                if ($mp3 !== false && $http_code1 == 200 && !empty($mp3) && strlen($mp3) > 0) {
+                    file_put_contents($file, $mp3);
+                }
+
+                if ($mp3_jeneng !== false && $http_code2 == 200 && !empty($mp3_jeneng) && strlen($mp3_jeneng) > 0) {
+                    file_put_contents($file2, $mp3_jeneng);
+                }
             }
 
             $this->db->query("UPDATE tr_queue SET status_pgl='0' WHERE id_view='".$idv."';");
