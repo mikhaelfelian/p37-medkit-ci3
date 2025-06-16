@@ -1580,13 +1580,14 @@ class Medcheck extends CI_Controller {
             $data['sidebar']    = 'admin-lte-3/includes/medcheck/sidebar_med';
             /* --- Sidebar Menu --- */
             
+            echo 'TEST : ';
             echo $fldr   = realpath('../'.BASE_ANTRIAN.'/scale/audio');
             
             /* Load view tampilan */
             $this->load->view('admin-lte-3/1_atas', $data);
             $this->load->view('admin-lte-3/2_header', $data);
             $this->load->view('admin-lte-3/3_navbar', $data);
-            $this->load->view('admin-lte-3/includes/medcheck/data_antrian', $data);
+            // $this->load->view('admin-lte-3/includes/medcheck/data_antrian', $data);
             $this->load->view('admin-lte-3/5_footer', $data);
             $this->load->view('admin-lte-3/6_bawah', $data);
         }else{
