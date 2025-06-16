@@ -1714,8 +1714,20 @@ class Medcheck extends CI_Controller {
             // If MP3 file exists do not create new request
             if (!file_exists($file2)) {
                 // Download content
-                $mp3        = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
-                $mp3_jeneng = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                $mp3 = curl_exec($ch);
+                curl_close($ch);
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                $mp3_jeneng = curl_exec($ch);
+                curl_close($ch);
+                
                 file_put_contents($file, $mp3);
                 file_put_contents($file2, $mp3_jeneng);
             }
