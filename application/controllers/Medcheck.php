@@ -1720,10 +1720,12 @@ class Medcheck extends CI_Controller {
                 $ch1 = curl_init();
                 curl_setopt($ch1, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
                 curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch1, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                curl_setopt($ch1, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
                 curl_setopt($ch1, CURLOPT_FOLLOWLOCATION, true);
                 curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch1, CURLOPT_TIMEOUT, 15);
+                curl_setopt($ch1, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch1, CURLOPT_HEADER, false);
+                curl_setopt($ch1, CURLOPT_ENCODING, '');
                 $mp3 = curl_exec($ch1);
                 $http_code1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
                 $err1 = curl_error($ch1);
@@ -1733,10 +1735,12 @@ class Medcheck extends CI_Controller {
                 $ch2 = curl_init();
                 curl_setopt($ch2, CURLOPT_URL, 'https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
                 curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch2, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                curl_setopt($ch2, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
                 curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, true);
                 curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch2, CURLOPT_TIMEOUT, 15);
+                curl_setopt($ch2, CURLOPT_TIMEOUT, 30);
+                curl_setopt($ch2, CURLOPT_HEADER, false);
+                curl_setopt($ch2, CURLOPT_ENCODING, '');
                 $mp3_jeneng = curl_exec($ch2);
                 $http_code2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
                 $err2 = curl_error($ch2);
@@ -1744,13 +1748,23 @@ class Medcheck extends CI_Controller {
 
                 // Save files if requests were successful and content is not empty
                 if ($mp3 !== false && $http_code1 == 200 && !empty($mp3) && strlen($mp3) > 0) {
-                    file_put_contents($file, $mp3);
-                    chmod($file, 0777); // Force file permissions to 777
+                    if (file_put_contents($file, $mp3) === false) {
+                        error_log("Failed to write file: " . $file);
+                    } else {
+                        chmod($file, 0777); // Force file permissions to 777
+                    }
+                } else {
+                    error_log("Invalid response for first text. HTTP Code: " . $http_code1 . ", Error: " . $err1);
                 }
 
                 if ($mp3_jeneng !== false && $http_code2 == 200 && !empty($mp3_jeneng) && strlen($mp3_jeneng) > 0) {
-                    file_put_contents($file2, $mp3_jeneng);
-                    chmod($file2, 0777); // Force file permissions to 777
+                    if (file_put_contents($file2, $mp3_jeneng) === false) {
+                        error_log("Failed to write file: " . $file2);
+                    } else {
+                        chmod($file2, 0777); // Force file permissions to 777
+                    }
+                } else {
+                    error_log("Invalid response for second text. HTTP Code: " . $http_code2 . ", Error: " . $err2);
                 }
             }
 
