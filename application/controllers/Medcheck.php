@@ -1718,7 +1718,7 @@ class Medcheck extends CI_Controller {
                 $mp3_jeneng = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
                 file_put_contents($file, $mp3);
                 file_put_contents($file2, $mp3_jeneng);
-            }
+            } 
 
             $this->db->query("UPDATE tr_queue SET status_pgl='0' WHERE id_view='".$idv."';");
             
