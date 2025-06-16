@@ -1714,8 +1714,8 @@ class Medcheck extends CI_Controller {
             // If MP3 file exists do not create new request
             if (!file_exists($file2)) {
                 // Download content
-                $mp3        = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=' . urlencode($text) . '&tl=ID');
-                $mp3_jeneng = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=' . urlencode($text2) . '&tl=ID');
+                $mp3        = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text) . '&tl=id&client=tw-ob');
+                $mp3_jeneng = file_get_contents('https://translate.google.com/translate_tts?ie=UTF-8&q=' . urlencode($text2) . '&tl=id&client=tw-ob');
                 file_put_contents($file, $mp3);
                 file_put_contents($file2, $mp3_jeneng);
             }
