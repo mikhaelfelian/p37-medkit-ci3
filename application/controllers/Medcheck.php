@@ -1502,6 +1502,7 @@ class Medcheck extends CI_Controller {
             $jml     = $this->input->get('jml');
 //            $jml_sql = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? $this->db->get('tbl_trans_jual')->num_rows() : $this->db->where('id_user', $id_user)->where('tgl_masuk', date('Y-m-d'))->get('tbl_trans_jual')->num_rows());
 
+
             if(!empty($jml)){
                 $jml_hal = $jml;
             }else{
@@ -1578,6 +1579,8 @@ class Medcheck extends CI_Controller {
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/medcheck/sidebar_med';
             /* --- Sidebar Menu --- */
+            
+            echo $fldr   = realpath('../'.BASE_ANTRIAN.'/scale/audio');
             
             /* Load view tampilan */
             $this->load->view('admin-lte-3/1_atas', $data);
@@ -1719,14 +1722,12 @@ class Medcheck extends CI_Controller {
 
                 // Initialize cURL for first request
                 $ch1 = curl_init();
-                curl_setopt_array($ch1, [
-                    CURLOPT_URL => $url1,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_USERAGENT => 'Mozilla/5.0',
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_SSL_VERIFYPEER => false,
-                    CURLOPT_TIMEOUT => 15
-                ]);
+                curl_setopt($ch1, CURLOPT_URL, $url1);
+                curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch1, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                curl_setopt($ch1, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch1, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch1, CURLOPT_TIMEOUT, 15);
                 $mp3 = curl_exec($ch1);
                 $http_code1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
                 $err1 = curl_error($ch1);
@@ -1734,14 +1735,12 @@ class Medcheck extends CI_Controller {
 
                 // Initialize cURL for second request
                 $ch2 = curl_init();
-                curl_setopt_array($ch2, [
-                    CURLOPT_URL => $url2,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_USERAGENT => 'Mozilla/5.0',
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_SSL_VERIFYPEER => false,
-                    CURLOPT_TIMEOUT => 15
-                ]);
+                curl_setopt($ch2, CURLOPT_URL, $url2);
+                curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch2, CURLOPT_USERAGENT, 'Mozilla/5.0');
+                curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch2, CURLOPT_TIMEOUT, 15);
                 $mp3_jeneng = curl_exec($ch2);
                 $http_code2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
                 $err2 = curl_error($ch2);
